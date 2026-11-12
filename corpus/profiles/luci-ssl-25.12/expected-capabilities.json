@@ -163,12 +163,59 @@
           "op": "invoke"
         }
       ],
+      "allowed_helper_effects": [
+        {
+          "sink_kind": "system",
+          "constraint": "fixed_command",
+          "examples": [
+            "/etc/init.d/sysfixtime restart"
+          ]
+        }
+      ],
       "denied_authority": [
         "unauthenticated invoke"
       ],
-      "rationale": "luci-mod-system-config write grants luci.setLocaltime. The handler runs date via sprintf of localtime() fields. Unauthenticated ACLs do not name this method.",
+      "rationale": "luci-mod-system-config write grants luci.setLocaltime. The handler runs date via sprintf of localtime() fields, then a fixed sysfixtime restart. Unauthenticated ACLs do not name this method.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-mounts",
+      "session_class": "luci-mod-system-mounts",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getBlockDevices",
+          "op": "invoke"
+        },
+        {
+          "target_id": "ubus:luci.setBlockDetect",
+          "op": "invoke"
+        }
+      ],
+      "allowed_helper_effects": [
+        {
+          "sink_kind": "popen",
+          "constraint": "fixed_command",
+          "examples": ["/sbin/block info"]
+        },
+        {
+          "sink_kind": "system",
+          "constraint": "fixed_command",
+          "examples": ["/sbin/block detect > /etc/config/fstab"]
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated invoke",
+        "arbitrary executable selection",
+        "command construction from request.args"
+      ],
+      "rationale": "luci-mod-system-mounts grants read of luci.getBlockDevices and write of luci.setBlockDetect. Both handlers take no request.args; they exec fixed /sbin/block argv. Unauthenticated ACLs do not name these methods. This is not a luci.sys helper.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci getBlockDevices.call and setBlockDetect.call"
       ]
     },
     {

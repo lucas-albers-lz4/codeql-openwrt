@@ -23,8 +23,11 @@ from policy.oracle import (  # noqa: E402
     ERROR_ACCESS,
     ERROR_PARSE,
     EXEC_METHODS,
+    FIXED_EXEC_METHODS,
+    MOUNTS_FIXTURE_SID,
     NETWORK_FIXTURE_SID,
     PRODUCER,
+    REQUEST_ARGS_EXEC_METHODS,
     ROOT_FIXTURE_SID,
     STATUS_FIXTURE_SID,
     SYSTEM_FIXTURE_SID,
@@ -162,6 +165,16 @@ class TestHandwrittenCases(unittest.TestCase):
                 SYSTEM_FIXTURE_SID,
                 "luci-mod-system.json",
             ),
+            "getBlockDevices": (
+                "luci-mod-system-mounts",
+                MOUNTS_FIXTURE_SID,
+                "luci-mod-system.json",
+            ),
+            "setBlockDetect": (
+                "luci-mod-system-mounts",
+                MOUNTS_FIXTURE_SID,
+                "luci-mod-system.json",
+            ),
         }
         for method, (session_class, sid, source) in expected.items():
             with self.subTest(method=method):
@@ -198,6 +211,7 @@ class TestHandwrittenCases(unittest.TestCase):
         network = self.sessions[NETWORK_FIXTURE_SID]
         status = self.sessions[STATUS_FIXTURE_SID]
         system = self.sessions[SYSTEM_FIXTURE_SID]
+        mounts = self.sessions[MOUNTS_FIXTURE_SID]
         self.assertEqual(
             evaluate_call(
                 sid=network.sid, object="luci", function="setPassword", data={}, sessions=self.sessions
@@ -227,6 +241,22 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertEqual(
             evaluate_call(
                 sid=network.sid, object="luci", function="getFeatures", data={}, sessions=self.sessions
+            ).outcome,
+            "deny",
+        )
+        self.assertEqual(
+            evaluate_call(
+                sid=mounts.sid, object="luci", function="setPassword", data={}, sessions=self.sessions
+            ).outcome,
+            "deny",
+        )
+        self.assertEqual(
+            evaluate_call(
+                sid=system.sid,
+                object="luci",
+                function="getBlockDevices",
+                data={},
+                sessions=self.sessions,
             ).outcome,
             "deny",
         )
@@ -285,7 +315,7 @@ class TestGrantsAndDecisions(unittest.TestCase):
             self.assertIn(row["record_type"], SCHEMA["properties"]["record_type"]["enum"])
             self.assertIn(row["evidence_status"], SCHEMA["properties"]["evidence_status"]["enum"])
 
-    def test_grants_keep_getfeatures_and_emit_five_exec_methods(self) -> None:
+    def test_grants_keep_getfeatures_and_emit_inventoried_exec_methods(self) -> None:
         methods = {row["method"] for row in self.grants}
         self.assertEqual(methods, set(EMITTED_METHODS))
         classes = {row["session_class"] for row in self.grants}
@@ -297,6 +327,7 @@ class TestGrantsAndDecisions(unittest.TestCase):
                 "luci-mod-network-config",
                 "luci-mod-status-realtime",
                 "luci-mod-system-config",
+                "luci-mod-system-mounts",
             },
         )
         getfeatures = [row for row in self.grants if row["method"] == "getFeatures"]
@@ -308,9 +339,12 @@ class TestGrantsAndDecisions(unittest.TestCase):
             "policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats",
             "policy:grant:luci-mod-system-config:ubus_http:luci.setPassword",
             "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime",
+            "policy:grant:luci-mod-system-mounts:ubus_http:luci.getBlockDevices",
+            "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect",
         }
         record_ids = {row["record_id"] for row in self.grants}
         self.assertTrue(delegated_ids <= record_ids)
+        self.assertEqual(set(REQUEST_ARGS_EXEC_METHODS) | set(FIXED_EXEC_METHODS), set(EXEC_METHODS))
         blob = json.dumps(self.grants)
         self.assertNotIn("authorization_violation", blob)
         self.assertNotIn("cgi-io", blob)
@@ -351,6 +385,7 @@ class TestGrantsAndDecisions(unittest.TestCase):
         findings = json.loads((REPO / "reports" / "m4-findings.json").read_text())
         for row in findings:
             with self.subTest(record_id=row["record_id"]):
+                self.assertIn(row["method"], REQUEST_ARGS_EXEC_METHODS)
                 self.assertIn(row["session_class"], SYNTHETIC_SESSION_CLASSES)
                 self.assertIs(row.get("synthetic_session"), True)
 
@@ -437,9 +472,18 @@ class TestMatching(unittest.TestCase):
         self.assertFalse(login_test_permission(None, "read", "luci-base"))
         self.assertTrue(login_test_permission(root, "read", "luci-mod-network-config"))
         self.assertTrue(login_test_permission(root, "write", "luci-mod-system-config"))
+        self.assertTrue(login_test_permission(root, "write", "luci-mod-system-mounts"))
         network = Login(username="luci-mod-network-config", read=["luci-mod-network-config"])
         self.assertTrue(login_test_permission(network, "read", "luci-mod-network-config"))
         self.assertFalse(login_test_permission(network, "write", "luci-mod-system-config"))
+        mounts = Login(
+            username="luci-mod-system-mounts",
+            read=["luci-mod-system-mounts"],
+            write=["luci-mod-system-mounts"],
+        )
+        self.assertTrue(login_test_permission(mounts, "read", "luci-mod-system-mounts"))
+        self.assertTrue(login_test_permission(mounts, "write", "luci-mod-system-mounts"))
+        self.assertFalse(login_test_permission(mounts, "write", "luci-mod-system-config"))
 
     def test_acl_catalog_loads_module_files_without_setinitaction(self) -> None:
         catalog = load_acl_catalog()
@@ -449,6 +493,8 @@ class TestMatching(unittest.TestCase):
         self.assertIn(("luci-mod-status-realtime", "luci", "getRealtimeStats"), by_fun)
         self.assertIn(("luci-mod-system-config", "luci", "setPassword"), by_fun)
         self.assertIn(("luci-mod-system-config", "luci", "setLocaltime"), by_fun)
+        self.assertIn(("luci-mod-system-mounts", "luci", "getBlockDevices"), by_fun)
+        self.assertIn(("luci-mod-system-mounts", "luci", "setBlockDetect"), by_fun)
         self.assertTrue(any(entry.object == "file" and entry.function == "exec" for entry in catalog))
         self.assertTrue(any(entry.scope == "cgi-io" for entry in catalog))
         self.assertTrue(any(entry.object == "hostapd.*" for entry in catalog))
@@ -513,7 +559,7 @@ class TestCDouble(unittest.TestCase):
         self.assertEqual(allow.stdout.strip(), "ALLOW")
         self.assertEqual(deny.stdout.strip(), "DENY")
 
-    def test_match_and_decide_five_exec_methods(self) -> None:
+    def test_match_and_decide_exec_methods(self) -> None:
         for method in EXEC_METHODS:
             with self.subTest(method=method):
                 own = self._run("match", "luci", method, "luci", method)

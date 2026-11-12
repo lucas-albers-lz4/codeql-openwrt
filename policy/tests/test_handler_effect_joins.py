@@ -6,8 +6,14 @@ from __future__ import annotations
 import json
 import unittest
 from pathlib import Path
+import sys
 
 REPO = Path(__file__).resolve().parents[2]
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
+
+from policy.oracle import EXEC_METHODS, REQUEST_ARGS_EXEC_METHODS  # noqa: E402
+
 JOIN_KEYS = (
     "corpus_revision",
     "profile",
@@ -24,19 +30,15 @@ CGI_JOIN_KEYS = (
     "cgi_endpoint",
 )
 CGI_EFFECT_ID = "policy:effect:cgi-backup-sensitive-read"
-EXEC_METHODS = (
-    "getSwconfigFeatures",
-    "getSwconfigPortState",
-    "getRealtimeStats",
-    "setPassword",
-    "setLocaltime",
-)
 COPIED_EFFECT_SNAPSHOTS = (
     "reports/findings.json",
     "reports/m4-getfeatures-direct-exec.json",
     "reports/m4-luci-sys-init-action-findings.json",
+    "reports/m4-block-device-exec.json",
 )
 PROJECTED_PATH_SNAPSHOT = "reports/m4-findings.json"
+LUCI_EFFECT_COUNT = 15
+COPIED_EFFECT_COUNT = 10
 SOURCE_FIELDS = (
     "corpus_revision",
     "profile",
@@ -67,14 +69,14 @@ class TestHandlerEffectJoins(unittest.TestCase):
 
     def test_catalog_is_handler_effects_only(self) -> None:
         self.assertIsInstance(self.effects, list)
-        self.assertGreaterEqual(len(self.effects), 13)
+        self.assertGreaterEqual(len(self.effects), LUCI_EFFECT_COUNT + 1)
         ids = [row["record_id"] for row in self.effects]
         effect_ids = [row["effect_id"] for row in self.effects]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(len(effect_ids), len(set(effect_ids)))
         luci_rows = [row for row in self.effects if row.get("ingress") == "ubus_http"]
         cgi_rows = [row for row in self.effects if row.get("ingress") == "cgi_io"]
-        self.assertEqual(len(luci_rows), 12)
+        self.assertEqual(len(luci_rows), LUCI_EFFECT_COUNT)
         self.assertEqual(len(cgi_rows), 1)
         for row in luci_rows:
             for key in REQUIRED:
@@ -116,11 +118,12 @@ class TestHandlerEffectJoins(unittest.TestCase):
             )
 
     def test_exec_method_effects_join_delegated_and_root_grants(self) -> None:
-        by_method = {
-            row["method"]: row for row in self.effects if row.get("method") in EXEC_METHODS
-        }
+        by_method = {}
+        for row in self.effects:
+            if row.get("method") in EXEC_METHODS:
+                by_method.setdefault(row["method"], []).append(row)
         self.assertEqual(set(by_method), set(EXEC_METHODS))
-        for method, effect in by_method.items():
+        for method, effects in by_method.items():
             delegated = next(
                 grant
                 for grant in self.grants
@@ -131,11 +134,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
                 for grant in self.grants
                 if grant.get("method") == method and grant["session_class"] == "root"
             )
-            refs = effect["evidence_refs"]
-            self.assertIn(delegated["record_id"], refs)
-            self.assertIn(root["record_id"], refs)
-            self.assertTrue(any(ref.startswith("m4:luci-") for ref in refs))
-            self.assertEqual(effect["assessment"], "intended_access")
+            for effect in effects:
+                refs = effect["evidence_refs"]
+                self.assertIn(delegated["record_id"], refs)
+                self.assertIn(root["record_id"], refs)
+                self.assertEqual(effect["assessment"], "intended_access")
             unauth_grants = [
                 grant
                 for grant in self.grants
@@ -166,8 +169,13 @@ class TestHandlerEffectJoins(unittest.TestCase):
 
     def test_projected_effects_cite_existing_taint_paths(self) -> None:
         taint_ids = {row["record_id"] for row in self.taint_paths}
-        for method in EXEC_METHODS:
-            effect = next(row for row in self.effects if row.get("method") == method)
+        for method in REQUEST_ARGS_EXEC_METHODS:
+            effect = next(
+                row
+                for row in self.effects
+                if row.get("method") == method
+                and any(ref in taint_ids for ref in row.get("evidence_refs", []))
+            )
             cited = [ref for ref in effect["evidence_refs"] if ref in taint_ids]
             self.assertEqual(len(cited), 1, method)
             source = next(row for row in self.taint_paths if row["record_id"] == cited[0])
@@ -193,8 +201,8 @@ class TestHandlerEffectJoins(unittest.TestCase):
             if row.get("record_type") == "taint_path"
             and row.get("evidence_status") == "path_found"
         ]
-        self.assertEqual(len(copied_sources), 7)
-        self.assertEqual(len(path_sources), len(EXEC_METHODS))
+        self.assertEqual(len(copied_sources), COPIED_EFFECT_COUNT)
+        self.assertEqual(len(path_sources), len(REQUEST_ARGS_EXEC_METHODS))
 
         luci_effects = [row for row in self.effects if row.get("ingress") == "ubus_http"]
         resolved_source_keys = []
@@ -221,7 +229,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             if source_path == PROJECTED_PATH_SNAPSHOT:
                 self.assertEqual(source["record_type"], "taint_path")
                 self.assertEqual(source["evidence_status"], "path_found")
-                self.assertIn(effect["method"], EXEC_METHODS)
+                self.assertIn(effect["method"], REQUEST_ARGS_EXEC_METHODS)
             else:
                 self.assertEqual(source["record_type"], "handler_effect")
                 self.assertEqual(source["record_id"], effect["record_id"])
@@ -233,7 +241,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
                     f"{effect['record_id']} drifted from {source_path} in {field}",
                 )
 
-        self.assertEqual(len(resolved_source_keys), 12)
+        self.assertEqual(len(resolved_source_keys), LUCI_EFFECT_COUNT)
         self.assertEqual(
             len(resolved_source_keys),
             len(set(resolved_source_keys)),
@@ -257,6 +265,14 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertIn("basename is not a modeled sanitizer", init_text)
         localtime = " ".join(by_id["m4:effect:luci-setLocaltime-system"]["assumptions"]).lower()
         self.assertIn("not treat localtime or sprintf %d as sanitizers", localtime)
+        for record_id in (
+            "m4:effect:luci-getBlockDevices-popen",
+            "m4:effect:luci-setBlockDetect-system",
+            "m4:effect:luci-setLocaltime-sysfixtime-system",
+        ):
+            text = " ".join(by_id[record_id]["assumptions"]).lower()
+            self.assertIn("not a taint path", text)
+            self.assertNotIn("path_found", text)
         cgi_text = " ".join(by_id[CGI_EFFECT_ID]["assumptions"]).lower()
         self.assertIn("shellquote", cgi_text)
         self.assertIn("basename", cgi_text)

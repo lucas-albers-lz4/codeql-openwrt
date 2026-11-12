@@ -1,6 +1,6 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-backup effect. Producer files under `reports/` remain the query snapshots for luci rows; cgi-backup is policy-facts (`policy:cgi-backup-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-backup effect. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query); cgi-backup is policy-facts (`policy:cgi-backup-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
 
 Findings are evidence, not proof. This catalog does not emit `authorization_violation`, cgi-exec/upload/download, or dispatcher effects. `shellquote` and `basename` are not sanitizers.
 
@@ -11,6 +11,7 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [findings.json](findings.json) | `getFeatures` → `callPackageVersionCheck('netifd')` → named `popen` |
 | [m4-getfeatures-direct-exec.json](m4-getfeatures-direct-exec.json) | `getFeatures.call` hostapd / wpa_supplicant `system`, dnsmasq / odhcpd / ipset `popen` |
 | [m4-findings.json](m4-findings.json) | five request.args exec sinks, projected from existing `taint_path` rows (no new query) |
+| [m4-block-device-exec.json](m4-block-device-exec.json) | `getBlockDevices` / `setBlockDetect` fixed `/sbin/block` exec plus `setLocaltime` sysfixtime |
 | [m4-luci-sys-init-action-findings.json](m4-luci-sys-init-action-findings.json) | `luci.sys` `init_action` → builtin `system` (no M2 grant) |
 | policy-facts `cgi_backup` | synthetic `cgi-backup` → `sensitive_backup_read` (C, not ucode) |
 
@@ -18,11 +19,11 @@ Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, s
 
 ## Grant ↔ effect joins
 
-Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v1` / `policy:cgi-backup-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
+Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
 
-Catalog copies add the `#12` / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
+Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
 
-### `#12` exec-method grants
+### `#12` request.args exec-method grants
 
 Unauthenticated `/ubus` is a **non-join** (M2 deny). Delegated module sessions and stock root `*` join as `intended_access`.
 
@@ -35,6 +36,16 @@ Unauthenticated `/ubus` is a **non-join** (M2 deny). Delegated module sessions a
 | `setLocaltime` | `setLocaltime.date.system` | `policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime` | `policy:grant:root:ubus_http:luci.setLocaltime` | no-join (`policy:decision:unauthenticated-setLocaltime-deny`) |
 
 Those five effects are handler sinks collected from the existing request.args inventory. `shellquote` on the swconfig / luci-bwc / passwd paths is observed, not a sanitizer. `localtime` / `sprintf %d` on `setLocaltime` are not sanitizers.
+
+### Fixed plugin-body exec (`luci-mod-system-mounts` + sysfixtime)
+
+`getBlockDevices` and `setBlockDetect` are **fixed** plugin-body exec (`call: function()`, no `request.args`, not `luci.sys`). Unauthenticated is a **non-join**. `setLocaltime.sysfixtime.system` is a second sink on the already-granted `setLocaltime` method (literal `/etc/init.d/sysfixtime restart`); it joins the same `#12` grants, not a new method grant.
+
+| Method | `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- | --- |
+| `getBlockDevices` | `getBlockDevices.block-info.popen` | `policy:grant:luci-mod-system-mounts:ubus_http:luci.getBlockDevices` | `policy:grant:root:ubus_http:luci.getBlockDevices` | no-join (`policy:decision:unauthenticated-getBlockDevices-deny`) |
+| `setBlockDetect` | `setBlockDetect.block-detect.system` | `policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect` | `policy:grant:root:ubus_http:luci.setBlockDetect` | no-join (`policy:decision:unauthenticated-setBlockDetect-deny`) |
+| `setLocaltime` | `setLocaltime.sysfixtime.system` | `policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime` | `policy:grant:root:ubus_http:luci.setLocaltime` | no-join (`policy:decision:unauthenticated-setLocaltime-deny`) |
 
 ### `getFeatures` grants (pre-#12, still join)
 

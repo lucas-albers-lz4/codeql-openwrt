@@ -21,6 +21,8 @@ See `reports/m4-coverage.json`.
 ## Still unmodeled in this slice
 
 - `setInitAction` → `init_action(request.args.*)` interprocedural dataflow (helper body in [m4-luci-sys-init-action.md](m4-luci-sys-init-action.md); no luci-ssl delegated grant at pin `b2e0be4b`)
+- `getRealtimeStats` later `flags` reassignment (CFG/SSA)
+- `setPassword` `u`/`p` `shellquote` barrier (observed, not modeled)
 - full CFG/SSA and global flow
 
-Moved to sibling M4 reports: getFeatures direct helpers ([m4-getfeatures-direct-exec.md](m4-getfeatures-direct-exec.md)); complete-argument `shellquote` ([m4-shellquote.md](m4-shellquote.md)).
+Moved to sibling M4 reports: getFeatures direct helpers ([m4-getfeatures-direct-exec.md](m4-getfeatures-direct-exec.md)); complete-argument `shellquote` ([m4-shellquote.md](m4-shellquote.md)); fixed `/sbin/block` exec and `setLocaltime` sysfixtime ([m4-block-device-exec.md](m4-block-device-exec.md)).

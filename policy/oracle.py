@@ -12,8 +12,9 @@ Oracle transcribed from pinned source, not from a live daemon:
 * stock root login @ openwrt ``4e9642517b48bae612ff10fb72fb9199e559500e``
 
 Literal object/method names only. Emission is bounded to luci.getFeatures
-plus the five inventoried request.args exec methods. No fnmatch-witness
-generator, dispatcher, cgi-io, Alloy, or ``producer: step4``.
+plus the inventoried request.args exec methods and getBlockDevices /
+setBlockDetect. No fnmatch-witness generator, dispatcher, cgi-io, Alloy, or
+``producer: step4``.
 """
 
 from __future__ import annotations
@@ -32,7 +33,7 @@ REPO_ROOT = POLICY_DIR.parent
 FIXTURES = POLICY_DIR / "fixtures"
 
 PROFILE = "luci-ssl-25.12"
-ANALYSIS_REVISION = "policy:ubus-luci-exec-methods-v1"
+ANALYSIS_REVISION = "policy:ubus-luci-exec-methods-v2"
 PRODUCER = "policy_facts"
 
 DEFAULT_SID = "00000000000000000000000000000000"
@@ -40,6 +41,7 @@ ROOT_FIXTURE_SID = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 NETWORK_FIXTURE_SID = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
 STATUS_FIXTURE_SID = "cccccccccccccccccccccccccccccccc"
 SYSTEM_FIXTURE_SID = "dddddddddddddddddddddddddddddddd"
+MOUNTS_FIXTURE_SID = "11111111111111111111111111111111"
 
 UHTTPD_SHA = "93b05e0b65d91c23c5aa8fdde378df1f174ec71d"
 RPCD_SHA = "d99f703e4035d03fbcfbada3cb697db346c2b984"
@@ -65,13 +67,18 @@ ACL_FIXTURE_FILES = (
     "luci-mod-status.json",
     "luci-mod-system.json",
 )
-EXEC_METHODS = (
+REQUEST_ARGS_EXEC_METHODS = (
     "getSwconfigFeatures",
     "getSwconfigPortState",
     "getRealtimeStats",
     "setPassword",
     "setLocaltime",
 )
+FIXED_EXEC_METHODS = (
+    "getBlockDevices",
+    "setBlockDetect",
+)
+EXEC_METHODS = REQUEST_ARGS_EXEC_METHODS + FIXED_EXEC_METHODS
 EMITTED_METHODS = frozenset(("getFeatures",) + EXEC_METHODS)
 SESSION_SIDS = {
     "unauthenticated": DEFAULT_SID,
@@ -79,6 +86,7 @@ SESSION_SIDS = {
     "luci-mod-network-config": NETWORK_FIXTURE_SID,
     "luci-mod-status-realtime": STATUS_FIXTURE_SID,
     "luci-mod-system-config": SYSTEM_FIXTURE_SID,
+    "luci-mod-system-mounts": MOUNTS_FIXTURE_SID,
 }
 SYNTHETIC_SESSION_CLASSES = frozenset(SESSION_SIDS) - {"unauthenticated", "root"}
 
@@ -98,8 +106,9 @@ ASSUMPTION_OBJECT = (
 UNKNOWN_ACL_SET = (
     "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, "
     "luci-mod-status.json, and luci-mod-system.json. Emission is bounded to "
-    "luci.getFeatures plus the five inventoried request.args exec methods; "
-    "file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+    "luci.getFeatures plus the inventoried request.args exec methods and "
+    "getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants "
+    "in those files are not emitted."
 )
 
 
@@ -646,8 +655,9 @@ def build_artifacts(
         "corpus_revision": corpus_revision(repo_root),
         "pins": _pins(),
         "scope": (
-            "/ubus luci.getFeatures plus five inventoried request.args exec "
-            "methods; literal object/method names"
+            "/ubus luci.getFeatures plus inventoried request.args exec "
+            "methods and getBlockDevices/setBlockDetect; literal "
+            "object/method names"
         ),
         "harness": {
             "canonical": "python3 -m policy emit",

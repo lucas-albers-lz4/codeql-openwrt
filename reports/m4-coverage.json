@@ -7,7 +7,7 @@
     "rpcd method name from methods.<name>.call",
     "syntactic request.args field taint into named fs popen and builtin system",
     "same-function lexical and assignment bindings (getRealtimeStats flags, setPassword u/p, setLocaltime t)",
-    "M2 policy-facts grants for delegated luci-mod-* sessions (analysis_revision policy:ubus-luci-exec-methods-v1)"
+    "M2 policy-facts grants for delegated luci-mod-* sessions (analysis_revision policy:ubus-luci-exec-methods-v2)"
   ],
   "methods_with_request_args_exec": [
     "getSwconfigFeatures",
@@ -22,7 +22,9 @@
   ],
   "unmodeled_branches": [
     "setInitAction → init_action interprocedural taint (helper body in reports/m4-luci-sys-init-action-coverage.json)",
-    "remaining luci methods without request.args in a popen/system argument"
+    "getRealtimeStats later flags reassignment (CFG/SSA)",
+    "setPassword u/p shellquote barrier (observed, not modeled)",
+    "fixed getBlockDevices/setBlockDetect/sysfixtime exec in reports/m4-block-device-exec-coverage.json"
   ],
   "unsupported_constructs": [
     "generated AST.qll/CFG.qll (not imported)",

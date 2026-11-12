@@ -162,6 +162,8 @@ class TestGrantsAndEffect(unittest.TestCase):
                 "getRealtimeStats",
                 "setPassword",
                 "setLocaltime",
+                "getBlockDevices",
+                "setBlockDetect",
             },
         )
         blob = json.dumps(self.luci_grants)
