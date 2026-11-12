@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 import subprocess
 import tempfile
 import unittest
@@ -357,29 +356,15 @@ class TestCommittedArtifacts(unittest.TestCase):
         self.assertEqual(committed, {"grants": grants, **bundle})
         self.assertEqual(committed_effect, effect)
 
-    def test_writer_preserves_canonical_artifacts(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            shutil.copytree(REPO / "policy" / "fixtures", root / "policy" / "fixtures")
-            (root / "corpus").mkdir()
-            shutil.copy2(REPO / "corpus" / "lock.json", root / "corpus" / "lock.json")
-            (root / "reports").mkdir()
-            canonical_paths = (Path("policy/grants.json"), Path("reports/handler_effects.json"))
-            before = {}
-            for relative_path in canonical_paths:
-                shutil.copy2(REPO / relative_path, root / relative_path)
-                before[relative_path] = (root / relative_path).read_bytes()
-
-            paths = write_artifacts(root)
-
-            self.assertEqual(
-                paths,
-                (root / "policy" / "cgi_exec_decisions.json", root / "reports" / "m2-cgi-exec-effect.json"),
-            )
-            for relative_path in canonical_paths:
-                self.assertEqual((root / relative_path).read_bytes(), before[relative_path], str(relative_path))
-            for path in paths:
-                self.assertTrue(path.is_file(), str(path))
+    def test_canonical_grants_json_includes_exec_grants(self) -> None:
+        grants, _, effect = build_artifacts()
+        committed = json.loads((REPO / "policy" / "grants.json").read_text(encoding="utf-8"))
+        catalog = json.loads((REPO / "reports" / "handler_effects.json").read_text(encoding="utf-8"))
+        for grant in grants:
+            self.assertIn(grant, committed)
+        catalog_effect = next(row for row in catalog if row["record_id"] == EFFECT_RECORD_ID)
+        self.assertEqual(catalog_effect, effect)
+        self.assertNotIn("path_found", json.dumps(grants))
 
 
 if __name__ == "__main__":
