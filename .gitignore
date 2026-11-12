@@ -7,4 +7,5 @@ extractor-pack/
 __pycache__/
 .DS_Store
 policy/c_double/uh_ubus_policy
+policy/c_double/cgi_backup
 *.o

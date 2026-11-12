@@ -1,8 +1,8 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks. Producer files under `reports/` remain the query snapshots; this file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-backup effect. Producer files under `reports/` remain the query snapshots for luci rows; cgi-backup is policy-facts (`policy:cgi-backup-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
 
-Findings are evidence, not proof. This slice does not emit `authorization_violation`, cgi-io, or dispatcher effects. `shellquote` and `basename` are not sanitizers.
+Findings are evidence, not proof. This catalog does not emit `authorization_violation`, cgi-exec/upload/download, or dispatcher effects. `shellquote` and `basename` are not sanitizers.
 
 ## Sources
 
@@ -12,12 +12,13 @@ Findings are evidence, not proof. This slice does not emit `authorization_violat
 | [m4-getfeatures-direct-exec.json](m4-getfeatures-direct-exec.json) | `getFeatures.call` hostapd / wpa_supplicant `system`, dnsmasq / odhcpd / ipset `popen` |
 | [m4-findings.json](m4-findings.json) | five request.args exec sinks, projected from existing `taint_path` rows (no new query) |
 | [m4-luci-sys-init-action-findings.json](m4-luci-sys-init-action-findings.json) | `luci.sys` `init_action` → builtin `system` (no M2 grant) |
+| policy-facts `cgi_backup` | synthetic `cgi-backup` → `sensitive_backup_read` (C, not ucode) |
 
-Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, cgi-io, dispatcher.
+Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, cgi-exec/upload/download, dispatcher.
 
 ## Grant ↔ effect joins
 
-Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, `ubus_object`, `method`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
+Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v1` / `policy:cgi-backup-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
 
 Catalog copies add the `#12` / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
 
@@ -52,9 +53,17 @@ Fixed helpers for stock unauthenticated feature probing: **intended_access**, no
 
 `luci.sys.init_action.system` (`setInitAction`) stays **unassessed**. M2 does not emit a luci-ssl grant for this method. `basename` is not a sanitizer. Do not invent a grant to complete the join.
 
+### cgi-backup (policy-facts synthetic)
+
+`cgi-backup.sysupgrade.create-backup` (`sink_kind=sensitive_backup_read`). cgi-io `main_backup` @ `31cb3c89` checks `session.access(sid, "cgi-io", "backup", "read")` only; it does not fork sysupgrade in this oracle. Unauthenticated `/cgi-bin/cgi-backup` is a **non-join** (403). Fixture `luci-mod-system-flash` and stock root `*` join as `intended_access`. A backup read is not a violation because the role lacks write. `shellquote` and `basename` are not sanitizers (no user path; fixed sysupgrade argv). cgi-exec/upload/download are not this slice.
+
+| `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- |
+| `cgi-backup.sysupgrade.create-backup` | `policy:grant:luci-mod-system-flash:cgi_io:cgi-backup` | `policy:grant:root:cgi_io:cgi-backup` | no-join (`policy:decision:unauthenticated-cgi-backup-deny`) |
+
 ## Out of this file
 
-- cgi-io synthetic effects (`cgi-backup` and siblings) — later ingress
+- cgi-exec / cgi-upload / cgi-download synthetic effects
 - dispatcher / `menu.d` routes
 - `authorization_violation` / BrokenAccessControl `path_found`
 - Alloy `producer: step4`

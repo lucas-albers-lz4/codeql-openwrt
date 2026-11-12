@@ -1,0 +1,530 @@
+{
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:cgi-backup-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "lockfile": "corpus/lock.json",
+    "endpoint": "cgi_io:cgi-backup"
+  },
+  "scope": "cgi-io cgi-backup \u2192 sensitive_backup_read only",
+  "harness": {
+    "canonical": "python3 -m policy emit",
+    "c_double": "policy/c_double/cgi_backup.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_cgi_io": false,
+    "live_sysupgrade": false
+  },
+  "assumptions": [
+    "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+    "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+    "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
+  ],
+  "unknowns": [
+    "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-cgi-backup-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-backup-v1",
+      "session_class": "unauthenticated",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "cgi_endpoint": "cgi-backup",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io backup",
+        "cgi-io@31cb3c89 main.c main_backup: session_access false -> 403 Backup permission denied",
+        "do not invent an unauthenticated cgi-backup grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "00000000000000000000000000000000",
+            "scope": "cgi-io",
+            "object": "backup",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "backup",
+          "function": "read",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "main_backup",
+          "result": "HTTP_403",
+          "message": "Backup permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_backup_cases.json#unauthenticated-cgi-backup-deny",
+        "c_double": "policy/c_double/cgi_backup.c"
+      },
+      "assumptions": [
+        "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sessionid-cgi-backup-forbidden",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-backup-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "cgi_endpoint": "cgi-backup",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": false,
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c main_backup: !fields[1] -> 403 Backup permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": false
+        },
+        {
+          "step": "main_backup",
+          "result": "HTTP_403",
+          "message": "Backup permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_backup_cases.json#missing-sessionid-cgi-backup-forbidden",
+        "c_double": "policy/c_double/cgi_backup.c"
+      },
+      "assumptions": [
+        "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "sysupgrade_exec",
+        "dispatcher"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:invalid-content-type-cgi-backup-bad-request",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-backup-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "cgi_endpoint": "cgi-backup",
+      "outcome": "bad_request",
+      "http_status": 400,
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_backup: !post -> 400 Invalid form data"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": false,
+          "sessionid_present": true
+        },
+        {
+          "step": "main_backup",
+          "result": "HTTP_400",
+          "message": "Invalid form data"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_backup_cases.json#invalid-content-type-cgi-backup-bad-request",
+        "c_double": "policy/c_double/cgi_backup.c"
+      },
+      "assumptions": [
+        "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
+      ],
+      "not": [
+        "acl_bypass",
+        "sysupgrade_exec"
+      ],
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-cgi-backup-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-backup-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "cgi_endpoint": "cgi-backup",
+      "outcome": "allow",
+      "http_status": 200,
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "input_rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download]",
+        "fixture rpcd.config login luci-mod-system-flash list read luci-mod-system-flash",
+        "cgi-io@31cb3c89 main.c main_backup session_access(sid, cgi-io, backup, read)",
+        "rpcd@d99f703 session.c rpc_handle_access uses supplied scope=cgi-io"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "scope": "cgi-io",
+            "object": "backup",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "backup",
+          "function": "read",
+          "match": "literal",
+          "acl_group": "luci-mod-system-flash",
+          "acl_source": "luci-mod-system.json",
+          "result": true
+        },
+        {
+          "step": "main_backup",
+          "result": "allow",
+          "sysupgrade": false
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_backup_cases.json#luci-mod-system-flash-cgi-backup-allow",
+        "c_double": "policy/c_double/cgi_backup.c"
+      },
+      "assumptions": [
+        "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "expectation_id": "luci-mod-system-flash-backup",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-system-flash is not a stock device login.",
+      "synthetic_session": true,
+      "matched_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "cgi-io",
+        "object": "backup",
+        "function": "read",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-cgi-backup-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-backup-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "cgi_endpoint": "cgi-backup",
+      "outcome": "allow",
+      "http_status": 200,
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-flash\", 0) matches",
+        "luci-mod-system-flash still contributes cgi-io backup to the root session"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "scope": "cgi-io",
+            "object": "backup",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "backup",
+          "function": "read",
+          "match": "literal",
+          "acl_group": "luci-mod-system-flash",
+          "acl_source": "luci-mod-system.json",
+          "result": true
+        },
+        {
+          "step": "main_backup",
+          "result": "allow",
+          "sysupgrade": false
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_backup_cases.json#root-star-cgi-backup-allow",
+        "c_double": "policy/c_double/cgi_backup.c"
+      },
+      "assumptions": [
+        "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "cgi-io",
+        "object": "backup",
+        "function": "read",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-config-cgi-backup-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-backup-v1",
+      "session_class": "luci-mod-system-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "cgi_endpoint": "cgi-backup",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system-config grants luci.setPassword/setLocaltime, not cgi-io backup",
+        "do not treat a luci exec-method grant as cgi-backup"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "dddddddddddddddddddddddddddddddd",
+            "scope": "cgi-io",
+            "object": "backup",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "backup",
+          "function": "read",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "main_backup",
+          "result": "HTTP_403",
+          "message": "Backup permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_backup_cases.json#luci-mod-system-config-cgi-backup-deny",
+        "c_double": "policy/c_double/cgi_backup.c"
+      },
+      "assumptions": [
+        "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-cgi-backup-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-backup-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "cgi_endpoint": "cgi-backup",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-network-config read cgi-io=[exec], not backup",
+        "do not treat cgi-io exec as cgi-backup"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "scope": "cgi-io",
+            "object": "backup",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "backup",
+          "function": "read",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "main_backup",
+          "result": "HTTP_403",
+          "message": "Backup permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_backup_cases.json#luci-mod-network-config-cgi-backup-deny",
+        "c_double": "policy/c_double/cgi_backup.c"
+      },
+      "assumptions": [
+        "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "grant_emitted": false
+    }
+  ]
+}
