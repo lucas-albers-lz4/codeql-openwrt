@@ -53,8 +53,9 @@ UNKNOWN_PLUGIN = (
     "session checks, if any, are not modeled. Stock luci.getFeatures has none."
 )
 UNKNOWN_CGI = (
-    "cgi-io and dispatcher admin/ubus are not this profile. no_ubusauth "
-    "does not skip those ingresses."
+    "cgi-io and dispatcher admin/ubus are outside this slice and unaffected. "
+    "The flag also skips uhttpd /call/<object> and GET subscription authorization; "
+    "those paths are unmodeled here."
 )
 ASSUMPTION_SKIP = (
     "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed / "
@@ -62,9 +63,13 @@ ASSUMPTION_SKIP = (
     "grant and is not luci-ssl-25.12 (that profile has no_ubusauth=0)."
 )
 ASSUMPTION_REWRITE = (
-    "Empty/missing SID is rewritten to UH_UBUS_DEFAULT_SID only when "
-    "conf.ubus_noauth is set; parse still requires object, function, and a "
-    "BLOBMSG_TYPE_TABLE data parameter."
+    "An empty string SID is rewritten to UH_UBUS_DEFAULT_SID when "
+    "conf.ubus_noauth is set. Typed array parsing skips mismatched values; "
+    "a null or omitted SID slot does not preserve later positional fields."
+)
+ASSUMPTION_LOOKUP = (
+    "A gate allow assumes ubus_lookup_id succeeds. Object lookup failure returns "
+    "ERROR_OBJECT before authorization; plugin execution and its outcome are unmodeled."
 )
 ASSUMPTION_VARIANT = (
     "Stock luci-ssl-25.12 ships commented option no_ubusauth 0. This "
@@ -76,13 +81,13 @@ ASSUMPTION_NO_GRANT = (
 )
 
 
-def _identity(record_type: str, record_id: str) -> dict[str, str]:
+def _identity(record_type: str, record_id: str, revision: str) -> dict[str, str]:
     return {
         "record_type": record_type,
         "evidence_status": "fact",
         "producer": PRODUCER,
         "record_id": record_id,
-        "corpus_revision": corpus_revision(),
+        "corpus_revision": revision,
         "profile": PROFILE,
         "analysis_revision": ANALYSIS_REVISION,
     }
@@ -117,13 +122,14 @@ def evaluate_expected_case(
         data=data,
         no_ubusauth=1,
         sessions=sessions,
+        object_exists=case.get("object_exists", True),
     )
 
 
-def decision_record(case: dict[str, Any], result: Any) -> dict[str, Any]:
+def decision_record(case: dict[str, Any], result: Any, revision: str) -> dict[str, Any]:
     if case.get("expect_grant"):
         raise ValueError("no_ubusauth profile does not emit luci-ssl grants")
-    record = _identity("policy_decision", f"policy:decision:{case['id']}")
+    record = _identity("policy_decision", f"policy:decision:{case['id']}", revision)
     record.update(
         {
             "session_class": result.session_class,
@@ -148,6 +154,7 @@ def decision_record(case: dict[str, Any], result: Any) -> dict[str, Any]:
             "assumptions": [
                 ASSUMPTION_SKIP,
                 ASSUMPTION_REWRITE,
+                ASSUMPTION_LOOKUP,
                 ASSUMPTION_VARIANT,
                 ASSUMPTION_NO_GRANT,
             ],
@@ -181,18 +188,19 @@ def build_artifacts(
     sessions = load_world(fixtures)
     cases = load_expected_cases(fixtures / "no_ubusauth_cases.json")
     decisions: list[dict[str, Any]] = []
+    revision = corpus_revision(repo_root)
     for case in cases:
         if int(case.get("no_ubusauth", 1)) != 1:
             raise ValueError(f"{case['id']} is not a no_ubusauth=1 case")
         if case.get("expect_grant"):
             raise ValueError(f"{case['id']} must not expect a luci-ssl grant")
         result = evaluate_expected_case(case, sessions)
-        decisions.append(decision_record(case, result))
+        decisions.append(decision_record(case, result, revision))
     return {
         "producer": PRODUCER,
         "profile": PROFILE,
         "analysis_revision": ANALYSIS_REVISION,
-        "corpus_revision": corpus_revision(repo_root),
+        "corpus_revision": revision,
         "pins": _pins(),
         "scope": (
             "/ubus JSON-RPC call with uhttpd option no_ubusauth 1: SID rewrite "
@@ -209,6 +217,7 @@ def build_artifacts(
         "assumptions": [
             ASSUMPTION_SKIP,
             ASSUMPTION_REWRITE,
+            ASSUMPTION_LOOKUP,
             ASSUMPTION_VARIANT,
             ASSUMPTION_NO_GRANT,
         ],

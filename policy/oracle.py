@@ -51,6 +51,7 @@ LUCI_SHA = "b2e0be4b46ec0fd43394c081fa7c50657af14011"
 OPENWRT_SHA = "4e9642517b48bae612ff10fb72fb9199e559500e"
 
 ERROR_PARSE = {"code": -32700, "name": "ERROR_PARSE", "message": "Parse error"}
+ERROR_OBJECT = {"code": -32000, "name": "ERROR_OBJECT", "message": "Object not found"}
 ERROR_ACCESS = {"code": -32002, "name": "ERROR_ACCESS", "message": "Access denied"}
 
 # glibc/musl FNM_NOESCAPE. Literal M2 names do not depend on this bit.
@@ -349,16 +350,28 @@ def is_blobmsg_table(data: Any) -> bool:
     return isinstance(data, dict)
 
 
-def parse_call_params(
-    sid: Optional[str],
-    object_name: Optional[str],
-    function: Optional[str],
-    data: Any,
-    no_ubusauth: int,
+def parse_call_param_array(
+    params: Any, no_ubusauth: int
 ) -> tuple[Optional[str], Optional[str], Optional[str], Any, bool, Optional[dict[str, Any]]]:
-    """Return (sid, object, function, data, rewritten, error). None SID means missing."""
+    """Model uhttpd and libubox's typed array scan, including skipped types.
+
+    libubox advances the policy index only after a matching attribute. A null
+    SID slot therefore does not reserve that position for the next value.
+    """
+    if not isinstance(params, list):
+        return None, None, None, None, False, ERROR_PARSE
+    matched: list[Any] = []
+    for value in params:
+        wants_string = len(matched) < 3
+        if (wants_string and isinstance(value, str)) or (
+            not wants_string and is_blobmsg_table(value)
+        ):
+            matched.append(value)
+            if len(matched) == 4:
+                break
+    matched.extend([None] * (4 - len(matched)))
+    resolved_sid, object_name, function, data = matched
     rewritten = False
-    resolved_sid = sid
     if no_ubusauth and (resolved_sid is None or resolved_sid == ""):
         resolved_sid = DEFAULT_SID
         rewritten = True
@@ -368,6 +381,14 @@ def parse_call_params(
     if not is_blobmsg_table(data):
         return resolved_sid, object_name, function, data, rewritten, ERROR_PARSE
     return resolved_sid, object_name, function, data, rewritten, None
+
+
+def parse_call_params(
+    sid: Optional[str], object_name: Optional[str], function: Optional[str],
+    data: Any, no_ubusauth: int,
+) -> tuple[Optional[str], Optional[str], Optional[str], Any, bool, Optional[dict[str, Any]]]:
+    """Parse the four supplied JSON array elements; None encodes JSON null."""
+    return parse_call_param_array([sid, object_name, function, data], no_ubusauth)
 
 
 def session_access(session: Session, scope: str, obj: str, fun: str) -> Optional[AclEntry]:
@@ -395,7 +416,12 @@ def evaluate_call(
     data: Any = None,
     no_ubusauth: int = 0,
     sessions: Optional[dict[str, Session]] = None,
+    object_exists: bool = True,
 ) -> EvalResult:
+    """Evaluate the gate assuming object lookup succeeds unless explicitly false.
+
+    An allow means this gate was passed, not that ubus execution succeeded.
+    """
     if sessions is None:
         sessions = load_world()
     steps: list[dict[str, Any]] = []
@@ -420,11 +446,9 @@ def evaluate_call(
             {
                 "step": "uh_ubus_handle_request_object",
                 "result": "ERROR_PARSE",
-                "not": [
-                    "unauthenticated_allow",
-                    "sentinel_rewrite",
-                    "file_uci_absent_sid_skip",
-                ],
+                "not": ["unauthenticated_allow"]
+                + ([] if rewritten else ["sentinel_rewrite"])
+                + ["file_uci_absent_sid_skip"],
             }
         )
         return EvalResult(
@@ -439,6 +463,15 @@ def evaluate_call(
             matched=None,
             jsonrpc_error=parse_err,
             steps=steps,
+        )
+
+    if not object_exists:
+        steps.append({"step": "ubus_lookup_id", "result": "ERROR_OBJECT"})
+        return EvalResult(
+            outcome="jsonrpc_object_error", session_class=None, sid=parsed_sid,
+            object=parsed_obj, function=parsed_fun, data_present=True,
+            no_ubusauth=no_ubusauth, sid_rewritten=rewritten, matched=None,
+            jsonrpc_error=ERROR_OBJECT, steps=steps,
         )
 
     hit = sessions.get(parsed_sid)
@@ -628,7 +661,7 @@ def decision_record(case: dict[str, Any], result: EvalResult) -> dict[str, Any]:
             "outcome": result.outcome,
             "no_ubusauth": case.get("no_ubusauth", 0),
             "sid_present": case.get("sid") is not None,
-            "sid": result.sid,
+            "sid": case.get("sid") if result.jsonrpc_error == ERROR_PARSE else result.sid,
             "input_rule_refs": list(case.get("rule_refs", [])),
             "matching_steps": result.steps,
             "upstream_conformance": {

@@ -11,16 +11,16 @@
   },
   "notes": [
     "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed when conf.ubus_noauth is set. That skip is not an ACL grant.",
-    "Empty/missing SID is rewritten to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set. luci-ssl-25.12 missing SID remains ERROR_PARSE.",
+    "An empty string SID rewrites to the default. A null or omitted SID element is skipped by typed array parsing; subsequent strings shift and the usual call fails parse.",
     "Parse still requires object, function, and a BLOBMSG_TYPE_TABLE data parameter.",
     "Unauthenticated luci-ssl ACLs still grant only luci.getFeatures. This profile does not invent that grant for setPassword; the allow is the HTTP-gate skip.",
     "cgi-io and dispatcher admin/ubus are not this slice. Do not emit policy_grant, authorization_violation, or path_found."
   ],
   "cases": [
     {
-      "id": "no-ubusauth-missing-sid-getFeatures-allow",
+      "id": "no-ubusauth-empty-sid-getFeatures-allow",
       "session_class": "unauthenticated",
-      "sid": null,
+      "sid": "",
       "object": "luci",
       "function": "getFeatures",
       "data_present": true,
@@ -33,7 +33,7 @@
       "entrypoint_id": "ubus_http:luci.getFeatures",
       "expectation_id": "uhttpd-no-ubusauth-http-gate-skip",
       "assessment": "unassessed",
-      "note": "Missing SID rewrites to the all-zero default, then uh_ubus_allowed is skipped. luci-ssl-25.12 missing SID is ERROR_PARSE. Not an ACL grant.",
+      "note": "An empty string SID is a string slot and rewrites to the all-zero default; the authorization gate is skipped. This is not an ACL grant.",
       "not": [
         "luci-ssl-acl-grant",
         "cgi_io",
@@ -42,6 +42,7 @@
         "authorization_violation"
       ],
       "rule_refs": [
+        "libubox@ff13b89 blobmsg.c blobmsg_parse_array skips type mismatches without advancing the policy index",
         "uhttpd@93b05e0 ubus.c parse_call_params: conf.ubus_noauth && (!sid || !*sid) -> UH_UBUS_DEFAULT_SID",
         "uhttpd@93b05e0 ubus.c uh_ubus_handle_request_object: if (!conf.ubus_noauth && !uh_ubus_allowed) ERROR_ACCESS; skip when ubus_noauth",
         "openwrt@4e964251 package/network/services/uhttpd/files/uhttpd.init append_bool no_ubusauth -a",
@@ -135,6 +136,53 @@
       "rule_refs": [
         "uhttpd@93b05e0 ubus.c uh_ubus_handle_request_object: if (!data.sid || !data.object || !data.function || !data.data) ERROR_PARSE before the ubus_noauth skip",
         "uhttpd@93b05e0 ubus.c parse_call_params: fourth parameter must be BLOBMSG_TYPE_TABLE"
+      ]
+    },
+    {
+      "id": "no-ubusauth-null-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "object": "luci",
+      "function": "getFeatures",
+      "data_present": true,
+      "no_ubusauth": 1,
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "jsonrpc_error_code": -32700,
+      "jsonrpc_error_name": "ERROR_PARSE",
+      "note": "A null first element is skipped, so luci and getFeatures shift into SID and object slots; no function is parsed.",
+      "not": [
+        "uh_ubus_allowed_skip",
+        "path_found"
+      ],
+      "rule_refs": [
+        "libubox@ff13b89 blobmsg.c blobmsg_parse_array skips mismatched types without advancing",
+        "uhttpd@93b05e0 ubus.c rejects missing parsed function"
+      ]
+    },
+    {
+      "id": "no-ubusauth-unknown-object-error",
+      "session_class": null,
+      "sid": "",
+      "object": "nonexistent.object",
+      "function": "method",
+      "data_present": true,
+      "no_ubusauth": 1,
+      "object_exists": false,
+      "expected_outcome": "jsonrpc_object_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "jsonrpc_error_code": -32000,
+      "jsonrpc_error_name": "ERROR_OBJECT",
+      "note": "Object lookup fails before the authorization gate is skipped.",
+      "not": [
+        "uh_ubus_allowed_skip",
+        "path_found"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c ubus_lookup_id returns ERROR_OBJECT before uh_ubus_allowed"
       ]
     }
   ]

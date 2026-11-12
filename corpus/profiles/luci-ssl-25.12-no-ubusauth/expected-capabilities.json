@@ -5,7 +5,8 @@
     "This is not a copy of luci-ssl ACL grants. no_ubusauth skips uh_ubus_allowed; it does not add ACL rows.",
     "Unauthenticated luci-ssl ACLs still name only luci.getFeatures. That ACL is not consulted at this HTTP gate.",
     "cgi-io and dispatcher admin/ubus are not this profile. Root * remains intended_access (root-administration), not authorization_violation.",
-    "Skip-allows are unassessed HTTP-gate facts, not path_found and not invented luci-ssl grants."
+    "Skip-allows are unassessed HTTP-gate facts, not path_found and not invented luci-ssl grants.",
+    "uhttpd /call/<object> and GET subscriptions also skip the authorization check; those paths are unmodeled here. A gate allow assumes successful object lookup and does not establish plugin execution or success."
   ],
   "expectations": [
     {

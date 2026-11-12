@@ -11,7 +11,7 @@
     "no_ubusauth": 1,
     "uci_option": "option no_ubusauth 1",
     "flag": "-a",
-    "note": "Stock luci-ssl-25.12 has no_ubusauth=0 (commented option no_ubusauth 0). This variant enables uhttpd -a. It only affects /ubus JSON-RPC; cgi-io and dispatcher admin/ubus are unchanged."
+    "note": "Stock luci-ssl-25.12 has no_ubusauth=0. This variant enables uhttpd -a. The flag also skips authorization for uhttpd /call/<object> and GET subscriptions; those paths are unmodeled here. cgi-io and dispatcher admin/ubus are unchanged."
   },
   "first_endpoint": {
     "ingress": "ubus_http",
@@ -29,6 +29,7 @@
   "unknowns": [
     "Plugin-side session checks, if any, are not this HTTP-gate slice. Stock luci.getFeatures has none.",
     "cgi-io and dispatcher admin/ubus remain on luci-ssl-25.12 semantics.",
-    "C plugins (rpcd-mod-luci, rpcd-mod-rrdns, rpcd-mod-rpcsys, rpcd-mod-iwinfo) remain c_plugin_not_analyzed."
+    "C plugins (rpcd-mod-luci, rpcd-mod-rrdns, rpcd-mod-rpcsys, rpcd-mod-iwinfo) remain c_plugin_not_analyzed.",
+    "uhttpd REST /call/<object> and GET subscribe authorization checks are also skipped by this flag and are not modeled by this JSON-RPC slice."
   ]
 }

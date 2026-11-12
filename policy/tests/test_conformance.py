@@ -458,8 +458,8 @@ class TestParseRules(unittest.TestCase):
         result = evaluate_call(sid="", object="luci", function="getFeatures", data={})
         self.assertEqual(result.outcome, "deny")
 
-    def test_no_ubusauth_one_rewrites_missing_sid(self) -> None:
-        sid, *_rest, rewritten, err = parse_call_params(None, "luci", "getFeatures", {}, 1)
+    def test_no_ubusauth_one_rewrites_empty_sid(self) -> None:
+        sid, *_rest, rewritten, err = parse_call_params("", "luci", "getFeatures", {}, 1)
         self.assertIsNone(err)
         self.assertTrue(rewritten)
         self.assertEqual(sid, DEFAULT_SID)

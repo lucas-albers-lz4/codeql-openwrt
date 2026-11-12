@@ -7,10 +7,17 @@ Both share `corpus/lock.json` (same `corpus_revision`).
 
 Pinned uhttpd `ubus.c` @ `93b05e0`:
 
-1. Empty/missing SID rewrites to `UH_UBUS_DEFAULT_SID` only when
-   `conf.ubus_noauth` is set.
-2. `uh_ubus_handle_request_object` calls `uh_ubus_allowed` only when
-   `!conf.ubus_noauth`. The skip is not an ACL grant.
+1. An empty string SID rewrites to `UH_UBUS_DEFAULT_SID` when
+   `conf.ubus_noauth` is set. A null or omitted SID slot is skipped by the
+   typed libubox array scan, shifting later strings and causing the usual call
+   to fail parse.
+2. Object lookup occurs first and can return `ERROR_OBJECT`. For an existing
+   object, `uh_ubus_handle_request_object` calls `uh_ubus_allowed` only when
+   `!conf.ubus_noauth`. The skip is a gate fact, not an ACL grant or a
+   guarantee that the plugin call succeeds.
+
+The flag also skips uhttpd authorization on `/call/<object>` and GET
+subscriptions. Those paths are not modeled in this JSON-RPC slice.
 
 Stock overlay @ openwrt `4e964251` leaves `# option no_ubusauth 0` commented
 and maps the UCI flag with `append_bool no_ubusauth -a`. luci-ssl does not

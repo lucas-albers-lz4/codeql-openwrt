@@ -30,14 +30,15 @@
   },
   "assumptions": [
     "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed / session.access when conf.ubus_noauth is set. That skip is not an ACL grant and is not luci-ssl-25.12 (that profile has no_ubusauth=0).",
-    "Empty/missing SID is rewritten to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; parse still requires object, function, and a BLOBMSG_TYPE_TABLE data parameter.",
+    "An empty string SID is rewritten to UH_UBUS_DEFAULT_SID when conf.ubus_noauth is set. Typed array parsing skips mismatched values; a null or omitted SID slot does not preserve later positional fields.",
+    "A gate allow assumes ubus_lookup_id succeeds. Object lookup failure returns ERROR_OBJECT before authorization; plugin execution and its outcome are unmodeled.",
     "Stock luci-ssl-25.12 ships commented option no_ubusauth 0. This profile is the operator-enabled variant option no_ubusauth 1 / uhttpd -a.",
     "Skip-allows do not emit policy_grant rows. Unauthenticated luci-ssl ACLs still name only luci.getFeatures; that ACL is not consulted here."
   ],
   "unknowns": [
     "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and the stock uhttpd UCI/init overlay.",
     "This slice is the uhttpd /ubus JSON-RPC HTTP gate only. Plugin-side session checks, if any, are not modeled. Stock luci.getFeatures has none.",
-    "cgi-io and dispatcher admin/ubus are not this profile. no_ubusauth does not skip those ingresses."
+    "cgi-io and dispatcher admin/ubus are outside this slice and unaffected. The flag also skips uhttpd /call/<object> and GET subscription authorization; those paths are unmodeled here."
   ],
   "grants": [],
   "decisions": [
@@ -45,7 +46,7 @@
       "record_type": "policy_decision",
       "evidence_status": "fact",
       "producer": "policy_facts",
-      "record_id": "policy:decision:no-ubusauth-missing-sid-getFeatures-allow",
+      "record_id": "policy:decision:no-ubusauth-empty-sid-getFeatures-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12-no-ubusauth",
       "analysis_revision": "policy:no-ubusauth-v1",
@@ -56,11 +57,12 @@
       "method": "getFeatures",
       "outcome": "allow",
       "no_ubusauth": 1,
-      "sid_present": false,
+      "sid_present": true,
       "sid": "00000000000000000000000000000000",
       "sid_rewritten": true,
       "grant_emitted": false,
       "input_rule_refs": [
+        "libubox@ff13b89 blobmsg.c blobmsg_parse_array skips type mismatches without advancing the policy index",
         "uhttpd@93b05e0 ubus.c parse_call_params: conf.ubus_noauth && (!sid || !*sid) -> UH_UBUS_DEFAULT_SID",
         "uhttpd@93b05e0 ubus.c uh_ubus_handle_request_object: if (!conf.ubus_noauth && !uh_ubus_allowed) ERROR_ACCESS; skip when ubus_noauth",
         "openwrt@4e964251 package/network/services/uhttpd/files/uhttpd.init append_bool no_ubusauth -a",
@@ -72,7 +74,7 @@
         {
           "step": "parse_call_params",
           "no_ubusauth": 1,
-          "sid_present": false,
+          "sid_present": true,
           "sid_rewritten_to_default": true,
           "object_present": true,
           "function_present": true,
@@ -96,19 +98,20 @@
       "upstream_conformance": {
         "status": "source_transcribed",
         "live_daemon": false,
-        "independent_expected": "policy/fixtures/no_ubusauth_cases.json#no-ubusauth-missing-sid-getFeatures-allow",
+        "independent_expected": "policy/fixtures/no_ubusauth_cases.json#no-ubusauth-empty-sid-getFeatures-allow",
         "c_double": "policy/c_double/uh_ubus_policy.c"
       },
       "assumptions": [
         "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed / session.access when conf.ubus_noauth is set. That skip is not an ACL grant and is not luci-ssl-25.12 (that profile has no_ubusauth=0).",
-        "Empty/missing SID is rewritten to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; parse still requires object, function, and a BLOBMSG_TYPE_TABLE data parameter.",
+        "An empty string SID is rewritten to UH_UBUS_DEFAULT_SID when conf.ubus_noauth is set. Typed array parsing skips mismatched values; a null or omitted SID slot does not preserve later positional fields.",
+        "A gate allow assumes ubus_lookup_id succeeds. Object lookup failure returns ERROR_OBJECT before authorization; plugin execution and its outcome are unmodeled.",
         "Stock luci-ssl-25.12 ships commented option no_ubusauth 0. This profile is the operator-enabled variant option no_ubusauth 1 / uhttpd -a.",
         "Skip-allows do not emit policy_grant rows. Unauthenticated luci-ssl ACLs still name only luci.getFeatures; that ACL is not consulted here."
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and the stock uhttpd UCI/init overlay.",
         "This slice is the uhttpd /ubus JSON-RPC HTTP gate only. Plugin-side session checks, if any, are not modeled. Stock luci.getFeatures has none.",
-        "cgi-io and dispatcher admin/ubus are not this profile. no_ubusauth does not skip those ingresses."
+        "cgi-io and dispatcher admin/ubus are outside this slice and unaffected. The flag also skips uhttpd /call/<object> and GET subscription authorization; those paths are unmodeled here."
       ],
       "target_id": "ubus:luci.getFeatures",
       "op": "invoke",
@@ -121,7 +124,7 @@
         "path_found",
         "authorization_violation"
       ],
-      "note": "Missing SID rewrites to the all-zero default, then uh_ubus_allowed is skipped. luci-ssl-25.12 missing SID is ERROR_PARSE. Not an ACL grant."
+      "note": "An empty string SID is a string slot and rewrites to the all-zero default; the authorization gate is skipped. This is not an ACL grant."
     },
     {
       "record_type": "policy_decision",
@@ -181,14 +184,15 @@
       },
       "assumptions": [
         "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed / session.access when conf.ubus_noauth is set. That skip is not an ACL grant and is not luci-ssl-25.12 (that profile has no_ubusauth=0).",
-        "Empty/missing SID is rewritten to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; parse still requires object, function, and a BLOBMSG_TYPE_TABLE data parameter.",
+        "An empty string SID is rewritten to UH_UBUS_DEFAULT_SID when conf.ubus_noauth is set. Typed array parsing skips mismatched values; a null or omitted SID slot does not preserve later positional fields.",
+        "A gate allow assumes ubus_lookup_id succeeds. Object lookup failure returns ERROR_OBJECT before authorization; plugin execution and its outcome are unmodeled.",
         "Stock luci-ssl-25.12 ships commented option no_ubusauth 0. This profile is the operator-enabled variant option no_ubusauth 1 / uhttpd -a.",
         "Skip-allows do not emit policy_grant rows. Unauthenticated luci-ssl ACLs still name only luci.getFeatures; that ACL is not consulted here."
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and the stock uhttpd UCI/init overlay.",
         "This slice is the uhttpd /ubus JSON-RPC HTTP gate only. Plugin-side session checks, if any, are not modeled. Stock luci.getFeatures has none.",
-        "cgi-io and dispatcher admin/ubus are not this profile. no_ubusauth does not skip those ingresses."
+        "cgi-io and dispatcher admin/ubus are outside this slice and unaffected. The flag also skips uhttpd /call/<object> and GET subscription authorization; those paths are unmodeled here."
       ],
       "target_id": "ubus:luci.setPassword",
       "op": "invoke",
@@ -260,14 +264,15 @@
       },
       "assumptions": [
         "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed / session.access when conf.ubus_noauth is set. That skip is not an ACL grant and is not luci-ssl-25.12 (that profile has no_ubusauth=0).",
-        "Empty/missing SID is rewritten to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; parse still requires object, function, and a BLOBMSG_TYPE_TABLE data parameter.",
+        "An empty string SID is rewritten to UH_UBUS_DEFAULT_SID when conf.ubus_noauth is set. Typed array parsing skips mismatched values; a null or omitted SID slot does not preserve later positional fields.",
+        "A gate allow assumes ubus_lookup_id succeeds. Object lookup failure returns ERROR_OBJECT before authorization; plugin execution and its outcome are unmodeled.",
         "Stock luci-ssl-25.12 ships commented option no_ubusauth 0. This profile is the operator-enabled variant option no_ubusauth 1 / uhttpd -a.",
         "Skip-allows do not emit policy_grant rows. Unauthenticated luci-ssl ACLs still name only luci.getFeatures; that ACL is not consulted here."
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and the stock uhttpd UCI/init overlay.",
         "This slice is the uhttpd /ubus JSON-RPC HTTP gate only. Plugin-side session checks, if any, are not modeled. Stock luci.getFeatures has none.",
-        "cgi-io and dispatcher admin/ubus are not this profile. no_ubusauth does not skip those ingresses."
+        "cgi-io and dispatcher admin/ubus are outside this slice and unaffected. The flag also skips uhttpd /call/<object> and GET subscription authorization; those paths are unmodeled here."
       ],
       "target_id": "ubus:luci.setPassword",
       "op": "invoke",
@@ -335,14 +340,15 @@
       },
       "assumptions": [
         "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed / session.access when conf.ubus_noauth is set. That skip is not an ACL grant and is not luci-ssl-25.12 (that profile has no_ubusauth=0).",
-        "Empty/missing SID is rewritten to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; parse still requires object, function, and a BLOBMSG_TYPE_TABLE data parameter.",
+        "An empty string SID is rewritten to UH_UBUS_DEFAULT_SID when conf.ubus_noauth is set. Typed array parsing skips mismatched values; a null or omitted SID slot does not preserve later positional fields.",
+        "A gate allow assumes ubus_lookup_id succeeds. Object lookup failure returns ERROR_OBJECT before authorization; plugin execution and its outcome are unmodeled.",
         "Stock luci-ssl-25.12 ships commented option no_ubusauth 0. This profile is the operator-enabled variant option no_ubusauth 1 / uhttpd -a.",
         "Skip-allows do not emit policy_grant rows. Unauthenticated luci-ssl ACLs still name only luci.getFeatures; that ACL is not consulted here."
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and the stock uhttpd UCI/init overlay.",
         "This slice is the uhttpd /ubus JSON-RPC HTTP gate only. Plugin-side session checks, if any, are not modeled. Stock luci.getFeatures has none.",
-        "cgi-io and dispatcher admin/ubus are not this profile. no_ubusauth does not skip those ingresses."
+        "cgi-io and dispatcher admin/ubus are outside this slice and unaffected. The flag also skips uhttpd /call/<object> and GET subscription authorization; those paths are unmodeled here."
       ],
       "jsonrpc_error": {
         "code": -32700,
@@ -355,6 +361,145 @@
         "path_found"
       ],
       "note": "no_ubusauth does not skip parse. Missing BLOBMSG_TYPE_TABLE data is still ERROR_PARSE."
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:no-ubusauth-null-sid-parse-error",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12-no-ubusauth",
+      "analysis_revision": "policy:no-ubusauth-v1",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "ubus_object": "luci",
+      "method": "getFeatures",
+      "outcome": "jsonrpc_parse_error",
+      "no_ubusauth": 1,
+      "sid_present": false,
+      "sid": "luci",
+      "sid_rewritten": false,
+      "grant_emitted": false,
+      "input_rule_refs": [
+        "libubox@ff13b89 blobmsg.c blobmsg_parse_array skips mismatched types without advancing",
+        "uhttpd@93b05e0 ubus.c rejects missing parsed function"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 1,
+          "sid_present": false,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ERROR_PARSE"
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_PARSE",
+          "not": [
+            "unauthenticated_allow",
+            "sentinel_rewrite",
+            "file_uci_absent_sid_skip"
+          ]
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/no_ubusauth_cases.json#no-ubusauth-null-sid-parse-error",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed / session.access when conf.ubus_noauth is set. That skip is not an ACL grant and is not luci-ssl-25.12 (that profile has no_ubusauth=0).",
+        "An empty string SID is rewritten to UH_UBUS_DEFAULT_SID when conf.ubus_noauth is set. Typed array parsing skips mismatched values; a null or omitted SID slot does not preserve later positional fields.",
+        "A gate allow assumes ubus_lookup_id succeeds. Object lookup failure returns ERROR_OBJECT before authorization; plugin execution and its outcome are unmodeled.",
+        "Stock luci-ssl-25.12 ships commented option no_ubusauth 0. This profile is the operator-enabled variant option no_ubusauth 1 / uhttpd -a.",
+        "Skip-allows do not emit policy_grant rows. Unauthenticated luci-ssl ACLs still name only luci.getFeatures; that ACL is not consulted here."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and the stock uhttpd UCI/init overlay.",
+        "This slice is the uhttpd /ubus JSON-RPC HTTP gate only. Plugin-side session checks, if any, are not modeled. Stock luci.getFeatures has none.",
+        "cgi-io and dispatcher admin/ubus are outside this slice and unaffected. The flag also skips uhttpd /call/<object> and GET subscription authorization; those paths are unmodeled here."
+      ],
+      "jsonrpc_error": {
+        "code": -32700,
+        "name": "ERROR_PARSE",
+        "message": "Parse error"
+      },
+      "not": [
+        "uh_ubus_allowed_skip",
+        "path_found"
+      ],
+      "note": "A null first element is skipped, so luci and getFeatures shift into SID and object slots; no function is parsed."
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:no-ubusauth-unknown-object-error",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12-no-ubusauth",
+      "analysis_revision": "policy:no-ubusauth-v1",
+      "ingress": "ubus_http",
+      "ubus_object": "nonexistent.object",
+      "method": "method",
+      "outcome": "jsonrpc_object_error",
+      "no_ubusauth": 1,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "sid_rewritten": true,
+      "grant_emitted": false,
+      "input_rule_refs": [
+        "uhttpd@93b05e0 ubus.c ubus_lookup_id returns ERROR_OBJECT before uh_ubus_allowed"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 1,
+          "sid_present": true,
+          "sid_rewritten_to_default": true,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "ubus_lookup_id",
+          "result": "ERROR_OBJECT"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/no_ubusauth_cases.json#no-ubusauth-unknown-object-error",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed / session.access when conf.ubus_noauth is set. That skip is not an ACL grant and is not luci-ssl-25.12 (that profile has no_ubusauth=0).",
+        "An empty string SID is rewritten to UH_UBUS_DEFAULT_SID when conf.ubus_noauth is set. Typed array parsing skips mismatched values; a null or omitted SID slot does not preserve later positional fields.",
+        "A gate allow assumes ubus_lookup_id succeeds. Object lookup failure returns ERROR_OBJECT before authorization; plugin execution and its outcome are unmodeled.",
+        "Stock luci-ssl-25.12 ships commented option no_ubusauth 0. This profile is the operator-enabled variant option no_ubusauth 1 / uhttpd -a.",
+        "Skip-allows do not emit policy_grant rows. Unauthenticated luci-ssl ACLs still name only luci.getFeatures; that ACL is not consulted here."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and the stock uhttpd UCI/init overlay.",
+        "This slice is the uhttpd /ubus JSON-RPC HTTP gate only. Plugin-side session checks, if any, are not modeled. Stock luci.getFeatures has none.",
+        "cgi-io and dispatcher admin/ubus are outside this slice and unaffected. The flag also skips uhttpd /call/<object> and GET subscription authorization; those paths are unmodeled here."
+      ],
+      "jsonrpc_error": {
+        "code": -32000,
+        "name": "ERROR_OBJECT",
+        "message": "Object not found"
+      },
+      "not": [
+        "uh_ubus_allowed_skip",
+        "path_found"
+      ],
+      "note": "Object lookup fails before the authorization gate is skipped."
     }
   ]
 }
