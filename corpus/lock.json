@@ -85,7 +85,7 @@
     }
   },
   "toolchain": {
-    "codeql_cli": null,
+    "codeql_cli": "2.27.4",
     "rustc_observed_at_lock": "1.99.1"
   },
   "first_endpoint": {
