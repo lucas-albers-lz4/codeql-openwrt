@@ -15,6 +15,6 @@ M4 fixed `/sbin/block` exec and `setLocaltime` sysfixtime: [reports/m4-block-dev
 M4 luci.sys status popen: [reports/m4-luci-sys-status-exec.md](reports/m4-luci-sys-status-exec.md). `getConntrackList` / `getProcessList` are fixed argv; QL waits on codeql-ucode#12.
 M4 getFeatures direct helpers: [reports/m4-getfeatures-direct-exec.md](reports/m4-getfeatures-direct-exec.md).
 M4 `shellquote` complete-argument barrier: [reports/m4-shellquote.md](reports/m4-shellquote.md). `shellquote` is not a global sanitizer.
-M4 same-function locals (`getRealtimeStats` `flags`, `setPassword` `u`/`p`): [reports/m4-realtime-password-unquoted.md](reports/m4-realtime-password-unquoted.md). Those locals are outside the complete-argument barrier.
+M4 same-function locals (`getRealtimeStats` `flags`, `setPassword` `u`/`p`): [reports/m4-realtime-password-quoted-locals.md](reports/m4-realtime-password-quoted-locals.md). Runtime quoting is preserved through those locals; the analyzer's direct-template barrier does not track them.
 M4 imported callee: [reports/m4-imported-callee.md](reports/m4-imported-callee.md). `setInitAction` → `luci.sys` `init_action` is `inconclusive` under the M3 extract set (`unresolved_call`).
 M4 luci.sys: [reports/m4-luci-sys-init-action.md](reports/m4-luci-sys-init-action.md). `init_action` reaches builtin `system` with interpolated `name`/`action`; `basename` is not a sanitizer.

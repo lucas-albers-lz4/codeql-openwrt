@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""M4 quoting inventory: getRealtimeStats flags and setPassword u/p locals."""
+"""M4 inventory: preserved runtime quoting and analyzer coverage through locals."""
 
 from __future__ import annotations
 
@@ -22,15 +22,15 @@ JOIN_KEYS = (
     "ubus_object",
     "method",
 )
-INVENTORY = REPO / "reports" / "m4-realtime-password-unquoted.json"
+INVENTORY = REPO / "reports" / "m4-realtime-password-quoted-locals.json"
 BARRIER = REPO / "reports" / "m4-shellquote-findings.json"
 GRANTS = REPO / "policy" / "grants.json"
 SCHEMA = json.loads((REPO / "schemas" / "finding.schema.json").read_text(encoding="utf-8"))
 REQUIRED = SCHEMA["required"]
-ANALYSIS_REVISION = "inventory:realtime-password-unquoted-v1"
+ANALYSIS_REVISION = "inventory:realtime-password-quoted-locals-v1"
 ROWS = {
     "getRealtimeStats": {
-        "record_id": "m4:inventory:luci-getRealtimeStats-flags-unquoted",
+        "record_id": "m4:inventory:luci-getRealtimeStats-flags-quoted-locals",
         "delegated": "policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats",
         "root": "policy:grant:root:ubus_http:luci.getRealtimeStats",
         "deny": "policy:decision:unauthenticated-getRealtimeStats-deny",
@@ -40,7 +40,7 @@ ROWS = {
         "taint_path": "m4:luci-getRealtimeStats-request-args-popen",
     },
     "setPassword": {
-        "record_id": "m4:inventory:luci-setPassword-u-p-unquoted",
+        "record_id": "m4:inventory:luci-setPassword-u-p-quoted-locals",
         "delegated": "policy:grant:luci-mod-system-config:ubus_http:luci.setPassword",
         "root": "policy:grant:root:ubus_http:luci.setPassword",
         "deny": "policy:decision:unauthenticated-setPassword-deny",
@@ -56,7 +56,7 @@ def _load(path: Path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-class TestRealtimePasswordUnquoted(unittest.TestCase):
+class TestRealtimePasswordQuotedLocals(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.rows = _load(INVENTORY)
@@ -128,7 +128,7 @@ class TestRealtimePasswordUnquoted(unittest.TestCase):
             ]
             self.assertEqual(unauth, [])
 
-    def test_shellquote_locals_are_outside_complete_argument_barrier(self) -> None:
+    def test_runtime_quoting_and_analyzer_coverage_are_distinct(self) -> None:
         barrier_methods = {
             row["method"]
             for row in self.barrier
@@ -143,10 +143,13 @@ class TestRealtimePasswordUnquoted(unittest.TestCase):
             assumptions = " ".join(row["assumptions"]).lower()
             conditions = " ".join(row["conditions"]).lower()
             self.assertIn("shellquote", assumptions)
-            self.assertIn("not a sanitizer", assumptions)
-            self.assertIn("basename", assumptions)
-            self.assertIn("not a sanitizer", assumptions)
-            self.assertIn("same-function locals", assumptions)
+            self.assertIn("does not treat shellquote as a global sanitizer", assumptions)
+            self.assertIn("quote characters are preserved", assumptions)
+            self.assertIn("local storage and template interpolation", assumptions)
+            self.assertIn("model coverage gap", assumptions)
+            self.assertIn("runtime command safety is unassessed", assumptions)
+            self.assertIn("basename is not a sanitizer", assumptions)
+            self.assertIn("same-function quoted locals", assumptions)
             self.assertIn("not a new query", assumptions)
             self.assertIn("not a query path result", assumptions)
             self.assertIn("does not invent a grant" if row["method"] == "getRealtimeStats" else "not a new unauthenticated grant", assumptions)

@@ -10,6 +10,8 @@
 | `taint_neg` | no | — | no |
 | luci `getSwconfigFeatures` / `getSwconfigPortState` | yes | **yes** | **no** |
 
-Unsupported (still taint, not a barrier): quoted executable selection, interpreter program input, embedding the quoted value in an unsafe context, and same-function locals (`getRealtimeStats` `flags`, `setPassword` `u`/`p`; inventoried in [m4-realtime-password-unquoted.md](m4-realtime-password-unquoted.md)).
+Unsupported by the current analyzer (still taint, no recognized barrier): quoted executable selection, interpreter program input, embedding the quoted value in an unsafe context, and quoted same-function locals (`getRealtimeStats` `flags`, `setPassword` `u`/`p`; inventoried in [m4-realtime-password-quoted-locals.md](m4-realtime-password-quoted-locals.md)).
+
+Quote characters are preserved through local storage and command template interpolation. The local-tracking coverage gap does not establish unquoted runtime input or prove overall command safety.
 
 See `reports/m4-shellquote-findings.json`.

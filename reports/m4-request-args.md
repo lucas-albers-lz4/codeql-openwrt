@@ -24,4 +24,4 @@ See `reports/m4-coverage.json`.
 - `getRealtimeStats` later `flags` reassignment (CFG/SSA)
 - full CFG/SSA and global flow
 
-Moved to sibling M4 reports: getFeatures direct helpers ([m4-getfeatures-direct-exec.md](m4-getfeatures-direct-exec.md)); complete-argument `shellquote` ([m4-shellquote.md](m4-shellquote.md)); same-function `flags` / `u`/`p` quoting ([m4-realtime-password-unquoted.md](m4-realtime-password-unquoted.md)); fixed `/sbin/block` exec and `setLocaltime` sysfixtime ([m4-block-device-exec.md](m4-block-device-exec.md)); luci.sys status popen ([m4-luci-sys-status-exec.md](m4-luci-sys-status-exec.md)).
+Moved to sibling M4 reports: getFeatures direct helpers ([m4-getfeatures-direct-exec.md](m4-getfeatures-direct-exec.md)); complete-argument `shellquote` ([m4-shellquote.md](m4-shellquote.md)); same-function `flags` / `u`/`p` quoting ([m4-realtime-password-quoted-locals.md](m4-realtime-password-quoted-locals.md)); fixed `/sbin/block` exec and `setLocaltime` sysfixtime ([m4-block-device-exec.md](m4-block-device-exec.md)); luci.sys status popen ([m4-luci-sys-status-exec.md](m4-luci-sys-status-exec.md)).

@@ -21,7 +21,7 @@
   ],
   "unmodeled_branches": [
     "getBlockDevices readfile of /sys/class/block/${dev}/size (not exec)",
-    "getRealtimeStats flags reassignment (CFG/SSA); same-function flags/u/p quoting in reports/m4-realtime-password-unquoted-coverage.json"
+    "getRealtimeStats flags reassignment (CFG/SSA); same-function flags/u/p quoting in reports/m4-realtime-password-quoted-locals-coverage.json"
   ],
   "unsupported_constructs": [
     "generated AST.qll/CFG.qll (not imported)",
