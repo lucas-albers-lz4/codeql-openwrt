@@ -18,18 +18,32 @@
     "entrypoint_id": "ubus_http:luci.getFeatures",
     "helper_chain": "callPackageVersionCheck('netifd') -> named popen from fs"
   },
+  "files_inventory": "reports/m4-luci-ssl-files.json",
   "files_preview": [
     {
       "source": "modules/luci-base/root/usr/share/rpcd/ucode/luci",
       "installed": "/usr/share/rpcd/ucode/luci",
       "classification": "plain",
       "reason": "rpcd raw_mode plugin, no extension, no shebang"
+    },
+    {
+      "source": "modules/luci-base/htdocs/cgi-bin/luci",
+      "installed": "/www/cgi-bin/luci",
+      "classification": "plain",
+      "reason": "shebang #!/usr/bin/env ucode; dispatcher not staffed"
+    },
+    {
+      "source": "modules/luci-base/ucode/uhttpd.uc",
+      "installed": "/usr/share/ucode/luci/uhttpd.uc",
+      "classification": "markup",
+      "reason": "content {% before .uc fallback; markup_not_modeled"
     }
   ],
   "unknowns": [
     "Plugin-side session checks, if any, are not this HTTP-gate slice. Stock luci.getFeatures has none.",
     "cgi-io and dispatcher admin/ubus remain on luci-ssl-25.12 semantics.",
-    "C plugins (rpcd-mod-luci, rpcd-mod-rrdns, rpcd-mod-rpcsys, rpcd-mod-iwinfo) remain c_plugin_not_analyzed.",
-    "uhttpd REST /call/<object> and GET subscribe authorization checks are also skipped by this flag and are not modeled by this JSON-RPC slice."
+    "C plugins (rpcd-mod-luci, rpcd-mod-rrdns, rpcd-mod-rpcsys, rpcd-mod-iwinfo, luci-bwc, luci-base core.so) remain c_plugin_not_analyzed.",
+    "uhttpd REST /call/<object> and GET subscribe authorization checks are also skipped by this flag and are not modeled by this JSON-RPC slice.",
+    "files[] routing is shared with luci-ssl-25.12 (reports/m4-luci-ssl-files.json); this profile does not restaff dispatcher or markup."
   ]
 }

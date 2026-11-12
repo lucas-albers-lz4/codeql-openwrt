@@ -19,7 +19,7 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m2-cgi-download-effect.json](m2-cgi-download-effect.json) | synthetic `cgi-download` → conjunctive `file_read` (C, not ucode) |
 | [m2-cgi-exec-effect.json](m2-cgi-exec-effect.json) | synthetic `cgi-exec` → cgi-io exec read gate only (C, not ucode) |
 
-Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), dispatcher.
+Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher.
 
 ## Grant ↔ effect joins
 
@@ -107,5 +107,6 @@ cgi-io `main_exec` @ `31cb3c89` checks `session.access(sid, "cgi-io", "exec", "r
 ## Out of this file
 
 - dispatcher / `menu.d` routes
+- luci-ssl `files[]` routing classification ([m4-luci-ssl-files.md](m4-luci-ssl-files.md))
 - `authorization_violation` / BrokenAccessControl `path_found`
 - Alloy `producer: step4`

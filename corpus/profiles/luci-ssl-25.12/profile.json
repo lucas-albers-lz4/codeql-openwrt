@@ -15,16 +15,48 @@
     "entrypoint_id": "ubus_http:luci.getFeatures",
     "helper_chain": "callPackageVersionCheck('netifd') -> named popen from fs"
   },
+  "files_inventory": "reports/m4-luci-ssl-files.json",
   "files_preview": [
     {
       "source": "modules/luci-base/root/usr/share/rpcd/ucode/luci",
       "installed": "/usr/share/rpcd/ucode/luci",
       "classification": "plain",
       "reason": "rpcd raw_mode plugin, no extension, no shebang"
+    },
+    {
+      "source": "modules/luci-base/ucode/sys.uc",
+      "installed": "/usr/share/ucode/luci/sys.uc",
+      "classification": "plain",
+      "reason": ".uc library"
+    },
+    {
+      "source": "modules/luci-base/htdocs/cgi-bin/luci",
+      "installed": "/www/cgi-bin/luci",
+      "classification": "plain",
+      "reason": "shebang #!/usr/bin/env ucode; dispatcher not staffed"
+    },
+    {
+      "source": "modules/luci-base/ucode/uhttpd.uc",
+      "installed": "/usr/share/ucode/luci/uhttpd.uc",
+      "classification": "markup",
+      "reason": "content {% before .uc fallback; postinst ucode_prefix; markup_not_modeled"
+    },
+    {
+      "source": "modules/luci-base/ucode/template/header.ut",
+      "installed": "/usr/share/ucode/luci/template/header.ut",
+      "classification": "markup",
+      "reason": ".ut"
+    },
+    {
+      "source": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
+      "installed": "/usr/share/ucode/luci/template/themes/bootstrap-dark",
+      "classification": "uncertain",
+      "reason": "extensionless symlink under usr/share/ucode"
     }
   ],
   "unknowns": [
-    "Full luci-ssl files[] mapping via luci.mk is not in wave 1; only the first-endpoint plugin is listed.",
-    "C plugins (rpcd-mod-luci, rpcd-mod-rrdns, rpcd-mod-rpcsys, rpcd-mod-iwinfo) remain c_plugin_not_analyzed."
+    "C plugins (rpcd-mod-luci, rpcd-mod-rrdns, rpcd-mod-rpcsys, rpcd-mod-iwinfo, luci-bwc, luci-base core.so) remain c_plugin_not_analyzed.",
+    "Dispatcher/menu.d, markup AST, Track A/JS, and OpenWrt rpcd/uhttpd/cgi-io/firewall4 trees are classified or counted but not staffed.",
+    "The extractor seven-case gate is codeql-ucode work and is not claimed from this files[] inventory."
   ]
 }

@@ -1,0 +1,58 @@
+{
+  "analysis_revision": "inventory:luci-ssl-files-v1",
+  "profile": "luci-ssl-25.12",
+  "status": "partial",
+  "extracted_files": ["luci", "taint_pos", "taint_neg", "sys.uc"],
+  "analyzed": [
+    "luci-ssl package closure from collections/luci-ssl and luci-light Makefiles at b2e0be4b with CONFIG_IPV6=y",
+    "luci.mk ucode/ -> /usr/share/ucode/luci/, htdocs/ -> /www/, root/ -> /",
+    "luci-base postinst uhttpd ucode_prefix /cgi-bin/luci=/usr/share/ucode/luci/uhttpd.uc",
+    "luci-base src install generated version.uc and core.so",
+    "plan section 2 routing rule order on installed paths (inventory, not extractor)",
+    "shebang CGI /www/cgi-bin/luci (#!/usr/bin/env ucode)",
+    "uhttpd.uc tagged markup before .uc fallback",
+    "theme bootstrap-dark/light extensionless symlinks as uncertain",
+    "libexec helpers are #!/bin/sh (shell_not_analyzed), not ucode shebang"
+  ],
+  "routing_counts": {
+    "plain": 10,
+    "markup": 12,
+    "uncertain": 2,
+    "exec_helper_shell": 3
+  },
+  "plan_seven_cases_in_luci_ssl": {
+    "shebang-less-extensionless-plugin": true,
+    "dot-uc-rpcd-plugin": false,
+    "shebang-libexec-ucode": false,
+    "ordinary-ut": true,
+    "tagged-uc": true,
+    "ut-under-rpcd": false,
+    "extensionless-usr-share-ucode": true
+  },
+  "negative_controls": [
+    "not path_found",
+    "not a new query",
+    "not a new method grant",
+    "luci emitter unchanged",
+    "extractor seven-case gate not claimed",
+    "unauthenticated remains no-grant deny for inventoried exec methods"
+  ],
+  "unmodeled_branches": [
+    "dispatcher / menu.d (classified but not staffed)",
+    "markup AST extraction (classified markup_not_modeled)",
+    "Track A / JS htdocs (87 files counted, not listed)",
+    "C plugins rpcd-mod-luci/rrdns/iwinfo/file/ucode, luci-bwc, core.so",
+    "setInitAction (no luci-ssl delegated grant)",
+    "OpenWrt rpcd/uhttpd/cgi-io/firewall4 trees (not luci.mk)"
+  ],
+  "unsupported_constructs": [
+    "extractor in-tree full-path classifier (codeql-ucode)",
+    "generated AST.qll/CFG.qll (not imported)",
+    "shellquote as a sanitizer",
+    "basename as a sanitizer"
+  ],
+  "unknowns": [
+    "live uhttpd/rpcd not executed; which of /www/cgi-bin/luci vs uhttpd ucode_prefix is the live dispatcher on a given image is unassessed",
+    "custom feeds and non-luci-ssl packages are outside this profile"
+  ]
+}
