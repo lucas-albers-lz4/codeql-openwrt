@@ -4,7 +4,9 @@ Findings are evidence, not proof. Wrapper AST/CFG/dataflow libraries are not imp
 
 ## Selected chain
 
-`getFeatures.call` → same-file `callPackageVersionCheck('netifd')` → named `popen` imported from `'fs'` (opkg and apk branches). No `request.args` taint on that helper (`GetFeaturesHelperTaint.ql` is empty).
+`getFeatures.call` → same-file `callPackageVersionCheck('netifd')` → named `popen` imported from `'fs'` (opkg and apk branches).
+
+That is **call reachability**, recorded as `handler_effect` / `fact` (`GetFeaturesPopen.ql`). It is not a taint path. Pairwise syntactic local taint from `request.args` into that helper is **`taint_path` / `no_path`** (`GetFeaturesHelperTaint.ql` is empty).
 
 Assessment for stock unauthenticated feature probing: **intended_access**. The helper interpolates a literal package name through `shellquote`. Reaching `popen` here is not BAC or RCE.
 

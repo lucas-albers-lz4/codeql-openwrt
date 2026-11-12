@@ -1,7 +1,7 @@
 [
   {
-    "record_type": "taint_path",
-    "evidence_status": "path_found",
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
     "producer": "step3",
     "record_id": "m3:getfeatures-netifd-popen",
     "corpus_revision": "sha256:e806b5f8e32d173aa022361d98f664e99ab2e23dcfd05c836d970784793a0cae",
@@ -11,21 +11,52 @@
     "entrypoint_id": "ubus_http:luci.getFeatures",
     "ubus_object": "luci",
     "method": "getFeatures",
+    "effect_id": "getFeatures.callPackageVersionCheck.popen",
+    "target_id": "command:callPackageVersionCheck:netifd",
+    "op": "exec",
     "sink_kind": "popen",
     "assessment": "intended_access",
     "expectation_id": "unauthenticated-getFeatures",
+    "conditions": [
+      "same-file callPackageVersionCheck('netifd')",
+      "named popen imported from fs"
+    ],
     "assumptions": [
-      "TreeSitter same-file call resolution only",
-      "popen is the named import from fs in this file"
+      "TreeSitter same-file call resolution only; not a taint path"
     ],
     "evidence_refs": [
       "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
-      "ql/src/m3/GetFeaturesPopen.ql",
-      "ql/src/m3/GetFeaturesHelperTaint.ql"
+      "ql/src/m3/GetFeaturesPopen.ql"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed"
     ]
+  },
+  {
+    "record_type": "taint_path",
+    "evidence_status": "no_path",
+    "producer": "step3",
+    "record_id": "m3:getfeatures-netifd-request-args-no-path",
+    "corpus_revision": "sha256:e806b5f8e32d173aa022361d98f664e99ab2e23dcfd05c836d970784793a0cae",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "param_name": "args",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "assumptions": [
+      "Pairwise syntactic local taint: request.args → named fs popen inside callPackageVersionCheck",
+      "GetFeatures.call takes no request.args; helper interpolates a literal package name",
+      "No CFG/SSA/global dataflow"
+    ],
+    "evidence_refs": [
+      "ql/src/m3/GetFeaturesHelperTaint.ql"
+    ],
+    "unknowns": []
   },
   {
     "record_type": "taint_path",
@@ -38,7 +69,8 @@
     "sink_kind": "popen",
     "assessment": "unassessed",
     "assumptions": [
-      "Synthetic fixture taint_pos; not stock firmware"
+      "Synthetic fixture taint_pos; not stock firmware",
+      "Syntactic local taint only"
     ],
     "unknowns": []
   },

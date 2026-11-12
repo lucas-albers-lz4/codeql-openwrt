@@ -8,7 +8,7 @@
     "same-file callPackageVersionCheck",
     "named popen from fs",
     "builtin system inventory",
-    "syntactic local request.args taint"
+    "syntactic local request.args taint (taint_pos path_found; getFeatures netifd helper no_path)"
   ],
   "resolved_calls": [
     "callPackageVersionCheck",
