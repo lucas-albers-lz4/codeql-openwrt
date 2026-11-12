@@ -6,7 +6,8 @@
   "analyzed": [
     "rpcd method name from methods.<name>.call",
     "syntactic request.args field taint into named fs popen and builtin system",
-    "same-function lexical and assignment bindings (getRealtimeStats flags, setPassword u/p, setLocaltime t)"
+    "same-function lexical and assignment bindings (getRealtimeStats flags, setPassword u/p, setLocaltime t)",
+    "M2 policy-facts grants for delegated luci-mod-* sessions (analysis_revision policy:ubus-luci-exec-methods-v1)"
   ],
   "methods_with_request_args_exec": [
     "getSwconfigFeatures",
@@ -30,7 +31,6 @@
     "sprintf %d / localtime conversion as a sanitizer"
   ],
   "unknowns": [
-    "live uhttpd/rpcd not executed",
-    "M2 evaluator still covers only luci.getFeatures grants"
+    "live uhttpd/rpcd not executed"
   ]
 }

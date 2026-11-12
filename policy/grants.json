@@ -6,7 +6,7 @@
     "record_id": "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",
-    "analysis_revision": "policy:ubus-getfeatures-v1",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
     "session_class": "unauthenticated",
     "ingress": "ubus_http",
     "entrypoint_id": "ubus_http:luci.getFeatures",
@@ -36,7 +36,7 @@
     "record_id": "policy:grant:root:ubus_http:luci.getFeatures",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",
-    "analysis_revision": "policy:ubus-getfeatures-v1",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
     "session_class": "root",
     "ingress": "ubus_http",
     "entrypoint_id": "ubus_http:luci.getFeatures",
@@ -55,6 +55,301 @@
       "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
       "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"unauthenticated\", 0) matches",
       "unauthenticated group still contributes luci.getFeatures to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigFeatures",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "luci-mod-network-config",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
+    "ubus_object": "luci",
+    "method": "getSwconfigFeatures",
+    "target_id": "ubus:luci.getSwconfigFeatures",
+    "op": "invoke",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "luci-mod-network-swconfig",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.ubus.luci=[getSwconfigFeatures, getSwconfigPortState]",
+      "fixture rpcd.config login luci-mod-network-config list read luci-mod-network-config",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+      "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getSwconfigFeatures"
+    ],
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigPortState",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "luci-mod-network-config",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
+    "ubus_object": "luci",
+    "method": "getSwconfigPortState",
+    "target_id": "ubus:luci.getSwconfigPortState",
+    "op": "invoke",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "luci-mod-network-swconfig",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.ubus.luci=[getSwconfigFeatures, getSwconfigPortState]",
+      "fixture rpcd.config login luci-mod-network-config list read luci-mod-network-config",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+      "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getSwconfigPortState"
+    ],
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "luci-mod-status-realtime",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getRealtimeStats",
+    "ubus_object": "luci",
+    "method": "getRealtimeStats",
+    "target_id": "ubus:luci.getRealtimeStats",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-realtime",
+    "expectation_id": "luci-mod-status-realtime",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-realtime.read.ubus.luci=[getConntrackList, getRealtimeStats]",
+      "fixture rpcd.config login luci-mod-status-realtime list read luci-mod-status-realtime",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+      "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getRealtimeStats"
+    ],
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-config:ubus_http:luci.setPassword",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "luci-mod-system-config",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setPassword",
+    "ubus_object": "luci",
+    "method": "setPassword",
+    "target_id": "ubus:luci.setPassword",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-config",
+    "expectation_id": "luci-mod-system-setPassword",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config.write.ubus.luci=[setLocaltime, setPassword]",
+      "fixture rpcd.config login luci-mod-system-config list write luci-mod-system-config",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+      "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/setPassword"
+    ],
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "luci-mod-system-config",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setLocaltime",
+    "ubus_object": "luci",
+    "method": "setLocaltime",
+    "target_id": "ubus:luci.setLocaltime",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-config",
+    "expectation_id": "luci-mod-system-setLocaltime",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config.write.ubus.luci=[setLocaltime, setPassword]",
+      "fixture rpcd.config login luci-mod-system-config list write luci-mod-system-config",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+      "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/setLocaltime"
+    ],
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.getSwconfigFeatures",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
+    "ubus_object": "luci",
+    "method": "getSwconfigFeatures",
+    "target_id": "ubus:luci.getSwconfigFeatures",
+    "op": "invoke",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches",
+      "luci-mod-network-config still contributes luci.getSwconfigFeatures to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.getSwconfigPortState",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
+    "ubus_object": "luci",
+    "method": "getSwconfigPortState",
+    "target_id": "ubus:luci.getSwconfigPortState",
+    "op": "invoke",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches",
+      "luci-mod-network-config still contributes luci.getSwconfigPortState to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.getRealtimeStats",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getRealtimeStats",
+    "ubus_object": "luci",
+    "method": "getRealtimeStats",
+    "target_id": "ubus:luci.getRealtimeStats",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-realtime",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-realtime\", 0) matches",
+      "luci-mod-status-realtime still contributes luci.getRealtimeStats to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.setPassword",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setPassword",
+    "ubus_object": "luci",
+    "method": "setPassword",
+    "target_id": "ubus:luci.setPassword",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-config\", 0) matches",
+      "luci-mod-system-config still contributes luci.setPassword to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.setLocaltime",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setLocaltime",
+    "ubus_object": "luci",
+    "method": "setLocaltime",
+    "target_id": "ubus:luci.setLocaltime",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-config\", 0) matches",
+      "luci-mod-system-config still contributes luci.setLocaltime to the root session"
     ],
     "note": "Stock root list read '*' / list write '*'; not a violation."
   }

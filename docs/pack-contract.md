@@ -16,9 +16,10 @@
 | M3 queries, effects, reports | `step3` |
 | Alloy (only after promotion) | `step4` |
 
-Joins require identical `corpus_revision` and `profile`. `analysis_revision` is producer-local (M2 `policy:ubus-getfeatures-v1`, M3 `step3:getfeatures-v1`, M4 `step3:request-args-exec-v1`). Cross-producer joins (`policy_grant` ↔ `handler_effect` / `taint_path`) match on those two fields plus the shared join keys (`entrypoint_id`, `ingress`, `ubus_object`, `method`) and `evidence_refs` record ids. Do not require two producers to share one `analysis_revision` string.
+Joins require identical `corpus_revision` and `profile`. `analysis_revision` is producer-local (M2 `policy:ubus-luci-exec-methods-v1`, M3 `step3:getfeatures-v1`, M4 `step3:request-args-exec-v1`). Cross-producer joins (`policy_grant` ↔ `handler_effect` / `taint_path`) match on those two fields plus the shared join keys (`entrypoint_id`, `ingress`, `ubus_object`, `method`) and `evidence_refs` record ids. Do not require two producers to share one `analysis_revision` string.
 
-M2 writes `policy/grants.json` (`policy_grant` / `fact`) and `policy/policy_decisions.json` for `/ubus` `luci.getFeatures` only. Do not emit `alloy_input.json` or `producer: step4` in M2.
+M2 writes `policy/grants.json` (`policy_grant` / `fact`) and `policy/policy_decisions.json` for `/ubus` `luci.getFeatures` plus the five inventoried request.args exec methods (`getSwconfigFeatures`, `getSwconfigPortState`, `getRealtimeStats`, `setPassword`, `setLocaltime`). Do not emit `alloy_input.json`, `producer: step4`, `file.exec`, cgi-io, `hostapd.*`, or `setInitAction` in M2.
+
 
 ## M1 extraction
 
