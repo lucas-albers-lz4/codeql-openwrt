@@ -1,0 +1,35 @@
+{
+  "profile": "luci-ssl-25.12-no-ubusauth",
+  "lockfile": "corpus/lock.json",
+  "base_profile": "luci-ssl-25.12",
+  "config_seed": {
+    "arch": "x86_64",
+    "CONFIG_IPV6": "y",
+    "CONFIG_PACKAGE_luci-ssl": "y"
+  },
+  "uhttpd": {
+    "no_ubusauth": 1,
+    "uci_option": "option no_ubusauth 1",
+    "flag": "-a",
+    "note": "Stock luci-ssl-25.12 has no_ubusauth=0. This variant enables uhttpd -a. The flag also skips authorization for uhttpd /call/<object> and GET subscriptions; those paths are unmodeled here. cgi-io and dispatcher admin/ubus are unchanged."
+  },
+  "first_endpoint": {
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "helper_chain": "callPackageVersionCheck('netifd') -> named popen from fs"
+  },
+  "files_preview": [
+    {
+      "source": "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+      "installed": "/usr/share/rpcd/ucode/luci",
+      "classification": "plain",
+      "reason": "rpcd raw_mode plugin, no extension, no shebang"
+    }
+  ],
+  "unknowns": [
+    "Plugin-side session checks, if any, are not this HTTP-gate slice. Stock luci.getFeatures has none.",
+    "cgi-io and dispatcher admin/ubus remain on luci-ssl-25.12 semantics.",
+    "C plugins (rpcd-mod-luci, rpcd-mod-rrdns, rpcd-mod-rpcsys, rpcd-mod-iwinfo) remain c_plugin_not_analyzed.",
+    "uhttpd REST /call/<object> and GET subscribe authorization checks are also skipped by this flag and are not modeled by this JSON-RPC slice."
+  ]
+}

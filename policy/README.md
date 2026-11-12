@@ -1,7 +1,7 @@
 # Policy-facts (M2)
 
 Canonical `/ubus` luci policy oracle plus cgi-io backup/upload/download/exec ingresses. Producer is `policy_facts`.
-Luci `analysis_revision` is `policy:ubus-luci-exec-methods-v2`. cgi-backup is `policy:cgi-backup-v1`. cgi-upload is `policy:cgi-upload-v1`. cgi-download is `policy:cgi-download-v1`. cgi-exec is `policy:cgi-exec-v1`.
+Luci `analysis_revision` is `policy:ubus-luci-exec-methods-v2`. cgi-backup is `policy:cgi-backup-v1`. cgi-upload is `policy:cgi-upload-v1`. cgi-download is `policy:cgi-download-v1`. cgi-exec is `policy:cgi-exec-v1`. The `no_ubusauth=1` variant is `policy:no-ubusauth-v1` (profile `luci-ssl-25.12-no-ubusauth`).
 
 The HTTP gate is uhttpd `uh_ubus_allowed` → ubus `session.access` (uhttpd omits `scope`; rpcd defaults `scope` to `ubus`). Missing SID with `no_ubusauth=0` is JSON-RPC `ERROR_PARSE`, not the all-zero sentinel and not rpcd `file`/`uci` absent-SID skip.
 
@@ -16,7 +16,7 @@ python3 -m policy emit
 python3 -m unittest discover -s policy/tests -t .
 ```
 
-`emit` rewrites `policy/grants.json` (luci grants, then cgi-backup, cgi-upload, cgi-download, cgi-exec), `policy/policy_decisions.json` (luci), and the per-endpoint cgi decision files. The luci grant emitter refuses anything except `luci.getFeatures`, the inventoried request.args exec methods, `getBlockDevices` / `setBlockDetect`, and luci.sys `getConntrackList` / `getProcessList`. Synthetic cgi `handler_effect` rows are upserted into `reports/handler_effects.json` and checked against the oracles. All rows share the `corpus/lock.json` hash.
+`emit` rewrites `policy/grants.json` (luci grants, then cgi-backup, cgi-upload, cgi-download, cgi-exec), `policy/policy_decisions.json` (luci), the per-endpoint cgi decision files, and `policy/no_ubusauth_decisions.json` (no grants). The luci grant emitter refuses anything except `luci.getFeatures`, the inventoried request.args exec methods, `getBlockDevices` / `setBlockDetect`, and luci.sys `getConntrackList` / `getProcessList`. It also refuses grants for `no_ubusauth=1`. Synthetic cgi `handler_effect` rows are upserted into `reports/handler_effects.json` and checked against the oracles. All rows share the `corpus/lock.json` hash. Profile `luci-ssl-25.12-no-ubusauth` does not join luci-ssl grants (`profile` differs).
 
 Tests compare the luci evaluator to handwritten cases in `policy/fixtures/expected_cases.json` and the cgi evaluators to `policy/fixtures/cgi_backup_cases.json`, `cgi_upload_cases.json`, `cgi_download_cases.json`, and `cgi_exec_cases.json` (transcribed from pinned C and ACL JSON, not from the evaluator). They compile the C doubles with:
 
@@ -33,6 +33,7 @@ Those C doubles cover the decoded-input gate + `session.access` matching without
 ## In scope
 
 - Profile `luci-ssl-25.12`, `no_ubusauth=0`
+- Profile `luci-ssl-25.12-no-ubusauth`, `option no_ubusauth 1` / `uhttpd -a`: empty SID rewrites to the all-zero default and `uh_ubus_allowed` is skipped. Unauthenticated `setPassword` allow is that skip (`unassessed`), not an invented luci-ssl grant. Null or omitted SID slots in the usual call array and missing data still fail parsing. Object lookup precedes the gate; a gate allow does not establish plugin success. The flag also skips authorization on uhttpd `/call/<object>` and GET subscriptions, which remain unmodeled. cgi-io / dispatcher unchanged.
 - Stock unauthenticated session (present all-zero SID) → `luci`/`getFeatures` allow
 - Same session → `luci`/`getSwconfigFeatures`, `getSwconfigPortState`, `getRealtimeStats`, `setPassword`, `setLocaltime`, `getBlockDevices`, `setBlockDetect`, `getConntrackList`, `getProcessList` deny (no invented grant)
 - Synthetic delegated fixture sessions → matching methods allow (`luci-mod-network-config`, `luci-mod-status-realtime`, `luci-mod-status-processes`, `luci-mod-system-config`, `luci-mod-system-mounts`, `luci-base` write login for cgi-upload, `luci-mod-system-flash` for cgi-backup/cgi-download); these are not stock logins. Their intended-access assessments are conditional on those fixture roles. The processes fixture is read-only (write `file.exec` `/bin/kill` is not granted).
@@ -48,11 +49,10 @@ Those C doubles cover the decoded-input gate + `session.access` matching without
 ## Out of scope (not M2)
 
 - M4, Alloy, `alloy_input.json`, `producer: step4`
-- Markup, Track A, dispatcher / `admin/ubus` SID rewrite
+- Markup, Track A, dispatcher / `admin/ubus` SID rewrite (`no_ubusauth` does not apply there)
 - `file.exec` / `hostapd.*` rows present in the loaded ACL files (matching accuracy only; not emitted)
 - `setInitAction` (no luci-ssl delegated grant at luci `b2e0be4b`)
 - fnmatch-witness generation (transcribed wildcard rows only; see `TestMatching.test_ubus_wildcard_object_hostapd_dot_star`)
-- A `no_ubusauth=1` profile (the SID rewrite is implemented in the oracle and noted as an assumption/unknown)
 
 ## fnmatch witnesses (C double)
 
@@ -61,3 +61,5 @@ Handwritten rows in `policy/tests/test_conformance.py` tie Python `acl_match` / 
 Pins live in `corpus/lock.json`. Luci join keys: `session_class`, `ingress=ubus_http`, `entrypoint_id`, `analysis_revision=policy:ubus-luci-exec-methods-v2`. cgi-backup: `ingress=cgi_io`, `cgi_endpoint=cgi-backup`, `analysis_revision=policy:cgi-backup-v1`. cgi-upload: `cgi_endpoint=cgi-upload`, `analysis_revision=policy:cgi-upload-v1`. cgi-download: `cgi_endpoint=cgi-download`, `analysis_revision=policy:cgi-download-v1`. cgi-exec: `cgi_endpoint=cgi-exec`, `analysis_revision=policy:cgi-exec-v1`. Do not reuse `policy:ubus-getfeatures-v1` for this catalog. All producers share the lockfile `corpus_revision`.
 
 Grant ↔ effect joins against `reports/handler_effects.json` use `corpus_revision`, `profile`, `ingress`, `entrypoint_id`, plus `ubus_object`/`method` or `cgi_endpoint`, and grant `record_id` in the effect `evidence_refs`. See [reports/handler_effects.md](../reports/handler_effects.md). luci.sys `getConntrackList` / `getProcessList` popens join those grants; see [m4-luci-sys-status-exec.md](../reports/m4-luci-sys-status-exec.md).
+
+`policy:no-ubusauth-v1` join keys: `corpus_revision` (lockfile hash), `profile=luci-ssl-25.12-no-ubusauth`, `ingress=ubus_http`, `entrypoint_id`. No grant `record_id` (no grants). Do not join these decisions to luci-ssl-25.12 grants.

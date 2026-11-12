@@ -1,0 +1,189 @@
+{
+  "comment": "Hand-transcribed expected /ubus decisions for uhttpd option no_ubusauth 1. Not generated from the Python evaluator. Not luci-ssl-25.12 (that profile has no_ubusauth=0).",
+  "pins": {
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "profile": "luci-ssl-25.12-no-ubusauth",
+    "base_profile": "luci-ssl-25.12",
+    "uhttpd_no_ubusauth": 1
+  },
+  "notes": [
+    "uhttpd ubus.c uh_ubus_handle_request_object skips uh_ubus_allowed when conf.ubus_noauth is set. That skip is not an ACL grant.",
+    "An empty string SID rewrites to the default. A null or omitted SID element is skipped by typed array parsing; subsequent strings shift and the usual call fails parse.",
+    "Parse still requires object, function, and a BLOBMSG_TYPE_TABLE data parameter.",
+    "Unauthenticated luci-ssl ACLs still grant only luci.getFeatures. This profile does not invent that grant for setPassword; the allow is the HTTP-gate skip.",
+    "cgi-io and dispatcher admin/ubus are not this slice. Do not emit policy_grant, authorization_violation, or path_found."
+  ],
+  "cases": [
+    {
+      "id": "no-ubusauth-empty-sid-getFeatures-allow",
+      "session_class": "unauthenticated",
+      "sid": "",
+      "object": "luci",
+      "function": "getFeatures",
+      "data_present": true,
+      "no_ubusauth": 1,
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getFeatures",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "expectation_id": "uhttpd-no-ubusauth-http-gate-skip",
+      "assessment": "unassessed",
+      "note": "An empty string SID is a string slot and rewrites to the all-zero default; the authorization gate is skipped. This is not an ACL grant.",
+      "not": [
+        "luci-ssl-acl-grant",
+        "cgi_io",
+        "dispatcher",
+        "path_found",
+        "authorization_violation"
+      ],
+      "rule_refs": [
+        "libubox@ff13b89 blobmsg.c blobmsg_parse_array skips type mismatches without advancing the policy index",
+        "uhttpd@93b05e0 ubus.c parse_call_params: conf.ubus_noauth && (!sid || !*sid) -> UH_UBUS_DEFAULT_SID",
+        "uhttpd@93b05e0 ubus.c uh_ubus_handle_request_object: if (!conf.ubus_noauth && !uh_ubus_allowed) ERROR_ACCESS; skip when ubus_noauth",
+        "openwrt@4e964251 package/network/services/uhttpd/files/uhttpd.init append_bool no_ubusauth -a",
+        "openwrt@4e964251 package/network/services/uhttpd/files/uhttpd.config commented option no_ubusauth 0",
+        "uhttpd@93b05e0 main.c -a sets conf.ubus_noauth",
+        "do not invent a luci-ssl grant"
+      ]
+    },
+    {
+      "id": "no-ubusauth-unauthenticated-setPassword-allow",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "object": "luci",
+      "function": "setPassword",
+      "data_present": true,
+      "no_ubusauth": 1,
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "target_id": "ubus:luci.setPassword",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setPassword",
+      "expectation_id": "uhttpd-no-ubusauth-http-gate-skip",
+      "assessment": "unassessed",
+      "note": "Present all-zero SID still skips uh_ubus_allowed. luci-ssl-25.12 unauthenticated setPassword is deny. Not an invented luci-ssl grant.",
+      "not": [
+        "luci-ssl-acl-grant",
+        "session.access",
+        "cgi_io",
+        "dispatcher",
+        "path_found",
+        "authorization_violation"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c uh_ubus_handle_request_object: if (!conf.ubus_noauth && !uh_ubus_allowed(data.sid, data.object, data.function)) ERROR_ACCESS",
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures; that ACL is not consulted when ubus_noauth",
+        "policy:decision:unauthenticated-setPassword-deny is the luci-ssl-25.12 control",
+        "do not invent an unauthenticated luci.setPassword grant"
+      ]
+    },
+    {
+      "id": "no-ubusauth-unknown-sid-setPassword-allow",
+      "session_class": null,
+      "sid": "ffffffffffffffffffffffffffffffff",
+      "object": "luci",
+      "function": "setPassword",
+      "data_present": true,
+      "no_ubusauth": 1,
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "target_id": "ubus:luci.setPassword",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setPassword",
+      "expectation_id": "uhttpd-no-ubusauth-http-gate-skip",
+      "assessment": "unassessed",
+      "note": "Unknown SID would fail uh_ubus_allowed; with ubus_noauth the HTTP gate still allows. Skip is not 'become unauthenticated'.",
+      "not": [
+        "unauthenticated_allow",
+        "luci-ssl-acl-grant",
+        "session.access",
+        "path_found",
+        "authorization_violation"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed is not called when conf.ubus_noauth",
+        "rpcd@d99f703 session.access on an unknown SID would not match; that check is skipped",
+        "do not invent a luci-ssl grant"
+      ]
+    },
+    {
+      "id": "no-ubusauth-missing-data-parse-error",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "object": "luci",
+      "function": "getFeatures",
+      "data_present": false,
+      "no_ubusauth": 1,
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "jsonrpc_error_code": -32700,
+      "jsonrpc_error_name": "ERROR_PARSE",
+      "note": "no_ubusauth does not skip parse. Missing BLOBMSG_TYPE_TABLE data is still ERROR_PARSE.",
+      "not": [
+        "unauthenticated_allow",
+        "uh_ubus_allowed_skip",
+        "path_found"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c uh_ubus_handle_request_object: if (!data.sid || !data.object || !data.function || !data.data) ERROR_PARSE before the ubus_noauth skip",
+        "uhttpd@93b05e0 ubus.c parse_call_params: fourth parameter must be BLOBMSG_TYPE_TABLE"
+      ]
+    },
+    {
+      "id": "no-ubusauth-null-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "object": "luci",
+      "function": "getFeatures",
+      "data_present": true,
+      "no_ubusauth": 1,
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "jsonrpc_error_code": -32700,
+      "jsonrpc_error_name": "ERROR_PARSE",
+      "note": "A null first element is skipped, so luci and getFeatures shift into SID and object slots; no function is parsed.",
+      "not": [
+        "uh_ubus_allowed_skip",
+        "path_found"
+      ],
+      "rule_refs": [
+        "libubox@ff13b89 blobmsg.c blobmsg_parse_array skips mismatched types without advancing",
+        "uhttpd@93b05e0 ubus.c rejects missing parsed function"
+      ]
+    },
+    {
+      "id": "no-ubusauth-unknown-object-error",
+      "session_class": null,
+      "sid": "",
+      "object": "nonexistent.object",
+      "function": "method",
+      "data_present": true,
+      "no_ubusauth": 1,
+      "object_exists": false,
+      "expected_outcome": "jsonrpc_object_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "jsonrpc_error_code": -32000,
+      "jsonrpc_error_name": "ERROR_OBJECT",
+      "note": "Object lookup fails before the authorization gate is skipped.",
+      "not": [
+        "uh_ubus_allowed_skip",
+        "path_found"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c ubus_lookup_id returns ERROR_OBJECT before uh_ubus_allowed"
+      ]
+    }
+  ]
+}
