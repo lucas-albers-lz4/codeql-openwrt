@@ -1,0 +1,169 @@
+{
+  "comment": "Hand-transcribed expected cgi-download decisions from pinned cgi-io C and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "cgi-io main_download requires application/x-www-form-urlencoded then session.access(sid, cgi-io, download, read) AND file read of canonicalize_path(path).",
+    "Missing or empty sessionid after a valid content-type is HTTP 403, not 400.",
+    "Invalid content-type is HTTP 400 Invalid form data.",
+    "luci-mod-system-flash read grants cgi-io download and /dev/mtdblock[0-9]* file read. Unauthenticated does not.",
+    "A '../' path is canonicalized before the file ACL so it cannot ride an allowed glob prefix.",
+    "This oracle does not open/stat/sendfile. cgi-upload and cgi-exec are not this slice.",
+    "This slice does not rewrite policy/grants.json; artifacts live in cgi_download_decisions.json."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-cgi-download-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "path": "/dev/mtdblock0",
+      "cgi_endpoint": "cgi-download",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "cgi_endpoint:cgi-download",
+      "op": "read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io download",
+        "cgi-io@31cb3c89 main.c main_download: session_access false -> 403 Download permission denied",
+        "do not invent an unauthenticated cgi-download grant"
+      ]
+    },
+    {
+      "id": "missing-sessionid-cgi-download-forbidden",
+      "session_class": null,
+      "sid": null,
+      "path": "/dev/mtdblock0",
+      "cgi_endpoint": "cgi-download",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "not": ["unauthenticated_allow", "sendfile", "dispatcher"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c main_download: !fields[1] -> 403 Download permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ]
+    },
+    {
+      "id": "invalid-content-type-cgi-download-bad-request",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "content_type": "application/json",
+      "path": "/dev/mtdblock0",
+      "cgi_endpoint": "cgi-download",
+      "expected_outcome": "bad_request",
+      "http_status": 400,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "not": ["acl_bypass", "sendfile"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_download: !post -> 400 Invalid form data"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-cgi-download-allow",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "path": "/dev/mtdblock0",
+      "cgi_endpoint": "cgi-download",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "cgi_endpoint:cgi-download",
+      "op": "read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "expectation_id": "luci-mod-system-flash-download",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-flash",
+      "note": "Fixture login luci-mod-system-flash is not a stock device login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file./dev/mtdblock[0-9]*=[read]",
+        "cgi-io@31cb3c89 main.c main_download conjunctive cgi-io download read and file read"
+      ]
+    },
+    {
+      "id": "root-star-cgi-download-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "path": "/dev/mtdblock0",
+      "cgi_endpoint": "cgi-download",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "cgi_endpoint:cgi-download",
+      "op": "read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-flash",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "luci-mod-system-flash still contributes cgi-io download to the root session"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-cgi-download-passwd-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "path": "/etc/passwd",
+      "cgi_endpoint": "cgi-download",
+      "expected_outcome": "path_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "not": ["authorization_violation", "cgi-io-only-suffices"],
+      "rule_refs": [
+        "cgi-io download read is not enough without file read of the canonical path",
+        "luci-mod-system-flash file read is /dev/mtdblock[0-9]*, not /etc/passwd"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-cgi-download-dotdot-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "path": "/dev/mtdblock0/../../../etc/passwd",
+      "cgi_endpoint": "cgi-download",
+      "expected_outcome": "path_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "not": ["glob_prefix_bypass"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c canonicalizes path before file ACL so ../ cannot ride /dev/mtdblock[0-9]*"
+      ]
+    },
+    {
+      "id": "luci-mod-system-config-cgi-download-deny",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "path": "/dev/mtdblock0",
+      "cgi_endpoint": "cgi-download",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "rule_refs": [
+        "luci-mod-system-config grants luci.setPassword/setLocaltime, not cgi-io download",
+        "do not treat a luci exec-method grant as cgi-download"
+      ]
+    }
+  ]
+}
