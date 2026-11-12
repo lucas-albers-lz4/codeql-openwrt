@@ -14,9 +14,10 @@ This slice does **not** model `parse_command`, `canonicalize_path` of argv0,
 `lookup_executable`, `file.exec` of a command, or `execv`. A cgi-io exec read
 grant is not a claim that an arbitrary command is authorized.
 
-Artifacts: `policy/cgi_exec_decisions.json`, `reports/m2-cgi-exec-effect.json`,
-appended `cgi_io` grants in `policy/grants.json`, and a synthetic row in
-`reports/handler_effects.json`. The luci `/ubus` emitter is unchanged.
+This slice does **not** rewrite `policy/grants.json` or
+`reports/handler_effects.json` (those files are on other in-flight PRs).
+Artifacts: `policy/cgi_exec_decisions.json`,
+`reports/m2-cgi-exec-effect.json`.
 
 Does not emit cgi-backup, cgi-upload, cgi-download, dispatcher,
 `authorization_violation`, or `path_found`. `shellquote` and `basename` are

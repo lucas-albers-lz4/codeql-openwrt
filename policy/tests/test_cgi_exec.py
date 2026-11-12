@@ -356,30 +356,9 @@ class TestCommittedArtifacts(unittest.TestCase):
         self.assertEqual(committed["decisions"], bundle["decisions"])
         self.assertEqual(committed_effect, effect)
 
-    def test_emit_appends_exec_grants_and_effect(self) -> None:
-        cgi_grants, cgi_bundle, effect = build_artifacts()
-        luci_grants, luci_bundle = luci_build_artifacts()
-        from policy.cgi_backup import build_artifacts as backup_build
-
-        backup_grants, backup_bundle, backup_effect = backup_build()
-        committed_grants = json.loads((REPO / "policy" / "grants.json").read_text(encoding="utf-8"))
-        committed_luci = json.loads(
-            (REPO / "policy" / "policy_decisions.json").read_text(encoding="utf-8")
-        )
-        committed_effects = json.loads(
-            (REPO / "reports" / "handler_effects.json").read_text(encoding="utf-8")
-        )
-        self.assertEqual(committed_grants, luci_grants + backup_grants + cgi_grants)
-        self.assertEqual(committed_luci, luci_bundle)
-        committed_effect = next(row for row in committed_effects if row["record_id"] == EFFECT_RECORD_ID)
-        self.assertEqual(committed_effect, effect)
-        committed_backup = next(
-            row for row in committed_effects if row["record_id"] == backup_effect["record_id"]
-        )
-        self.assertEqual(committed_backup, backup_effect)
-        self.assertEqual(backup_bundle["analysis_revision"], "policy:cgi-backup-v1")
-        blob = json.dumps(luci_bundle)
-        self.assertIn("getFeatures", blob)
+    def test_does_not_rewrite_canonical_grants_json(self) -> None:
+        committed = json.loads((REPO / "policy" / "grants.json").read_text(encoding="utf-8"))
+        blob = json.dumps(committed)
         self.assertNotIn("cgi-exec", blob)
 
 
