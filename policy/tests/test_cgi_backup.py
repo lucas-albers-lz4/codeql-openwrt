@@ -344,7 +344,10 @@ class TestCommittedArtifacts(unittest.TestCase):
         committed_effects = json.loads(
             (REPO / "reports" / "handler_effects.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(committed_grants, luci_grants + cgi_grants)
+        from policy.cgi_exec import build_artifacts as exec_build
+
+        exec_grants, _, _ = exec_build()
+        self.assertEqual(committed_grants, luci_grants + cgi_grants + exec_grants)
         self.assertEqual(committed_luci, luci_bundle)
         self.assertEqual(committed_cgi, cgi_bundle)
         committed_effect = next(row for row in committed_effects if row["record_id"] == EFFECT_RECORD_ID)

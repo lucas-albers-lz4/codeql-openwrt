@@ -107,6 +107,28 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-network-config-cgi-exec",
+      "session_class": "luci-mod-network-config",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "intended_access": [
+        {
+          "target_id": "cgi_endpoint:cgi-exec",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "file.exec of an arbitrary command"
+      ],
+      "rationale": "luci-mod-network-config read grants cgi-io exec. This expectation covers the cgi-io exec read gate only. Unauthenticated ACLs do not. Stock root '*' is intended_access, not a violation. file.exec of a command after this gate is not this slice.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
+        "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec session_access(sid, cgi-io, exec, read)"
+      ]
+    },
+    {
       "expectation_id": "luci-mod-status-realtime",
       "session_class": "luci-mod-status-realtime",
       "ingress": "ubus_http",

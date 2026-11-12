@@ -644,5 +644,61 @@
       "luci-mod-system-flash still contributes cgi-io backup to the root session"
     ],
     "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-network-config:cgi_io:cgi-exec",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-v1",
+    "session_class": "luci-mod-network-config",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec",
+    "cgi_endpoint": "cgi-exec",
+    "target_id": "cgi_endpoint:cgi-exec",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "luci-mod-network-config-cgi-exec",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
+      "fixture rpcd.config login luci-mod-network-config list read luci-mod-network-config",
+      "cgi-io@31cb3c89 main.c main_exec session_access(sid, cgi-io, exec, read)",
+      "rpcd@d99f703 session.c rpc_handle_access uses supplied scope=cgi-io"
+    ],
+    "note": "Fixture login luci-mod-network-config is not a stock device login. This grant is the cgi-io exec read gate only, not file.exec of a command.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec",
+    "cgi_endpoint": "cgi-exec",
+    "target_id": "cgi_endpoint:cgi-exec",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches",
+      "luci-mod-network-config still contributes cgi-io exec to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
   }
 ]

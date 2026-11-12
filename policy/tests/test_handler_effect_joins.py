@@ -30,6 +30,7 @@ CGI_JOIN_KEYS = (
     "cgi_endpoint",
 )
 CGI_EFFECT_ID = "policy:effect:cgi-backup-sensitive-read"
+CGI_EXEC_EFFECT_ID = "policy:effect:cgi-exec-session-access"
 COPIED_EFFECT_SNAPSHOTS = (
     "reports/findings.json",
     "reports/m4-getfeatures-direct-exec.json",
@@ -78,7 +79,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         luci_rows = [row for row in self.effects if row.get("ingress") == "ubus_http"]
         cgi_rows = [row for row in self.effects if row.get("ingress") == "cgi_io"]
         self.assertEqual(len(luci_rows), LUCI_EFFECT_COUNT)
-        self.assertEqual(len(cgi_rows), 1)
+        self.assertEqual(len(cgi_rows), 2)
         for row in luci_rows:
             for key in REQUIRED:
                 self.assertIn(key, row, key)
@@ -95,14 +96,23 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotIn("route_path", row)
             self.assertIn(row["record_type"], SCHEMA["properties"]["record_type"]["enum"])
             self.assertIn(row["sink_kind"], SCHEMA["properties"]["sink_kind"]["enum"])
-        cgi = cgi_rows[0]
-        self.assertEqual(cgi["record_id"], CGI_EFFECT_ID)
-        self.assertEqual(cgi["producer"], "policy_facts")
-        self.assertEqual(cgi["cgi_endpoint"], "cgi-backup")
-        self.assertEqual(cgi["sink_kind"], "sensitive_backup_read")
-        self.assertEqual(cgi["op"], "read")
-        self.assertEqual(cgi["assessment"], "intended_access")
-        self.assertNotEqual(cgi["assessment"], "authorization_violation")
+        by_endpoint = {row["cgi_endpoint"]: row for row in cgi_rows}
+        self.assertEqual(set(by_endpoint), {"cgi-backup", "cgi-exec"})
+        backup = by_endpoint["cgi-backup"]
+        self.assertEqual(backup["record_id"], CGI_EFFECT_ID)
+        self.assertEqual(backup["producer"], "policy_facts")
+        self.assertEqual(backup["sink_kind"], "sensitive_backup_read")
+        self.assertEqual(backup["op"], "read")
+        self.assertEqual(backup["assessment"], "intended_access")
+        self.assertNotEqual(backup["assessment"], "authorization_violation")
+        exec_row = by_endpoint["cgi-exec"]
+        self.assertEqual(exec_row["record_id"], CGI_EXEC_EFFECT_ID)
+        self.assertEqual(exec_row["producer"], "policy_facts")
+        self.assertEqual(exec_row["sink_kind"], "exec")
+        self.assertEqual(exec_row["op"], "exec")
+        self.assertEqual(exec_row["assessment"], "intended_access")
+        self.assertNotEqual(exec_row["evidence_status"], "path_found")
+        self.assertNotEqual(exec_row["assessment"], "authorization_violation")
 
     def test_every_grant_joins_an_effect(self) -> None:
         for grant in self.grants:
@@ -283,6 +293,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertIn("shellquote", cgi_text)
         self.assertIn("basename", cgi_text)
         self.assertIn("not sanitizers", cgi_text)
+        exec_text = " ".join(by_id[CGI_EXEC_EFFECT_ID]["assumptions"]).lower()
+        self.assertIn("shellquote", exec_text)
+        self.assertIn("basename", exec_text)
+        self.assertIn("not sanitizers", exec_text)
+        self.assertNotIn("path_found", json.dumps(by_id[CGI_EXEC_EFFECT_ID]))
 
     def test_cgi_backup_joins_flash_and_root(self) -> None:
         effect = next(row for row in self.effects if row["record_id"] == CGI_EFFECT_ID)
@@ -309,13 +324,52 @@ class TestHandlerEffectJoins(unittest.TestCase):
         ]
         self.assertEqual(unauth, [])
 
+    def test_cgi_exec_joins_network_and_root(self) -> None:
+        effect = next(row for row in self.effects if row["record_id"] == CGI_EXEC_EFFECT_ID)
+        network = next(
+            grant
+            for grant in self.grants
+            if grant.get("cgi_endpoint") == "cgi-exec"
+            and grant["session_class"] == "luci-mod-network-config"
+        )
+        root = next(
+            grant
+            for grant in self.grants
+            if grant.get("cgi_endpoint") == "cgi-exec" and grant["session_class"] == "root"
+        )
+        refs = effect["evidence_refs"]
+        self.assertIn(network["record_id"], refs)
+        self.assertIn(root["record_id"], refs)
+        self.assertEqual(effect["assessment"], "intended_access")
+        self.assertNotEqual(effect["evidence_status"], "path_found")
+        unauth = [
+            grant
+            for grant in self.grants
+            if grant.get("cgi_endpoint") == "cgi-exec"
+            and grant["session_class"] == "unauthenticated"
+        ]
+        self.assertEqual(unauth, [])
+        invented = [
+            grant
+            for grant in self.grants
+            if grant.get("cgi_endpoint") == "cgi-exec"
+            and grant["session_class"]
+            in ("luci-mod-status-logs", "luci-mod-status-firewall", "luci-app-package-manager")
+        ]
+        self.assertEqual(invented, [])
+
     def test_catalog_does_not_invent_forbidden_claims(self) -> None:
+        allowed_cgi = {
+            "cgi-backup": "sensitive_backup_read",
+            "cgi-exec": "exec",
+        }
         for row in self.effects:
             self.assertNotEqual(row.get("assessment"), "authorization_violation")
             self.assertNotEqual(row.get("ingress"), "dispatcher")
+            self.assertNotEqual(row.get("evidence_status"), "path_found")
             if row.get("ingress") == "cgi_io":
-                self.assertEqual(row.get("cgi_endpoint"), "cgi-backup")
-                self.assertEqual(row.get("sink_kind"), "sensitive_backup_read")
+                self.assertIn(row.get("cgi_endpoint"), allowed_cgi)
+                self.assertEqual(row.get("sink_kind"), allowed_cgi[row["cgi_endpoint"]])
             else:
                 self.assertNotIn("cgi_endpoint", row)
 
