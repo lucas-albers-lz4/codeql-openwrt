@@ -18,6 +18,8 @@
 
 Joins require identical `corpus_revision`, `profile`, and `analysis_revision`.
 
+M2 writes `policy/grants.json` (`policy_grant` / `fact`) and `policy/policy_decisions.json` for `/ubus` `luci.getFeatures` only. Do not emit `alloy_input.json` or `producer: step4` in M2.
+
 ## M1 extraction
 
 The stock CodeQL driver matches **basename only**. Until M4 routing, extract with literal `file_globs: ["luci"]`. M3 may add extra literal basenames or a catch-all `"*"` on a pre-filtered file list. Do not extract markup in M0–M3.

@@ -1,0 +1,24 @@
+{
+  "comment": "Pinned copies of stock ACL/login inputs. Do not treat these as expected-capabilities.",
+  "profile": "luci-ssl-25.12",
+  "files": {
+    "luci-base.json": {
+      "source": "openwrt/luci modules/luci-base/root/usr/share/rpcd/acl.d/luci-base.json",
+      "sha": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "url": "https://raw.githubusercontent.com/openwrt/luci/b2e0be4b46ec0fd43394c081fa7c50657af14011/modules/luci-base/root/usr/share/rpcd/acl.d/luci-base.json",
+      "sha256": "1e571671df667e8cdb09e4905f47bce0a37b81d8166d6bc654c155bb30e8f4c3"
+    },
+    "unauthenticated.json": {
+      "source": "openwrt/rpcd unauthenticated.json (installed as /usr/share/rpcd/acl.d/unauthenticated.json)",
+      "sha": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+      "url": "https://raw.githubusercontent.com/openwrt/rpcd/d99f703e4035d03fbcfbada3cb697db346c2b984/unauthenticated.json",
+      "sha256": "f9ffec0554e0dd2e429f7c1fc843393c6bd97c4af843ba8f4c0d1020a7d22a67"
+    },
+    "rpcd.config": {
+      "source": "openwrt/openwrt package/system/rpcd/files/rpcd.config",
+      "sha": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "url": "https://raw.githubusercontent.com/openwrt/openwrt/4e9642517b48bae612ff10fb72fb9199e559500e/package/system/rpcd/files/rpcd.config",
+      "sha256": "1a40da0ebe45b1afd131dfc4650592913e38445e7fe42f96d3b95ad5151ac0e6"
+    }
+  }
+}

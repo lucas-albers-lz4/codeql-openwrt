@@ -1,0 +1,61 @@
+[
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+    "corpus_revision": "sha256:e806b5f8e32d173aa022361d98f664e99ab2e23dcfd05c836d970784793a0cae",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-getfeatures-v1",
+    "session_class": "unauthenticated",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "target_id": "ubus:luci.getFeatures",
+    "op": "invoke",
+    "acl_group": "unauthenticated",
+    "expectation_id": "unauthenticated-getFeatures",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/acl.d/luci-base.json unauthenticated.read.ubus.luci=[getFeatures]",
+      "rpcd@d99f703 session.c rpc_session_api_init default SID 0000... loads group unauthenticated only",
+      "uhttpd@93b05e0 ubus.c parse_call_params: present SID is not rewritten when no_ubusauth=0",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+      "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getFeatures"
+    ]
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.getFeatures",
+    "corpus_revision": "sha256:e806b5f8e32d173aa022361d98f664e99ab2e23dcfd05c836d970784793a0cae",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-getfeatures-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "target_id": "ubus:luci.getFeatures",
+    "op": "invoke",
+    "acl_group": "unauthenticated",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"unauthenticated\", 0) matches",
+      "unauthenticated group still contributes luci.getFeatures to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  }
+]

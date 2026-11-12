@@ -18,6 +18,7 @@
         "backend_method",
         "dispatcher_route",
         "policy_grant",
+        "policy_decision",
         "handler_effect",
         "taint_path",
         "access_control_finding",

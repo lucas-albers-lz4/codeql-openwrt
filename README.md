@@ -6,4 +6,4 @@ The ucode CodeQL language pack lives in [codeql-ucode](https://github.com/lucas-
 
 First slice: `/ubus` → `luci.getFeatures` → `callPackageVersionCheck('netifd')` → named `popen` from `'fs'`. Findings are evidence, not proof.
 
-See [docs/pack-contract.md](docs/pack-contract.md) and `corpus/lock.json`.
+See [docs/pack-contract.md](docs/pack-contract.md), `corpus/lock.json`, and [policy/README.md](policy/README.md) for the M2 `/ubus` `luci.getFeatures` oracle.
