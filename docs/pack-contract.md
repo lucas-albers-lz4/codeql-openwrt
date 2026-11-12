@@ -22,7 +22,7 @@ M2 writes `policy/grants.json` (`policy_grant` / `fact`) and `policy/policy_deci
 
 ## M1 extraction
 
-The stock CodeQL driver matches **basename only**. Until M4 routing, extract with literal `file_globs: ["luci"]`. M3 may add extra literal basenames or a catch-all `"*"` on a pre-filtered file list. Do not extract markup in M0–M3.
+The stock CodeQL driver matches **basename only**. M1 uses literal `file_globs: ["luci"]`. M3 adds taint fixture basenames. M4 may add further literal basenames (`sys.uc` for installed luci.sys) or a catch-all `"*"` on a pre-filtered file list. Do not extract markup in M0–M3; do not staff Alloy/markup/Track A here.
 
 ## cgi-backup
 
