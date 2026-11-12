@@ -75,10 +75,30 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertNotIn("policy:grant:unauthenticated:cgi_io:cgi-upload", grant_ids)
 
     def test_missing_sessionid_is_response_200_not_403(self) -> None:
-        result = self._result("missing-sessionid-cgi-upload-denied")
-        self.assertEqual(result.outcome, "upload_denied")
+        result = self._result("missing-sessionid-with-filedata")
+        self.assertEqual(result.outcome, "missing_session")
+        self.assertEqual(result.message, "File data without session")
+        self.assertFalse(any(step["step"] == "session_access" for step in result.steps))
         self.assertEqual(result.http_status, 200)
         self.assertNotEqual(result.http_status, 403)
+
+    def test_absent_sessionid_without_filedata_has_no_response(self) -> None:
+        result = self._result("missing-sessionid-without-filedata")
+        self.assertEqual(result.outcome, "no_response")
+        self.assertIsNone(result.http_status)
+        self.assertIsNone(result.message)
+        self.assertFalse(any(step["step"] == "session_access" for step in result.steps))
+
+    def test_empty_sessionid_part_is_outside_slice(self) -> None:
+        with self.assertRaisesRegex(ValueError, "empty sessionid"):
+            evaluate_upload(sid="")
+
+    def test_authorized_sessionid_without_filedata_has_no_file_acl_check(self) -> None:
+        result = self._result("luci-base-without-filedata")
+        self.assertEqual(result.outcome, "no_response")
+        self.assertIsNone(result.http_status)
+        self.assertIsNotNone(result.cgi_matched)
+        self.assertFalse(any(step.get("scope") == "file" for step in result.steps))
 
     def test_urlencoded_content_type_is_invalid_request(self) -> None:
         result = self._result("invalid-content-type-cgi-upload-invalid-request")
@@ -129,6 +149,16 @@ class TestGrantsAndEffect(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.grants, cls.bundle, cls.effect = build_artifacts()
         cls.luci_grants, cls.luci_bundle = luci_build_artifacts()
+
+    def test_no_response_decisions_have_no_status_or_grant(self) -> None:
+        decisions = {row["record_id"]: row for row in self.bundle["decisions"]}
+        for case_id in ("missing-sessionid-without-filedata", "luci-base-without-filedata"):
+            row = decisions[f"policy:decision:{case_id}"]
+            self.assertEqual(row["outcome"], "no_response")
+            self.assertIsNone(row["http_status"])
+            self.assertFalse(row["response_emitted"])
+            self.assertFalse(row["grant_emitted"])
+            self.assertFalse(row["filedata_present"])
 
     def test_luci_emitter_is_unchanged(self) -> None:
         blob = json.dumps(self.luci_grants)
@@ -200,9 +230,9 @@ class TestCDouble(unittest.TestCase):
         proc = self._run("parse", "application/x-www-form-urlencoded", BASE_FIXTURE_SID)
         self.assertEqual(proc.stdout.strip(), "INVALID_REQUEST")
 
-    def test_parse_missing_sessionid(self) -> None:
+    def test_parse_does_not_require_sessionid(self) -> None:
         proc = self._run("parse", CONTENT_TYPE_EXAMPLE, "-")
-        self.assertEqual(proc.stdout.strip(), "UPLOAD_DENIED")
+        self.assertEqual(proc.stdout.strip(), "PARSE_OK")
 
     def test_parse_ok(self) -> None:
         proc = self._run("parse", CONTENT_TYPE_EXAMPLE, BASE_FIXTURE_SID)
@@ -231,6 +261,7 @@ class TestCDouble(unittest.TestCase):
             "write",
             "/etc/luci-uploads/*",
             "write",
+            "1",
         )
         passwd = self._run(
             "decide",
@@ -242,6 +273,7 @@ class TestCDouble(unittest.TestCase):
             "write",
             "/etc/luci-uploads/*",
             "write",
+            "1",
         )
         dotdot = self._run(
             "decide",
@@ -253,10 +285,36 @@ class TestCDouble(unittest.TestCase):
             "write",
             "/etc/luci-uploads/*",
             "write",
+            "1",
         )
         self.assertEqual(allow.stdout.strip(), "ALLOW")
         self.assertEqual(passwd.stdout.strip(), "PATH_DENIED")
         self.assertEqual(dotdot.stdout.strip(), "PATH_DENIED")
+
+    def test_decide_absent_session_and_filedata_controls(self) -> None:
+        for sid, filedata, cgi_object, expected in [
+            ("-", "1", "upload", "FILE_DATA_WITHOUT_SESSION"),
+            ("-", "0", "upload", "NO_RESPONSE"),
+            (BASE_FIXTURE_SID, "1", "download", "UPLOAD_DENIED"),
+            (BASE_FIXTURE_SID, "0", "download", "UPLOAD_DENIED"),
+            (BASE_FIXTURE_SID, "0", "upload", "NO_RESPONSE"),
+        ]:
+            with self.subTest(sid=sid, filedata=filedata, cgi_object=cgi_object):
+                proc = self._run(
+                    "decide", CONTENT_TYPE_EXAMPLE, sid, UPLOAD_PATH,
+                    "cgi-io", cgi_object, "write", "/etc/luci-uploads/*", "write", filedata,
+                )
+                self.assertEqual(proc.stdout.strip(), expected)
+                self.assertEqual(proc.returncode, 0 if expected == "NO_RESPONSE" else 1)
+
+    def test_decide_empty_sessionid_is_outside_slice(self) -> None:
+        proc = self._run(
+            "decide", CONTENT_TYPE_EXAMPLE, "", UPLOAD_PATH,
+            "cgi-io", "upload", "write", "/etc/luci-uploads/*", "write", "1",
+        )
+        self.assertEqual(proc.returncode, 2)
+        self.assertIn("empty sessionid", proc.stderr)
+        self.assertEqual(proc.stdout, "")
 
     def test_flags_record_pin(self) -> None:
         proc = self._run("flags")

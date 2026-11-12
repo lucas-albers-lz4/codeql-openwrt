@@ -1,7 +1,9 @@
 /*
  * Isolated double of cgi-io main_upload @ 31cb3c89f02d918d7f17bf62a80c852fc38a1ca1:
  *   Inputs are already-decoded multipart fields. Successful multipart framing
- *   is a precondition; the parser itself is not modeled.
+ *   is a precondition; the parser itself is not modeled. sessionid/filename
+ *   precede filedata when present; empty sessionid parts and arbitrary ordering
+ *   are outside this slice.
  *   CONTENT_TYPE prefix "multipart/form-data;" (20) plus a boundary '='
  *   session_access(sid, "cgi-io", "upload", "write")  [after sessionid part]
  *   canonicalize_path(filename)
@@ -9,7 +11,9 @@
  *
  * cgi-io uses response() (Status 200 + JSON) for these failures, not
  * failure(403). This double prints ALLOW / INVALID_REQUEST / UPLOAD_DENIED /
- * PATH_DENIED to match that gate without writing files.
+ * PATH_DENIED / FILE_DATA_WITHOUT_SESSION to match that gate without writing
+ * files. NO_RESPONSE denotes main_upload returning without response(), not an
+ * HTTP status. A missing sessionid part differs from a present unauthorized SID.
  *
  * Does not create tempfiles, chmod, or copy. No live ubus/cgi-io.
  * Does not model cgi-download, cgi-exec, or cgi-backup.
@@ -138,14 +142,10 @@ next:
 	return canonpath;
 }
 
-static int gate_parse(const char *content_type, const char *sid)
+static int gate_parse(const char *content_type)
 {
 	if (!content_type_ok(content_type)) {
 		puts("INVALID_REQUEST");
-		return 1;
-	}
-	if (sid == NULL || sid[0] == '\0') {
-		puts("UPLOAD_DENIED");
 		return 1;
 	}
 	return 0;
@@ -153,7 +153,7 @@ static int gate_parse(const char *content_type, const char *sid)
 
 static int cmd_parse(int argc, char **argv)
 {
-	const char *content_type, *sid;
+	const char *content_type;
 
 	if (argc != 2) {
 		fprintf(stderr, "parse: expected 2 args\n");
@@ -161,8 +161,8 @@ static int cmd_parse(int argc, char **argv)
 	}
 
 	content_type = arg_or_null(argv[0]);
-	sid = arg_or_null(argv[1]);
-	if (gate_parse(content_type, sid) != 0)
+	/* sessionid presence is not an init_parser gate. */
+	if (gate_parse(content_type) != 0)
 		return 1;
 	puts("PARSE_OK");
 	return 0;
@@ -208,9 +208,10 @@ static int cmd_decide(int argc, char **argv)
 	const char *cgi_scope, *cgi_obj, *cgi_fun;
 	const char *file_pat, *file_fun;
 	char *canon;
+	int filedata_present;
 
-	if (argc != 8) {
-		fprintf(stderr, "decide: expected 8 args\n");
+	if (argc != 9) {
+		fprintf(stderr, "decide: expected 9 args\n");
 		return 2;
 	}
 
@@ -222,14 +223,30 @@ static int cmd_decide(int argc, char **argv)
 	cgi_fun = argv[5];
 	file_pat = argv[6];
 	file_fun = argv[7];
+	filedata_present = strcmp(argv[8], "1") == 0;
 
-	if (gate_parse(content_type, sid) != 0)
+	if (gate_parse(content_type) != 0)
 		return 1;
+
+	if (sid == NULL) {
+		puts(filedata_present ? "FILE_DATA_WITHOUT_SESSION" : "NO_RESPONSE");
+		return filedata_present ? 1 : 0;
+	}
+
+	if (sid[0] == '\0') {
+		fprintf(stderr, "empty sessionid parts are outside this decoded-field slice\n");
+		return 2;
+	}
 
 	if (!(scope_match(cgi_scope, REQ_SCOPE) &&
 	      acl_match(cgi_obj, cgi_fun, REQ_OBJECT, REQ_FUNCTION))) {
 		puts("UPLOAD_DENIED");
 		return 1;
+	}
+
+	if (!filedata_present) {
+		puts("NO_RESPONSE");
+		return 0;
 	}
 
 	canon = raw_path ? canonicalize_path(raw_path, strlen(raw_path)) : NULL;
@@ -269,7 +286,7 @@ static void usage(FILE *fp)
 		"       cgi_upload canon <path>\n"
 		"       cgi_upload match <scope_pat> <obj_pat> <fun_pat> <scope> <object> <function>\n"
 		"       cgi_upload decide <content_type|-> <sessionid|-> <filename|-> "
-		"<cgi_scope_pat> <cgi_obj_pat> <cgi_fun_pat> <file_pat> <file_fun>\n"
+		"<cgi_scope_pat> <cgi_obj_pat> <cgi_fun_pat> <file_pat> <file_fun> <filedata_present:0|1>\n"
 		"       cgi_upload flags\n");
 }
 

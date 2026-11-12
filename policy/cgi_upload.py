@@ -14,6 +14,9 @@ Does not rewrite the luci ``/ubus`` grant emitter or ``policy/grants.json``.
 Does not emit cgi-exec, cgi-download, cgi-backup, dispatcher, or
 ``authorization_violation``. Does not create tempfiles, chmod, or copy.
 cgi-io ``response()`` failures are Status 200 + JSON, not HTTP 403.
+Complete requests without filedata may return without any response. Decoded
+sessionid/filename parts precede filedata when present; arbitrary ordering and
+truncated multipart input are outside this oracle.
 """
 
 from __future__ import annotations
@@ -73,7 +76,10 @@ UNKNOWN_LIVE = (
 )
 UNKNOWN_MULTIPART = (
     "Multipart framing, boundary scanning, and temp-file copy/chmod are not "
-    "modeled; this slice assumes already-decoded sessionid and filename fields."
+    "modeled; this slice assumes complete multipart input with already-decoded "
+    "sessionid and filename fields before an optional filedata part. None SID means "
+    "an absent sessionid part; present sessionids must be nonempty decoded strings. "
+    "Empty parts, arbitrary part ordering, and incomplete framing are outside this slice."
 )
 ASSUMPTION_CONJUNCT = (
     "cgi-io main_upload requires session.access scope=cgi-io object=upload "
@@ -81,9 +87,11 @@ ASSUMPTION_CONJUNCT = (
     "function=write. A cgi-io grant without the file-write grant cannot authorize."
 )
 ASSUMPTION_RESPONSE_200 = (
-    "cgi-io upload failures use response() which prints Status 200 with a JSON "
-    "failure body, not failure(403). http_status stays 200; outcome distinguishes "
-    "invalid_request / upload_denied / path_denied."
+    "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON "
+    "failure body, not failure(403). Those responses have http_status 200; outcome distinguishes "
+    "invalid_request / upload_denied / missing_session / path_denied. A complete "
+    "request without filedata can return without response(); no_response has no "
+    "HTTP status and is not an ACL denial."
 )
 ASSUMPTION_CANON = (
     "Filename is canonicalized before the file ACL check so a '../' suffix cannot "
@@ -142,14 +150,14 @@ def content_type_ok(content_type: Optional[str]) -> bool:
 @dataclass
 class UploadResult:
     outcome: str
-    http_status: int
+    http_status: Optional[int]
     session_class: Optional[str]
     sid: Optional[str]
     filename: Optional[str]
     canon: Optional[str]
     cgi_matched: Any
     file_matched: Any
-    message: str
+    message: Optional[str]
     steps: list[dict[str, Any]]
 
 
@@ -186,8 +194,11 @@ def evaluate_upload(
     sid: Optional[str] = None,
     content_type: Optional[str] = CONTENT_TYPE_EXAMPLE,
     filename: Optional[str] = UPLOAD_PATH,
+    filedata_present: bool = True,
     sessions: Optional[dict[str, Session]] = None,
 ) -> UploadResult:
+    if sid == "":
+        raise ValueError("empty sessionid parts are outside this decoded-field slice")
     if sessions is None:
         sessions = load_upload_world()
     steps: list[dict[str, Any]] = [
@@ -196,7 +207,8 @@ def evaluate_upload(
             "multipart_assumed": True,
             "content_type_prefix": CONTENT_TYPE_PREFIX,
             "content_type_ok": content_type_ok(content_type),
-            "sessionid_present": bool(sid),
+            "sessionid_present": sid is not None,
+            "filedata_present": filedata_present,
             "filename_present": bool(filename),
         }
     ]
@@ -214,18 +226,25 @@ def evaluate_upload(
             message="Invalid request",
             steps=steps,
         )
-    if sid is None or sid == "":
-        steps.append({"step": "main_upload", "result": "UPLOAD_DENIED", "http_status": 200})
+    if sid is None:
+        # No SESSIONID part means data_end_cb never runs its upload ACL check.
+        outcome = "missing_session" if filedata_present else "no_response"
+        status = 200 if filedata_present else None
+        steps.append({
+            "step": "data_begin_cb" if filedata_present else "main_upload",
+            "result": outcome.upper(),
+            "http_status": status,
+        })
         return UploadResult(
-            outcome="upload_denied",
-            http_status=200,
-            session_class=session_class,
+            outcome=outcome,
+            http_status=status,
+            session_class=None,
             sid=sid,
             filename=filename,
             canon=None,
             cgi_matched=None,
             file_matched=None,
-            message="Upload permission denied",
+            message="File data without session" if filedata_present else None,
             steps=steps,
         )
 
@@ -257,6 +276,21 @@ def evaluate_upload(
             cgi_matched=None,
             file_matched=None,
             message="Upload permission denied",
+            steps=steps,
+        )
+
+    if not filedata_present:
+        steps.append({"step": "main_upload", "result": "NO_RESPONSE", "http_status": None})
+        return UploadResult(
+            outcome="no_response",
+            http_status=None,
+            session_class=resolved_class,
+            sid=sid,
+            filename=filename,
+            canon=canonicalize_path(filename) if filename else None,
+            cgi_matched=cgi_matched,
+            file_matched=None,
+            message=None,
             steps=steps,
         )
 
@@ -339,6 +373,7 @@ def evaluate_expected_case(
         sid=case.get("sid"),
         content_type=content_type,
         filename=case.get("filename", UPLOAD_PATH),
+        filedata_present=case.get("filedata_present", True),
         sessions=sessions,
     )
 
@@ -387,7 +422,9 @@ def decision_record(case: dict[str, Any], result: UploadResult) -> dict[str, Any
             "cgi_endpoint": CGI_ENDPOINT,
             "outcome": result.outcome,
             "http_status": result.http_status,
-            "sid_present": case.get("sid") is not None and case.get("sid") != "",
+            "response_emitted": result.http_status is not None,
+            "filedata_present": case.get("filedata_present", True),
+            "sid_present": case.get("sid") is not None,
             "sid": result.sid,
             "filename": result.filename,
             "canon": result.canon,
@@ -440,7 +477,7 @@ def decision_record(case: dict[str, Any], result: UploadResult) -> dict[str, Any
             "function": result.file_matched.function,
             "source": result.file_matched.source,
         }
-    return {key: value for key, value in record.items() if value is not None}
+    return {key: value for key, value in record.items() if value is not None or key == "http_status"}
 
 
 def effect_record(grants: list[dict[str, Any]]) -> dict[str, Any]:

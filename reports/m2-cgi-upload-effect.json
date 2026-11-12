@@ -29,7 +29,7 @@
   "assumptions": [
     "Synthetic handler_effect transcribed from cgi-io main_upload; C, not ucode",
     "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
-    "cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). http_status stays 200; outcome distinguishes invalid_request / upload_denied / path_denied.",
+    "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
     "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
     "This oracle does not create tempfiles, chmod, or copy bytes",
     "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
@@ -41,7 +41,7 @@
   ],
   "unknowns": [
     "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-    "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes already-decoded sessionid and filename fields.",
+    "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
     "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
   ]
 }

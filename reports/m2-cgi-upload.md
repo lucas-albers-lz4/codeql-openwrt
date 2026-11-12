@@ -12,8 +12,19 @@ Conjunctive gate:
 A cgi-io upload grant without the file-write grant is **not** enough.
 `../` is collapsed before the file ACL so it cannot ride `/etc/luci-uploads/*`.
 
-cgi-io upload failures use `response()` **Status 200** with a JSON failure
-body, not `failure(403)`.
+Emitted cgi-io upload failures use `response()` **Status 200** with a JSON
+failure body, not `failure(403)`. The upload ACL runs at `data_end_cb` only
+when a `sessionid` part is present. An absent sessionid with a `filedata`
+part instead produces `File data without session` at `data_begin_cb`
+(`missing_session`, Status 200); this is separate from a present unauthorized
+SID (`upload_denied`). A complete request without `filedata` and
+without a rejected sessionid part returns from `main_upload` without
+`response()` (`no_response`, `http_status: null`), so it is not an ACL denial.
+
+Cases assume complete multipart framing, with sessionid/filename parts before
+filedata when present. `filedata_present` defaults to true; SID `None` means
+an absent part; present SIDs must be nonempty decoded strings. Empty parts, arbitrary ordering,
+truncated framing, temp-file creation, and file copying remain outside the slice.
 
 This slice does **not** rewrite `policy/grants.json` or
 `reports/handler_effects.json` (those files are on other in-flight PRs).
@@ -24,7 +35,7 @@ Does not copy/chmod files. Does not emit cgi-download, cgi-exec, dispatcher,
 `authorization_violation`, or `path_found`. `shellquote` and `basename` are
 not sanitizers; `canonicalize_path` is not a taint sanitizer.
 
-Unauthenticated is deny. Fixture `luci-base` (synthesized write login) and
+The present unauthenticated SID is denied by the upload ACL. Fixture `luci-base` (synthesized write login) and
 stock root `*` allow `/etc/luci-uploads/example.bin` as `intended_access`.
 The `luci-mod-system-flash` fixture login is `list read` only, so its ACL
 group's upload write is not in session.
