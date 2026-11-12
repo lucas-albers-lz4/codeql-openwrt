@@ -6,6 +6,6 @@
 
 The stock `setInitAction` caller switches on `request.args.action` tokens `enable|disable|start|stop|restart|reload` (`SetInitActionActionSwitch.ql`). That is **caller-side inventory, not a sanitizer** of `name` or of luci.sys.
 
-Evidence: `handler_effect` / `fact` for the helper `system` sink, plus `backend_method` / `fact` for the token switch. Assessment stays **unassessed** (no M2 grant row for this method in the first-release evaluator).
+Evidence: `handler_effect` / `fact` for the helper `system` sink, `backend_method` / `fact` for the token switch, and `taint_path` / `inconclusive` for the syntactic caller/sink pair (not interprocedural dataflow, not `path_found`). Assessment stays **unassessed** (no M2 grant row for this method in the first-release evaluator).
 
 See `reports/m4-luci-sys-init-action-findings.json`.
