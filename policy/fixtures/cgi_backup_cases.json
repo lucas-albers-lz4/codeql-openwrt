@@ -1,0 +1,152 @@
+{
+  "comment": "Hand-transcribed expected cgi-backup decisions from pinned cgi-io C and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "cgi-io main_backup requires application/x-www-form-urlencoded (strncmp 33) then session.access(sid, cgi-io, backup, read).",
+    "cgi-io supplies scope; this is not the uhttpd omit-scope /ubus path.",
+    "Missing or empty sessionid after a valid content-type is HTTP 403, not 400.",
+    "Invalid content-type is HTTP 400 Invalid form data (postdecode returns NULL).",
+    "luci-mod-system-flash read grants cgi-io backup. Unauthenticated, luci-mod-system-config, and luci-mod-network-config (cgi-io exec) do not.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Emission is bounded to cgi-backup. Do not emit cgi-exec, cgi-upload, cgi-download, dispatcher, or authorization_violation.",
+    "This oracle does not fork sysupgrade --create-backup."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-cgi-backup-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "cgi_endpoint": "cgi-backup",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io backup",
+        "cgi-io@31cb3c89 main.c main_backup: session_access false -> 403 Backup permission denied",
+        "do not invent an unauthenticated cgi-backup grant"
+      ]
+    },
+    {
+      "id": "missing-sessionid-cgi-backup-forbidden",
+      "session_class": null,
+      "sid": null,
+      "cgi_endpoint": "cgi-backup",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "not": ["unauthenticated_allow", "sysupgrade_exec", "dispatcher"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c main_backup: !fields[1] -> 403 Backup permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ]
+    },
+    {
+      "id": "invalid-content-type-cgi-backup-bad-request",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "content_type": "application/json",
+      "cgi_endpoint": "cgi-backup",
+      "expected_outcome": "bad_request",
+      "http_status": 400,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "not": ["acl_bypass", "sysupgrade_exec"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_backup: !post -> 400 Invalid form data"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-cgi-backup-allow",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "cgi_endpoint": "cgi-backup",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "expectation_id": "luci-mod-system-flash-backup",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-flash",
+      "note": "Fixture login luci-mod-system-flash is not a stock device login.",
+      "rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download]",
+        "fixture rpcd.config login luci-mod-system-flash list read luci-mod-system-flash",
+        "cgi-io@31cb3c89 main.c main_backup session_access(sid, cgi-io, backup, read)",
+        "rpcd@d99f703 session.c rpc_handle_access uses supplied scope=cgi-io"
+      ]
+    },
+    {
+      "id": "root-star-cgi-backup-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "cgi_endpoint": "cgi-backup",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-flash",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-flash\", 0) matches",
+        "luci-mod-system-flash still contributes cgi-io backup to the root session"
+      ]
+    },
+    {
+      "id": "luci-mod-system-config-cgi-backup-deny",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "cgi_endpoint": "cgi-backup",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system-config grants luci.setPassword/setLocaltime, not cgi-io backup",
+        "do not treat a luci exec-method grant as cgi-backup"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-cgi-backup-deny",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "cgi_endpoint": "cgi-backup",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "cgi_endpoint:cgi-backup",
+      "op": "read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network-config read cgi-io=[exec], not backup",
+        "do not treat cgi-io exec as cgi-backup"
+      ]
+    }
+  ]
+}

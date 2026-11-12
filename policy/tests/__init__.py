@@ -1,1 +1,1 @@
-# policy.tests — M2 conformance plus grant↔handler_effect joins
+# policy.tests — M2 luci + cgi-backup conformance plus grant↔handler_effect joins

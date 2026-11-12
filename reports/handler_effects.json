@@ -52,7 +52,10 @@
     "sink_kind": "system",
     "assessment": "intended_access",
     "expectation_id": "unauthenticated-getFeatures",
-    "conditions": ["getFeatures.call body", "wifi_features literal list"],
+    "conditions": [
+      "getFeatures.call body",
+      "wifi_features literal list"
+    ],
     "assumptions": [
       "TreeSitter call reachability inside getFeatures.call; not a taint path",
       "feature comes from a closed literal list, not request.args",
@@ -63,7 +66,9 @@
       "policy:grant:root:ubus_http:luci.getFeatures",
       "ql/src/m4/GetFeaturesDirectExec.ql"
     ],
-    "unknowns": ["live uhttpd/rpcd not executed"]
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
   },
   {
     "record_type": "handler_effect",
@@ -83,7 +88,10 @@
     "sink_kind": "system",
     "assessment": "intended_access",
     "expectation_id": "unauthenticated-getFeatures",
-    "conditions": ["getFeatures.call body", "wifi_features literal list"],
+    "conditions": [
+      "getFeatures.call body",
+      "wifi_features literal list"
+    ],
     "assumptions": [
       "TreeSitter call reachability inside getFeatures.call; not a taint path",
       "feature comes from a closed literal list, not request.args",
@@ -94,7 +102,9 @@
       "policy:grant:root:ubus_http:luci.getFeatures",
       "ql/src/m4/GetFeaturesDirectExec.ql"
     ],
-    "unknowns": ["live uhttpd/rpcd not executed"]
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
   },
   {
     "record_type": "handler_effect",
@@ -114,7 +124,10 @@
     "sink_kind": "popen",
     "assessment": "intended_access",
     "expectation_id": "unauthenticated-getFeatures",
-    "conditions": ["getFeatures.call body", "literal dnsmasq --version"],
+    "conditions": [
+      "getFeatures.call body",
+      "literal dnsmasq --version"
+    ],
     "assumptions": [
       "TreeSitter call reachability; not a taint path",
       "Collected from reports/m4-getfeatures-direct-exec.json; not a new query run"
@@ -124,7 +137,9 @@
       "policy:grant:root:ubus_http:luci.getFeatures",
       "ql/src/m4/GetFeaturesDirectExec.ql"
     ],
-    "unknowns": ["live uhttpd/rpcd not executed"]
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
   },
   {
     "record_type": "handler_effect",
@@ -144,7 +159,10 @@
     "sink_kind": "popen",
     "assessment": "intended_access",
     "expectation_id": "unauthenticated-getFeatures",
-    "conditions": ["getFeatures.call body", "literal odhcpd -h"],
+    "conditions": [
+      "getFeatures.call body",
+      "literal odhcpd -h"
+    ],
     "assumptions": [
       "TreeSitter call reachability; not a taint path",
       "Collected from reports/m4-getfeatures-direct-exec.json; not a new query run"
@@ -154,7 +172,9 @@
       "policy:grant:root:ubus_http:luci.getFeatures",
       "ql/src/m4/GetFeaturesDirectExec.ql"
     ],
-    "unknowns": ["live uhttpd/rpcd not executed"]
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
   },
   {
     "record_type": "handler_effect",
@@ -174,7 +194,10 @@
     "sink_kind": "popen",
     "assessment": "intended_access",
     "expectation_id": "unauthenticated-getFeatures",
-    "conditions": ["getFeatures.call body", "literal ipset --help"],
+    "conditions": [
+      "getFeatures.call body",
+      "literal ipset --help"
+    ],
     "assumptions": [
       "TreeSitter call reachability; not a taint path",
       "Collected from reports/m4-getfeatures-direct-exec.json; not a new query run"
@@ -184,7 +207,9 @@
       "policy:grant:root:ubus_http:luci.getFeatures",
       "ql/src/m4/GetFeaturesDirectExec.ql"
     ],
-    "unknowns": ["live uhttpd/rpcd not executed"]
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
   },
   {
     "record_type": "handler_effect",
@@ -417,6 +442,50 @@
     "unknowns": [
       "live uhttpd/rpcd not executed",
       "no M2 grant row for setInitAction in the first-release evaluator"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:effect:cgi-backup-sensitive-read",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-backup-v1",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-backup",
+    "cgi_endpoint": "cgi-backup",
+    "effect_id": "cgi-backup.sysupgrade.create-backup",
+    "target_id": "cgi_endpoint:cgi-backup",
+    "op": "read",
+    "sink_kind": "sensitive_backup_read",
+    "asset_id": "cgi:backup",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-system-flash-backup",
+    "conditions": [
+      "argv0 contains cgi-backup",
+      "CONTENT_TYPE application/x-www-form-urlencoded",
+      "Successfully decoded form body with POST sessionid present"
+    ],
+    "requirements": [
+      "session.access scope=cgi-io object=backup function=read"
+    ],
+    "assumptions": [
+      "Synthetic handler_effect transcribed from cgi-io main_backup; C, not ucode",
+      "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice",
+      "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
+      "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -.",
+      "A backup read is not a violation merely because the role lacks write permission"
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-system-flash:cgi_io:cgi-backup",
+      "policy:grant:root:cgi_io:cgi-backup",
+      "cgi-io@31cb3c89 main.c main_backup session_access(sid, cgi-io, backup, read)"
+    ],
+    "unknowns": [
+      "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+      "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+      "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
     ]
   }
 ]

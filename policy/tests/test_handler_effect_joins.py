@@ -16,6 +16,14 @@ JOIN_KEYS = (
     "ubus_object",
     "method",
 )
+CGI_JOIN_KEYS = (
+    "corpus_revision",
+    "profile",
+    "ingress",
+    "entrypoint_id",
+    "cgi_endpoint",
+)
+CGI_EFFECT_ID = "policy:effect:cgi-backup-sensitive-read"
 EXEC_METHODS = (
     "getSwconfigFeatures",
     "getSwconfigPortState",
@@ -59,19 +67,22 @@ class TestHandlerEffectJoins(unittest.TestCase):
 
     def test_catalog_is_handler_effects_only(self) -> None:
         self.assertIsInstance(self.effects, list)
-        self.assertGreaterEqual(len(self.effects), 12)
+        self.assertGreaterEqual(len(self.effects), 13)
         ids = [row["record_id"] for row in self.effects]
         effect_ids = [row["effect_id"] for row in self.effects]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(len(effect_ids), len(set(effect_ids)))
-        for row in self.effects:
+        luci_rows = [row for row in self.effects if row.get("ingress") == "ubus_http"]
+        cgi_rows = [row for row in self.effects if row.get("ingress") == "cgi_io"]
+        self.assertEqual(len(luci_rows), 12)
+        self.assertEqual(len(cgi_rows), 1)
+        for row in luci_rows:
             for key in REQUIRED:
                 self.assertIn(key, row, key)
             self.assertEqual(row["record_type"], "handler_effect")
             self.assertEqual(row["evidence_status"], "fact")
             self.assertEqual(row["producer"], "step3")
             self.assertEqual(row["profile"], "luci-ssl-25.12")
-            self.assertEqual(row["ingress"], "ubus_http")
             self.assertEqual(row["ubus_object"], "luci")
             self.assertEqual(row["op"], "exec")
             self.assertIn(row["sink_kind"], ("popen", "system"))
@@ -81,13 +92,22 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotIn("route_path", row)
             self.assertIn(row["record_type"], SCHEMA["properties"]["record_type"]["enum"])
             self.assertIn(row["sink_kind"], SCHEMA["properties"]["sink_kind"]["enum"])
+        cgi = cgi_rows[0]
+        self.assertEqual(cgi["record_id"], CGI_EFFECT_ID)
+        self.assertEqual(cgi["producer"], "policy_facts")
+        self.assertEqual(cgi["cgi_endpoint"], "cgi-backup")
+        self.assertEqual(cgi["sink_kind"], "sensitive_backup_read")
+        self.assertEqual(cgi["op"], "read")
+        self.assertEqual(cgi["assessment"], "intended_access")
+        self.assertNotEqual(cgi["assessment"], "authorization_violation")
 
     def test_every_grant_joins_an_effect(self) -> None:
         for grant in self.grants:
+            keys = CGI_JOIN_KEYS if grant.get("ingress") == "cgi_io" else JOIN_KEYS
             matches = [
                 effect
                 for effect in self.effects
-                if all(effect.get(key) == grant[key] for key in JOIN_KEYS)
+                if all(effect.get(key) == grant[key] for key in keys)
                 and grant["record_id"] in effect.get("evidence_refs", [])
             ]
             self.assertTrue(
@@ -96,18 +116,20 @@ class TestHandlerEffectJoins(unittest.TestCase):
             )
 
     def test_exec_method_effects_join_delegated_and_root_grants(self) -> None:
-        by_method = {row["method"]: row for row in self.effects if row["method"] in EXEC_METHODS}
+        by_method = {
+            row["method"]: row for row in self.effects if row.get("method") in EXEC_METHODS
+        }
         self.assertEqual(set(by_method), set(EXEC_METHODS))
         for method, effect in by_method.items():
             delegated = next(
                 grant
                 for grant in self.grants
-                if grant["method"] == method and grant["session_class"] != "root"
+                if grant.get("method") == method and grant["session_class"] != "root"
             )
             root = next(
                 grant
                 for grant in self.grants
-                if grant["method"] == method and grant["session_class"] == "root"
+                if grant.get("method") == method and grant["session_class"] == "root"
             )
             refs = effect["evidence_refs"]
             self.assertIn(delegated["record_id"], refs)
@@ -117,12 +139,12 @@ class TestHandlerEffectJoins(unittest.TestCase):
             unauth_grants = [
                 grant
                 for grant in self.grants
-                if grant["method"] == method and grant["session_class"] == "unauthenticated"
+                if grant.get("method") == method and grant["session_class"] == "unauthenticated"
             ]
             self.assertEqual(unauth_grants, [])
 
     def test_getfeatures_effects_join_unauthenticated_and_root(self) -> None:
-        effects = [row for row in self.effects if row["method"] == "getFeatures"]
+        effects = [row for row in self.effects if row.get("method") == "getFeatures"]
         self.assertEqual(len(effects), 6)
         for effect in effects:
             self.assertIn(
@@ -136,16 +158,16 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertEqual(effect["assessment"], "intended_access")
 
     def test_setinitaction_has_effect_without_grant(self) -> None:
-        effects = [row for row in self.effects if row["method"] == "setInitAction"]
+        effects = [row for row in self.effects if row.get("method") == "setInitAction"]
         self.assertEqual(len(effects), 1)
         self.assertEqual(effects[0]["assessment"], "unassessed")
         self.assertFalse(any("policy:grant:" in ref for ref in effects[0]["evidence_refs"]))
-        self.assertEqual([row for row in self.grants if row["method"] == "setInitAction"], [])
+        self.assertEqual([row for row in self.grants if row.get("method") == "setInitAction"], [])
 
     def test_projected_effects_cite_existing_taint_paths(self) -> None:
         taint_ids = {row["record_id"] for row in self.taint_paths}
         for method in EXEC_METHODS:
-            effect = next(row for row in self.effects if row["method"] == method)
+            effect = next(row for row in self.effects if row.get("method") == method)
             cited = [ref for ref in effect["evidence_refs"] if ref in taint_ids]
             self.assertEqual(len(cited), 1, method)
             source = next(row for row in self.taint_paths if row["record_id"] == cited[0])
@@ -174,8 +196,9 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual(len(copied_sources), 7)
         self.assertEqual(len(path_sources), len(EXEC_METHODS))
 
+        luci_effects = [row for row in self.effects if row.get("ingress") == "ubus_http"]
         resolved_source_keys = []
-        for effect in self.effects:
+        for effect in luci_effects:
             copied = [
                 (path, source)
                 for path, source in copied_sources
@@ -234,13 +257,45 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertIn("basename is not a modeled sanitizer", init_text)
         localtime = " ".join(by_id["m4:effect:luci-setLocaltime-system"]["assumptions"]).lower()
         self.assertIn("not treat localtime or sprintf %d as sanitizers", localtime)
+        cgi_text = " ".join(by_id[CGI_EFFECT_ID]["assumptions"]).lower()
+        self.assertIn("shellquote", cgi_text)
+        self.assertIn("basename", cgi_text)
+        self.assertIn("not sanitizers", cgi_text)
+
+    def test_cgi_backup_joins_flash_and_root(self) -> None:
+        effect = next(row for row in self.effects if row["record_id"] == CGI_EFFECT_ID)
+        flash = next(
+            grant
+            for grant in self.grants
+            if grant.get("cgi_endpoint") == "cgi-backup"
+            and grant["session_class"] == "luci-mod-system-flash"
+        )
+        root = next(
+            grant
+            for grant in self.grants
+            if grant.get("cgi_endpoint") == "cgi-backup" and grant["session_class"] == "root"
+        )
+        refs = effect["evidence_refs"]
+        self.assertIn(flash["record_id"], refs)
+        self.assertIn(root["record_id"], refs)
+        self.assertEqual(effect["assessment"], "intended_access")
+        unauth = [
+            grant
+            for grant in self.grants
+            if grant.get("cgi_endpoint") == "cgi-backup"
+            and grant["session_class"] == "unauthenticated"
+        ]
+        self.assertEqual(unauth, [])
 
     def test_catalog_does_not_invent_forbidden_claims(self) -> None:
         for row in self.effects:
             self.assertNotEqual(row.get("assessment"), "authorization_violation")
-            self.assertNotEqual(row.get("ingress"), "cgi_io")
             self.assertNotEqual(row.get("ingress"), "dispatcher")
-            self.assertNotIn("cgi_endpoint", row)
+            if row.get("ingress") == "cgi_io":
+                self.assertEqual(row.get("cgi_endpoint"), "cgi-backup")
+                self.assertEqual(row.get("sink_kind"), "sensitive_backup_read")
+            else:
+                self.assertNotIn("cgi_endpoint", row)
 
 
 if __name__ == "__main__":
