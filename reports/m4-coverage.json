@@ -1,0 +1,38 @@
+{
+  "analysis_revision": "step3:request-args-exec-v1",
+  "profile": "luci-ssl-25.12",
+  "status": "partial",
+  "extracted_files": ["luci", "taint_pos", "taint_neg"],
+  "analyzed": [
+    "rpcd method name from methods.<name>.call",
+    "syntactic request.args field taint into named fs popen and builtin system",
+    "same-function lexical and assignment bindings (getRealtimeStats flags, setPassword u/p, setLocaltime t)"
+  ],
+  "methods_with_request_args_exec": [
+    "getSwconfigFeatures",
+    "getSwconfigPortState",
+    "getRealtimeStats",
+    "setPassword",
+    "setLocaltime"
+  ],
+  "negative_controls": [
+    "getFeatures not in RequestArgsExec",
+    "taint_pos/taint_neg excluded by luci basename"
+  ],
+  "unmodeled_branches": [
+    "setInitAction → init_action (interprocedural)",
+    "getFeatures hostapd/wpa_supplicant system() template probes",
+    "getFeatures dnsmasq/odhcpd/ipset popen",
+    "remaining luci methods without request.args in a popen/system argument"
+  ],
+  "unsupported_constructs": [
+    "generated AST.qll/CFG.qll (not imported)",
+    "global dataflow/SSA",
+    "shellquote as a sanitizer",
+    "sprintf %d / localtime conversion as a sanitizer"
+  ],
+  "unknowns": [
+    "live uhttpd/rpcd not executed",
+    "M2 evaluator still covers only luci.getFeatures grants"
+  ]
+}

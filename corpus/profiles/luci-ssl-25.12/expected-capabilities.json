@@ -74,6 +74,104 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-network-swconfig",
+      "session_class": "luci-mod-network-config",
+      "ingress": "ubus_http",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getSwconfigFeatures",
+          "op": "invoke"
+        },
+        {
+          "target_id": "ubus:luci.getSwconfigPortState",
+          "op": "invoke"
+        }
+      ],
+      "allowed_helper_effects": [
+        {
+          "sink_kind": "popen",
+          "constraint": "fixed_executable_quoted_arg",
+          "examples": [
+            "swconfig dev <quoted switch> help",
+            "swconfig dev <quoted switch> show"
+          ]
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated invoke",
+        "arbitrary executable selection"
+      ],
+      "rationale": "luci-mod-network-config grants read of luci getSwconfigFeatures/getSwconfigPortState as switch diagnostics. Unauthenticated ACLs do not name these methods. A quoted complete argument to a fixed swconfig executable is intended diagnostic access for that ACL group, not BAC. shellquote is not treated as a global sanitizer.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-realtime",
+      "session_class": "luci-mod-status-realtime",
+      "ingress": "ubus_http",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getRealtimeStats",
+          "op": "invoke"
+        }
+      ],
+      "allowed_helper_effects": [
+        {
+          "sink_kind": "popen",
+          "constraint": "fixed_executable_quoted_arg",
+          "examples": ["luci-bwc -i|-r <quoted device>"]
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated invoke",
+        "arbitrary executable selection"
+      ],
+      "rationale": "luci-mod-status-realtime grants read of luci getRealtimeStats. Unauthenticated ACLs do not name it.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-realtime"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-setPassword",
+      "session_class": "luci-mod-system-config",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setPassword",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.setPassword",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated invoke"
+      ],
+      "rationale": "luci-mod-system-config write grants luci.setPassword. Unauthenticated setPassword is already a M2 deny. Password change by an authorized admin is intended_access; taint into busybox passwd remains a code-review candidate, not BAC, unless an extra boundary is crossed.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config",
+        "policy:decision:unauthenticated-setPassword-deny"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-setLocaltime",
+      "session_class": "luci-mod-system-config",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setLocaltime",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.setLocaltime",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated invoke"
+      ],
+      "rationale": "luci-mod-system-config write grants luci.setLocaltime. The handler runs date via sprintf of localtime() fields. Unauthenticated ACLs do not name this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config"
+      ]
+    },
+    {
       "expectation_id": "synthetic-diagnostic-exec",
       "session_class": "synthetic-diagnostic",
       "synthetic": true,
