@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Canonical /ubus luci.getFeatures policy evaluator (M2).
+"""Canonical /ubus luci policy evaluator (M2).
 
 Oracle transcribed from pinned source, not from a live daemon:
 
@@ -7,11 +7,13 @@ Oracle transcribed from pinned source, not from a live daemon:
   @ ``93b05e0b65d91c23c5aa8fdde378df1f174ec71d``
 * rpcd ``session.c`` ``rpc_handle_access`` / ``rpc_session_acl_allowed``
   / ``rpc_login_test_permission`` @ ``d99f703e4035d03fbcfbada3cb697db346c2b984``
-* luci-base unauthenticated ACL @ luci ``b2e0be4b46ec0fd43394c081fa7c50657af14011``
+* luci-base unauthenticated ACL and luci-mod-{network,status,system} ACLs
+  @ luci ``b2e0be4b46ec0fd43394c081fa7c50657af14011``
 * stock root login @ openwrt ``4e9642517b48bae612ff10fb72fb9199e559500e``
 
-Literal object/method names only. No fnmatch-witness generator, dispatcher,
-cgi-io, Alloy, or ``producer: step4``.
+Literal object/method names only. Emission is bounded to luci.getFeatures
+plus the five inventoried request.args exec methods. No fnmatch-witness
+generator, dispatcher, cgi-io, Alloy, or ``producer: step4``.
 """
 
 from __future__ import annotations
@@ -30,11 +32,14 @@ REPO_ROOT = POLICY_DIR.parent
 FIXTURES = POLICY_DIR / "fixtures"
 
 PROFILE = "luci-ssl-25.12"
-ANALYSIS_REVISION = "policy:ubus-getfeatures-v1"
+ANALYSIS_REVISION = "policy:ubus-luci-exec-methods-v1"
 PRODUCER = "policy_facts"
 
 DEFAULT_SID = "00000000000000000000000000000000"
 ROOT_FIXTURE_SID = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+NETWORK_FIXTURE_SID = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+STATUS_FIXTURE_SID = "cccccccccccccccccccccccccccccccc"
+SYSTEM_FIXTURE_SID = "dddddddddddddddddddddddddddddddd"
 
 UHTTPD_SHA = "93b05e0b65d91c23c5aa8fdde378df1f174ec71d"
 RPCD_SHA = "d99f703e4035d03fbcfbada3cb697db346c2b984"
@@ -53,6 +58,29 @@ M2_OBJECT = "luci"
 M2_METHOD = "getFeatures"
 UBUS_SCOPE = "ubus"
 
+ACL_FIXTURE_FILES = (
+    "luci-base.json",
+    "unauthenticated.json",
+    "luci-mod-network.json",
+    "luci-mod-status.json",
+    "luci-mod-system.json",
+)
+EXEC_METHODS = (
+    "getSwconfigFeatures",
+    "getSwconfigPortState",
+    "getRealtimeStats",
+    "setPassword",
+    "setLocaltime",
+)
+EMITTED_METHODS = frozenset(("getFeatures",) + EXEC_METHODS)
+SESSION_SIDS = {
+    "unauthenticated": DEFAULT_SID,
+    "root": ROOT_FIXTURE_SID,
+    "luci-mod-network-config": NETWORK_FIXTURE_SID,
+    "luci-mod-status-realtime": STATUS_FIXTURE_SID,
+    "luci-mod-system-config": SYSTEM_FIXTURE_SID,
+}
+
 UNKNOWN_LIVE = (
     "Live rpcd and uhttpd were not executed; decisions are transcribed "
     "from pinned C and ACL JSON."
@@ -67,9 +95,10 @@ ASSUMPTION_OBJECT = (
     "out of M2 scope."
 )
 UNKNOWN_ACL_SET = (
-    "Wave 1 does not inventory every luci-ssl acl.d file. M2 loads rpcd "
-    "unauthenticated.json and luci-base.json, the sources of the default "
-    "session and the getFeatures grant."
+    "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, "
+    "luci-mod-status.json, and luci-mod-system.json. Emission is bounded to "
+    "luci.getFeatures plus the five inventoried request.args exec methods; "
+    "file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
 )
 
 
@@ -248,9 +277,8 @@ def load_acl_file(path: Path) -> list[AclEntry]:
 
 def load_acl_catalog(fixtures: Path = FIXTURES) -> list[AclEntry]:
     entries: list[AclEntry] = []
-    for path in sorted(fixtures.glob("*.json")):
-        if path.name in {"luci-base.json", "unauthenticated.json"}:
-            entries.extend(load_acl_file(path))
+    for name in ACL_FIXTURE_FILES:
+        entries.extend(load_acl_file(fixtures / name))
     return entries
 
 
@@ -275,21 +303,29 @@ def session_acls(login: Optional[Login], catalog: list[AclEntry]) -> list[AclEnt
 
 def load_world(fixtures: Path = FIXTURES) -> dict[str, Session]:
     catalog = load_acl_catalog(fixtures)
-    logins = parse_rpcd_logins((fixtures / "rpcd.config").read_text(encoding="utf-8"))
-    root = next(login for login in logins if login.username == "root")
-    unauth = Session(
-        session_class="unauthenticated",
-        sid=DEFAULT_SID,
-        login=None,
-        acls=session_acls(None, catalog),
-    )
-    root_ses = Session(
-        session_class="root",
-        sid=ROOT_FIXTURE_SID,
-        login=root,
-        acls=session_acls(root, catalog),
-    )
-    return {unauth.sid: unauth, root_ses.sid: root_ses}
+    logins = {
+        login.username: login
+        for login in parse_rpcd_logins((fixtures / "rpcd.config").read_text(encoding="utf-8"))
+    }
+    sessions: dict[str, Session] = {
+        DEFAULT_SID: Session(
+            session_class="unauthenticated",
+            sid=DEFAULT_SID,
+            login=None,
+            acls=session_acls(None, catalog),
+        )
+    }
+    for session_class, sid in SESSION_SIDS.items():
+        if session_class == "unauthenticated":
+            continue
+        login = logins[session_class]
+        sessions[sid] = Session(
+            session_class=session_class,
+            sid=sid,
+            login=login,
+            acls=session_acls(login, catalog),
+        )
+    return sessions
 
 
 def is_blobmsg_table(data: Any) -> bool:
@@ -589,6 +625,10 @@ def build_artifacts(
         result = evaluate_expected_case(case, sessions)
         decisions.append(decision_record(case, result))
         if case.get("expect_grant") and result.outcome == "allow":
+            obj = case.get("object")
+            fun = case.get("function")
+            if obj != M2_OBJECT or fun not in EMITTED_METHODS:
+                raise ValueError(f"refusing to emit grant for {obj}.{fun}")
             grants.append(grant_record(case, result))
     bundle = {
         "producer": PRODUCER,
@@ -596,7 +636,10 @@ def build_artifacts(
         "analysis_revision": ANALYSIS_REVISION,
         "corpus_revision": corpus_revision(repo_root),
         "pins": _pins(),
-        "scope": "/ubus luci.getFeatures only; literal object/method names",
+        "scope": (
+            "/ubus luci.getFeatures plus five inventoried request.args exec "
+            "methods; literal object/method names"
+        ),
         "harness": {
             "canonical": "python3 -m policy emit",
             "c_double": "policy/c_double/uh_ubus_policy.c",
@@ -626,11 +669,11 @@ def emit_artifacts(repo_root: Path = REPO_ROOT) -> tuple[Path, Path]:
 
 
 def main(argv: Optional[list[str]] = None) -> int:
-    parser = argparse.ArgumentParser(description="M2 /ubus luci.getFeatures policy oracle")
+    parser = argparse.ArgumentParser(description="M2 /ubus luci policy oracle")
     sub = parser.add_subparsers(dest="cmd")
     sub.add_parser("emit", help="write policy/grants.json and policy/policy_decisions.json")
     decide = sub.add_parser("decide", help="evaluate one /ubus call")
-    decide.add_argument("--session-class", choices=["unauthenticated", "root"])
+    decide.add_argument("--session-class", choices=sorted(SESSION_SIDS))
     decide.add_argument("--sid")
     decide.add_argument("--missing-sid", action="store_true")
     decide.add_argument("--object", default=M2_OBJECT)
@@ -644,11 +687,8 @@ def main(argv: Optional[list[str]] = None) -> int:
         return 0
     if args.cmd == "decide":
         sid = None if args.missing_sid else args.sid
-        if sid is None and not args.missing_sid:
-            if args.session_class == "root":
-                sid = ROOT_FIXTURE_SID
-            elif args.session_class == "unauthenticated":
-                sid = DEFAULT_SID
+        if sid is None and not args.missing_sid and args.session_class:
+            sid = SESSION_SIDS[args.session_class]
         result = evaluate_call(
             session_class=args.session_class,
             sid=sid,

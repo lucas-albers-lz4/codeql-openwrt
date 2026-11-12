@@ -19,8 +19,8 @@ Assessment for stock unauthenticated feature probing: **intended_access**. The h
 
 ## Other luci `popen` / `system` (unassessed)
 
-Nine named `fs` `popen` calls and six builtin `system()` calls exist in the plugin. Four `popen` sites take `request.args` (switch helpers). Those methods are **unassessed** in this slice. `getFeatures` also calls builtin `system()` for hostapd/wpa_supplicant probes (template strings); expected-capabilities already lists them as unmodeled branches.
+Nine named `fs` `popen` calls and six builtin `system()` calls exist in the plugin. Four `popen` sites take `request.args` (switch helpers). Delegated assessments for those methods live in [m4-request-args.md](m4-request-args.md). `getFeatures` also calls builtin `system()` for hostapd/wpa_supplicant probes (template strings); expected-capabilities already lists them as unmodeled branches.
 
 ## Coverage
 
-See `reports/coverage.json`. M2 `policy/grants.json` records `policy:grant:unauthenticated:ubus_http:luci.getFeatures` as `intended_access` (uhttpd `uh_ubus_allowed` → `session.access`). The join with those grants is `corpus_revision` (`sha256:b4cbdabb…` of `corpus/lock.json`) plus `profile` and `entrypoint_id`; `analysis_revision` stays producer-local (`policy:ubus-getfeatures-v1` vs `step3:getfeatures-v1`) per `docs/pack-contract.md`. This report does not claim a live daemon run or a plugin-side session check (the default `getFeatures` body has none).
+See `reports/coverage.json`. M2 `policy/grants.json` records `policy:grant:unauthenticated:ubus_http:luci.getFeatures` as `intended_access` (uhttpd `uh_ubus_allowed` → `session.access`). The join with those grants is `corpus_revision` (`sha256:b4cbdabb…` of `corpus/lock.json`) plus `profile` and `entrypoint_id`; `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v1` vs `step3:getfeatures-v1`) per `docs/pack-contract.md`. This report does not claim a live daemon run or a plugin-side session check (the default `getFeatures` body has none).

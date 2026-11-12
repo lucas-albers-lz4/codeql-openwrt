@@ -16,18 +16,25 @@ if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from policy.oracle import (  # noqa: E402
+    ANALYSIS_REVISION,
     C_DOUBLE_FLAGS,
     DEFAULT_SID,
+    EMITTED_METHODS,
     ERROR_ACCESS,
     ERROR_PARSE,
+    EXEC_METHODS,
+    NETWORK_FIXTURE_SID,
     PRODUCER,
     ROOT_FIXTURE_SID,
+    STATUS_FIXTURE_SID,
+    SYSTEM_FIXTURE_SID,
     acl_match,
     build_artifacts,
     corpus_revision,
     emit_artifacts,
     evaluate_call,
     evaluate_expected_case,
+    load_acl_catalog,
     load_expected_cases,
     load_world,
     login_test_permission,
@@ -83,7 +90,7 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertIsNone(result.matched)
         self.assertFalse(self.cases["unauthenticated-setPassword-deny"]["expect_grant"])
         grant_ids = [row["record_id"] for row in self.grants]
-        self.assertFalse(any("setPassword" in record_id for record_id in grant_ids))
+        self.assertNotIn("policy:grant:unauthenticated:ubus_http:luci.setPassword", grant_ids)
 
     def test_missing_sid_parse_error(self) -> None:
         case = self.cases["missing-sid-parse-error"]
@@ -112,6 +119,116 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertEqual(case["assessment"], "intended_access")
         self.assertIn("not a violation", case["note"])
 
+    def test_unauthenticated_exec_methods_deny(self) -> None:
+        for method in EXEC_METHODS:
+            case_id = f"unauthenticated-{method}-deny"
+            with self.subTest(method=method):
+                result = self._result(case_id)
+                self.assertEqual(result.outcome, "deny")
+                self.assertEqual(result.jsonrpc_error, ERROR_ACCESS)
+                self.assertIsNone(result.matched)
+                self.assertFalse(self.cases[case_id]["expect_grant"])
+                grant_ids = [row["record_id"] for row in self.grants]
+                self.assertNotIn(
+                    f"policy:grant:unauthenticated:ubus_http:luci.{method}", grant_ids
+                )
+
+    def test_delegated_exec_methods_allow(self) -> None:
+        expected = {
+            "getSwconfigFeatures": (
+                "luci-mod-network-config",
+                NETWORK_FIXTURE_SID,
+                "luci-mod-network.json",
+            ),
+            "getSwconfigPortState": (
+                "luci-mod-network-config",
+                NETWORK_FIXTURE_SID,
+                "luci-mod-network.json",
+            ),
+            "getRealtimeStats": (
+                "luci-mod-status-realtime",
+                STATUS_FIXTURE_SID,
+                "luci-mod-status.json",
+            ),
+            "setPassword": (
+                "luci-mod-system-config",
+                SYSTEM_FIXTURE_SID,
+                "luci-mod-system.json",
+            ),
+            "setLocaltime": (
+                "luci-mod-system-config",
+                SYSTEM_FIXTURE_SID,
+                "luci-mod-system.json",
+            ),
+        }
+        for method, (session_class, sid, source) in expected.items():
+            with self.subTest(method=method):
+                result = self._result(f"{session_class}-{method}-allow")
+                self.assertEqual(result.outcome, "allow")
+                self.assertEqual(result.session_class, session_class)
+                self.assertEqual(result.sid, sid)
+                self.assertIsNotNone(result.matched)
+                self.assertEqual(result.matched.object, "luci")
+                self.assertEqual(result.matched.function, method)
+                self.assertEqual(result.matched.group, session_class)
+                self.assertEqual(result.matched.source, source)
+                self.assertEqual(
+                    self.cases[f"{session_class}-{method}-allow"]["assessment"],
+                    "intended_access",
+                )
+
+    def test_root_exec_methods_allow_not_violation(self) -> None:
+        for method in EXEC_METHODS:
+            with self.subTest(method=method):
+                case = self.cases[f"root-star-{method}-allow"]
+                result = self._result(case["id"])
+                self.assertEqual(result.outcome, "allow")
+                self.assertEqual(result.session_class, "root")
+                self.assertEqual(result.sid, ROOT_FIXTURE_SID)
+                self.assertIsNotNone(result.matched)
+                self.assertEqual(result.matched.function, method)
+                self.assertEqual(case["assessment"], "intended_access")
+                self.assertEqual(case["expectation_id"], "root-administration")
+                self.assertIn("not a violation", case["note"])
+                self.assertNotEqual(case["assessment"], "authorization_violation")
+
+    def test_delegated_sessions_do_not_cross_grant(self) -> None:
+        network = self.sessions[NETWORK_FIXTURE_SID]
+        status = self.sessions[STATUS_FIXTURE_SID]
+        system = self.sessions[SYSTEM_FIXTURE_SID]
+        self.assertEqual(
+            evaluate_call(
+                sid=network.sid, object="luci", function="setPassword", data={}, sessions=self.sessions
+            ).outcome,
+            "deny",
+        )
+        self.assertEqual(
+            evaluate_call(
+                sid=status.sid,
+                object="luci",
+                function="getSwconfigFeatures",
+                data={},
+                sessions=self.sessions,
+            ).outcome,
+            "deny",
+        )
+        self.assertEqual(
+            evaluate_call(
+                sid=system.sid,
+                object="luci",
+                function="getRealtimeStats",
+                data={},
+                sessions=self.sessions,
+            ).outcome,
+            "deny",
+        )
+        self.assertEqual(
+            evaluate_call(
+                sid=network.sid, object="luci", function="getFeatures", data={}, sessions=self.sessions
+            ).outcome,
+            "deny",
+        )
+
     def test_evaluator_matches_every_handwritten_outcome(self) -> None:
         for case in self.cases.values():
             result = self._result(case["id"])
@@ -137,39 +254,66 @@ class TestGrantsAndDecisions(unittest.TestCase):
                 self.assertIn(key, row, key)
             self.assertEqual(row["corpus_revision"], revision)
             self.assertEqual(row["profile"], "luci-ssl-25.12")
-            self.assertEqual(row["analysis_revision"], "policy:ubus-getfeatures-v1")
+            self.assertEqual(row["analysis_revision"], ANALYSIS_REVISION)
+            self.assertNotEqual(row["analysis_revision"], "policy:ubus-getfeatures-v1")
             self.assertIn(row["record_type"], SCHEMA["properties"]["record_type"]["enum"])
             self.assertIn(row["evidence_status"], SCHEMA["properties"]["evidence_status"]["enum"])
 
-    def test_grants_are_getfeatures_only(self) -> None:
-        self.assertEqual(len(self.grants), 2)
+    def test_grants_keep_getfeatures_and_emit_five_exec_methods(self) -> None:
+        methods = {row["method"] for row in self.grants}
+        self.assertEqual(methods, set(EMITTED_METHODS))
         classes = {row["session_class"] for row in self.grants}
-        self.assertEqual(classes, {"unauthenticated", "root"})
+        self.assertEqual(
+            classes,
+            {
+                "unauthenticated",
+                "root",
+                "luci-mod-network-config",
+                "luci-mod-status-realtime",
+                "luci-mod-system-config",
+            },
+        )
+        getfeatures = [row for row in self.grants if row["method"] == "getFeatures"]
+        self.assertEqual(len(getfeatures), 2)
+        self.assertEqual({row["session_class"] for row in getfeatures}, {"unauthenticated", "root"})
+        delegated_ids = {
+            "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigFeatures",
+            "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigPortState",
+            "policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats",
+            "policy:grant:luci-mod-system-config:ubus_http:luci.setPassword",
+            "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime",
+        }
+        record_ids = {row["record_id"] for row in self.grants}
+        self.assertTrue(delegated_ids <= record_ids)
+        blob = json.dumps(self.grants)
+        self.assertNotIn("authorization_violation", blob)
+        self.assertNotIn("cgi-io", blob)
+        self.assertNotIn("hostapd", blob)
+        self.assertNotIn("setInitAction", blob)
+        self.assertNotIn('"ubus_object": "file"', blob)
         for row in self.grants:
             self.assertEqual(row["record_type"], "policy_grant")
             self.assertEqual(row["evidence_status"], "fact")
             self.assertEqual(row["ingress"], "ubus_http")
             self.assertEqual(row["ubus_object"], "luci")
-            self.assertEqual(row["method"], "getFeatures")
-            self.assertEqual(row["target_id"], "ubus:luci.getFeatures")
+            self.assertIn(row["method"], EMITTED_METHODS)
             self.assertEqual(row["op"], "invoke")
-            self.assertEqual(row["entrypoint_id"], "ubus_http:luci.getFeatures")
+            self.assertEqual(row["assessment"], "intended_access")
+            self.assertEqual(row["target_id"], f"ubus:luci.{row['method']}")
+            self.assertEqual(row["entrypoint_id"], f"ubus_http:luci.{row['method']}")
+            if row["method"] in EXEC_METHODS:
+                self.assertNotEqual(row["session_class"], "unauthenticated")
 
-    def test_decisions_cover_four_cases(self) -> None:
+    def test_decisions_cover_handwritten_cases(self) -> None:
         ids = [row["record_id"] for row in self.bundle["decisions"]]
-        self.assertEqual(
-            ids,
-            [
-                "policy:decision:unauthenticated-getFeatures-allow",
-                "policy:decision:unauthenticated-setPassword-deny",
-                "policy:decision:missing-sid-parse-error",
-                "policy:decision:root-star-getFeatures-allow",
-            ],
-        )
+        expected = [f"policy:decision:{case['id']}" for case in load_expected_cases()]
+        self.assertEqual(ids, expected)
         parse = next(row for row in self.bundle["decisions"] if row["outcome"] == "jsonrpc_parse_error")
         self.assertEqual(parse["jsonrpc_error"]["code"], -32700)
         self.assertIn("unauthenticated_allow", parse["not"])
         self.assertIn(UNKNOWN_SNIPPET, " ".join(parse["unknowns"]))
+        assessments = {row.get("assessment") for row in self.bundle["decisions"]}
+        self.assertNotIn("authorization_violation", assessments)
 
     def test_unknowns_on_decisions(self) -> None:
         for row in self.bundle["decisions"]:
@@ -236,6 +380,12 @@ class TestMatching(unittest.TestCase):
     def test_literal_setpassword_does_not_match_getfeatures_grant(self) -> None:
         self.assertFalse(acl_match("luci", "getFeatures", "luci", "setPassword"))
 
+    def test_literal_exec_methods_match_own_grant_only(self) -> None:
+        for method in EXEC_METHODS:
+            with self.subTest(method=method):
+                self.assertTrue(acl_match("luci", method, "luci", method))
+                self.assertFalse(acl_match("luci", "getFeatures", "luci", method))
+
     def test_uci_set_does_not_match_luci_grant(self) -> None:
         self.assertFalse(acl_match("luci", "getFeatures", "uci", "set"))
 
@@ -246,6 +396,24 @@ class TestMatching(unittest.TestCase):
         self.assertTrue(login_test_permission(root, "read", "unauthenticated"))
         self.assertTrue(login_test_permission(None, "read", "unauthenticated"))
         self.assertFalse(login_test_permission(None, "read", "luci-base"))
+        self.assertTrue(login_test_permission(root, "read", "luci-mod-network-config"))
+        self.assertTrue(login_test_permission(root, "write", "luci-mod-system-config"))
+        network = Login(username="luci-mod-network-config", read=["luci-mod-network-config"])
+        self.assertTrue(login_test_permission(network, "read", "luci-mod-network-config"))
+        self.assertFalse(login_test_permission(network, "write", "luci-mod-system-config"))
+
+    def test_acl_catalog_loads_module_files_without_setinitaction(self) -> None:
+        catalog = load_acl_catalog()
+        by_fun = {(entry.group, entry.object, entry.function): entry for entry in catalog}
+        self.assertIn(("luci-mod-network-config", "luci", "getSwconfigFeatures"), by_fun)
+        self.assertIn(("luci-mod-network-config", "luci", "getSwconfigPortState"), by_fun)
+        self.assertIn(("luci-mod-status-realtime", "luci", "getRealtimeStats"), by_fun)
+        self.assertIn(("luci-mod-system-config", "luci", "setPassword"), by_fun)
+        self.assertIn(("luci-mod-system-config", "luci", "setLocaltime"), by_fun)
+        self.assertTrue(any(entry.object == "file" and entry.function == "exec" for entry in catalog))
+        self.assertTrue(any(entry.scope == "cgi-io" for entry in catalog))
+        self.assertTrue(any(entry.object == "hostapd.*" for entry in catalog))
+        self.assertFalse(any(entry.function == "setInitAction" for entry in catalog))
 
     def test_ubus_wildcard_object_hostapd_dot_star(self) -> None:
         """Pinned luci-mod-network write ubus hostapd.* / del_client (FNM_NOESCAPE)."""
@@ -306,6 +474,22 @@ class TestCDouble(unittest.TestCase):
         self.assertEqual(allow.stdout.strip(), "ALLOW")
         self.assertEqual(deny.stdout.strip(), "DENY")
 
+    def test_match_and_decide_five_exec_methods(self) -> None:
+        for method in EXEC_METHODS:
+            with self.subTest(method=method):
+                own = self._run("match", "luci", method, "luci", method)
+                unauth_grant = self._run("match", "luci", "getFeatures", "luci", method)
+                self.assertEqual(own.stdout.strip(), "ALLOW")
+                self.assertEqual(unauth_grant.stdout.strip(), "DENY")
+                deny = self._run(
+                    "decide", "0", DEFAULT_SID, "luci", method, "1", "luci", "getFeatures"
+                )
+                allow = self._run(
+                    "decide", "0", DEFAULT_SID, "luci", method, "1", "luci", method
+                )
+                self.assertEqual(deny.stdout.strip(), "DENY")
+                self.assertEqual(allow.stdout.strip(), "ALLOW")
+
     def test_match_ubus_wildcard_object(self) -> None:
         allow = self._run("match", "hostapd.*", "del_client", "hostapd.wlan0", "del_client")
         deny_obj = self._run("match", "hostapd.*", "del_client", "hostapd", "del_client")
@@ -329,6 +513,12 @@ class TestCDouble(unittest.TestCase):
     def test_group_star(self) -> None:
         proc = self._run("group", "*", "unauthenticated")
         self.assertEqual(proc.stdout.strip(), "MATCH")
+        network = self._run("group", "*", "luci-mod-network-config")
+        exact = self._run("group", "luci-mod-network-config", "luci-mod-network-config")
+        miss = self._run("group", "luci-mod-network-config", "luci-mod-system-config")
+        self.assertEqual(network.stdout.strip(), "MATCH")
+        self.assertEqual(exact.stdout.strip(), "MATCH")
+        self.assertEqual(miss.stdout.strip(), "NO_MATCH")
 
     def test_flags_record_fnm_noescape(self) -> None:
         proc = self._run("flags")

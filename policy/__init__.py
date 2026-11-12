@@ -1,4 +1,4 @@
-"""M2 /ubus luci.getFeatures policy-facts (producer: policy_facts)."""
+"""M2 /ubus luci policy-facts (producer: policy_facts)."""
 
 from .oracle import ANALYSIS_REVISION, PROFILE, emit_artifacts, evaluate_call
 

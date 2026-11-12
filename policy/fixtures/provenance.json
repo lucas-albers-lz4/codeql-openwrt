@@ -18,7 +18,26 @@
       "source": "openwrt/openwrt package/system/rpcd/files/rpcd.config",
       "sha": "4e9642517b48bae612ff10fb72fb9199e559500e",
       "url": "https://raw.githubusercontent.com/openwrt/openwrt/4e9642517b48bae612ff10fb72fb9199e559500e/package/system/rpcd/files/rpcd.config",
-      "sha256": "1a40da0ebe45b1afd131dfc4650592913e38445e7fe42f96d3b95ad5151ac0e6"
+      "stock_sha256": "1a40da0ebe45b1afd131dfc4650592913e38445e7fe42f96d3b95ad5151ac0e6",
+      "note": "Stock root login plus fixture logins luci-mod-network-config (read), luci-mod-status-realtime (read), luci-mod-system-config (write). Fixture logins are not in the stock file."
+    },
+    "luci-mod-network.json": {
+      "source": "openwrt/luci modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json",
+      "sha": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "url": "https://raw.githubusercontent.com/openwrt/luci/b2e0be4b46ec0fd43394c081fa7c50657af14011/modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json",
+      "sha256": "38ba28adae3cfd5fc9241b7abacc8b441078cc9ff57da70a85241fdaa63b426b"
+    },
+    "luci-mod-status.json": {
+      "source": "openwrt/luci modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json",
+      "sha": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "url": "https://raw.githubusercontent.com/openwrt/luci/b2e0be4b46ec0fd43394c081fa7c50657af14011/modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json",
+      "sha256": "be0441526a4e288399f80f0f081722ddf188932a4bf33f3cbe7044f694036851"
+    },
+    "luci-mod-system.json": {
+      "source": "openwrt/luci modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json",
+      "sha": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "url": "https://raw.githubusercontent.com/openwrt/luci/b2e0be4b46ec0fd43394c081fa7c50657af14011/modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json",
+      "sha256": "16a24f388ca457758afbea4ff2283ad5984b0146d01697a6955ea84f42cb7924"
     }
   }
 }
