@@ -1,7 +1,8 @@
 """luci-ssl files[] mapping and routing classification (inventory only).
 
-Rules are the plan §2 order applied to installed paths from luci.mk at
-luci pin b2e0be4b. This is not the codeql-ucode extractor seven-case gate.
+Rules are defined in docs/file-routing.md and applied to installed paths
+from luci.mk at luci pin b2e0be4b. This is not the codeql-ucode extractor
+seven-case gate.
 """
 
 from __future__ import annotations
@@ -26,24 +27,84 @@ HTDOCS = "/www"
 SHEBANG_UCODE = re.compile(r"^#!.*\bucode\b")
 MARKUP_CONTENT = re.compile(r"(?m)^\s*\{[%{#]")
 
-# luci-ssl → luci-light + luci-app-package-manager (+ SSL C libs, not luci.mk).
-# luci-light → luci-mod-admin-full + luci-app-firewall + luci-theme-bootstrap
-# + luci-proto-ppp + luci-proto-ipv6 (CONFIG_IPV6=y) + C/uhttpd packages.
-# luci-mod-admin-full → luci-base + luci-mod-status + luci-mod-system
-# + luci-mod-network.
-LUCI_SSL_LUCI_PACKAGES = (
-    "luci-ssl",
-    "luci-light",
-    "luci-app-package-manager",
-    "luci-mod-admin-full",
-    "luci-app-firewall",
-    "luci-theme-bootstrap",
-    "luci-proto-ppp",
-    "luci-proto-ipv6",
-    "luci-base",
-    "luci-mod-status",
-    "luci-mod-system",
-    "luci-mod-network",
+# Pinned LuCI-only dependency edges. Non-LuCI C/uhttpd dependencies remain
+# outside this file inventory. The IPv6 edge is enabled by this profile.
+LUCI_PACKAGE_DEPENDENCIES: dict[str, tuple[str, ...]] = {
+    "luci-ssl": ("luci-light", "luci-app-package-manager"),
+    "luci-light": (
+        "luci-mod-admin-full", "luci-app-firewall", "luci-theme-bootstrap",
+        "luci-proto-ppp", "luci-proto-ipv6",
+    ),
+    "luci-mod-admin-full": (
+        "luci-base", "luci-mod-status", "luci-mod-system", "luci-mod-network",
+    ),
+    "luci-mod-status": ("luci-base",),
+    "luci-mod-system": ("luci-base",),
+    "luci-mod-network": ("luci-base", "luci-lib-uqr"),
+    "luci-app-package-manager": ("luci-base",),
+    "luci-app-firewall": ("luci-base",),
+    "luci-theme-bootstrap": ("luci-base",),
+    "luci-proto-ppp": (),
+    "luci-proto-ipv6": (),
+    "luci-base": (),
+    "luci-lib-uqr": (),
+}
+PACKAGE_DEPENDENCY_SOURCES = {
+    "luci-ssl": "collections/luci-ssl/Makefile",
+    "luci-light": "collections/luci-light/Makefile",
+    "luci-mod-admin-full": "modules/luci-mod-admin-full/Makefile",
+    "luci-mod-status": "modules/luci-mod-status/Makefile",
+    "luci-mod-system": "modules/luci-mod-system/Makefile",
+    "luci-mod-network": "modules/luci-mod-network/Makefile",
+    "luci-app-package-manager": "applications/luci-app-package-manager/Makefile",
+    "luci-app-firewall": "applications/luci-app-firewall/Makefile",
+    "luci-theme-bootstrap": "themes/luci-theme-bootstrap/Makefile",
+    "luci-proto-ppp": "protocols/luci-proto-ppp/Makefile",
+    "luci-proto-ipv6": "protocols/luci-proto-ipv6/Makefile",
+    "luci-base": "modules/luci-base/Makefile",
+    "luci-lib-uqr": "libs/luci-lib-uqr/Makefile",
+}
+
+
+def luci_package_closure(seed: str) -> tuple[str, ...]:
+    """Follow every pinned LuCI dependency edge, including transitive libraries."""
+    visited: set[str] = set()
+    ordered: list[str] = []
+
+    def visit(package: str) -> None:
+        if package in visited:
+            return
+        if package not in LUCI_PACKAGE_DEPENDENCIES:
+            raise ValueError(f"no pinned dependency evidence for {package}")
+        visited.add(package)
+        ordered.append(package)
+        for dependency in LUCI_PACKAGE_DEPENDENCIES[package]:
+            visit(dependency)
+
+    visit(seed)
+    return tuple(ordered)
+
+
+LUCI_SSL_LUCI_PACKAGES = luci_package_closure("luci-ssl")
+# Per-package htdocs/*.js counts from the pinned git tree, before minification.
+JS_FILES_BY_PACKAGE = {
+    "luci-ssl": 0, "luci-light": 0, "luci-mod-admin-full": 0,
+    "luci-app-package-manager": 1, "luci-app-firewall": 7,
+    "luci-theme-bootstrap": 2, "luci-proto-ppp": 5, "luci-proto-ipv6": 8,
+    "luci-base": 17, "luci-mod-status": 21, "luci-mod-system": 17,
+    "luci-mod-network": 9, "luci-lib-uqr": 1,
+}
+ADDITIONAL_FILE_EVIDENCE = (
+    {
+        "package": "luci-lib-uqr",
+        "dependency_source": "modules/luci-mod-network/Makefile",
+        "source": "libs/luci-lib-uqr/htdocs/luci-static/resources/uqr.js",
+        "kind": "htdocs",
+        "rel": "luci-static/resources/uqr.js",
+        "installed": "/www/luci-static/resources/uqr.js",
+        "source_blob": "8d8ad4a31a8edc77eef187205d81922cfbf5deab",
+        "analysis": "JavaScript; Track A not staffed; not a ucode routing row",
+    },
 )
 
 C_NOT_ANALYZED = (
@@ -60,8 +121,6 @@ COMMON_ASSUMPTIONS = [
     "Transcribed from luci pin b2e0be4b luci.mk install rules and file "
     "contents; not a new query run and not a live make install.",
     "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-    "basename is not a sanitizer. shellquote is not a sanitizer unless a "
-    "complete-argument barrier is already modeled.",
     "This slice does not rewrite the luci emitter, does not invent luci-ssl "
     "grants, and does not claim path_found.",
     "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction "
@@ -104,7 +163,7 @@ def classify_installed(
     shebang: Optional[str] = None,
     content_prefix: str = "",
 ) -> tuple[str, str, int]:
-    """Plan §2 route order. Returns (classification, reason, rule)."""
+    """Apply docs/file-routing.md in order; return (classification, reason, rule)."""
     rel = installed.lstrip("/")
     if rel.startswith("usr/share/rpcd/ucode/"):
         return "plain", "rpcd raw_mode plugin", 1
@@ -330,7 +389,7 @@ ROUTING_EVIDENCE: tuple[dict[str, Any], ...] = (
         "kind": "ucode",
         "rel": "template/themes/bootstrap/footer.ut",
         "shebang": None,
-        "content_prefix": "{% if (!blank_page): %}",
+        "content_prefix": "\t\t{% if (!blank_page): %}",
         "symlink_target": None,
         "analysis": "markup_not_modeled",
     },
@@ -396,7 +455,7 @@ SHELL_HELPERS: tuple[dict[str, Any], ...] = (
     },
 )
 
-PLAN_SEVEN_CASES = {
+EXTRACTOR_SEVEN_CASES = {
     "shebang-less-extensionless-plugin": {
         "present": True,
         "fs_path": "/usr/share/rpcd/ucode/luci",
@@ -468,13 +527,14 @@ def _routing_record(evidence: dict[str, Any], revision: str) -> dict[str, Any]:
         "conditions": [
             f"luci@{LUCI_PIN} {evidence['source']}",
             f"installed {installed} via {luci_mk}",
-            f"plan section 2 rule {rule}: {reason}",
+            f"docs/file-routing.md classification rule {rule}: {reason}",
             evidence["analysis"],
         ],
         "assumptions": list(COMMON_ASSUMPTIONS),
         "evidence_refs": [
             f"luci@{LUCI_PIN} {evidence['source']}",
             f"luci@{LUCI_PIN} luci.mk Package/install",
+            "docs/file-routing.md#classification-order",
         ],
         "unknowns": list(COMMON_UNKNOWNS),
     }
@@ -523,18 +583,57 @@ def _helper_record(evidence: dict[str, Any], revision: str) -> dict[str, Any]:
         ],
         "assumptions": COMMON_ASSUMPTIONS
         + [
-            "shell_not_analyzed. This is not a ucode shebang and not plan §2 rule 3.",
+            "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
             "Do not invent a luci-ssl ubus grant for this helper.",
         ],
         "evidence_refs": [
             f"luci@{LUCI_PIN} {evidence['source']}",
             f"luci@{LUCI_PIN} luci.mk Package/install root/",
+            "docs/file-routing.md#classification-order",
         ],
         "unknowns": COMMON_UNKNOWNS
         + [
             "file.exec matching of the helper argv is C and is not this slice",
         ],
     }
+
+
+def routing_inventory_profile(profile: dict[str, Any]) -> str:
+    """Resolve explicit file-routing ownership, never authorization inheritance.
+
+    Only a declared routing_only reference to this profile's base_profile can
+    select a different inventory profile. Record profile keys remain intact.
+    """
+    requested = profile["profile"]
+    source = profile.get("files_inventory_profile", requested)
+    if source != requested and (
+        profile.get("files_inventory_inheritance") != "routing_only"
+        or profile.get("base_profile") != source
+    ):
+        raise ValueError("cross-profile file routing requires explicit routing_only inheritance")
+    return source
+
+
+def find_routing_record(
+    profile: dict[str, Any], records: list[dict[str, Any]],
+    fs_path: str, revision: str,
+) -> Optional[dict[str, Any]]:
+    """Resolve a routing row by exact revision, inventory profile and path.
+
+    Grants, decisions, handler effects and helper inventory are excluded. The
+    returned record retains its inventory profile; no record is retagged.
+    """
+    source = routing_inventory_profile(profile)
+    matches = [
+        row for row in records
+        if row.get("record_type") == "routing"
+        and row.get("corpus_revision") == revision
+        and row.get("profile") == source
+        and row.get("fs_path") == fs_path
+    ]
+    if len(matches) > 1:
+        raise ValueError(f"duplicate routing records for {source}:{fs_path}")
+    return matches[0] if matches else None
 
 
 def build_records(repo_root: Path = REPO_ROOT) -> list[dict[str, Any]]:

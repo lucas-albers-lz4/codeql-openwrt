@@ -16,6 +16,7 @@
     "helper_chain": "callPackageVersionCheck('netifd') -> named popen from fs"
   },
   "files_inventory": "reports/m4-luci-ssl-files.json",
+  "files_inventory_profile": "luci-ssl-25.12",
   "files_preview": [
     {
       "source": "modules/luci-base/root/usr/share/rpcd/ucode/luci",

@@ -17,7 +17,15 @@ from corpus.luci_ssl_files import (  # noqa: E402
     C_NOT_ANALYZED,
     INVENTORY,
     LUCI_SSL_LUCI_PACKAGES,
-    PLAN_SEVEN_CASES,
+    EXTRACTOR_SEVEN_CASES,
+    ADDITIONAL_FILE_EVIDENCE,
+    JS_FILES_BY_PACKAGE,
+    LUCI_PACKAGE_DEPENDENCIES,
+    LUCI_PIN,
+    PACKAGE_DEPENDENCY_SOURCES,
+    find_routing_record,
+    luci_package_closure,
+    routing_inventory_profile,
     PRODUCER,
     build_records,
     classify_installed,
@@ -148,16 +156,16 @@ class TestLuciSslFiles(unittest.TestCase):
             "/usr/share/rpcd/ucode/luci",
         )
 
-    def test_plan_seven_cases_are_honest_about_absence(self) -> None:
+    def test_extractor_seven_cases_are_honest_about_absence(self) -> None:
         by_path = {row["fs_path"]: row for row in self.rows}
-        for name, spec in PLAN_SEVEN_CASES.items():
+        for name, spec in EXTRACTOR_SEVEN_CASES.items():
             if spec["present"]:
                 self.assertIn(spec["fs_path"], by_path, name)
             else:
                 self.assertIsNone(spec["fs_path"], name)
-        self.assertFalse(PLAN_SEVEN_CASES["shebang-libexec-ucode"]["present"])
-        self.assertFalse(PLAN_SEVEN_CASES["dot-uc-rpcd-plugin"]["present"])
-        self.assertFalse(PLAN_SEVEN_CASES["ut-under-rpcd"]["present"])
+        self.assertFalse(EXTRACTOR_SEVEN_CASES["shebang-libexec-ucode"]["present"])
+        self.assertFalse(EXTRACTOR_SEVEN_CASES["dot-uc-rpcd-plugin"]["present"])
+        self.assertFalse(EXTRACTOR_SEVEN_CASES["ut-under-rpcd"]["present"])
         for helper in (
             "/usr/libexec/syslog-wrapper",
             "/usr/libexec/luci-peeraddr",
@@ -181,18 +189,11 @@ class TestLuciSslFiles(unittest.TestCase):
         self.assertEqual(
             LUCI_SSL_LUCI_PACKAGES,
             (
-                "luci-ssl",
-                "luci-light",
+                "luci-ssl", "luci-light", "luci-mod-admin-full",
+                "luci-base", "luci-mod-status", "luci-mod-system",
+                "luci-mod-network", "luci-lib-uqr", "luci-app-firewall",
+                "luci-theme-bootstrap", "luci-proto-ppp", "luci-proto-ipv6",
                 "luci-app-package-manager",
-                "luci-mod-admin-full",
-                "luci-app-firewall",
-                "luci-theme-bootstrap",
-                "luci-proto-ppp",
-                "luci-proto-ipv6",
-                "luci-base",
-                "luci-mod-status",
-                "luci-mod-system",
-                "luci-mod-network",
             ),
         )
         for name in C_NOT_ANALYZED:
@@ -210,6 +211,85 @@ class TestLuciSslFiles(unittest.TestCase):
         unknowns = " ".join(self.profile["unknowns"])
         self.assertNotIn("not in wave 1", unknowns)
         self.assertIn("c_plugin_not_analyzed", unknowns)
+
+    def test_transitive_uqr_dependency_and_javascript_evidence(self) -> None:
+        self.assertIn("luci-lib-uqr", LUCI_PACKAGE_DEPENDENCIES["luci-mod-network"])
+        self.assertEqual(luci_package_closure("luci-mod-network"),
+                         ("luci-mod-network", "luci-base", "luci-lib-uqr"))
+        self.assertEqual(PACKAGE_DEPENDENCY_SOURCES["luci-mod-network"],
+                         "modules/luci-mod-network/Makefile")
+        self.assertEqual(set(JS_FILES_BY_PACKAGE), set(LUCI_SSL_LUCI_PACKAGES))
+        self.assertEqual(JS_FILES_BY_PACKAGE["luci-lib-uqr"], 1)
+        self.assertEqual(sum(JS_FILES_BY_PACKAGE.values()), 88)
+        asset, = ADDITIONAL_FILE_EVIDENCE
+        self.assertEqual(asset["source"],
+                         "libs/luci-lib-uqr/htdocs/luci-static/resources/uqr.js")
+        self.assertEqual(asset["installed"], luci_mk_installed(asset["kind"], asset["rel"]))
+        self.assertEqual(asset["installed"], "/www/luci-static/resources/uqr.js")
+        self.assertFalse(any(row["fs_path"] == asset["installed"] for row in self.rows))
+        coverage = _load(REPO / "reports" / "m4-luci-ssl-files-coverage.json")
+        self.assertEqual(coverage["luci_package_closure"], list(LUCI_SSL_LUCI_PACKAGES))
+        self.assertEqual(coverage["package_dependency_evidence"], [
+            {"package": name, "source": PACKAGE_DEPENDENCY_SOURCES[name],
+             "luci_dependencies": list(LUCI_PACKAGE_DEPENDENCIES[name]), "pin": LUCI_PIN}
+            for name in LUCI_SSL_LUCI_PACKAGES
+        ])
+        self.assertEqual(coverage["javascript_files_by_package"], JS_FILES_BY_PACKAGE)
+        self.assertEqual(coverage["javascript_files_total"], 88)
+        self.assertEqual(coverage["additional_file_evidence"], list(ADDITIONAL_FILE_EVIDENCE))
+
+    def test_routing_only_inheritance_preserves_exact_authorization_profiles(self) -> None:
+        variant = _load(REPO / "corpus" / "profiles" /
+                        "luci-ssl-25.12-no-ubusauth" / "profile.json")
+        self.assertEqual(variant["files_inventory_inheritance"], "routing_only")
+        self.assertEqual(routing_inventory_profile(variant), self.profile["profile"])
+        self.assertEqual(routing_inventory_profile(self.profile), self.profile["profile"])
+        for item in variant["files_preview"]:
+            row = find_routing_record(variant, self.rows, item["installed"], self.lock_hash)
+            self.assertIsNotNone(row)
+            self.assertEqual(row["classification"], item["classification"])
+            self.assertEqual(row["profile"], "luci-ssl-25.12")
+        path = "/usr/share/rpcd/ucode/luci"
+        routing = find_routing_record(variant, self.rows, path, self.lock_hash)
+        for record_type in ("policy_grant", "policy_decision", "handler_effect",
+                            "taint_path", "exec_helper_inventory"):
+            other = {**routing, "record_type": record_type}
+            self.assertIsNone(find_routing_record(variant, [other], path, self.lock_hash))
+        self.assertIsNone(find_routing_record(variant, self.rows, path, "sha256:other"))
+        self.assertIsNone(find_routing_record(variant, self.rows, "/missing", self.lock_hash))
+        self.assertEqual([row for row in self.rows
+                          if row["profile"] == variant["profile"]], [])
+        self.assertEqual([row for row in self.grants
+                          if row["profile"] == variant["profile"]], [])
+        decisions = _load(REPO / "policy" / "no_ubusauth_decisions.json")
+        self.assertEqual(decisions["profile"], variant["profile"])
+        self.assertTrue(all(row["profile"] == variant["profile"]
+                            for row in decisions["decisions"]))
+        undeclared = {key: value for key, value in variant.items()
+                      if key != "files_inventory_inheritance"}
+        with self.assertRaises(ValueError):
+            routing_inventory_profile(undeclared)
+        with self.assertRaises(ValueError):
+            routing_inventory_profile({**variant, "files_inventory_profile": "other"})
+        with self.assertRaises(ValueError):
+            find_routing_record(variant, [routing, routing], path, self.lock_hash)
+
+    def test_self_contained_routing_precedence(self) -> None:
+        # Conflicting signals prove first-match ordering, rather than only
+        # testing each rule in isolation.
+        cases = (
+            ("/usr/share/rpcd/ucode/plugin.ut", "#!/usr/bin/ucode", "{%", "plain", 1),
+            ("/tmp/template.ut", "#!/usr/bin/ucode", "{%", "markup", 2),
+            ("/tmp/script.uc", "#!/usr/bin/ucode", "{%", "plain", 3),
+            ("/tmp/template.uc", None, "  {%", "markup", 4),
+            ("/usr/share/ucode/lib.uc", None, "// plain", "plain", 5),
+            ("/usr/share/ucode/extensionless", None, "", "uncertain", 6),
+        )
+        for path, shebang, prefix, classification, rule in cases:
+            result = classify_installed(path, shebang, prefix)
+            self.assertEqual((result[0], result[2]), (classification, rule))
+        with self.assertRaises(ValueError):
+            classify_installed("/www/luci-static/resources/uqr.js", None, "")
 
     def test_luci_emitter_and_handler_effects_are_unchanged(self) -> None:
         methods = {row["method"] for row in self.grants if row.get("ingress") == "ubus_http"}

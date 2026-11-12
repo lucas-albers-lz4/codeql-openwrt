@@ -19,19 +19,19 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci",
       "installed /usr/share/rpcd/ucode/luci via luci.mk root/ -> installed",
-      "plan section 2 rule 1: rpcd raw_mode plugin",
+      "docs/file-routing.md classification rule 1: rpcd raw_mode plugin",
       "extracted basename luci (M1/M3); remaining methods inventoried separately"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -58,19 +58,19 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/sys.uc",
       "installed /usr/share/ucode/luci/sys.uc via luci.mk ucode/ -> installed",
-      "plan section 2 rule 5: .uc/.ucode",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
       "extracted basename sys.uc for luci.sys helpers"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/sys.uc",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -97,20 +97,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/dispatcher.uc",
       "installed /usr/share/ucode/luci/dispatcher.uc via luci.mk ucode/ -> installed",
-      "plan section 2 rule 5: .uc/.ucode",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
       "plain .uc; dispatcher ingress not staffed"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Dispatcher ingress and menu.d are not staffed; this is routing only."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/dispatcher.uc",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -137,20 +137,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/http.uc",
       "installed /usr/share/ucode/luci/http.uc via luci.mk ucode/ -> installed",
-      "plan section 2 rule 5: .uc/.ucode",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
       "plain .uc; dispatcher support not staffed"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Dispatcher ingress and menu.d are not staffed; this is routing only."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/http.uc",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -177,20 +177,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/runtime.uc",
       "installed /usr/share/ucode/luci/runtime.uc via luci.mk ucode/ -> installed",
-      "plan section 2 rule 5: .uc/.ucode",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
       "plain .uc; dispatcher support not staffed"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Dispatcher ingress and menu.d are not staffed; this is routing only."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/runtime.uc",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -217,19 +217,19 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/zoneinfo.uc",
       "installed /usr/share/ucode/luci/zoneinfo.uc via luci.mk ucode/ -> installed",
-      "plan section 2 rule 5: .uc/.ucode",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
       "plain .uc; not extracted in this slice"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/zoneinfo.uc",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -256,20 +256,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/controller/admin/index.uc",
       "installed /usr/share/ucode/luci/controller/admin/index.uc via luci.mk ucode/ -> installed",
-      "plan section 2 rule 5: .uc/.ucode",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
       "plain .uc; dispatcher controller not staffed"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Dispatcher ingress and menu.d are not staffed; this is routing only."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/controller/admin/index.uc",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -296,20 +296,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/controller/admin/uci.uc",
       "installed /usr/share/ucode/luci/controller/admin/uci.uc via luci.mk ucode/ -> installed",
-      "plan section 2 rule 5: .uc/.ucode",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
       "plain .uc; dispatcher controller not staffed"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Dispatcher ingress and menu.d are not staffed; this is routing only."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/controller/admin/uci.uc",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -336,13 +336,12 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/uhttpd.uc",
       "installed /usr/share/ucode/luci/uhttpd.uc via luci.mk ucode/ -> installed",
-      "plan section 2 rule 4: tagged markup content",
+      "docs/file-routing.md classification rule 4: tagged markup content",
       "markup_not_modeled; luci-base postinst ucode_prefix /cgi-bin/luci=/usr/share/ucode/luci/uhttpd.uc; dispatcher ingress not staffed"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar.",
@@ -350,7 +349,8 @@
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/uhttpd.uc",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -377,20 +377,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/csrftoken.ut",
       "installed /usr/share/ucode/luci/template/csrftoken.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/csrftoken.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -417,20 +417,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/error404.ut",
       "installed /usr/share/ucode/luci/template/error404.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/error404.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -457,20 +457,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/error500.ut",
       "installed /usr/share/ucode/luci/template/error500.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/error500.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -497,20 +497,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/footer.ut",
       "installed /usr/share/ucode/luci/template/footer.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/footer.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -537,20 +537,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/header.ut",
       "installed /usr/share/ucode/luci/template/header.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/header.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -577,20 +577,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/sysauth.ut",
       "installed /usr/share/ucode/luci/template/sysauth.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/sysauth.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -617,20 +617,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/view.ut",
       "installed /usr/share/ucode/luci/template/view.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/view.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -657,20 +657,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/htdocs/cgi-bin/luci",
       "installed /www/cgi-bin/luci via luci.mk htdocs/ -> installed",
-      "plan section 2 rule 3: shebang ucode",
+      "docs/file-routing.md classification rule 3: shebang ucode",
       "plain shebang CGI at /www/cgi-bin/luci; imports luci.dispatcher; dispatcher ingress not staffed"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Dispatcher ingress and menu.d are not staffed; this is routing only."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/htdocs/cgi-bin/luci",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -697,19 +697,19 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/src/Makefile",
       "installed /usr/share/ucode/luci/version.uc via src Package/install (core.so + generated version.uc)",
-      "plan section 2 rule 5: .uc/.ucode",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
       "generated by luci-base src install (not a git blob); plain .uc; not extracted"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/src/Makefile",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -736,20 +736,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/ucode/template/admin_status/index.ut",
       "installed /usr/share/ucode/luci/template/admin_status/index.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/ucode/template/admin_status/index.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -776,20 +776,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
       "installed /usr/share/ucode/luci/template/themes/bootstrap/header.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -812,24 +812,24 @@
     "rule": 2,
     "reason": ".ut",
     "shebang": null,
-    "content_prefix": "{% if (!blank_page): %}",
+    "content_prefix": "\t\t{% if (!blank_page): %}",
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
       "installed /usr/share/ucode/luci/template/themes/bootstrap/footer.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -856,20 +856,20 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut",
       "installed /usr/share/ucode/luci/template/themes/bootstrap/sysauth.ut via luci.mk ucode/ -> installed",
-      "plan section 2 rule 2: .ut",
+      "docs/file-routing.md classification rule 2: .ut",
       "markup_not_modeled"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Markup classification is markup_not_modeled; no second grammar."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -896,21 +896,21 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
       "installed /usr/share/ucode/luci/template/themes/bootstrap-dark via luci.mk ucode/ -> installed",
-      "plan section 2 rule 6: remaining usr/share/ucode",
+      "docs/file-routing.md classification rule 6: remaining usr/share/ucode",
       "extensionless symlink to bootstrap/ .ut directory; remaining usr/share/ucode",
       "git symlink -> bootstrap"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Unresolved remaining usr/share/ucode path is uncertain, not extracted."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -938,21 +938,21 @@
     "conditions": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light",
       "installed /usr/share/ucode/luci/template/themes/bootstrap-light via luci.mk ucode/ -> installed",
-      "plan section 2 rule 6: remaining usr/share/ucode",
+      "docs/file-routing.md classification rule 6: remaining usr/share/ucode",
       "extensionless symlink to bootstrap/ .ut directory; remaining usr/share/ucode",
       "git symlink -> bootstrap"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
       "Unresolved remaining usr/share/ucode path is uncertain, not extracted."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -986,15 +986,15 @@
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
-      "shell_not_analyzed. This is not a ucode shebang and not plan \u00a72 rule 3.",
+      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
       "Do not invent a luci-ssl ubus grant for this helper."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/libexec/syslog-wrapper",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -1028,15 +1028,15 @@
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
-      "shell_not_analyzed. This is not a ucode shebang and not plan \u00a72 rule 3.",
+      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
       "Do not invent a luci-ssl ubus grant for this helper."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/libexec/luci-peeraddr",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
@@ -1070,15 +1070,15 @@
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
-      "basename is not a sanitizer. shellquote is not a sanitizer unless a complete-argument barrier is already modeled.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
-      "shell_not_analyzed. This is not a ucode shebang and not plan \u00a72 rule 3.",
+      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
       "Do not invent a luci-ssl ubus grant for this helper."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/root/usr/libexec/package-manager-call",
-      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/"
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
+      "docs/file-routing.md#classification-order"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
