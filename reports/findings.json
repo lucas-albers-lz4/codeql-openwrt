@@ -1,0 +1,55 @@
+[
+  {
+    "record_type": "taint_path",
+    "evidence_status": "path_found",
+    "producer": "step3",
+    "record_id": "m3:getfeatures-netifd-popen",
+    "corpus_revision": "luci:b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "assumptions": [
+      "TreeSitter same-file call resolution only",
+      "popen is the named import from fs in this file"
+    ],
+    "unknowns": [
+      "M2 policy join pending"
+    ]
+  },
+  {
+    "record_type": "taint_path",
+    "evidence_status": "path_found",
+    "producer": "step3",
+    "record_id": "m3:synthetic-taint-pos",
+    "corpus_revision": "luci:b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-v1",
+    "sink_kind": "popen",
+    "assessment": "unassessed",
+    "assumptions": [
+      "Synthetic fixture taint_pos; not stock firmware"
+    ],
+    "unknowns": []
+  },
+  {
+    "record_type": "taint_path",
+    "evidence_status": "no_path",
+    "producer": "step3",
+    "record_id": "m3:synthetic-taint-neg",
+    "corpus_revision": "luci:b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-v1",
+    "sink_kind": "popen",
+    "assessment": "unassessed",
+    "assumptions": [
+      "Synthetic fixture taint_neg; request.args is unused"
+    ],
+    "unknowns": []
+  }
+]

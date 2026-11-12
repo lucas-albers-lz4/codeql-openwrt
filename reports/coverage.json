@@ -1,0 +1,32 @@
+{
+  "analysis_revision": "step3:getfeatures-v1",
+  "profile": "luci-ssl-25.12",
+  "entrypoint_id": "ubus_http:luci.getFeatures",
+  "status": "partial",
+  "extracted_files": ["luci", "taint_pos", "taint_neg"],
+  "analyzed": [
+    "same-file callPackageVersionCheck",
+    "named popen from fs",
+    "builtin system inventory",
+    "syntactic local request.args taint"
+  ],
+  "resolved_calls": [
+    "callPackageVersionCheck",
+    "popen",
+    "system"
+  ],
+  "unmodeled_branches": [
+    "getFeatures hostapd/wpa_supplicant system() template probes",
+    "getFeatures dnsmasq/odhcpd/ipset popen",
+    "non-getFeatures methods in luci (including request.args switch popen)"
+  ],
+  "unsupported_constructs": [
+    "generated AST.qll/CFG.qll (not imported)",
+    "global dataflow/SSA"
+  ],
+  "trusted_summaries": [],
+  "unknowns": [
+    "M2 grants.json join pending until policy oracle PR",
+    "live uhttpd/session.access not executed from this pack"
+  ]
+}
