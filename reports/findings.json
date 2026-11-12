@@ -18,8 +18,13 @@
       "TreeSitter same-file call resolution only",
       "popen is the named import from fs in this file"
     ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "ql/src/m3/GetFeaturesPopen.ql",
+      "ql/src/m3/GetFeaturesHelperTaint.ql"
+    ],
     "unknowns": [
-      "M2 policy join pending"
+      "live uhttpd/rpcd not executed"
     ]
   },
   {

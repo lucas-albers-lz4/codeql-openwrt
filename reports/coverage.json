@@ -26,7 +26,7 @@
   ],
   "trusted_summaries": [],
   "unknowns": [
-    "M2 grants.json join pending until policy oracle PR",
-    "live uhttpd/session.access not executed from this pack"
+    "live uhttpd/rpcd not executed; M2 uses a C double of parse + session.access matching",
+    "generated AST.qll/CFG.qll are not imported"
   ]
 }
