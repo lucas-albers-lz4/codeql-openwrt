@@ -1,0 +1,35 @@
+{
+  "analysis_revision": "step3:luci-fixed-exec-v1",
+  "profile": "luci-ssl-25.12",
+  "status": "partial",
+  "extracted_files": ["luci"],
+  "analyzed": [
+    "getBlockDevices.call named fs popen of literal /sbin/block info",
+    "setBlockDetect.call builtin system of literal /sbin/block detect",
+    "setLocaltime.call extra builtin system of literal /etc/init.d/sysfixtime restart",
+    "M2 policy-facts grants for luci-mod-system-mounts (analysis_revision policy:ubus-luci-exec-methods-v2); setLocaltime grants unchanged besides revision bump"
+  ],
+  "call_sites": [
+    {"line": 112, "method": "setLocaltime", "kind": "system", "command": "/etc/init.d/sysfixtime restart"},
+    {"line": 481, "method": "getBlockDevices", "kind": "popen", "command": "/sbin/block info"},
+    {"line": 532, "method": "setBlockDetect", "kind": "system", "command": "/sbin/block detect > /etc/config/fstab"}
+  ],
+  "negative_controls": [
+    "getBlockDevices/setBlockDetect take no request.args",
+    "not luci.sys helpers at this pin",
+    "not path_found"
+  ],
+  "unmodeled_branches": [
+    "getBlockDevices readfile of /sys/class/block/${dev}/size (not exec)",
+    "getRealtimeStats flags reassignment and setPassword u/p barrier stay on the request.args inventory"
+  ],
+  "unsupported_constructs": [
+    "generated AST.qll/CFG.qll (not imported)",
+    "global dataflow/SSA",
+    "shellquote as a sanitizer",
+    "basename as a sanitizer"
+  ],
+  "unknowns": [
+    "live uhttpd/rpcd not executed"
+  ]
+}

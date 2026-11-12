@@ -1,7 +1,7 @@
 {
   "producer": "policy_facts",
   "profile": "luci-ssl-25.12",
-  "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+  "analysis_revision": "policy:ubus-luci-exec-methods-v2",
   "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
   "pins": {
     "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
@@ -11,7 +11,7 @@
     "lockfile": "corpus/lock.json",
     "first_endpoint": "ubus_http:luci.getFeatures"
   },
-  "scope": "/ubus luci.getFeatures plus five inventoried request.args exec methods; literal object/method names",
+  "scope": "/ubus luci.getFeatures plus inventoried request.args exec methods and getBlockDevices/setBlockDetect; literal object/method names",
   "harness": {
     "canonical": "python3 -m policy emit",
     "c_double": "policy/c_double/uh_ubus_policy.c",
@@ -32,7 +32,7 @@
   ],
   "unknowns": [
     "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-    "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+    "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
   ],
   "decisions": [
     {
@@ -42,7 +42,7 @@
       "record_id": "policy:decision:unauthenticated-getFeatures-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "unauthenticated",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getFeatures",
@@ -109,7 +109,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getFeatures",
       "op": "invoke",
@@ -130,7 +130,7 @@
       "record_id": "policy:decision:unauthenticated-setPassword-deny",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "unauthenticated",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.setPassword",
@@ -200,7 +200,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.setPassword",
       "op": "invoke",
@@ -218,7 +218,7 @@
       "record_id": "policy:decision:missing-sid-parse-error",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getFeatures",
       "ubus_object": "luci",
@@ -265,7 +265,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "jsonrpc_error": {
         "code": -32700,
@@ -285,7 +285,7 @@
       "record_id": "policy:decision:root-star-getFeatures-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "root",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getFeatures",
@@ -350,7 +350,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getFeatures",
       "op": "invoke",
@@ -372,7 +372,7 @@
       "record_id": "policy:decision:unauthenticated-getSwconfigFeatures-deny",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "unauthenticated",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
@@ -442,7 +442,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getSwconfigFeatures",
       "op": "invoke",
@@ -460,7 +460,7 @@
       "record_id": "policy:decision:unauthenticated-getSwconfigPortState-deny",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "unauthenticated",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
@@ -530,7 +530,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getSwconfigPortState",
       "op": "invoke",
@@ -548,7 +548,7 @@
       "record_id": "policy:decision:unauthenticated-getRealtimeStats-deny",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "unauthenticated",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getRealtimeStats",
@@ -618,7 +618,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getRealtimeStats",
       "op": "invoke",
@@ -636,7 +636,7 @@
       "record_id": "policy:decision:unauthenticated-setLocaltime-deny",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "unauthenticated",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.setLocaltime",
@@ -706,7 +706,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.setLocaltime",
       "op": "invoke",
@@ -724,7 +724,7 @@
       "record_id": "policy:decision:luci-mod-network-config-getSwconfigFeatures-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "luci-mod-network-config",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
@@ -790,7 +790,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getSwconfigFeatures",
       "op": "invoke",
@@ -812,7 +812,7 @@
       "record_id": "policy:decision:luci-mod-network-config-getSwconfigPortState-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "luci-mod-network-config",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
@@ -878,7 +878,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getSwconfigPortState",
       "op": "invoke",
@@ -900,7 +900,7 @@
       "record_id": "policy:decision:luci-mod-status-realtime-getRealtimeStats-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "luci-mod-status-realtime",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getRealtimeStats",
@@ -966,7 +966,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getRealtimeStats",
       "op": "invoke",
@@ -988,7 +988,7 @@
       "record_id": "policy:decision:luci-mod-system-config-setPassword-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "luci-mod-system-config",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.setPassword",
@@ -1054,7 +1054,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.setPassword",
       "op": "invoke",
@@ -1076,7 +1076,7 @@
       "record_id": "policy:decision:luci-mod-system-config-setLocaltime-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "luci-mod-system-config",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.setLocaltime",
@@ -1142,7 +1142,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.setLocaltime",
       "op": "invoke",
@@ -1164,7 +1164,7 @@
       "record_id": "policy:decision:root-star-getSwconfigFeatures-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "root",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
@@ -1229,7 +1229,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getSwconfigFeatures",
       "op": "invoke",
@@ -1251,7 +1251,7 @@
       "record_id": "policy:decision:root-star-getSwconfigPortState-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "root",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
@@ -1316,7 +1316,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getSwconfigPortState",
       "op": "invoke",
@@ -1338,7 +1338,7 @@
       "record_id": "policy:decision:root-star-getRealtimeStats-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "root",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.getRealtimeStats",
@@ -1403,7 +1403,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.getRealtimeStats",
       "op": "invoke",
@@ -1425,7 +1425,7 @@
       "record_id": "policy:decision:root-star-setPassword-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "root",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.setPassword",
@@ -1490,7 +1490,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.setPassword",
       "op": "invoke",
@@ -1512,7 +1512,7 @@
       "record_id": "policy:decision:root-star-setLocaltime-allow",
       "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
       "profile": "luci-ssl-25.12",
-      "analysis_revision": "policy:ubus-luci-exec-methods-v1",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
       "session_class": "root",
       "ingress": "ubus_http",
       "entrypoint_id": "ubus_http:luci.setLocaltime",
@@ -1577,7 +1577,7 @@
       ],
       "unknowns": [
         "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the five inventoried request.args exec methods; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
       ],
       "target_id": "ubus:luci.setLocaltime",
       "op": "invoke",
@@ -1589,6 +1589,532 @@
         "scope": "ubus",
         "object": "luci",
         "function": "setLocaltime",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-getBlockDevices-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+      "session_class": "unauthenticated",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBlockDevices",
+      "ubus_object": "luci",
+      "method": "getBlockDevices",
+      "outcome": "deny",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.read.ubus.luci includes getBlockDevices; unauthenticated does not",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed false -> ERROR_ACCESS (-32002)",
+        "do not invent an unauthenticated grant for getBlockDevices"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "00000000000000000000000000000000",
+            "object": "luci",
+            "function": "getBlockDevices"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getBlockDevices",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#unauthenticated-getBlockDevices-deny",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+      ],
+      "target_id": "ubus:luci.getBlockDevices",
+      "op": "invoke",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-setBlockDetect-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+      "session_class": "unauthenticated",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setBlockDetect",
+      "ubus_object": "luci",
+      "method": "setBlockDetect",
+      "outcome": "deny",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.luci includes setBlockDetect; unauthenticated does not",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed false -> ERROR_ACCESS (-32002)",
+        "do not invent an unauthenticated grant for setBlockDetect"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "00000000000000000000000000000000",
+            "object": "luci",
+            "function": "setBlockDetect"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "setBlockDetect",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#unauthenticated-setBlockDetect-deny",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+      ],
+      "target_id": "ubus:luci.setBlockDetect",
+      "op": "invoke",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-mounts-getBlockDevices-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBlockDevices",
+      "ubus_object": "luci",
+      "method": "getBlockDevices",
+      "outcome": "allow",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "input_rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts.read.ubus.luci=[getBlockDevices, getMountPoints]",
+        "fixture rpcd.config login luci-mod-system-mounts list read/write luci-mod-system-mounts",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+        "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getBlockDevices"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "11111111111111111111111111111111",
+            "object": "luci",
+            "function": "getBlockDevices"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getBlockDevices",
+          "match": "literal",
+          "acl_group": "luci-mod-system-mounts",
+          "acl_source": "luci-mod-system.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#luci-mod-system-mounts-getBlockDevices-allow",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+      ],
+      "target_id": "ubus:luci.getBlockDevices",
+      "op": "invoke",
+      "expectation_id": "luci-mod-system-mounts",
+      "assessment": "intended_access",
+      "synthetic_session": true,
+      "matched_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getBlockDevices",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-mounts-setBlockDetect-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setBlockDetect",
+      "ubus_object": "luci",
+      "method": "setBlockDetect",
+      "outcome": "allow",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "input_rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts.write.ubus.luci=[setBlockDetect]",
+        "fixture rpcd.config login luci-mod-system-mounts list read/write luci-mod-system-mounts",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+        "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/setBlockDetect"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "11111111111111111111111111111111",
+            "object": "luci",
+            "function": "setBlockDetect"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "setBlockDetect",
+          "match": "literal",
+          "acl_group": "luci-mod-system-mounts",
+          "acl_source": "luci-mod-system.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#luci-mod-system-mounts-setBlockDetect-allow",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+      ],
+      "target_id": "ubus:luci.setBlockDetect",
+      "op": "invoke",
+      "expectation_id": "luci-mod-system-mounts",
+      "assessment": "intended_access",
+      "synthetic_session": true,
+      "matched_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "setBlockDetect",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-getBlockDevices-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBlockDevices",
+      "ubus_object": "luci",
+      "method": "getBlockDevices",
+      "outcome": "allow",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-mounts\", 0) matches",
+        "luci-mod-system-mounts still contributes luci.getBlockDevices to the root session"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "object": "luci",
+            "function": "getBlockDevices"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getBlockDevices",
+          "match": "literal",
+          "acl_group": "luci-mod-system-mounts",
+          "acl_source": "luci-mod-system.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#root-star-getBlockDevices-allow",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+      ],
+      "target_id": "ubus:luci.getBlockDevices",
+      "op": "invoke",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getBlockDevices",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-setBlockDetect-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setBlockDetect",
+      "ubus_object": "luci",
+      "method": "setBlockDetect",
+      "outcome": "allow",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-mounts\", 0) matches",
+        "luci-mod-system-mounts still contributes luci.setBlockDetect to the root session"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "object": "luci",
+            "function": "setBlockDetect"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "setBlockDetect",
+          "match": "literal",
+          "acl_group": "luci-mod-system-mounts",
+          "acl_source": "luci-mod-system.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#root-star-setBlockDetect-allow",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "M2 loads rpcd unauthenticated.json, luci-base.json, luci-mod-network.json, luci-mod-status.json, and luci-mod-system.json. Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect; file.exec, cgi-io, and hostapd.* grants in those files are not emitted."
+      ],
+      "target_id": "ubus:luci.setBlockDetect",
+      "op": "invoke",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "setBlockDetect",
         "source": "luci-mod-system.json"
       }
     }

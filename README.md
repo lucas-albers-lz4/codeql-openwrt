@@ -6,11 +6,12 @@ The ucode CodeQL language pack lives in [codeql-ucode](https://github.com/lucas-
 
 First slice: `/ubus` → `luci.getFeatures` → `callPackageVersionCheck('netifd')` → named `popen` from `'fs'`. Findings are evidence, not proof.
 
-See [docs/pack-contract.md](docs/pack-contract.md), `corpus/lock.json`, and [policy/README.md](policy/README.md) for the M2 `/ubus` luci policy oracle (`getFeatures` plus inventoried request.args exec methods) and the cgi-backup C oracle (`sensitive_backup_read`).
+See [docs/pack-contract.md](docs/pack-contract.md), `corpus/lock.json`, and [policy/README.md](policy/README.md) for the M2 `/ubus` luci policy oracle (`getFeatures` plus inventoried exec methods) and the cgi-backup C oracle (`sensitive_backup_read`).
 
 Canonical handler effects and grant joins: [reports/handler_effects.md](reports/handler_effects.md).
 
 M4 request.args inventory: [reports/m4-request-args.md](reports/m4-request-args.md).
+M4 fixed `/sbin/block` exec and `setLocaltime` sysfixtime: [reports/m4-block-device-exec.md](reports/m4-block-device-exec.md).
 M4 getFeatures direct helpers: [reports/m4-getfeatures-direct-exec.md](reports/m4-getfeatures-direct-exec.md).
 M4 `shellquote` complete-argument barrier: [reports/m4-shellquote.md](reports/m4-shellquote.md). `shellquote` is not a global sanitizer.
 M4 imported callee: [reports/m4-imported-callee.md](reports/m4-imported-callee.md). `setInitAction` → `luci.sys` `init_action` is `inconclusive` under the M3 extract set (`unresolved_call`).

@@ -12,10 +12,10 @@
     "JSON-RPC call params are [sid, object, function, data_table]. Missing SID with no_ubusauth=0 is ERROR_PARSE (-32700), not the all-zero sentinel and not rpcd file/uci if (!sid) return true.",
     "uh_ubus_allowed invokes session.access with {ubus_rpc_session, object, function} and omits scope; rpcd defaults scope to ubus.",
     "A present all-zero SID is RPC_DEFAULT_SESSION_ID and is still checked via session.access.",
-    "Unauthenticated ACLs grant only luci.getFeatures. They do not name getSwconfigFeatures, getSwconfigPortState, getRealtimeStats, setPassword, or setLocaltime.",
+    "Unauthenticated ACLs grant only luci.getFeatures. They do not name getSwconfigFeatures, getSwconfigPortState, getRealtimeStats, setPassword, setLocaltime, getBlockDevices, or setBlockDetect.",
     "Delegated fixture logins grant only the matching luci-mod-* group. Matching methods ALLOW; unauthenticated is no-grant deny.",
     "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
-    "Emission is bounded to luci.getFeatures plus those five methods. Do not emit file.exec, cgi-io, hostapd.*, or setInitAction (no luci-ssl delegated grant at this pin).",
+    "Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect. Do not emit file.exec, cgi-io, hostapd.*, or setInitAction (no luci-ssl delegated grant at this pin).",
     "no_ubusauth=1 SID rewrite exists in uhttpd ubus.c but is not a luci-ssl-25.12 profile case."
   ],
   "cases": [
@@ -446,6 +446,148 @@
         "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
         "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-config\", 0) matches",
         "luci-mod-system-config still contributes luci.setLocaltime to the root session"
+      ]
+    },
+    {
+      "id": "unauthenticated-getBlockDevices-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "object": "luci",
+      "function": "getBlockDevices",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getBlockDevices",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBlockDevices",
+      "jsonrpc_error_code": -32002,
+      "jsonrpc_error_name": "ERROR_ACCESS",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.read.ubus.luci includes getBlockDevices; unauthenticated does not",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed false -> ERROR_ACCESS (-32002)",
+        "do not invent an unauthenticated grant for getBlockDevices"
+      ]
+    },
+    {
+      "id": "unauthenticated-setBlockDetect-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "object": "luci",
+      "function": "setBlockDetect",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.setBlockDetect",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setBlockDetect",
+      "jsonrpc_error_code": -32002,
+      "jsonrpc_error_name": "ERROR_ACCESS",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.luci includes setBlockDetect; unauthenticated does not",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed false -> ERROR_ACCESS (-32002)",
+        "do not invent an unauthenticated grant for setBlockDetect"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-getBlockDevices-allow",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "object": "luci",
+      "function": "getBlockDevices",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getBlockDevices",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBlockDevices",
+      "expectation_id": "luci-mod-system-mounts",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-mounts",
+      "rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts.read.ubus.luci=[getBlockDevices, getMountPoints]",
+        "fixture rpcd.config login luci-mod-system-mounts list read/write luci-mod-system-mounts",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+        "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getBlockDevices"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-setBlockDetect-allow",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "object": "luci",
+      "function": "setBlockDetect",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.setBlockDetect",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setBlockDetect",
+      "expectation_id": "luci-mod-system-mounts",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-mounts",
+      "rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts.write.ubus.luci=[setBlockDetect]",
+        "fixture rpcd.config login luci-mod-system-mounts list read/write luci-mod-system-mounts",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+        "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/setBlockDetect"
+      ]
+    },
+    {
+      "id": "root-star-getBlockDevices-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "object": "luci",
+      "function": "getBlockDevices",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getBlockDevices",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBlockDevices",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "acl_group": "luci-mod-system-mounts",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-mounts\", 0) matches",
+        "luci-mod-system-mounts still contributes luci.getBlockDevices to the root session"
+      ]
+    },
+    {
+      "id": "root-star-setBlockDetect-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "object": "luci",
+      "function": "setBlockDetect",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.setBlockDetect",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setBlockDetect",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "acl_group": "luci-mod-system-mounts",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-mounts\", 0) matches",
+        "luci-mod-system-mounts still contributes luci.setBlockDetect to the root session"
       ]
     }
   ]
