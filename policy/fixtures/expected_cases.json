@@ -16,7 +16,7 @@
     "Delegated fixture logins grant only the matching luci-mod-* group. Matching methods ALLOW; unauthenticated is no-grant deny.",
     "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
     "Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods, getBlockDevices/setBlockDetect, and luci.sys getConntrackList/getProcessList. Do not emit file.exec, cgi-io, hostapd.*, or setInitAction (no luci-ssl delegated grant at this pin).",
-    "no_ubusauth=1 SID rewrite exists in uhttpd ubus.c but is not a luci-ssl-25.12 profile case."
+    "no_ubusauth=1 SID rewrite and uh_ubus_allowed skip are profile luci-ssl-25.12-no-ubusauth, not luci-ssl-25.12."
   ],
   "cases": [
     {

@@ -441,6 +441,44 @@ def evaluate_call(
             steps=steps,
         )
 
+    hit = sessions.get(parsed_sid)
+    resolved_class = hit.session_class if hit else None
+    if hit is not None and session_class is not None and session_class != resolved_class:
+        raise ValueError(
+            f"session_class {session_class!r} does not match SID session {resolved_class!r}"
+        )
+
+    # uhttpd ubus.c uh_ubus_handle_request_object:
+    # if (!conf.ubus_noauth && !uh_ubus_allowed(...)) ERROR_ACCESS
+    if no_ubusauth:
+        steps.append(
+            {
+                "step": "uh_ubus_allowed",
+                "invoke": "skipped",
+                "reason": "conf.ubus_noauth",
+                "result": "allow",
+                "not": [
+                    "session.access",
+                    "luci-ssl-acl-grant",
+                    "cgi_io",
+                    "dispatcher",
+                ],
+            }
+        )
+        return EvalResult(
+            outcome="allow",
+            session_class=resolved_class,
+            sid=parsed_sid,
+            object=parsed_obj,
+            function=parsed_fun,
+            data_present=True,
+            no_ubusauth=no_ubusauth,
+            sid_rewritten=rewritten,
+            matched=None,
+            jsonrpc_error=None,
+            steps=steps,
+        )
+
     steps.append(
         {
             "step": "uh_ubus_allowed",
@@ -461,12 +499,6 @@ def evaluate_call(
         }
     )
     matched = uh_ubus_allowed(sessions, parsed_sid, parsed_obj, parsed_fun)
-    hit = sessions.get(parsed_sid)
-    resolved_class = hit.session_class if hit else None
-    if hit is not None and session_class is not None and session_class != resolved_class:
-        raise ValueError(
-            f"session_class {session_class!r} does not match SID session {resolved_class!r}"
-        )
     steps.append(
         {
             "step": "rpc_session_acl_allowed",
@@ -649,6 +681,8 @@ def build_artifacts(
         result = evaluate_expected_case(case, sessions)
         decisions.append(decision_record(case, result))
         if case.get("expect_grant") and result.outcome == "allow":
+            if int(case.get("no_ubusauth", 0)):
+                raise ValueError("refusing to emit luci-ssl grant for no_ubusauth skip")
             obj = case.get("object")
             fun = case.get("function")
             if obj != M2_OBJECT or fun not in EMITTED_METHODS:

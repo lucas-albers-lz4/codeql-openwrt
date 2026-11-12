@@ -8,7 +8,7 @@
   },
   "uhttpd": {
     "no_ubusauth": 0,
-    "note": "no_ubusauth=1 is a separate profile and only affects /ubus"
+    "note": "no_ubusauth=1 is profile luci-ssl-25.12-no-ubusauth and only affects /ubus"
   },
   "first_endpoint": {
     "ingress": "ubus_http",

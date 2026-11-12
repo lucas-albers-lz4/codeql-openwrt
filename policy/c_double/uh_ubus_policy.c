@@ -1,6 +1,7 @@
 /*
  * Isolated double of:
  *   uhttpd ubus.c parse_call_params + the call-method parse/auth gate
+ *   uhttpd ubus.c conf.ubus_noauth skip of uh_ubus_allowed
  *   rpcd session.c rpc_session_acl_allowed / rpc_login_test_permission
  *
  * No live ubus/uhttpd/rpcd. Literal object/method names plus libc fnmatch.
@@ -152,6 +153,12 @@ static int cmd_decide(int argc, char **argv)
 	if (!sid || !object || !function || data_missing(data) || !data_is_table(data)) {
 		puts("ERROR_PARSE");
 		return 1;
+	}
+
+	/* uhttpd ubus.c: if (!conf.ubus_noauth && !uh_ubus_allowed(...)) */
+	if (no_ubusauth) {
+		puts("ALLOW");
+		return 0;
 	}
 
 	if (acl_match(pat_obj, pat_fun, object, function)) {

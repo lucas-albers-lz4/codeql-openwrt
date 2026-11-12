@@ -1,0 +1,36 @@
+{
+  "profile": "luci-ssl-25.12-no-ubusauth",
+  "base_profile": "luci-ssl-25.12",
+  "notes": [
+    "This is not a copy of luci-ssl ACL grants. no_ubusauth skips uh_ubus_allowed; it does not add ACL rows.",
+    "Unauthenticated luci-ssl ACLs still name only luci.getFeatures. That ACL is not consulted at this HTTP gate.",
+    "cgi-io and dispatcher admin/ubus are not this profile. Root * remains intended_access (root-administration), not authorization_violation.",
+    "Skip-allows are unassessed HTTP-gate facts, not path_found and not invented luci-ssl grants."
+  ],
+  "expectations": [
+    {
+      "expectation_id": "uhttpd-no-ubusauth-http-gate-skip",
+      "session_class": "*",
+      "ingress": "ubus_http",
+      "intended_access": [
+        {
+          "constraint": "uh_ubus_allowed_skipped",
+          "note": "uhttpd JSON-RPC method call proceeds without session.access when option no_ubusauth 1 / uhttpd -a. This is the modeled config, not an ACL grant."
+        }
+      ],
+      "denied_authority": [
+        "luci-ssl ACL grant for methods unauthenticated does not name",
+        "cgi-io session.access skip",
+        "dispatcher admin/ubus skip",
+        "path_found"
+      ],
+      "rationale": "Pinned uhttpd ubus.c calls uh_ubus_allowed only when !conf.ubus_noauth. Stock luci-ssl-25.12 leaves the UCI option commented at 0. Enabling it is a distinct profile. Unauthenticated deny on luci-ssl-25.12 stays deny; this variant allows at the HTTP gate because the check is skipped.",
+      "review_provenance": [
+        "openwrt/uhttpd@93b05e0b65d91c23c5aa8fdde378df1f174ec71d ubus.c parse_call_params SID rewrite and uh_ubus_handle_request_object skip of uh_ubus_allowed",
+        "openwrt/uhttpd@93b05e0b65d91c23c5aa8fdde378df1f174ec71d main.c -a sets conf.ubus_noauth",
+        "openwrt/openwrt@4e9642517b48bae612ff10fb72fb9199e559500e package/network/services/uhttpd/files/uhttpd.init append_bool no_ubusauth -a",
+        "openwrt/openwrt@4e9642517b48bae612ff10fb72fb9199e559500e package/network/services/uhttpd/files/uhttpd.config commented option no_ubusauth 0"
+      ]
+    }
+  ]
+}
