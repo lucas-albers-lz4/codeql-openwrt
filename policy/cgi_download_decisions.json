@@ -1,0 +1,714 @@
+{
+  "grants": [
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-system-flash:cgi_io:cgi-download",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "target_id": "cgi_endpoint:cgi-download",
+      "op": "read",
+      "acl_group": "luci-mod-system-flash",
+      "expectation_id": "luci-mod-system-flash-download",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=download function=read",
+        "session.access scope=file object=canonicalize_path(path) function=read"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file./dev/mtdblock[0-9]*=[read]",
+        "cgi-io@31cb3c89 main.c main_download conjunctive cgi-io download read and file read"
+      ],
+      "note": "Fixture login luci-mod-system-flash is not a stock device login.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-download",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "target_id": "cgi_endpoint:cgi-download",
+      "op": "read",
+      "acl_group": "luci-mod-system-flash",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=download function=read",
+        "session.access scope=file object=canonicalize_path(path) function=read"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "luci-mod-system-flash still contributes cgi-io download to the root session"
+      ],
+      "note": "Stock root list read '*' / list write '*'; not a violation."
+    }
+  ],
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:cgi-download-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "lockfile": "corpus/lock.json",
+    "endpoint": "cgi_io:cgi-download"
+  },
+  "scope": "cgi-io cgi-download \u2192 file_read with conjunctive file ACL",
+  "harness": {
+    "canonical": "python3 -c 'from policy.cgi_download import build_artifacts; build_artifacts()'",
+    "c_double": "policy/c_double/cgi_download.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_cgi_io": false,
+    "live_filesystem": false
+  },
+  "assumptions": [
+    "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+    "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+    "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+    "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+  ],
+  "unknowns": [
+    "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+    "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+    "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-cgi-download-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "unauthenticated",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "path": "/dev/mtdblock0",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io download",
+        "cgi-io@31cb3c89 main.c main_download: session_access false -> 403 Download permission denied",
+        "do not invent an unauthenticated cgi-download grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "path_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "download",
+          "function": "read",
+          "result": false
+        },
+        {
+          "step": "main_download",
+          "result": "HTTP_403",
+          "message": "Download permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_download_cases.json#unauthenticated-cgi-download-deny",
+        "c_double": "policy/c_double/cgi_download.c"
+      },
+      "assumptions": [
+        "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+        "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+        "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "target_id": "cgi_endpoint:cgi-download",
+      "op": "read",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sessionid-cgi-download-forbidden",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": false,
+      "path": "/dev/mtdblock0",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c main_download: !fields[1] -> 403 Download permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": false,
+          "path_present": true
+        },
+        {
+          "step": "main_download",
+          "result": "HTTP_403",
+          "message": "Download permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_download_cases.json#missing-sessionid-cgi-download-forbidden",
+        "c_double": "policy/c_double/cgi_download.c"
+      },
+      "assumptions": [
+        "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+        "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+        "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "sendfile",
+        "dispatcher"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:invalid-content-type-cgi-download-bad-request",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "outcome": "bad_request",
+      "http_status": 400,
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "path": "/dev/mtdblock0",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_download: !post -> 400 Invalid form data"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": false,
+          "sessionid_present": true,
+          "path_present": true
+        },
+        {
+          "step": "main_download",
+          "result": "HTTP_400",
+          "message": "Invalid form data"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_download_cases.json#invalid-content-type-cgi-download-bad-request",
+        "c_double": "policy/c_double/cgi_download.c"
+      },
+      "assumptions": [
+        "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+        "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+        "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "acl_bypass",
+        "sendfile"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-cgi-download-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "outcome": "allow",
+      "http_status": 200,
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "path": "/dev/mtdblock0",
+      "canon": "/dev/mtdblock0",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file./dev/mtdblock[0-9]*=[read]",
+        "cgi-io@31cb3c89 main.c main_download conjunctive cgi-io download read and file read"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "path_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "download",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "canonicalize_path",
+          "path": "/dev/mtdblock0",
+          "canon": "/dev/mtdblock0"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/dev/mtdblock0",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "main_download",
+          "result": "allow",
+          "sendfile": false
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_download_cases.json#luci-mod-system-flash-cgi-download-allow",
+        "c_double": "policy/c_double/cgi_download.c"
+      },
+      "assumptions": [
+        "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+        "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+        "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "target_id": "cgi_endpoint:cgi-download",
+      "op": "read",
+      "expectation_id": "luci-mod-system-flash-download",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-system-flash is not a stock device login.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "cgi-io",
+        "object": "download",
+        "function": "read",
+        "source": "luci-mod-system.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "file",
+        "object": "/dev/mtdblock[0-9]*",
+        "function": "read",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-cgi-download-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "outcome": "allow",
+      "http_status": 200,
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "path": "/dev/mtdblock0",
+      "canon": "/dev/mtdblock0",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "luci-mod-system-flash still contributes cgi-io download to the root session"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "path_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "download",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "canonicalize_path",
+          "path": "/dev/mtdblock0",
+          "canon": "/dev/mtdblock0"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/dev/mtdblock0",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "main_download",
+          "result": "allow",
+          "sendfile": false
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_download_cases.json#root-star-cgi-download-allow",
+        "c_double": "policy/c_double/cgi_download.c"
+      },
+      "assumptions": [
+        "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+        "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+        "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "target_id": "cgi_endpoint:cgi-download",
+      "op": "read",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "cgi-io",
+        "object": "download",
+        "function": "read",
+        "source": "luci-mod-system.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "file",
+        "object": "/dev/mtdblock[0-9]*",
+        "function": "read",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-cgi-download-passwd-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "outcome": "path_denied",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "path": "/etc/passwd",
+      "canon": "/etc/passwd",
+      "input_rule_refs": [
+        "cgi-io download read is not enough without file read of the canonical path",
+        "luci-mod-system-flash file read is /dev/mtdblock[0-9]*, not /etc/passwd"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "path_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "download",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "canonicalize_path",
+          "path": "/etc/passwd",
+          "canon": "/etc/passwd"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/passwd",
+          "function": "read",
+          "result": false
+        },
+        {
+          "step": "main_download",
+          "result": "HTTP_403",
+          "message": "Access to path denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_download_cases.json#luci-mod-system-flash-cgi-download-passwd-deny",
+        "c_double": "policy/c_double/cgi_download.c"
+      },
+      "assumptions": [
+        "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+        "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+        "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "authorization_violation",
+        "cgi-io-only-suffices"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "cgi-io",
+        "object": "download",
+        "function": "read",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-cgi-download-dotdot-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "outcome": "path_denied",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "path": "/dev/mtdblock0/../../../etc/passwd",
+      "canon": "/etc/passwd",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c canonicalizes path before file ACL so ../ cannot ride /dev/mtdblock[0-9]*"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "path_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "download",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "canonicalize_path",
+          "path": "/dev/mtdblock0/../../../etc/passwd",
+          "canon": "/etc/passwd"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/passwd",
+          "function": "read",
+          "result": false
+        },
+        {
+          "step": "main_download",
+          "result": "HTTP_403",
+          "message": "Access to path denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_download_cases.json#luci-mod-system-flash-cgi-download-dotdot-deny",
+        "c_double": "policy/c_double/cgi_download.c"
+      },
+      "assumptions": [
+        "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+        "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+        "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "glob_prefix_bypass"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "cgi-io",
+        "object": "download",
+        "function": "read",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-config-cgi-download-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-download-v1",
+      "session_class": "luci-mod-system-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "cgi_endpoint": "cgi-download",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "path": "/dev/mtdblock0",
+      "input_rule_refs": [
+        "luci-mod-system-config grants luci.setPassword/setLocaltime, not cgi-io download",
+        "do not treat a luci exec-method grant as cgi-download"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "path_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "download",
+          "function": "read",
+          "result": false
+        },
+        {
+          "step": "main_download",
+          "result": "HTTP_403",
+          "message": "Download permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_download_cases.json#luci-mod-system-config-cgi-download-deny",
+        "c_double": "policy/c_double/cgi_download.c"
+      },
+      "assumptions": [
+        "cgi-io main_download requires session.access scope=cgi-io object=download function=read AND session.access scope=file object=canonicalize_path(path) function=read. A cgi-io grant without the file-read grant cannot authorize.",
+        "Path is canonicalized before the file ACL check so a '../' suffix cannot match an allowed glob prefix while open() resolves outside that prefix.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "This oracle does not stat, open, or sendfile the target; regular-file and block-device checks after the ACL gate are unknown.",
+        "cgi-upload and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "grant_emitted": false
+    }
+  ]
+}
