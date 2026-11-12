@@ -6,7 +6,7 @@ The ucode CodeQL language pack lives in [codeql-ucode](https://github.com/lucas-
 
 First slice: `/ubus` → `luci.getFeatures` → `callPackageVersionCheck('netifd')` → named `popen` from `'fs'`. Findings are evidence, not proof.
 
-See [docs/pack-contract.md](docs/pack-contract.md), `corpus/lock.json`, and [policy/README.md](policy/README.md) for the M2 `/ubus` luci policy oracle (`getFeatures` plus inventoried exec methods) and the cgi-io C oracles (`cgi-backup` `sensitive_backup_read`, conjunctive `cgi-upload` `file_write`, conjunctive `cgi-download` `file_read`).
+See [docs/pack-contract.md](docs/pack-contract.md), `corpus/lock.json`, and [policy/README.md](policy/README.md) for the M2 `/ubus` luci policy oracle (`getFeatures` plus inventoried exec methods) and the cgi-io C oracles (`cgi-backup` `sensitive_backup_read`, conjunctive `cgi-upload` `file_write`, conjunctive `cgi-download` `file_read`, `cgi-exec` session exec read gate).
 
 Canonical handler effects and grant joins: [reports/handler_effects.md](reports/handler_effects.md).
 

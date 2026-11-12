@@ -676,8 +676,14 @@ class TestCommittedArtifacts(unittest.TestCase):
         cgi_endpoints = {row["cgi_endpoint"] for row in committed_grants[len(grants) :]}
         for row in committed_grants[len(grants) :]:
             self.assertEqual(row["ingress"], "cgi_io")
-            self.assertIn(row["cgi_endpoint"], {"cgi-backup", "cgi-upload", "cgi-download"})
-        self.assertEqual(cgi_endpoints, {"cgi-backup", "cgi-upload", "cgi-download"})
+            self.assertIn(
+                row["cgi_endpoint"],
+                {"cgi-backup", "cgi-upload", "cgi-download", "cgi-exec"},
+            )
+        self.assertEqual(
+            cgi_endpoints,
+            {"cgi-backup", "cgi-upload", "cgi-download", "cgi-exec"},
+        )
 
     def test_emit_helper_roundtrip(self) -> None:
         committed_grants = (REPO / "policy" / "grants.json").read_text(encoding="utf-8")

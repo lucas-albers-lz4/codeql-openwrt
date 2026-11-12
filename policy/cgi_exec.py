@@ -13,9 +13,12 @@ Oracle transcribed from pinned source, not from a live daemon:
 Bounded to the cgi-io exec ACL gate:
 ``session_access(sid, "cgi-io", "exec", "read")``.
 
-Does not rewrite the luci ``/ubus`` grant emitter. Does not emit cgi-backup,
-cgi-upload, cgi-download, dispatcher, ``authorization_violation``, or
-``path_found``. Does not invent luci-ssl grants. Does not model
+Does not rewrite the luci ``/ubus`` grant emitter. Canonical
+``python3 -m policy emit`` appends these grants after luci and the other cgi-io
+slices and upserts the synthetic effect into ``reports/handler_effects.json``.
+Does not emit cgi-backup, cgi-upload, cgi-download, dispatcher,
+``authorization_violation``, or ``path_found``. Does not invent luci-ssl grants.
+Does not model
 ``parse_command``, ``canonicalize_path``, ``lookup_executable``, ``file.exec``
 of a command, or ``execv``.
 """
@@ -417,7 +420,7 @@ def build_artifacts(
         "pins": _pins(),
         "scope": "cgi-io cgi-exec → session.access exec read only",
         "harness": {
-            "canonical": "python3 -c 'from policy.cgi_exec import write_artifacts; write_artifacts()'",
+            "canonical": "python3 -m policy emit",
             "c_double": "policy/c_double/cgi_exec.c",
             "compiler": "gcc",
             "flags": C_DOUBLE_FLAGS,

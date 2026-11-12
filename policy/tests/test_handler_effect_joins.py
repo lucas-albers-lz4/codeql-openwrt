@@ -36,6 +36,7 @@ CGI_JOIN_KEYS = (
 CGI_BACKUP_EFFECT_ID = "policy:effect:cgi-backup-sensitive-read"
 CGI_UPLOAD_EFFECT_ID = "policy:effect:cgi-upload-file-write"
 CGI_DOWNLOAD_EFFECT_ID = "policy:effect:cgi-download-file-read"
+CGI_EXEC_EFFECT_ID = "policy:effect:cgi-exec-session-access"
 CGI_CATALOG = {
     "cgi-backup": {
         "record_id": CGI_BACKUP_EFFECT_ID,
@@ -57,6 +58,13 @@ CGI_CATALOG = {
         "op": "read",
         "snapshot": "reports/m2-cgi-download-effect.json",
         "delegated_class": "luci-mod-system-flash",
+    },
+    "cgi-exec": {
+        "record_id": CGI_EXEC_EFFECT_ID,
+        "sink_kind": "exec",
+        "op": "exec",
+        "snapshot": "reports/m2-cgi-exec-effect.json",
+        "delegated_class": "luci-mod-network-config",
     },
 }
 COPIED_EFFECT_SNAPSHOTS = (
@@ -318,6 +326,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             CGI_BACKUP_EFFECT_ID,
             CGI_UPLOAD_EFFECT_ID,
             CGI_DOWNLOAD_EFFECT_ID,
+            CGI_EXEC_EFFECT_ID,
         ):
             cgi_text = " ".join(by_id[record_id]["assumptions"]).lower()
             self.assertIn("shellquote", cgi_text)
@@ -364,13 +373,13 @@ class TestHandlerEffectJoins(unittest.TestCase):
             if row.get("ingress") == "cgi_io":
                 spec = CGI_CATALOG[row["cgi_endpoint"]]
                 self.assertEqual(row.get("sink_kind"), spec["sink_kind"])
-                self.assertNotEqual(row.get("cgi_endpoint"), "cgi-exec")
             else:
                 self.assertNotIn("cgi_endpoint", row)
-        self.assertEqual(
-            [row for row in self.grants if row.get("cgi_endpoint") == "cgi-exec"],
-            [],
-        )
+        exec_effect = next(row for row in self.effects if row["record_id"] == CGI_EXEC_EFFECT_ID)
+        exec_text = " ".join(exec_effect.get("assumptions", [])).lower()
+        self.assertIn("execv", exec_text)
+        self.assertIn("file.exec", " ".join(exec_effect.get("unknowns", [])).lower())
+        self.assertNotIn("path_found", json.dumps(exec_effect))
 
 
 if __name__ == "__main__":
