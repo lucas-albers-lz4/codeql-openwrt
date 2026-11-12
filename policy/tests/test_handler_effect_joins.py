@@ -12,7 +12,11 @@ REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-from policy.oracle import EXEC_METHODS, REQUEST_ARGS_EXEC_METHODS  # noqa: E402
+from policy.oracle import (  # noqa: E402
+    EXEC_METHODS,
+    REQUEST_ARGS_EXEC_METHODS,
+    corpus_revision,
+)
 
 JOIN_KEYS = (
     "corpus_revision",
@@ -29,7 +33,32 @@ CGI_JOIN_KEYS = (
     "entrypoint_id",
     "cgi_endpoint",
 )
-CGI_EFFECT_ID = "policy:effect:cgi-backup-sensitive-read"
+CGI_BACKUP_EFFECT_ID = "policy:effect:cgi-backup-sensitive-read"
+CGI_UPLOAD_EFFECT_ID = "policy:effect:cgi-upload-file-write"
+CGI_DOWNLOAD_EFFECT_ID = "policy:effect:cgi-download-file-read"
+CGI_CATALOG = {
+    "cgi-backup": {
+        "record_id": CGI_BACKUP_EFFECT_ID,
+        "sink_kind": "sensitive_backup_read",
+        "op": "read",
+        "snapshot": None,
+        "delegated_class": "luci-mod-system-flash",
+    },
+    "cgi-upload": {
+        "record_id": CGI_UPLOAD_EFFECT_ID,
+        "sink_kind": "file_write",
+        "op": "write",
+        "snapshot": "reports/m2-cgi-upload-effect.json",
+        "delegated_class": "luci-base",
+    },
+    "cgi-download": {
+        "record_id": CGI_DOWNLOAD_EFFECT_ID,
+        "sink_kind": "file_read",
+        "op": "read",
+        "snapshot": "reports/m2-cgi-download-effect.json",
+        "delegated_class": "luci-mod-system-flash",
+    },
+}
 COPIED_EFFECT_SNAPSHOTS = (
     "reports/findings.json",
     "reports/m4-getfeatures-direct-exec.json",
@@ -78,7 +107,9 @@ class TestHandlerEffectJoins(unittest.TestCase):
         luci_rows = [row for row in self.effects if row.get("ingress") == "ubus_http"]
         cgi_rows = [row for row in self.effects if row.get("ingress") == "cgi_io"]
         self.assertEqual(len(luci_rows), LUCI_EFFECT_COUNT)
-        self.assertEqual(len(cgi_rows), 1)
+        self.assertEqual(len(cgi_rows), len(CGI_CATALOG))
+        self.assertEqual({row["cgi_endpoint"] for row in cgi_rows}, set(CGI_CATALOG))
+        lock_hash = corpus_revision()
         for row in luci_rows:
             for key in REQUIRED:
                 self.assertIn(key, row, key)
@@ -95,14 +126,18 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotIn("route_path", row)
             self.assertIn(row["record_type"], SCHEMA["properties"]["record_type"]["enum"])
             self.assertIn(row["sink_kind"], SCHEMA["properties"]["sink_kind"]["enum"])
-        cgi = cgi_rows[0]
-        self.assertEqual(cgi["record_id"], CGI_EFFECT_ID)
-        self.assertEqual(cgi["producer"], "policy_facts")
-        self.assertEqual(cgi["cgi_endpoint"], "cgi-backup")
-        self.assertEqual(cgi["sink_kind"], "sensitive_backup_read")
-        self.assertEqual(cgi["op"], "read")
-        self.assertEqual(cgi["assessment"], "intended_access")
-        self.assertNotEqual(cgi["assessment"], "authorization_violation")
+            self.assertEqual(row["corpus_revision"], lock_hash)
+        for cgi in cgi_rows:
+            spec = CGI_CATALOG[cgi["cgi_endpoint"]]
+            self.assertEqual(cgi["record_id"], spec["record_id"])
+            self.assertEqual(cgi["producer"], "policy_facts")
+            self.assertEqual(cgi["sink_kind"], spec["sink_kind"])
+            self.assertEqual(cgi["op"], spec["op"])
+            self.assertEqual(cgi["assessment"], "intended_access")
+            self.assertNotEqual(cgi["assessment"], "authorization_violation")
+            self.assertEqual(cgi["corpus_revision"], lock_hash)
+            self.assertEqual(cgi["evidence_status"], "fact")
+            self.assertNotEqual(cgi["evidence_status"], "path_found")
 
     def test_every_grant_joins_an_effect(self) -> None:
         for grant in self.grants:
@@ -279,45 +314,63 @@ class TestHandlerEffectJoins(unittest.TestCase):
         process_text = " ".join(by_id["m4:effect:luci-getProcessList-popen"]["assumptions"]).lower()
         self.assertIn("file.exec", process_text)
         self.assertIn("not", process_text)
-        cgi_text = " ".join(by_id[CGI_EFFECT_ID]["assumptions"]).lower()
-        self.assertIn("shellquote", cgi_text)
-        self.assertIn("basename", cgi_text)
-        self.assertIn("not sanitizers", cgi_text)
+        for record_id in (
+            CGI_BACKUP_EFFECT_ID,
+            CGI_UPLOAD_EFFECT_ID,
+            CGI_DOWNLOAD_EFFECT_ID,
+        ):
+            cgi_text = " ".join(by_id[record_id]["assumptions"]).lower()
+            self.assertIn("shellquote", cgi_text)
+            self.assertIn("basename", cgi_text)
+            self.assertIn("not sanitizers", cgi_text)
 
-    def test_cgi_backup_joins_flash_and_root(self) -> None:
-        effect = next(row for row in self.effects if row["record_id"] == CGI_EFFECT_ID)
-        flash = next(
-            grant
-            for grant in self.grants
-            if grant.get("cgi_endpoint") == "cgi-backup"
-            and grant["session_class"] == "luci-mod-system-flash"
-        )
-        root = next(
-            grant
-            for grant in self.grants
-            if grant.get("cgi_endpoint") == "cgi-backup" and grant["session_class"] == "root"
-        )
-        refs = effect["evidence_refs"]
-        self.assertIn(flash["record_id"], refs)
-        self.assertIn(root["record_id"], refs)
-        self.assertEqual(effect["assessment"], "intended_access")
-        unauth = [
-            grant
-            for grant in self.grants
-            if grant.get("cgi_endpoint") == "cgi-backup"
-            and grant["session_class"] == "unauthenticated"
-        ]
-        self.assertEqual(unauth, [])
+    def test_cgi_effects_join_delegated_and_root_grants(self) -> None:
+        lock_hash = corpus_revision()
+        for endpoint, spec in CGI_CATALOG.items():
+            effect = next(row for row in self.effects if row["record_id"] == spec["record_id"])
+            delegated = next(
+                grant
+                for grant in self.grants
+                if grant.get("cgi_endpoint") == endpoint
+                and grant["session_class"] == spec["delegated_class"]
+            )
+            root = next(
+                grant
+                for grant in self.grants
+                if grant.get("cgi_endpoint") == endpoint and grant["session_class"] == "root"
+            )
+            refs = effect["evidence_refs"]
+            self.assertIn(delegated["record_id"], refs)
+            self.assertIn(root["record_id"], refs)
+            self.assertEqual(effect["assessment"], "intended_access")
+            self.assertEqual(effect["corpus_revision"], lock_hash)
+            self.assertEqual(delegated["corpus_revision"], lock_hash)
+            self.assertEqual(root["corpus_revision"], lock_hash)
+            unauth = [
+                grant
+                for grant in self.grants
+                if grant.get("cgi_endpoint") == endpoint
+                and grant["session_class"] == "unauthenticated"
+            ]
+            self.assertEqual(unauth, [])
+            if spec["snapshot"]:
+                snapshot = _load(REPO / spec["snapshot"])
+                self.assertEqual(effect, snapshot)
 
     def test_catalog_does_not_invent_forbidden_claims(self) -> None:
         for row in self.effects:
             self.assertNotEqual(row.get("assessment"), "authorization_violation")
             self.assertNotEqual(row.get("ingress"), "dispatcher")
             if row.get("ingress") == "cgi_io":
-                self.assertEqual(row.get("cgi_endpoint"), "cgi-backup")
-                self.assertEqual(row.get("sink_kind"), "sensitive_backup_read")
+                spec = CGI_CATALOG[row["cgi_endpoint"]]
+                self.assertEqual(row.get("sink_kind"), spec["sink_kind"])
+                self.assertNotEqual(row.get("cgi_endpoint"), "cgi-exec")
             else:
                 self.assertNotIn("cgi_endpoint", row)
+        self.assertEqual(
+            [row for row in self.grants if row.get("cgi_endpoint") == "cgi-exec"],
+            [],
+        )
 
 
 if __name__ == "__main__":

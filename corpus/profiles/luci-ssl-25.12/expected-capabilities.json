@@ -290,7 +290,7 @@
         "unauthenticated cgi-backup",
         "cgi-exec"
       ],
-      "rationale": "luci-mod-system-flash read grants cgi-io backup. Unauthenticated ACLs do not. A backup read by this fixture role is intended_access, not a violation because the role lacks write. cgi-io exec/upload/download are not this slice.",
+      "rationale": "luci-mod-system-flash read grants cgi-io backup. Unauthenticated ACLs do not. A backup read by this fixture role is intended_access, not a violation because the role lacks write. cgi-io upload/download are separate conjunctive oracles. cgi-exec is not emitted.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download]",
         "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_backup session_access(sid, cgi-io, backup, read)"
@@ -307,6 +307,52 @@
         }
       ],
       "note": "A backup read is not a violation merely because the role lacks write permission. Unauthorized roles holding the grant are assessed against their own expectation."
+    },
+    {
+      "expectation_id": "luci-base-upload",
+      "session_class": "luci-base",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "intended_access": [
+        {
+          "target_id": "cgi_endpoint:cgi-upload",
+          "op": "write"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-upload",
+        "cgi-io upload write without file write of canonicalize_path(filename)",
+        "cgi-exec"
+      ],
+      "rationale": "luci-base write grants cgi-io upload and /etc/luci-uploads/* file write. Unauthenticated ACLs do not. The luci-mod-system-flash fixture login is list read only, so its ACL group's upload write is not in session. cgi-io main_upload is conjunctive: cgi-io upload write AND file write of canonicalize_path(filename). ../ is collapsed before the file ACL.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/acl.d/luci-base.json luci-base.write.cgi-io=[upload] file./etc/luci-uploads/*=[write]",
+        "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_upload session_access(sid, cgi-io, upload, write) then file write of canonicalize_path(filename)"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-flash-download",
+      "session_class": "luci-mod-system-flash",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "intended_access": [
+        {
+          "target_id": "cgi_endpoint:cgi-download",
+          "op": "read"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-download",
+        "cgi-io download read without file read of canonicalize_path(path)",
+        "cgi-exec"
+      ],
+      "rationale": "luci-mod-system-flash read grants cgi-io download and /dev/mtdblock[0-9]* file read. Unauthenticated ACLs do not. cgi-io main_download is conjunctive: cgi-io download read AND file read of canonicalize_path(path). ../ is collapsed before the file ACL.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download] file./dev/mtdblock[0-9]*=[read]",
+        "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_download session_access(sid, cgi-io, download, read) then file read of canonicalize_path(path)"
+      ]
     }
   ]
 }

@@ -178,10 +178,15 @@ class TestGrantsAndEffect(unittest.TestCase):
         self.assertIn("basename", text)
         self.assertIn("not sanitizers", text)
 
-    def test_does_not_rewrite_canonical_grants_json(self) -> None:
+    def test_canonical_grants_json_includes_download_grants(self) -> None:
+        grants, _, effect = build_artifacts()
         committed = json.loads((REPO / "policy" / "grants.json").read_text(encoding="utf-8"))
-        blob = json.dumps(committed)
-        self.assertNotIn("cgi-download", blob)
+        catalog = json.loads((REPO / "reports" / "handler_effects.json").read_text(encoding="utf-8"))
+        for grant in grants:
+            self.assertIn(grant, committed)
+        catalog_effect = next(row for row in catalog if row["record_id"] == EFFECT_RECORD_ID)
+        self.assertEqual(catalog_effect, effect)
+        self.assertNotIn("cgi-exec", json.dumps(grants))
 
 
 class TestCanonicalize(unittest.TestCase):

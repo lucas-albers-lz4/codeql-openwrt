@@ -644,5 +644,117 @@
       "luci-mod-system-flash still contributes cgi-io backup to the root session"
     ],
     "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-base:cgi_io:cgi-upload",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-upload-v1",
+    "session_class": "luci-base",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-upload",
+    "cgi_endpoint": "cgi-upload",
+    "target_id": "cgi_endpoint:cgi-upload",
+    "op": "write",
+    "acl_group": "luci-base",
+    "expectation_id": "luci-base-upload",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=upload function=write",
+      "session.access scope=file object=canonicalize_path(filename) function=write"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-base.json luci-base.write.cgi-io=[upload]",
+      "luci@b2e0be4b luci-base.json luci-base.write.file./etc/luci-uploads/*=[write]",
+      "cgi-io@31cb3c89 main.c main_upload conjunctive cgi-io upload write and file write"
+    ],
+    "note": "Fixture login luci-base is not a stock device login.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-upload",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-upload-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-upload",
+    "cgi_endpoint": "cgi-upload",
+    "target_id": "cgi_endpoint:cgi-upload",
+    "op": "write",
+    "acl_group": "luci-base",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=upload function=write",
+      "session.access scope=file object=canonicalize_path(filename) function=write"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "luci-base still contributes cgi-io upload to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-flash:cgi_io:cgi-download",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-download-v1",
+    "session_class": "luci-mod-system-flash",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-download",
+    "cgi_endpoint": "cgi-download",
+    "target_id": "cgi_endpoint:cgi-download",
+    "op": "read",
+    "acl_group": "luci-mod-system-flash",
+    "expectation_id": "luci-mod-system-flash-download",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=download function=read",
+      "session.access scope=file object=canonicalize_path(path) function=read"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download]",
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file./dev/mtdblock[0-9]*=[read]",
+      "cgi-io@31cb3c89 main.c main_download conjunctive cgi-io download read and file read"
+    ],
+    "note": "Fixture login luci-mod-system-flash is not a stock device login.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-download",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-download-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-download",
+    "cgi_endpoint": "cgi-download",
+    "target_id": "cgi_endpoint:cgi-download",
+    "op": "read",
+    "acl_group": "luci-mod-system-flash",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=download function=read",
+      "session.access scope=file object=canonicalize_path(path) function=read"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "luci-mod-system-flash still contributes cgi-io download to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
   }
 ]

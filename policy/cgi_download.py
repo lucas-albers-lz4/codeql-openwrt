@@ -11,9 +11,11 @@ Oracle transcribed from pinned source, not from a live daemon:
   ``/dev/mtdblock[0-9]*`` file read
   @ luci ``b2e0be4b46ec0fd43394c081fa7c50657af14011``
 
-Does not rewrite the luci ``/ubus`` grant emitter or ``policy/grants.json``.
-Does not emit cgi-exec, cgi-upload, cgi-backup, dispatcher, or
-``authorization_violation``. Does not open/stat/sendfile the target path.
+Does not rewrite the luci ``/ubus`` grant emitter. Canonical
+``python3 -m policy emit`` appends these grants after luci and cgi-backup
+and upserts the synthetic effect into ``reports/handler_effects.json``.
+Does not emit cgi-exec, dispatcher, or ``authorization_violation``.
+Does not open/stat/sendfile the target path.
 """
 
 from __future__ import annotations
@@ -487,7 +489,7 @@ def build_artifacts(
         "pins": _pins(),
         "scope": "cgi-io cgi-download → file_read with conjunctive file ACL",
         "harness": {
-            "canonical": "python3 -c 'from policy.cgi_download import build_artifacts; build_artifacts()'",
+            "canonical": "python3 -m policy emit",
             "c_double": "policy/c_double/cgi_download.c",
             "compiler": "gcc",
             "flags": C_DOUBLE_FLAGS,
