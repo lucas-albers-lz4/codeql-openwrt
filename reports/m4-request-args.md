@@ -20,7 +20,7 @@ See `reports/m4-coverage.json`.
 
 ## Still unmodeled in this slice
 
-- `setInitAction` → `init_action(request.args.*)` (interprocedural)
-- `getFeatures` hostapd/wpa_supplicant `system()` templates and dnsmasq/odhcpd/ipset `popen`
-- `shellquote` as a complete-argument barrier
+- `setInitAction` → `init_action(request.args.*)` interprocedural dataflow (helper body in [m4-luci-sys-init-action.md](m4-luci-sys-init-action.md))
 - full CFG/SSA and global flow
+
+Moved to sibling M4 reports: getFeatures direct helpers ([m4-getfeatures-direct-exec.md](m4-getfeatures-direct-exec.md)); complete-argument `shellquote` ([m4-shellquote.md](m4-shellquote.md)).
