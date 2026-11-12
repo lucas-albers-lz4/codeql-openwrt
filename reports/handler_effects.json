@@ -465,13 +465,14 @@
     "conditions": [
       "argv0 contains cgi-backup",
       "CONTENT_TYPE application/x-www-form-urlencoded",
-      "POST sessionid present"
+      "Successfully decoded form body with POST sessionid present"
     ],
     "requirements": [
       "session.access scope=cgi-io object=backup function=read"
     ],
     "assumptions": [
       "Synthetic handler_effect transcribed from cgi-io main_backup; C, not ucode",
+      "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice",
       "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
       "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -.",
       "A backup read is not a violation merely because the role lacks write permission"
@@ -483,6 +484,7 @@
     ],
     "unknowns": [
       "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+      "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
       "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
     ]
   }

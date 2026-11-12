@@ -63,6 +63,10 @@ UNKNOWN_LIVE = (
     "Live cgi-io, uhttpd, and rpcd were not executed; decisions are "
     "transcribed from pinned C and ACL JSON."
 )
+UNKNOWN_POSTDECODE = (
+    "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are "
+    "not modeled; this slice assumes successful form-body decoding."
+)
 ASSUMPTION_BACKUP_ONLY = (
     "cgi-io main_backup checks session.access scope=cgi-io object=backup "
     "function=read only. It does not require a file-scope ACL."
@@ -120,11 +124,18 @@ def evaluate_backup(
     content_type: Optional[str] = CONTENT_TYPE_PREFIX,
     sessions: Optional[dict[str, Session]] = None,
 ) -> BackupResult:
+    """Evaluate cgi-backup authorization for already-decoded form inputs.
+
+    Successful form-body framing and URL decoding are preconditions. This
+    slice does not model CONTENT_LENGTH validation, truncated bodies, or
+    percent-decoding failures performed by upstream ``postdecode``.
+    """
     if sessions is None:
         sessions = load_cgi_world()
     steps: list[dict[str, Any]] = [
         {
             "step": "postdecode",
+            "body_validation_assumed": True,
             "content_type_prefix": CONTENT_TYPE_PREFIX,
             "content_type_ok": content_type_ok(content_type),
             "sessionid_present": bool(sid),
@@ -302,10 +313,11 @@ def decision_record(case: dict[str, Any], result: BackupResult) -> dict[str, Any
             },
             "assumptions": [
                 ASSUMPTION_BACKUP_ONLY,
+                "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
                 ASSUMPTION_NO_SYSUPGRADE,
                 ASSUMPTION_NOT_SANITIZER,
             ],
-            "unknowns": [UNKNOWN_LIVE, UNKNOWN_OTHER_CGI],
+            "unknowns": [UNKNOWN_LIVE, UNKNOWN_POSTDECODE, UNKNOWN_OTHER_CGI],
         }
     )
     if case.get("target_id"):
@@ -353,13 +365,14 @@ def effect_record(grants: list[dict[str, Any]]) -> dict[str, Any]:
             "conditions": [
                 "argv0 contains cgi-backup",
                 "CONTENT_TYPE application/x-www-form-urlencoded",
-                "POST sessionid present",
+                "Successfully decoded form body with POST sessionid present",
             ],
             "requirements": [
                 "session.access scope=cgi-io object=backup function=read",
             ],
             "assumptions": [
                 "Synthetic handler_effect transcribed from cgi-io main_backup; C, not ucode",
+                "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice",
                 ASSUMPTION_NO_SYSUPGRADE,
                 ASSUMPTION_NOT_SANITIZER,
                 "A backup read is not a violation merely because the role lacks write permission",
@@ -368,7 +381,7 @@ def effect_record(grants: list[dict[str, Any]]) -> dict[str, Any]:
             + [
                 f"cgi-io@{CGI_IO_SHA[:8]} main.c main_backup session_access(sid, cgi-io, backup, read)",
             ],
-            "unknowns": [UNKNOWN_LIVE, UNKNOWN_OTHER_CGI],
+            "unknowns": [UNKNOWN_LIVE, UNKNOWN_POSTDECODE, UNKNOWN_OTHER_CGI],
         }
     )
     return record
@@ -405,10 +418,11 @@ def build_artifacts(
         },
         "assumptions": [
             ASSUMPTION_BACKUP_ONLY,
+            "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
             ASSUMPTION_NO_SYSUPGRADE,
             ASSUMPTION_NOT_SANITIZER,
         ],
-        "unknowns": [UNKNOWN_LIVE, UNKNOWN_OTHER_CGI],
+        "unknowns": [UNKNOWN_LIVE, UNKNOWN_POSTDECODE, UNKNOWN_OTHER_CGI],
         "decisions": decisions,
     }
     return grants, bundle, effect_record(grants)

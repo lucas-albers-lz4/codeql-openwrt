@@ -1,5 +1,8 @@
 /*
  * Isolated double of cgi-io main_backup @ 31cb3c89f02d918d7f17bf62a80c852fc38a1ca1:
+ *   Inputs are already-decoded form fields. Successful CONTENT_LENGTH/body
+ *   framing and URL decoding are preconditions; those postdecode failures are
+ *   not modeled by this authorization double.
  *   postdecode sessionid (application/x-www-form-urlencoded)
  *   session_access(sid, "cgi-io", "backup", "read")
  *
@@ -61,7 +64,9 @@ static int scope_match(const char *pat_scope, const char *scope)
 	return strcmp(pat_scope, scope) == 0;
 }
 
-/* cgi-io util.c postdecode CONTENT_TYPE prefix check. */
+/* cgi-io util.c postdecode CONTENT_TYPE prefix check, given successfully
+ * framed and URL-decoded form input (the body parser is outside this double).
+ */
 static int content_type_ok(const char *ct)
 {
 	return ct != NULL && strncmp(ct, CT_PREFIX, CT_PREFIX_LEN) == 0;

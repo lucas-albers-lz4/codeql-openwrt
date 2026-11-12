@@ -27,11 +27,13 @@
   },
   "assumptions": [
     "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+    "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
     "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
     "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
   ],
   "unknowns": [
     "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
     "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
   ],
   "decisions": [
@@ -60,6 +62,7 @@
       "matching_steps": [
         {
           "step": "postdecode",
+          "body_validation_assumed": true,
           "content_type_prefix": "application/x-www-form-urlencoded",
           "content_type_ok": true,
           "sessionid_present": true
@@ -98,11 +101,13 @@
       },
       "assumptions": [
         "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
         "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
         "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
         "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
       ],
       "target_id": "cgi_endpoint:cgi-backup",
@@ -130,6 +135,7 @@
       "matching_steps": [
         {
           "step": "postdecode",
+          "body_validation_assumed": true,
           "content_type_prefix": "application/x-www-form-urlencoded",
           "content_type_ok": true,
           "sessionid_present": false
@@ -148,11 +154,13 @@
       },
       "assumptions": [
         "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
         "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
         "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
         "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
       ],
       "not": [
@@ -185,6 +193,7 @@
       "matching_steps": [
         {
           "step": "postdecode",
+          "body_validation_assumed": true,
           "content_type_prefix": "application/x-www-form-urlencoded",
           "content_type_ok": false,
           "sessionid_present": true
@@ -203,11 +212,13 @@
       },
       "assumptions": [
         "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
         "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
         "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
         "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
       ],
       "not": [
@@ -241,6 +252,7 @@
       "matching_steps": [
         {
           "step": "postdecode",
+          "body_validation_assumed": true,
           "content_type_prefix": "application/x-www-form-urlencoded",
           "content_type_ok": true,
           "sessionid_present": true
@@ -279,11 +291,13 @@
       },
       "assumptions": [
         "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
         "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
         "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
         "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
       ],
       "target_id": "cgi_endpoint:cgi-backup",
@@ -324,6 +338,7 @@
       "matching_steps": [
         {
           "step": "postdecode",
+          "body_validation_assumed": true,
           "content_type_prefix": "application/x-www-form-urlencoded",
           "content_type_ok": true,
           "sessionid_present": true
@@ -362,11 +377,13 @@
       },
       "assumptions": [
         "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
         "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
         "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
         "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
       ],
       "target_id": "cgi_endpoint:cgi-backup",
@@ -405,6 +422,7 @@
       "matching_steps": [
         {
           "step": "postdecode",
+          "body_validation_assumed": true,
           "content_type_prefix": "application/x-www-form-urlencoded",
           "content_type_ok": true,
           "sessionid_present": true
@@ -443,11 +461,13 @@
       },
       "assumptions": [
         "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
         "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
         "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
         "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
       ],
       "target_id": "cgi_endpoint:cgi-backup",
@@ -477,6 +497,7 @@
       "matching_steps": [
         {
           "step": "postdecode",
+          "body_validation_assumed": true,
           "content_type_prefix": "application/x-www-form-urlencoded",
           "content_type_ok": true,
           "sessionid_present": true
@@ -515,11 +536,13 @@
       },
       "assumptions": [
         "cgi-io main_backup checks session.access scope=cgi-io object=backup function=read only. It does not require a file-scope ACL.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
         "This oracle does not fork /sbin/sysupgrade --create-backup; the sensitive_backup_read effect is synthetic from the C gate.",
         "shellquote and basename are not sanitizers. cgi-backup has no user path; the modeled command is the fixed argv /sbin/sysupgrade --create-backup -."
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
         "cgi-upload, cgi-download, and cgi-exec are not emitted in this slice."
       ],
       "target_id": "cgi_endpoint:cgi-backup",

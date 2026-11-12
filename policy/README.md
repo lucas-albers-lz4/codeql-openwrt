@@ -5,7 +5,7 @@ Luci `analysis_revision` is `policy:ubus-luci-exec-methods-v1`. cgi-backup is `p
 
 The HTTP gate is uhttpd `uh_ubus_allowed` → ubus `session.access` (uhttpd omits `scope`; rpcd defaults `scope` to `ubus`). Missing SID with `no_ubusauth=0` is JSON-RPC `ERROR_PARSE`, not the all-zero sentinel and not rpcd `file`/`uci` absent-SID skip.
 
-cgi-backup is a separate C ingress (`policy/cgi_backup.py`, `analysis_revision=policy:cgi-backup-v1`). cgi-io `main_backup` calls `session.access` with scope `cgi-io`, object `backup`, function `read`. Missing sessionid is HTTP 403, not the `/ubus` parse failure.
+cgi-backup is a separate C ingress (`policy/cgi_backup.py`, `analysis_revision=policy:cgi-backup-v1`). Its oracle and C double accept already-decoded form fields: successful form-body framing and URL decoding are preconditions. The slice checks the content-type prefix and models authorization, but does not model `CONTENT_LENGTH` validation, truncated bodies, or percent-decoding failures in upstream `postdecode`. Given a valid decoded form body, cgi-io `main_backup` calls `session.access` with scope `cgi-io`, object `backup`, function `read`; a missing sessionid then yields HTTP 403, not the `/ubus` parse failure.
 
 ## Run
 
@@ -25,7 +25,7 @@ gcc -std=c11 -Wall -Wextra -Werror -O0 -o policy/c_double/uh_ubus_policy policy/
 gcc -std=c11 -Wall -Wextra -Werror -O0 -o policy/c_double/cgi_backup policy/c_double/cgi_backup.c
 ```
 
-Those C doubles cover parse + `session.access` matching without a live daemon. Live uhttpd/rpcd/cgi-io/`sysupgrade` are not executed.
+Those C doubles cover the decoded-input gate + `session.access` matching without a live daemon. They do not model raw HTTP form parsing, and live uhttpd/rpcd/cgi-io/`sysupgrade` are not executed.
 
 ## In scope
 
