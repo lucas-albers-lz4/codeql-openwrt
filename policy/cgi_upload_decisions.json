@@ -70,7 +70,7 @@
   },
   "scope": "cgi-io cgi-upload \u2192 file_write with conjunctive file ACL",
   "harness": {
-    "canonical": "python3 -c 'from policy.cgi_upload import write_artifacts; write_artifacts()'",
+    "canonical": "python3 -m policy emit",
     "c_double": "policy/c_double/cgi_upload.c",
     "compiler": "gcc",
     "flags": [

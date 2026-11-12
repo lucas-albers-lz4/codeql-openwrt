@@ -1,8 +1,8 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-backup effect. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-backup is policy-facts (`policy:cgi-backup-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
 
-Findings are evidence, not proof. This catalog does not emit `authorization_violation`, cgi-exec/upload/download, or dispatcher effects. `shellquote` and `basename` are not sanitizers.
+Findings are evidence, not proof. This catalog does not emit `authorization_violation`, cgi-exec, or dispatcher effects. `shellquote` and `basename` are not sanitizers. `canonicalize_path` is not a taint sanitizer.
 
 ## Sources
 
@@ -15,12 +15,14 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m4-luci-sys-status-exec.json](m4-luci-sys-status-exec.json) | `getConntrackList` / `getProcessList` luci.sys fixed popen |
 | [m4-luci-sys-init-action-findings.json](m4-luci-sys-init-action-findings.json) | `luci.sys` `init_action` → builtin `system` (no M2 grant) |
 | policy-facts `cgi_backup` | synthetic `cgi-backup` → `sensitive_backup_read` (C, not ucode) |
+| [m2-cgi-upload-effect.json](m2-cgi-upload-effect.json) | synthetic `cgi-upload` → conjunctive `file_write` (C, not ucode) |
+| [m2-cgi-download-effect.json](m2-cgi-download-effect.json) | synthetic `cgi-download` → conjunctive `file_read` (C, not ucode) |
 
-Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, cgi-exec/upload/download, dispatcher.
+Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, cgi-exec, dispatcher.
 
 ## Grant ↔ effect joins
 
-Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
+Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
 
 Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
 
@@ -76,15 +78,26 @@ Fixed helpers for stock unauthenticated feature probing: **intended_access**, no
 
 ### cgi-backup (policy-facts synthetic)
 
-`cgi-backup.sysupgrade.create-backup` (`sink_kind=sensitive_backup_read`). cgi-io `main_backup` @ `31cb3c89` checks `session.access(sid, "cgi-io", "backup", "read")` only; it does not fork sysupgrade in this oracle. Unauthenticated `/cgi-bin/cgi-backup` is a **non-join** (403). Fixture `luci-mod-system-flash` and stock root `*` join as `intended_access`. A backup read is not a violation because the role lacks write. `shellquote` and `basename` are not sanitizers (no user path; fixed sysupgrade argv). cgi-exec/upload/download are not this slice.
+`cgi-backup.sysupgrade.create-backup` (`sink_kind=sensitive_backup_read`). cgi-io `main_backup` @ `31cb3c89` checks `session.access(sid, "cgi-io", "backup", "read")` only; it does not fork sysupgrade in this oracle. Unauthenticated `/cgi-bin/cgi-backup` is a **non-join** (403). Fixture `luci-mod-system-flash` and stock root `*` join as `intended_access`. A backup read is not a violation because the role lacks write. `shellquote` and `basename` are not sanitizers (no user path; fixed sysupgrade argv). cgi-exec is not this catalog.
 
 | `effect_id` | Delegated grant | Root grant | Unauthenticated |
 | --- | --- | --- | --- |
 | `cgi-backup.sysupgrade.create-backup` | `policy:grant:luci-mod-system-flash:cgi_io:cgi-backup` | `policy:grant:root:cgi_io:cgi-backup` | no-join (`policy:decision:unauthenticated-cgi-backup-deny`) |
 
+### cgi-upload / cgi-download (policy-facts synthetic, conjunctive)
+
+cgi-io `main_upload` / `main_download` @ `31cb3c89` require the cgi-io ACL **and** a `file` ACL on `canonicalize_path(...)`. A cgi-io grant without the file grant cannot authorize. `../` is collapsed before the file ACL. Unauthenticated is a **non-join**. Catalog rows are copies of [m2-cgi-upload-effect.json](m2-cgi-upload-effect.json) and [m2-cgi-download-effect.json](m2-cgi-download-effect.json); `corpus_revision` is the lockfile hash.
+
+| `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- |
+| `cgi-upload.canonicalize-path.write` | `policy:grant:luci-base:cgi_io:cgi-upload` | `policy:grant:root:cgi_io:cgi-upload` | no-join (`policy:decision:unauthenticated-cgi-upload-deny`) |
+| `cgi-download.canonicalize-path.read` | `policy:grant:luci-mod-system-flash:cgi_io:cgi-download` | `policy:grant:root:cgi_io:cgi-download` | no-join (`policy:decision:unauthenticated-cgi-download-deny`) |
+
+The `luci-base` upload fixture is a **write** login (not stock). The `luci-mod-system-flash` fixture is `list read` only, so its ACL group's upload write is not in session. cgi-upload failures are Status 200 JSON, not HTTP 403.
+
 ## Out of this file
 
-- cgi-exec / cgi-upload / cgi-download synthetic effects
+- cgi-exec synthetic effects
 - dispatcher / `menu.d` routes
 - `authorization_violation` / BrokenAccessControl `path_found`
 - Alloy `producer: step4`

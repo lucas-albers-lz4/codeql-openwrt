@@ -26,9 +26,10 @@ filedata when present. `filedata_present` defaults to true; SID `None` means
 an absent part and `""` means a present empty part. Arbitrary ordering,
 truncated framing, temp-file creation, and file copying remain outside the slice.
 
-This slice does **not** rewrite `policy/grants.json` or
-`reports/handler_effects.json` (those files are on other in-flight PRs).
-Artifacts: `policy/cgi_upload_decisions.json`,
+Canonical `python3 -m policy emit` appends the luci-base and root grants
+to `policy/grants.json` and upserts this effect into
+`reports/handler_effects.json` (same `corpus_revision` lock hash).
+Per-endpoint artifacts remain `policy/cgi_upload_decisions.json` and
 `reports/m2-cgi-upload-effect.json`.
 
 Does not copy/chmod files. Does not emit cgi-download, cgi-exec, dispatcher,

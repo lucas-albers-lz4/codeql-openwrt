@@ -12,9 +12,10 @@ Conjunctive gate:
 A cgi-io download grant without the file-read grant is **not** enough.
 `../` is collapsed before the file ACL so it cannot ride `/dev/mtdblock[0-9]*`.
 
-This slice does **not** rewrite `policy/grants.json` or
-`reports/handler_effects.json` (those files are on other in-flight PRs).
-Artifacts: `policy/cgi_download_decisions.json`,
+Canonical `python3 -m policy emit` appends the luci-mod-system-flash and
+root grants to `policy/grants.json` and upserts this effect into
+`reports/handler_effects.json` (same `corpus_revision` lock hash).
+Per-endpoint artifacts remain `policy/cgi_download_decisions.json` and
 `reports/m2-cgi-download-effect.json`.
 
 Does not open/stat/sendfile. Does not emit cgi-upload, cgi-exec, dispatcher,

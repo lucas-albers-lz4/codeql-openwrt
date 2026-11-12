@@ -35,6 +35,8 @@ from policy.cgi_backup import (  # noqa: E402
     load_cgi_world,
     load_expected_cases,
 )
+from policy.cgi_download import build_artifacts as download_build_artifacts  # noqa: E402
+from policy.cgi_upload import build_artifacts as upload_build_artifacts  # noqa: E402
 from policy.oracle import (  # noqa: E402
     C_DOUBLE_FLAGS,
     DEFAULT_SID,
@@ -344,7 +346,12 @@ class TestCommittedArtifacts(unittest.TestCase):
         committed_effects = json.loads(
             (REPO / "reports" / "handler_effects.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(committed_grants, luci_grants + cgi_grants)
+        upload_grants, _, _ = upload_build_artifacts()
+        download_grants, _, _ = download_build_artifacts()
+        self.assertEqual(
+            committed_grants,
+            luci_grants + cgi_grants + upload_grants + download_grants,
+        )
         self.assertEqual(committed_luci, luci_bundle)
         self.assertEqual(committed_cgi, cgi_bundle)
         committed_effect = next(row for row in committed_effects if row["record_id"] == EFFECT_RECORD_ID)

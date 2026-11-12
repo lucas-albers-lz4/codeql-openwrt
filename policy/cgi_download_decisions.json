@@ -70,7 +70,7 @@
   },
   "scope": "cgi-io cgi-download \u2192 file_read with conjunctive file ACL",
   "harness": {
-    "canonical": "python3 -c 'from policy.cgi_download import build_artifacts; build_artifacts()'",
+    "canonical": "python3 -m policy emit",
     "c_double": "policy/c_double/cgi_download.c",
     "compiler": "gcc",
     "flags": [

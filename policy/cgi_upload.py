@@ -10,9 +10,11 @@ Oracle transcribed from pinned source, not from a live daemon:
 * luci-base write ``cgi-io`` ``upload`` and ``/etc/luci-uploads/*`` file write
   @ luci ``b2e0be4b46ec0fd43394c081fa7c50657af14011``
 
-Does not rewrite the luci ``/ubus`` grant emitter or ``policy/grants.json``.
-Does not emit cgi-exec, cgi-download, cgi-backup, dispatcher, or
-``authorization_violation``. Does not create tempfiles, chmod, or copy.
+Does not rewrite the luci ``/ubus`` grant emitter. Canonical
+``python3 -m policy emit`` appends these grants after luci and cgi-backup
+and upserts the synthetic effect into ``reports/handler_effects.json``.
+Does not emit cgi-exec, dispatcher, or ``authorization_violation``.
+Does not create tempfiles, chmod, or copy.
 cgi-io ``response()`` failures are Status 200 + JSON, not HTTP 403.
 Complete requests without filedata may return without any response. Decoded
 sessionid/filename parts precede filedata when present; arbitrary ordering and
@@ -543,7 +545,7 @@ def build_artifacts(
         "pins": _pins(),
         "scope": "cgi-io cgi-upload → file_write with conjunctive file ACL",
         "harness": {
-            "canonical": "python3 -c 'from policy.cgi_upload import write_artifacts; write_artifacts()'",
+            "canonical": "python3 -m policy emit",
             "c_double": "policy/c_double/cgi_upload.c",
             "compiler": "gcc",
             "flags": C_DOUBLE_FLAGS,
