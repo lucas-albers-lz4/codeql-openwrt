@@ -10,7 +10,7 @@
   ],
   "unsupported_constructs": [
     "shellquote as a global sanitizer",
-    "same-function locals (getRealtimeStats flags, setPassword u/p)",
+    "same-function locals (inventoried in reports/m4-realtime-password-unquoted-coverage.json)",
     "interpreter program input",
     "quoted value embedded or concatenated unsafely beyond a single substitution"
   ]

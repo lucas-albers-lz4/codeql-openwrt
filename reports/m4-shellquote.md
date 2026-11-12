@@ -10,6 +10,6 @@
 | `taint_neg` | no | — | no |
 | luci `getSwconfigFeatures` / `getSwconfigPortState` | yes | **yes** | **no** |
 
-Unsupported (still taint, not a barrier): quoted executable selection, interpreter program input, embedding the quoted value in an unsafe context, and same-function locals (see the request.args inventory PR).
+Unsupported (still taint, not a barrier): quoted executable selection, interpreter program input, embedding the quoted value in an unsafe context, and same-function locals (`getRealtimeStats` `flags`, `setPassword` `u`/`p`; inventoried in [m4-realtime-password-unquoted.md](m4-realtime-password-unquoted.md)).
 
 See `reports/m4-shellquote-findings.json`.

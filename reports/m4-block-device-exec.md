@@ -19,6 +19,6 @@ See `reports/m4-block-device-exec-coverage.json`.
 ## Still unmodeled in this slice
 
 - `getRealtimeStats` later `flags` reassignment (CFG/SSA)
-- `setPassword` `u`/`p` `shellquote` barrier (observed, not modeled)
+- same-function `flags` / `u`/`p` quoting ([m4-realtime-password-unquoted.md](m4-realtime-password-unquoted.md))
 - `setInitAction` → `luci.sys` `init_action` interprocedural dataflow (no luci-ssl delegated grant)
 - `getBlockDevices` `readfile` of `/sys/class/block/${dev}/size` (not exec)

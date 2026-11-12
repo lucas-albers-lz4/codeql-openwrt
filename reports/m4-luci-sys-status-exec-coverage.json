@@ -22,7 +22,7 @@
   ],
   "unmodeled_branches": [
     "conntrack_list open('/proc/net/nf_conntrack') file_read",
-    "getRealtimeStats flags reassignment and setPassword u/p barrier stay on the request.args inventory"
+    "getRealtimeStats flags reassignment (CFG/SSA); same-function flags/u/p quoting in reports/m4-realtime-password-unquoted-coverage.json"
   ],
   "unsupported_constructs": [
     "generated AST.qll/CFG.qll (not imported for this transcription)",

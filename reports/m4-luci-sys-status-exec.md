@@ -20,5 +20,5 @@ See `reports/m4-luci-sys-status-exec-coverage.json`.
 - `getConntrackList` primary `open('/proc/net/nf_conntrack')` (file_read, not exec)
 - `luci-mod-status-processes` write `file.exec` `/bin/kill` (C `file.exec`, not this luci.sys popen)
 - `getRealtimeStats` later `flags` reassignment (CFG/SSA; QL waits on `codeql-ucode#12`)
-- `setPassword` `u`/`p` `shellquote` barrier (observed, not modeled)
+- same-function `flags` / `u`/`p` quoting ([m4-realtime-password-unquoted.md](m4-realtime-password-unquoted.md))
 - `setInitAction` → `luci.sys` `init_action` interprocedural dataflow (no luci-ssl delegated grant)
