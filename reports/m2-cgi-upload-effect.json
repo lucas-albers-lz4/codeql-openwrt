@@ -41,7 +41,7 @@
   ],
   "unknowns": [
     "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-    "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+    "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
     "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
   ]
 }

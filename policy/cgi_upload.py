@@ -78,8 +78,8 @@ UNKNOWN_MULTIPART = (
     "Multipart framing, boundary scanning, and temp-file copy/chmod are not "
     "modeled; this slice assumes complete multipart input with already-decoded "
     "sessionid and filename fields before an optional filedata part. None SID means "
-    "an absent sessionid part; present sessionids must be nonempty decoded strings. "
-    "Empty parts, arbitrary part ordering, and incomplete framing are outside this slice."
+    "an absent sessionid part; an empty string means a present empty part. "
+    "Arbitrary part ordering and incomplete framing are outside this slice."
 )
 ASSUMPTION_CONJUNCT = (
     "cgi-io main_upload requires session.access scope=cgi-io object=upload "
@@ -197,8 +197,6 @@ def evaluate_upload(
     filedata_present: bool = True,
     sessions: Optional[dict[str, Session]] = None,
 ) -> UploadResult:
-    if sid == "":
-        raise ValueError("empty sessionid parts are outside this decoded-field slice")
     if sessions is None:
         sessions = load_upload_world()
     steps: list[dict[str, Any]] = [

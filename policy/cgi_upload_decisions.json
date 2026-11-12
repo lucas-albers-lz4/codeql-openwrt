@@ -91,7 +91,7 @@
   ],
   "unknowns": [
     "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-    "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+    "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
     "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
   ],
   "decisions": [
@@ -156,7 +156,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "target_id": "cgi_endpoint:cgi-upload",
@@ -213,7 +213,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "not": [
@@ -272,7 +272,74 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "http_403",
+        "dispatcher"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:empty-sessionid-cgi-upload-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "upload_denied",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "",
+      "filename": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c data_cb PART_SESSIONID datadup(data, 0) yields a present empty string; data_end_cb invokes session_access with empty SID -> Upload permission denied via response() Status 200"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": false
+        },
+        {
+          "step": "main_upload",
+          "result": "UPLOAD_DENIED",
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#empty-sessionid-cgi-upload-denied",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "not": [
@@ -334,7 +401,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "not": [
@@ -419,7 +486,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "target_id": "cgi_endpoint:cgi-upload",
@@ -517,7 +584,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "target_id": "cgi_endpoint:cgi-upload",
@@ -613,7 +680,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "not": [
@@ -702,7 +769,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "not": [
@@ -779,7 +846,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "not": [
@@ -847,7 +914,7 @@
       ],
       "unknowns": [
         "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
-        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; present sessionids must be nonempty decoded strings. Empty parts, arbitrary part ordering, and incomplete framing are outside this slice.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
         "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
       ],
       "target_id": "cgi_endpoint:cgi-upload",

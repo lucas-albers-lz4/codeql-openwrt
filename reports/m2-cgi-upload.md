@@ -17,13 +17,13 @@ failure body, not `failure(403)`. The upload ACL runs at `data_end_cb` only
 when a `sessionid` part is present. An absent sessionid with a `filedata`
 part instead produces `File data without session` at `data_begin_cb`
 (`missing_session`, Status 200); this is separate from a present unauthorized
-SID (`upload_denied`). A complete request without `filedata` and
+or empty SID (`upload_denied`). A complete request without `filedata` and
 without a rejected sessionid part returns from `main_upload` without
 `response()` (`no_response`, `http_status: null`), so it is not an ACL denial.
 
 Cases assume complete multipart framing, with sessionid/filename parts before
 filedata when present. `filedata_present` defaults to true; SID `None` means
-an absent part; present SIDs must be nonempty decoded strings. Empty parts, arbitrary ordering,
+an absent part and `""` means a present empty part. Arbitrary ordering,
 truncated framing, temp-file creation, and file copying remain outside the slice.
 
 This slice does **not** rewrite `policy/grants.json` or

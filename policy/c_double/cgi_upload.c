@@ -2,8 +2,7 @@
  * Isolated double of cgi-io main_upload @ 31cb3c89f02d918d7f17bf62a80c852fc38a1ca1:
  *   Inputs are already-decoded multipart fields. Successful multipart framing
  *   is a precondition; the parser itself is not modeled. sessionid/filename
- *   precede filedata when present; empty sessionid parts and arbitrary ordering
- *   are outside this slice.
+ *   precede filedata when present; arbitrary ordering is outside this slice.
  *   CONTENT_TYPE prefix "multipart/form-data;" (20) plus a boundary '='
  *   session_access(sid, "cgi-io", "upload", "write")  [after sessionid part]
  *   canonicalize_path(filename)
@@ -233,12 +232,8 @@ static int cmd_decide(int argc, char **argv)
 		return filedata_present ? 1 : 0;
 	}
 
-	if (sid[0] == '\0') {
-		fprintf(stderr, "empty sessionid parts are outside this decoded-field slice\n");
-		return 2;
-	}
-
-	if (!(scope_match(cgi_scope, REQ_SCOPE) &&
+	/* datadup(data, 0) yields a present NUL string, not an absent part. */
+	if (sid[0] == '\0' || !(scope_match(cgi_scope, REQ_SCOPE) &&
 	      acl_match(cgi_obj, cgi_fun, REQ_OBJECT, REQ_FUNCTION))) {
 		puts("UPLOAD_DENIED");
 		return 1;

@@ -74,6 +74,26 @@
       "filedata_present": false
     },
     {
+      "id": "empty-sessionid-cgi-upload-denied",
+      "session_class": null,
+      "sid": "",
+      "filename": "/etc/luci-uploads/example.bin",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "upload_denied",
+      "http_status": 200,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "not": [
+        "http_403",
+        "dispatcher"
+      ],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c data_cb PART_SESSIONID datadup(data, 0) yields a present empty string; data_end_cb invokes session_access with empty SID -> Upload permission denied via response() Status 200"
+      ],
+      "filedata_present": true
+    },
+    {
       "id": "invalid-content-type-cgi-upload-invalid-request",
       "session_class": "luci-base",
       "sid": "22222222222222222222222222222222",

@@ -89,9 +89,15 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertIsNone(result.message)
         self.assertFalse(any(step["step"] == "session_access" for step in result.steps))
 
-    def test_empty_sessionid_part_is_outside_slice(self) -> None:
-        with self.assertRaisesRegex(ValueError, "empty sessionid"):
-            evaluate_upload(sid="")
+    def test_present_empty_sessionid_is_acl_denied(self) -> None:
+        result = self._result("empty-sessionid-cgi-upload-denied")
+        self.assertEqual(result.outcome, "upload_denied")
+        self.assertEqual(result.http_status, 200)
+        self.assertEqual(result.message, "Upload permission denied")
+        self.assertTrue(any(step["step"] == "session_access" for step in result.steps))
+        no_filedata = evaluate_upload(sid="", filedata_present=False)
+        self.assertEqual(no_filedata.outcome, "upload_denied")
+        self.assertEqual(no_filedata.http_status, 200)
 
     def test_authorized_sessionid_without_filedata_has_no_file_acl_check(self) -> None:
         result = self._result("luci-base-without-filedata")
@@ -159,6 +165,10 @@ class TestGrantsAndEffect(unittest.TestCase):
             self.assertFalse(row["response_emitted"])
             self.assertFalse(row["grant_emitted"])
             self.assertFalse(row["filedata_present"])
+
+        empty = decisions["policy:decision:empty-sessionid-cgi-upload-denied"]
+        self.assertTrue(empty["sid_present"])
+        self.assertTrue(empty["response_emitted"])
 
     def test_luci_emitter_is_unchanged(self) -> None:
         blob = json.dumps(self.luci_grants)
@@ -295,6 +305,8 @@ class TestCDouble(unittest.TestCase):
         for sid, filedata, cgi_object, expected in [
             ("-", "1", "upload", "FILE_DATA_WITHOUT_SESSION"),
             ("-", "0", "upload", "NO_RESPONSE"),
+            ("", "1", "upload", "UPLOAD_DENIED"),
+            ("", "0", "upload", "UPLOAD_DENIED"),
             (BASE_FIXTURE_SID, "1", "download", "UPLOAD_DENIED"),
             (BASE_FIXTURE_SID, "0", "download", "UPLOAD_DENIED"),
             (BASE_FIXTURE_SID, "0", "upload", "NO_RESPONSE"),
@@ -306,15 +318,6 @@ class TestCDouble(unittest.TestCase):
                 )
                 self.assertEqual(proc.stdout.strip(), expected)
                 self.assertEqual(proc.returncode, 0 if expected == "NO_RESPONSE" else 1)
-
-    def test_decide_empty_sessionid_is_outside_slice(self) -> None:
-        proc = self._run(
-            "decide", CONTENT_TYPE_EXAMPLE, "", UPLOAD_PATH,
-            "cgi-io", "upload", "write", "/etc/luci-uploads/*", "write", "1",
-        )
-        self.assertEqual(proc.returncode, 2)
-        self.assertIn("empty sessionid", proc.stderr)
-        self.assertEqual(proc.stdout, "")
 
     def test_flags_record_pin(self) -> None:
         proc = self._run("flags")
