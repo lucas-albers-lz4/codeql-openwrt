@@ -247,6 +247,17 @@ class TestMatching(unittest.TestCase):
         self.assertTrue(login_test_permission(None, "read", "unauthenticated"))
         self.assertFalse(login_test_permission(None, "read", "luci-base"))
 
+    def test_ubus_wildcard_object_hostapd_dot_star(self) -> None:
+        """Pinned luci-mod-network write ubus hostapd.* / del_client (FNM_NOESCAPE)."""
+        self.assertTrue(
+            acl_match("hostapd.*", "del_client", "hostapd.wlan0", "del_client")
+        )
+        self.assertFalse(acl_match("hostapd.*", "del_client", "hostapd", "del_client"))
+        self.assertFalse(acl_match("hostapd.*", "del_client", "hostapd.wlan0", "scan"))
+
+    def test_uh_id_len_prefix_rejects_before_fnmatch(self) -> None:
+        self.assertFalse(acl_match("lucix*", "getFeatures", "luci", "getFeatures"))
+
 
 class TestCDouble(unittest.TestCase):
     @classmethod
@@ -294,6 +305,16 @@ class TestCDouble(unittest.TestCase):
         deny = self._run("match", "luci", "getFeatures", "luci", "setPassword")
         self.assertEqual(allow.stdout.strip(), "ALLOW")
         self.assertEqual(deny.stdout.strip(), "DENY")
+
+    def test_match_ubus_wildcard_object(self) -> None:
+        allow = self._run("match", "hostapd.*", "del_client", "hostapd.wlan0", "del_client")
+        deny_obj = self._run("match", "hostapd.*", "del_client", "hostapd", "del_client")
+        deny_fun = self._run("match", "hostapd.*", "del_client", "hostapd.wlan0", "scan")
+        prefix = self._run("match", "lucix*", "getFeatures", "luci", "getFeatures")
+        self.assertEqual(allow.stdout.strip(), "ALLOW")
+        self.assertEqual(deny_obj.stdout.strip(), "DENY")
+        self.assertEqual(deny_fun.stdout.strip(), "DENY")
+        self.assertEqual(prefix.stdout.strip(), "DENY")
 
     def test_decide_four_cases(self) -> None:
         allow = self._run("decide", "0", DEFAULT_SID, "luci", "getFeatures", "1", "luci", "getFeatures")

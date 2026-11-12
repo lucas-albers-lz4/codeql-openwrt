@@ -34,7 +34,11 @@ That C double covers parse + `session.access` matching without a live ubus daemo
 
 - M4, Alloy, `alloy_input.json`, `producer: step4`
 - Markup, Track A, cgi-io, dispatcher / `admin/ubus` SID rewrite
-- fnmatch-witness generation
+- fnmatch-witness generation (transcribed wildcard rows only; see `TestMatching.test_ubus_wildcard_object_hostapd_dot_star`)
 - A `no_ubusauth=1` profile (the SID rewrite is implemented in the oracle and noted as an assumption/unknown)
+
+## fnmatch witnesses (C double)
+
+Handwritten rows in `policy/tests/test_conformance.py` tie Python `acl_match` / `login_test_permission` to `uh_ubus_policy match` and `group`. Wildcard ubus object `hostapd.*` with `del_client` is transcribed from luci `b2e0be4b` `luci-mod-network.json` (`luci-mod-network-config` write grant), not from a generator.
 
 Pins live in `corpus/lock.json`. Join keys: `session_class`, `ingress=ubus_http`, `entrypoint_id=ubus_http:luci.getFeatures`, `analysis_revision=policy:ubus-getfeatures-v1`.
