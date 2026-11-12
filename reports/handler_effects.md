@@ -19,7 +19,7 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m2-cgi-download-effect.json](m2-cgi-download-effect.json) | synthetic `cgi-download` → conjunctive `file_read` (C, not ucode) |
 | [m2-cgi-exec-effect.json](m2-cgi-exec-effect.json) | synthetic `cgi-exec` → cgi-io exec read gate only (C, not ucode) |
 
-Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, dispatcher.
+Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), dispatcher.
 
 ## Grant ↔ effect joins
 
@@ -39,7 +39,7 @@ Unauthenticated `/ubus` is a **non-join** (M2 deny). Delegated module sessions a
 | `setPassword` | `setPassword.busybox-passwd.system` | `policy:grant:luci-mod-system-config:ubus_http:luci.setPassword` | `policy:grant:root:ubus_http:luci.setPassword` | no-join (`policy:decision:unauthenticated-setPassword-deny`) |
 | `setLocaltime` | `setLocaltime.date.system` | `policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime` | `policy:grant:root:ubus_http:luci.setLocaltime` | no-join (`policy:decision:unauthenticated-setLocaltime-deny`) |
 
-Those five effects are handler sinks collected from the existing request.args inventory. `shellquote` on the swconfig / luci-bwc / passwd paths is observed, not a sanitizer. `localtime` / `sprintf %d` on `setLocaltime` are not sanitizers.
+Those five effects are handler sinks collected from the existing request.args inventory. The analyzer observes `shellquote` on the swconfig / luci-bwc / passwd paths without treating it as a global sanitizer. `localtime` / `sprintf %d` on `setLocaltime` are not sanitizers. Runtime quoting is preserved through same-function `getRealtimeStats` `flags` and `setPassword` `u`/`p`; the analyzer's direct-template barrier does not track those locals; quoting inventory is [m4-realtime-password-quoted-locals.md](m4-realtime-password-quoted-locals.md), not extra catalog sinks.
 
 ### Fixed plugin-body exec (`luci-mod-system-mounts` + sysfixtime)
 

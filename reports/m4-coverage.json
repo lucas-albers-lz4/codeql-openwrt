@@ -23,7 +23,7 @@
   "unmodeled_branches": [
     "setInitAction → init_action interprocedural taint (helper body in reports/m4-luci-sys-init-action-coverage.json)",
     "getRealtimeStats later flags reassignment (CFG/SSA)",
-    "setPassword u/p shellquote barrier (observed, not modeled)",
+    "same-function flags/u/p quoting in reports/m4-realtime-password-quoted-locals-coverage.json",
     "fixed getBlockDevices/setBlockDetect/sysfixtime exec in reports/m4-block-device-exec-coverage.json",
     "luci.sys getConntrackList/getProcessList fixed popen in reports/m4-luci-sys-status-exec-coverage.json"
   ],
