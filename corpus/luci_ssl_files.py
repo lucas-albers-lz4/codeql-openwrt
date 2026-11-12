@@ -434,6 +434,14 @@ SHELL_HELPERS: tuple[dict[str, Any], ...] = (
         "shebang": "#!/bin/sh",
         "acl_group": "luci-mod-status-logs",
         "target_id": "command:syslog-wrapper",
+        "gate": (
+            "cgi-io cgi-exec: session.access cgi-io exec read then file.exec of "
+            "/usr/libexec/syslog-wrapper (policy:cgi-exec-file-v1)"
+        ),
+        "helper_body": (
+            "uci_get system @system[0] log_file then cat, else /sbin/logread -e ^ "
+            "or /usr/sbin/logread -e ^; argv unused"
+        ),
     },
     {
         "package": "luci-mod-network",
@@ -443,6 +451,14 @@ SHELL_HELPERS: tuple[dict[str, Any], ...] = (
         "shebang": "#!/bin/sh",
         "acl_group": "luci-mod-network-config",
         "target_id": "command:luci-peeraddr",
+        "gate": (
+            "cgi-io cgi-exec: session.access cgi-io exec read then file.exec of "
+            "/usr/libexec/luci-peeraddr (policy:cgi-exec-file-v1)"
+        ),
+        "helper_body": (
+            "reads CGI REMOTE_ADDR/SERVER_ADDR; ubus/jsonfilter/ip/uci/resolveip; "
+            "interpolates env into ip route get and JSON; argv unused"
+        ),
     },
     {
         "package": "luci-app-package-manager",
@@ -452,6 +468,15 @@ SHELL_HELPERS: tuple[dict[str, Any], ...] = (
         "shebang": "#!/bin/sh",
         "acl_group": "luci-app-package-manager",
         "target_id": "command:package-manager-call",
+        "gate": (
+            "cgi-io cgi-exec: session.access cgi-io exec read then file.exec of "
+            "package-manager-call cmdline (list-* exact; install/remove/upgrade globs) "
+            "(policy:cgi-exec-file-v1)"
+        ),
+        "helper_body": (
+            "action=$1 then apk or opkg; list-installed/list-available or "
+            "install|update|upgrade|remove with remaining argv; flock /tmp/ipkg.lock"
+        ),
     },
 )
 
@@ -560,7 +585,7 @@ def _helper_record(evidence: dict[str, Any], revision: str) -> dict[str, Any]:
     installed = luci_mk_installed(evidence["kind"], evidence["rel"])
     return {
         "record_type": "exec_helper_inventory",
-        "evidence_status": "inconclusive",
+        "evidence_status": "fact",
         "producer": PRODUCER,
         "record_id": f"m4:exec-helper:luci-ssl:{installed}",
         "corpus_revision": revision,
@@ -579,21 +604,30 @@ def _helper_record(evidence: dict[str, Any], revision: str) -> dict[str, Any]:
             f"luci@{LUCI_PIN} {evidence['source']}",
             f"installed {installed} via luci.mk root/",
             f"shebang {evidence['shebang']}",
-            "Not a luci object method; file.exec is C rpcd, not granted here",
+            evidence["gate"],
+            evidence["helper_body"],
+            "Not a luci object method; callers at this pin use fs.exec_direct → cgi-exec",
         ],
         "assumptions": COMMON_ASSUMPTIONS
         + [
-            "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
+            "This is not a ucode shebang and not routing rule 3.",
             "Do not invent a luci-ssl ubus grant for this helper.",
+            "shellquote and basename are not sanitizers.",
+            "canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+            "Helper-internal commands are transcribed, not executed. Track A is unstaffed.",
         ],
         "evidence_refs": [
             f"luci@{LUCI_PIN} {evidence['source']}",
             f"luci@{LUCI_PIN} luci.mk Package/install root/",
             "docs/file-routing.md#classification-order",
+            "policy:cgi-exec-file-v1",
+            "cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec",
         ],
         "unknowns": COMMON_UNKNOWNS
         + [
-            "file.exec matching of the helper argv is C and is not this slice",
+            "lookup_executable PATH search and execv are not modeled",
+            "ubus file.exec (rpcd-mod-file) is not this helper gate",
+            "luci-mod-status-firewall cgi-io exec is not staffed",
         ],
     }
 

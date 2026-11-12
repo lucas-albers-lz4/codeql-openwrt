@@ -371,10 +371,79 @@
         "file.exec of an arbitrary command",
         "execv"
       ],
-      "rationale": "luci-mod-network-config read grants cgi-io exec read at luci b2e0be4b. Unauthenticated ACLs do not. cgi-io main_exec still requires file.exec of the command after this gate; that conjunct is not modeled here.",
+      "rationale": "luci-mod-network-config read grants cgi-io exec read at luci b2e0be4b. Unauthenticated ACLs do not. cgi-io main_exec still requires file.exec of the command after this gate; the three luci-ssl libexec helpers are policy:cgi-exec-file-v1.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
         "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec session_access(sid, cgi-io, exec, read)"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+      "session_class": "luci-mod-status-logs",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "intended_access": [
+        {
+          "target_id": "command:syslog-wrapper",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "file.exec of luci-peeraddr or package-manager-call",
+        "execv"
+      ],
+      "rationale": "luci-mod-status-logs read grants cgi-io exec and file.exec of /usr/libexec/syslog-wrapper. cgi-io main_exec is conjunctive. The helper ignores argv. Unauthenticated ACLs do not grant this helper.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-logs.read.file./usr/libexec/syslog-wrapper=[exec]",
+        "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec file.exec of cmdline or executable"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-network-config-luci-peeraddr",
+      "session_class": "luci-mod-network-config",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "intended_access": [
+        {
+          "target_id": "command:luci-peeraddr",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "file.exec of syslog-wrapper or package-manager-call",
+        "execv"
+      ],
+      "rationale": "luci-mod-network-config read grants cgi-io exec and file.exec of /usr/libexec/luci-peeraddr. A cgi-io exec grant is not file.exec of the other helpers.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.file./usr/libexec/luci-peeraddr=[exec]",
+        "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec file.exec of cmdline or executable"
+      ]
+    },
+    {
+      "expectation_id": "luci-app-package-manager-call",
+      "session_class": "luci-app-package-manager",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "intended_access": [
+        {
+          "target_id": "command:package-manager-call",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "file.exec of syslog-wrapper or luci-peeraddr",
+        "execv"
+      ],
+      "rationale": "luci-app-package-manager grants cgi-io exec read and file.exec of package-manager-call list-* / install / install * / remove * / update / upgrade. Extra package tokens on install * are intended_access for this fixture, not a violation. Bare helper path is not an ACL object, so extra argv on list-installed is denied.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json",
+        "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec file.exec of cmdline or executable"
       ]
     }
   ]

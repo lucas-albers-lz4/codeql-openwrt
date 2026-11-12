@@ -962,7 +962,7 @@
   },
   {
     "record_type": "exec_helper_inventory",
-    "evidence_status": "inconclusive",
+    "evidence_status": "fact",
     "producer": "corpus",
     "record_id": "m4:exec-helper:luci-ssl:/usr/libexec/syslog-wrapper",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
@@ -981,30 +981,39 @@
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/libexec/syslog-wrapper",
       "installed /usr/libexec/syslog-wrapper via luci.mk root/",
       "shebang #!/bin/sh",
-      "Not a luci object method; file.exec is C rpcd, not granted here"
+      "cgi-io cgi-exec: session.access cgi-io exec read then file.exec of /usr/libexec/syslog-wrapper (policy:cgi-exec-file-v1)",
+      "uci_get system @system[0] log_file then cat, else /sbin/logread -e ^ or /usr/sbin/logread -e ^; argv unused",
+      "Not a luci object method; callers at this pin use fs.exec_direct \u2192 cgi-exec"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
-      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
-      "Do not invent a luci-ssl ubus grant for this helper."
+      "This is not a ucode shebang and not routing rule 3.",
+      "Do not invent a luci-ssl ubus grant for this helper.",
+      "shellquote and basename are not sanitizers.",
+      "canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+      "Helper-internal commands are transcribed, not executed. Track A is unstaffed."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/libexec/syslog-wrapper",
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
-      "docs/file-routing.md#classification-order"
+      "docs/file-routing.md#classification-order",
+      "policy:cgi-exec-file-v1",
+      "cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
       "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
-      "file.exec matching of the helper argv is C and is not this slice"
+      "lookup_executable PATH search and execv are not modeled",
+      "ubus file.exec (rpcd-mod-file) is not this helper gate",
+      "luci-mod-status-firewall cgi-io exec is not staffed"
     ]
   },
   {
     "record_type": "exec_helper_inventory",
-    "evidence_status": "inconclusive",
+    "evidence_status": "fact",
     "producer": "corpus",
     "record_id": "m4:exec-helper:luci-ssl:/usr/libexec/luci-peeraddr",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
@@ -1023,30 +1032,39 @@
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/libexec/luci-peeraddr",
       "installed /usr/libexec/luci-peeraddr via luci.mk root/",
       "shebang #!/bin/sh",
-      "Not a luci object method; file.exec is C rpcd, not granted here"
+      "cgi-io cgi-exec: session.access cgi-io exec read then file.exec of /usr/libexec/luci-peeraddr (policy:cgi-exec-file-v1)",
+      "reads CGI REMOTE_ADDR/SERVER_ADDR; ubus/jsonfilter/ip/uci/resolveip; interpolates env into ip route get and JSON; argv unused",
+      "Not a luci object method; callers at this pin use fs.exec_direct \u2192 cgi-exec"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
-      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
-      "Do not invent a luci-ssl ubus grant for this helper."
+      "This is not a ucode shebang and not routing rule 3.",
+      "Do not invent a luci-ssl ubus grant for this helper.",
+      "shellquote and basename are not sanitizers.",
+      "canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+      "Helper-internal commands are transcribed, not executed. Track A is unstaffed."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/libexec/luci-peeraddr",
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
-      "docs/file-routing.md#classification-order"
+      "docs/file-routing.md#classification-order",
+      "policy:cgi-exec-file-v1",
+      "cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
       "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
-      "file.exec matching of the helper argv is C and is not this slice"
+      "lookup_executable PATH search and execv are not modeled",
+      "ubus file.exec (rpcd-mod-file) is not this helper gate",
+      "luci-mod-status-firewall cgi-io exec is not staffed"
     ]
   },
   {
     "record_type": "exec_helper_inventory",
-    "evidence_status": "inconclusive",
+    "evidence_status": "fact",
     "producer": "corpus",
     "record_id": "m4:exec-helper:luci-ssl:/usr/libexec/package-manager-call",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
@@ -1065,25 +1083,34 @@
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/root/usr/libexec/package-manager-call",
       "installed /usr/libexec/package-manager-call via luci.mk root/",
       "shebang #!/bin/sh",
-      "Not a luci object method; file.exec is C rpcd, not granted here"
+      "cgi-io cgi-exec: session.access cgi-io exec read then file.exec of package-manager-call cmdline (list-* exact; install/remove/upgrade globs) (policy:cgi-exec-file-v1)",
+      "action=$1 then apk or opkg; list-installed/list-available or install|update|upgrade|remove with remaining argv; flock /tmp/ipkg.lock",
+      "Not a luci object method; callers at this pin use fs.exec_direct \u2192 cgi-exec"
     ],
     "assumptions": [
       "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
       "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
       "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
       "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
-      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
-      "Do not invent a luci-ssl ubus grant for this helper."
+      "This is not a ucode shebang and not routing rule 3.",
+      "Do not invent a luci-ssl ubus grant for this helper.",
+      "shellquote and basename are not sanitizers.",
+      "canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+      "Helper-internal commands are transcribed, not executed. Track A is unstaffed."
     ],
     "evidence_refs": [
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/root/usr/libexec/package-manager-call",
       "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
-      "docs/file-routing.md#classification-order"
+      "docs/file-routing.md#classification-order",
+      "policy:cgi-exec-file-v1",
+      "cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec"
     ],
     "unknowns": [
       "live uhttpd/rpcd not executed",
       "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
-      "file.exec matching of the helper argv is C and is not this slice"
+      "lookup_executable PATH search and execv are not modeled",
+      "ubus file.exec (rpcd-mod-file) is not this helper gate",
+      "luci-mod-status-firewall cgi-io exec is not staffed"
     ]
   }
 ]

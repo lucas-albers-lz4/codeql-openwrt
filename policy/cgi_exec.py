@@ -73,13 +73,14 @@ UNKNOWN_POSTDECODE = (
 )
 UNKNOWN_FILE_EXEC = (
     "After the cgi-io exec read gate, main_exec still requires file.exec of "
-    "the canonicalized cmdline or lookup_executable result. That conjunctive "
-    "file ACL, parse_command, canonicalize_path, and execv are not modeled."
+    "the command. The three luci-ssl libexec helpers are modeled by "
+    "policy:cgi-exec-file-v1. lookup_executable PATH search, execv, and "
+    "file.exec of other commands are not modeled here."
 )
 UNKNOWN_UNSTAFFED = (
-    "luci-mod-status-logs, luci-mod-status-firewall, and "
-    "luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this "
-    "slice does not staff those fixture logins or invent those grants."
+    "luci-mod-status-firewall also grants cgi-io exec at luci b2e0be4b; this "
+    "slice does not staff that fixture login. luci-mod-status-logs and "
+    "luci-app-package-manager file.exec helpers are policy:cgi-exec-file-v1."
 )
 ASSUMPTION_EXEC_ONLY = (
     "cgi-io main_exec checks session.access scope=cgi-io object=exec "

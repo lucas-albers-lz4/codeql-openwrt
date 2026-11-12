@@ -37,34 +37,56 @@ CGI_BACKUP_EFFECT_ID = "policy:effect:cgi-backup-sensitive-read"
 CGI_UPLOAD_EFFECT_ID = "policy:effect:cgi-upload-file-write"
 CGI_DOWNLOAD_EFFECT_ID = "policy:effect:cgi-download-file-read"
 CGI_EXEC_EFFECT_ID = "policy:effect:cgi-exec-session-access"
+CGI_EXEC_FILE_SNAPSHOT = "reports/m2-cgi-exec-file-effect.json"
 CGI_CATALOG = {
-    "cgi-backup": {
-        "record_id": CGI_BACKUP_EFFECT_ID,
+    CGI_BACKUP_EFFECT_ID: {
+        "cgi_endpoint": "cgi-backup",
         "sink_kind": "sensitive_backup_read",
         "op": "read",
         "snapshot": None,
         "delegated_class": "luci-mod-system-flash",
     },
-    "cgi-upload": {
-        "record_id": CGI_UPLOAD_EFFECT_ID,
+    CGI_UPLOAD_EFFECT_ID: {
+        "cgi_endpoint": "cgi-upload",
         "sink_kind": "file_write",
         "op": "write",
         "snapshot": "reports/m2-cgi-upload-effect.json",
         "delegated_class": "luci-base",
     },
-    "cgi-download": {
-        "record_id": CGI_DOWNLOAD_EFFECT_ID,
+    CGI_DOWNLOAD_EFFECT_ID: {
+        "cgi_endpoint": "cgi-download",
         "sink_kind": "file_read",
         "op": "read",
         "snapshot": "reports/m2-cgi-download-effect.json",
         "delegated_class": "luci-mod-system-flash",
     },
-    "cgi-exec": {
-        "record_id": CGI_EXEC_EFFECT_ID,
+    CGI_EXEC_EFFECT_ID: {
+        "cgi_endpoint": "cgi-exec",
         "sink_kind": "exec",
         "op": "exec",
         "snapshot": "reports/m2-cgi-exec-effect.json",
         "delegated_class": "luci-mod-network-config",
+    },
+    "policy:effect:cgi-exec-file:syslog-wrapper": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": CGI_EXEC_FILE_SNAPSHOT,
+        "delegated_class": "luci-mod-status-logs",
+    },
+    "policy:effect:cgi-exec-file:luci-peeraddr": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": CGI_EXEC_FILE_SNAPSHOT,
+        "delegated_class": "luci-mod-network-config",
+    },
+    "policy:effect:cgi-exec-file:package-manager-call": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": CGI_EXEC_FILE_SNAPSHOT,
+        "delegated_class": "luci-app-package-manager",
     },
 }
 COPIED_EFFECT_SNAPSHOTS = (
@@ -116,7 +138,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
         cgi_rows = [row for row in self.effects if row.get("ingress") == "cgi_io"]
         self.assertEqual(len(luci_rows), LUCI_EFFECT_COUNT)
         self.assertEqual(len(cgi_rows), len(CGI_CATALOG))
-        self.assertEqual({row["cgi_endpoint"] for row in cgi_rows}, set(CGI_CATALOG))
+        self.assertEqual({row["record_id"] for row in cgi_rows}, set(CGI_CATALOG))
+        self.assertEqual(
+            {row["cgi_endpoint"] for row in cgi_rows},
+            {spec["cgi_endpoint"] for spec in CGI_CATALOG.values()},
+        )
         lock_hash = corpus_revision()
         for row in luci_rows:
             for key in REQUIRED:
@@ -136,8 +162,8 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertIn(row["sink_kind"], SCHEMA["properties"]["sink_kind"]["enum"])
             self.assertEqual(row["corpus_revision"], lock_hash)
         for cgi in cgi_rows:
-            spec = CGI_CATALOG[cgi["cgi_endpoint"]]
-            self.assertEqual(cgi["record_id"], spec["record_id"])
+            spec = CGI_CATALOG[cgi["record_id"]]
+            self.assertEqual(cgi["cgi_endpoint"], spec["cgi_endpoint"])
             self.assertEqual(cgi["producer"], "policy_facts")
             self.assertEqual(cgi["sink_kind"], spec["sink_kind"])
             self.assertEqual(cgi["op"], spec["op"])
@@ -327,6 +353,9 @@ class TestHandlerEffectJoins(unittest.TestCase):
             CGI_UPLOAD_EFFECT_ID,
             CGI_DOWNLOAD_EFFECT_ID,
             CGI_EXEC_EFFECT_ID,
+            "policy:effect:cgi-exec-file:syslog-wrapper",
+            "policy:effect:cgi-exec-file:luci-peeraddr",
+            "policy:effect:cgi-exec-file:package-manager-call",
         ):
             cgi_text = " ".join(by_id[record_id]["assumptions"]).lower()
             self.assertIn("shellquote", cgi_text)
@@ -335,18 +364,24 @@ class TestHandlerEffectJoins(unittest.TestCase):
 
     def test_cgi_effects_join_delegated_and_root_grants(self) -> None:
         lock_hash = corpus_revision()
-        for endpoint, spec in CGI_CATALOG.items():
-            effect = next(row for row in self.effects if row["record_id"] == spec["record_id"])
+        snapshots = {}
+        for spec in CGI_CATALOG.values():
+            if spec["snapshot"]:
+                loaded = _load(REPO / spec["snapshot"])
+                snapshots[spec["snapshot"]] = loaded if isinstance(loaded, list) else [loaded]
+        for record_id, spec in CGI_CATALOG.items():
+            effect = next(row for row in self.effects if row["record_id"] == record_id)
             delegated = next(
                 grant
                 for grant in self.grants
-                if grant.get("cgi_endpoint") == endpoint
+                if grant["record_id"] in effect["evidence_refs"]
                 and grant["session_class"] == spec["delegated_class"]
             )
             root = next(
                 grant
                 for grant in self.grants
-                if grant.get("cgi_endpoint") == endpoint and grant["session_class"] == "root"
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "root"
             )
             refs = effect["evidence_refs"]
             self.assertIn(delegated["record_id"], refs)
@@ -358,12 +393,13 @@ class TestHandlerEffectJoins(unittest.TestCase):
             unauth = [
                 grant
                 for grant in self.grants
-                if grant.get("cgi_endpoint") == endpoint
+                if grant.get("entrypoint_id") == effect["entrypoint_id"]
                 and grant["session_class"] == "unauthenticated"
             ]
             self.assertEqual(unauth, [])
             if spec["snapshot"]:
-                snapshot = _load(REPO / spec["snapshot"])
+                snapshot_rows = snapshots[spec["snapshot"]]
+                snapshot = next(row for row in snapshot_rows if row["record_id"] == record_id)
                 self.assertEqual(effect, snapshot)
 
     def test_catalog_does_not_invent_forbidden_claims(self) -> None:
@@ -371,7 +407,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotEqual(row.get("assessment"), "authorization_violation")
             self.assertNotEqual(row.get("ingress"), "dispatcher")
             if row.get("ingress") == "cgi_io":
-                spec = CGI_CATALOG[row["cgi_endpoint"]]
+                spec = CGI_CATALOG[row["record_id"]]
                 self.assertEqual(row.get("sink_kind"), spec["sink_kind"])
             else:
                 self.assertNotIn("cgi_endpoint", row)
