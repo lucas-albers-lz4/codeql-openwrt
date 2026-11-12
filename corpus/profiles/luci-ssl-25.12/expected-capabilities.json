@@ -37,7 +37,7 @@
             "wpa_supplicant -v<feature>",
             "/etc/init.d/ufp running"
           ],
-          "coverage": "unmodeled_branch_until_m3_ledger_includes_them"
+          "coverage": "m4 GetFeaturesDirectExec.ql records hostapd/wpa_supplicant system() call sites; wifi_features loop is not unrolled"
         }
       ],
       "denied_authority": [

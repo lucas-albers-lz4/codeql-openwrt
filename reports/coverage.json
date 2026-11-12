@@ -16,9 +16,8 @@
     "system"
   ],
   "unmodeled_branches": [
-    "getFeatures hostapd/wpa_supplicant system() template probes",
-    "getFeatures dnsmasq/odhcpd/ipset popen",
-    "non-getFeatures request.args exec moved to reports/m4-coverage.json"
+    "getFeatures hostapd/wpa_supplicant/dnsmasq/odhcpd/ipset moved to reports/m4-getfeatures-direct-exec-coverage.json",
+    "non-getFeatures request.args exec in reports/m4-coverage.json"
   ],
   "unsupported_constructs": [
     "generated AST.qll/CFG.qll (not imported)",

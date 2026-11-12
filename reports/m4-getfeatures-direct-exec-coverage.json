@@ -1,0 +1,25 @@
+{
+  "analysis_revision": "step3:getfeatures-direct-exec-v1",
+  "profile": "luci-ssl-25.12",
+  "entrypoint_id": "ubus_http:luci.getFeatures",
+  "status": "partial",
+  "analyzed": [
+    "getFeatures.call direct named fs popen (dnsmasq, odhcpd, ipset)",
+    "getFeatures.call builtin system (hostapd -vfeature, wpa_supplicant -vfeature)"
+  ],
+  "call_sites": [
+    {"line": 268, "kind": "system", "command": "hostapd -v${feature}"},
+    {"line": 275, "kind": "system", "command": "wpa_supplicant -v${feature}"},
+    {"line": 278, "kind": "popen", "command": "dnsmasq --version"},
+    {"line": 294, "kind": "popen", "command": "odhcpd -h"},
+    {"line": 315, "kind": "popen", "command": "ipset --help"}
+  ],
+  "unmodeled_branches": [
+    "wifi_features loop not unrolled",
+    "ufpd is access() not system() in this plugin"
+  ],
+  "out_of_slice": [
+    "callPackageVersionCheck netifd popen (M3 GetFeaturesPopen)",
+    "non-getFeatures request.args exec (M4 RequestArgsExec)"
+  ]
+}
