@@ -1,0 +1,934 @@
+{
+  "grants": [
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-base:cgi_io:cgi-upload",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "luci-base",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "acl_group": "luci-base",
+      "expectation_id": "luci-base-upload",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=upload function=write",
+        "session.access scope=file object=canonicalize_path(filename) function=write"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-base.json luci-base.write.cgi-io=[upload]",
+        "luci@b2e0be4b luci-base.json luci-base.write.file./etc/luci-uploads/*=[write]",
+        "cgi-io@31cb3c89 main.c main_upload conjunctive cgi-io upload write and file write"
+      ],
+      "note": "Fixture login luci-base is not a stock device login.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-upload",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "acl_group": "luci-base",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=upload function=write",
+        "session.access scope=file object=canonicalize_path(filename) function=write"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "luci-base still contributes cgi-io upload to the root session"
+      ],
+      "note": "Stock root list read '*' / list write '*'; not a violation."
+    }
+  ],
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:cgi-upload-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "lockfile": "corpus/lock.json",
+    "endpoint": "cgi_io:cgi-upload"
+  },
+  "scope": "cgi-io cgi-upload \u2192 file_write with conjunctive file ACL",
+  "harness": {
+    "canonical": "python3 -c 'from policy.cgi_upload import write_artifacts; write_artifacts()'",
+    "c_double": "policy/c_double/cgi_upload.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_cgi_io": false,
+    "live_filesystem": false
+  },
+  "assumptions": [
+    "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+    "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+    "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+    "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+  ],
+  "unknowns": [
+    "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+    "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-cgi-upload-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "unauthenticated",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "upload_denied",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "filename": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "cgi-io@31cb3c89 main.c main_upload: session_access false -> Upload permission denied via response()",
+        "do not invent an unauthenticated cgi-upload grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": false
+        },
+        {
+          "step": "main_upload",
+          "result": "UPLOAD_DENIED",
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#unauthenticated-cgi-upload-deny",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sessionid-with-filedata",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "missing_session",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": false,
+      "filename": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c data_begin_cb PART_FILEDATA: absent sessionid -> File data without session via response() Status 200; no upload ACL check ran"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": false,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "data_begin_cb",
+          "result": "MISSING_SESSION",
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#missing-sessionid-with-filedata",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "http_403",
+        "dispatcher"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sessionid-without-filedata",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "no_response",
+      "http_status": null,
+      "response_emitted": false,
+      "filedata_present": false,
+      "sid_present": false,
+      "filename": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c main_upload: complete multipart request with neither sessionid nor filedata never invokes the upload ACL or filedata callbacks and returns without response()"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": false,
+          "filedata_present": false,
+          "filename_present": true
+        },
+        {
+          "step": "main_upload",
+          "result": "NO_RESPONSE",
+          "http_status": null
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#missing-sessionid-without-filedata",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "http_403",
+        "dispatcher"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:empty-sessionid-cgi-upload-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "upload_denied",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "",
+      "filename": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c data_cb PART_SESSIONID datadup(data, 0) yields a present empty string; data_end_cb invokes session_access with empty SID -> Upload permission denied via response() Status 200"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": false
+        },
+        {
+          "step": "main_upload",
+          "result": "UPLOAD_DENIED",
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#empty-sessionid-cgi-upload-denied",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "http_403",
+        "dispatcher"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:invalid-content-type-cgi-upload-invalid-request",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "luci-base",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "invalid_request",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "22222222222222222222222222222222",
+      "filename": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c init_parser: CONTENT_TYPE must start with multipart/form-data; and include '='",
+        "upload uses response(false, Invalid request) Status 200, not failure(400)"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": false,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "main_upload",
+          "result": "INVALID_REQUEST",
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#invalid-content-type-cgi-upload-invalid-request",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "http_400",
+        "acl_bypass"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-base-cgi-upload-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "luci-base",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "allow",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "22222222222222222222222222222222",
+      "filename": "/etc/luci-uploads/example.bin",
+      "canon": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json luci-base.write.cgi-io=[upload]",
+        "luci@b2e0be4b luci-base.json luci-base.write.file./etc/luci-uploads/*=[write]",
+        "cgi-io@31cb3c89 main.c main_upload conjunctive cgi-io upload write and file write"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": true
+        },
+        {
+          "step": "canonicalize_path",
+          "filename": "/etc/luci-uploads/example.bin",
+          "canon": "/etc/luci-uploads/example.bin"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/luci-uploads/example.bin",
+          "function": "write",
+          "result": true
+        },
+        {
+          "step": "main_upload",
+          "result": "allow",
+          "filecopy": false,
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#luci-base-cgi-upload-allow",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "expectation_id": "luci-base-upload",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-base is not a stock device login.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-base",
+        "scope": "cgi-io",
+        "object": "upload",
+        "function": "write",
+        "source": "luci-base.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-base",
+        "scope": "file",
+        "object": "/etc/luci-uploads/*",
+        "function": "write",
+        "source": "luci-base.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-cgi-upload-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "allow",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "filename": "/etc/luci-uploads/example.bin",
+      "canon": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "luci-base still contributes cgi-io upload to the root session"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": true
+        },
+        {
+          "step": "canonicalize_path",
+          "filename": "/etc/luci-uploads/example.bin",
+          "canon": "/etc/luci-uploads/example.bin"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/luci-uploads/example.bin",
+          "function": "write",
+          "result": true
+        },
+        {
+          "step": "main_upload",
+          "result": "allow",
+          "filecopy": false,
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#root-star-cgi-upload-allow",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-base",
+        "scope": "cgi-io",
+        "object": "upload",
+        "function": "write",
+        "source": "luci-base.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-base",
+        "scope": "file",
+        "object": "/etc/luci-uploads/*",
+        "function": "write",
+        "source": "luci-base.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-base-cgi-upload-passwd-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "luci-base",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "path_denied",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "22222222222222222222222222222222",
+      "filename": "/etc/passwd",
+      "canon": "/etc/passwd",
+      "input_rule_refs": [
+        "cgi-io upload write is not enough without file write of the canonical path",
+        "luci-base file write is /etc/luci-uploads/*, not /etc/passwd"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": true
+        },
+        {
+          "step": "canonicalize_path",
+          "filename": "/etc/passwd",
+          "canon": "/etc/passwd"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/passwd",
+          "function": "write",
+          "result": false
+        },
+        {
+          "step": "main_upload",
+          "result": "PATH_DENIED",
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#luci-base-cgi-upload-passwd-deny",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "authorization_violation",
+        "cgi-io-only-suffices"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-base",
+        "scope": "cgi-io",
+        "object": "upload",
+        "function": "write",
+        "source": "luci-base.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-base-cgi-upload-dotdot-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "luci-base",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "path_denied",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "22222222222222222222222222222222",
+      "filename": "/etc/luci-uploads/../passwd",
+      "canon": "/etc/passwd",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c canonicalizes filename before file ACL so ../ cannot ride /etc/luci-uploads/*"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": true
+        },
+        {
+          "step": "canonicalize_path",
+          "filename": "/etc/luci-uploads/../passwd",
+          "canon": "/etc/passwd"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/passwd",
+          "function": "write",
+          "result": false
+        },
+        {
+          "step": "main_upload",
+          "result": "PATH_DENIED",
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#luci-base-cgi-upload-dotdot-deny",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "glob_prefix_bypass"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-base",
+        "scope": "cgi-io",
+        "object": "upload",
+        "function": "write",
+        "source": "luci-base.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-cgi-upload-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "upload_denied",
+      "http_status": 200,
+      "response_emitted": true,
+      "filedata_present": true,
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "filename": "/tmp/firmware.bin",
+      "input_rule_refs": [
+        "luci-mod-system-flash ACL has cgi-io upload write, but the fixture login is list read only",
+        "rpc_login_test_permission write does not fall back to read",
+        "do not invent a luci-ssl write grant for this fixture"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": true,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": false
+        },
+        {
+          "step": "main_upload",
+          "result": "UPLOAD_DENIED",
+          "http_status": 200
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#luci-mod-system-flash-cgi-upload-deny",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "not": [
+        "invented_write_login"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-base-without-filedata",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-upload-v1",
+      "session_class": "luci-base",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "cgi_endpoint": "cgi-upload",
+      "outcome": "no_response",
+      "http_status": null,
+      "response_emitted": false,
+      "filedata_present": false,
+      "sid_present": true,
+      "sid": "22222222222222222222222222222222",
+      "filename": "/etc/luci-uploads/example.bin",
+      "canon": "/etc/luci-uploads/example.bin",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c: authorized sessionid data_end passes, but no filedata means main_upload returns without response() or file ACL check"
+      ],
+      "matching_steps": [
+        {
+          "step": "init_parser",
+          "multipart_assumed": true,
+          "content_type_prefix": "multipart/form-data;",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "filedata_present": false,
+          "filename_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "upload",
+          "function": "write",
+          "result": true
+        },
+        {
+          "step": "main_upload",
+          "result": "NO_RESPONSE",
+          "http_status": null
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_upload_cases.json#luci-base-without-filedata",
+        "c_double": "policy/c_double/cgi_upload.c"
+      },
+      "assumptions": [
+        "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+        "Emitted cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). Those responses have http_status 200; outcome distinguishes invalid_request / upload_denied / missing_session / path_denied. A complete request without filedata can return without response(); no_response has no HTTP status and is not an ACL denial.",
+        "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes complete multipart input with already-decoded sessionid and filename fields before an optional filedata part. None SID means an absent sessionid part; an empty string means a present empty part. Arbitrary part ordering and incomplete framing are outside this slice.",
+        "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+      ],
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "note": "Fixture login luci-base is not a stock device login.",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-base",
+        "scope": "cgi-io",
+        "object": "upload",
+        "function": "write",
+        "source": "luci-base.json"
+      }
+    }
+  ]
+}
