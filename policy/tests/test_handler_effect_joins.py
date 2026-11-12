@@ -23,6 +23,25 @@ EXEC_METHODS = (
     "setPassword",
     "setLocaltime",
 )
+COPIED_EFFECT_SNAPSHOTS = (
+    "reports/findings.json",
+    "reports/m4-getfeatures-direct-exec.json",
+    "reports/m4-luci-sys-init-action-findings.json",
+)
+PROJECTED_PATH_SNAPSHOT = "reports/m4-findings.json"
+SOURCE_FIELDS = (
+    "corpus_revision",
+    "profile",
+    "analysis_revision",
+    "ingress",
+    "entrypoint_id",
+    "ubus_object",
+    "method",
+    "target_id",
+    "op",
+    "sink_kind",
+    "assessment",
+)
 SCHEMA = json.loads((REPO / "schemas" / "finding.schema.json").read_text(encoding="utf-8"))
 REQUIRED = SCHEMA["required"]
 
@@ -134,6 +153,66 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertEqual(source["entrypoint_id"], effect["entrypoint_id"])
             self.assertEqual(source["sink_kind"], effect["sink_kind"])
             self.assertEqual(source["target_id"], effect["target_id"])
+
+    def test_every_catalog_effect_resolves_to_its_producer_snapshot(self) -> None:
+        """Catalog rows must be copied effects or projections of retained paths."""
+        copied_sources = []
+        for relative_path in COPIED_EFFECT_SNAPSHOTS:
+            for row in _load(REPO / relative_path):
+                if row.get("record_type") == "handler_effect":
+                    copied_sources.append((relative_path, row))
+
+        path_sources = [
+            (PROJECTED_PATH_SNAPSHOT, row)
+            for row in _load(REPO / PROJECTED_PATH_SNAPSHOT)
+            if row.get("record_type") == "taint_path"
+            and row.get("evidence_status") == "path_found"
+        ]
+        self.assertEqual(len(copied_sources), 7)
+        self.assertEqual(len(path_sources), len(EXEC_METHODS))
+
+        resolved_source_keys = []
+        for effect in self.effects:
+            copied = [
+                (path, source)
+                for path, source in copied_sources
+                if source["record_id"] == effect["record_id"]
+            ]
+            projected = [
+                (path, source)
+                for path, source in path_sources
+                if source["record_id"] in effect.get("evidence_refs", [])
+            ]
+            matches = copied + projected
+            self.assertEqual(
+                len(matches),
+                1,
+                f"{effect['record_id']} must resolve uniquely to a retained source row",
+            )
+            source_path, source = matches[0]
+            resolved_source_keys.append((source_path, source["record_id"]))
+
+            if source_path == PROJECTED_PATH_SNAPSHOT:
+                self.assertEqual(source["record_type"], "taint_path")
+                self.assertEqual(source["evidence_status"], "path_found")
+                self.assertIn(effect["method"], EXEC_METHODS)
+            else:
+                self.assertEqual(source["record_type"], "handler_effect")
+                self.assertEqual(source["record_id"], effect["record_id"])
+
+            for field in SOURCE_FIELDS:
+                self.assertEqual(
+                    effect.get(field),
+                    source.get(field),
+                    f"{effect['record_id']} drifted from {source_path} in {field}",
+                )
+
+        self.assertEqual(len(resolved_source_keys), 12)
+        self.assertEqual(
+            len(resolved_source_keys),
+            len(set(resolved_source_keys)),
+            "catalog effects must resolve one-to-one to retained producer rows",
+        )
 
     def test_shellquote_and_basename_are_not_sanitizers(self) -> None:
         quoted = [
