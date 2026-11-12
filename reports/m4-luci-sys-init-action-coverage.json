@@ -3,9 +3,10 @@
   "profile": "luci-ssl-25.12",
   "entrypoint_id": "ubus_http:luci.setInitAction",
   "status": "partial",
-  "extracted_files": ["sys.uc"],
+  "extracted_files": ["luci", "sys.uc"],
   "analyzed": [
-    "luci.sys init_action builtin system template"
+    "luci.sys init_action builtin system template",
+    "setInitAction.call action token switch (inventory, not a sanitizer)"
   ],
   "resolved_calls": [
     "system"
@@ -13,7 +14,7 @@
   "unmodeled_branches": [
     "interprocedural request.args taint from setInitAction into init_action",
     "basename as a sanitizer (not modeled)",
-    "setInitAction action token switch"
+    "setInitAction action token switch as a sanitizer (inventory only)"
   ],
   "unsupported_constructs": [
     "generated AST.qll/CFG.qll (not imported)",

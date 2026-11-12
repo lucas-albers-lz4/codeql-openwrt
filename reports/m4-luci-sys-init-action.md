@@ -4,8 +4,8 @@
 
 `init_action` interpolates `basename(name)` and `action` into builtin `system` via a template string. **`basename` is not a modeled sanitizer.** There is no `shellquote` on this sink. Interprocedural taint from the rpcd method is not claimed (still local TreeSitter only).
 
-The stock `setInitAction` caller switches on a fixed action token list before calling the helper; that allowlist is **not** proven by `InitActionSystem.ql`.
+The stock `setInitAction` caller switches on `request.args.action` tokens `enable|disable|start|stop|restart|reload` (`SetInitActionActionSwitch.ql`). That is **caller-side inventory, not a sanitizer** of `name` or of luci.sys.
 
-Evidence: `handler_effect` / `fact`. Assessment stays **unassessed** (no M2 grant row for this method in the first-release evaluator).
+Evidence: `handler_effect` / `fact` for the helper `system` sink, plus `backend_method` / `fact` for the token switch. Assessment stays **unassessed** (no M2 grant row for this method in the first-release evaluator).
 
 See `reports/m4-luci-sys-init-action-findings.json`.
