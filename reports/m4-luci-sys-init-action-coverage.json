@@ -1,0 +1,27 @@
+{
+  "analysis_revision": "step3:luci-sys-init-action-v1",
+  "profile": "luci-ssl-25.12",
+  "entrypoint_id": "ubus_http:luci.setInitAction",
+  "status": "partial",
+  "extracted_files": ["sys.uc"],
+  "analyzed": [
+    "luci.sys init_action builtin system template"
+  ],
+  "resolved_calls": [
+    "system"
+  ],
+  "unmodeled_branches": [
+    "interprocedural request.args taint from setInitAction into init_action",
+    "basename as a sanitizer (not modeled)",
+    "setInitAction action token switch"
+  ],
+  "unsupported_constructs": [
+    "generated AST.qll/CFG.qll (not imported)",
+    "global dataflow/SSA"
+  ],
+  "trusted_summaries": [],
+  "unknowns": [
+    "live uhttpd/rpcd not executed",
+    "no M2 grant row for setInitAction"
+  ]
+}
