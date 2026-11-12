@@ -1,0 +1,707 @@
+{
+  "grants": [
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-network-config:cgi_io:cgi-exec",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "target_id": "cgi_endpoint:cgi-exec",
+      "op": "exec",
+      "acl_group": "luci-mod-network-config",
+      "expectation_id": "luci-mod-network-config-cgi-exec",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
+        "fixture rpcd.config login luci-mod-network-config list read luci-mod-network-config",
+        "cgi-io@31cb3c89 main.c main_exec session_access(sid, cgi-io, exec, read)",
+        "rpcd@d99f703 session.c rpc_handle_access uses supplied scope=cgi-io"
+      ],
+      "note": "Fixture login luci-mod-network-config is not a stock device login. This grant is the cgi-io exec read gate only, not file.exec of a command.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "target_id": "cgi_endpoint:cgi-exec",
+      "op": "exec",
+      "acl_group": "luci-mod-network-config",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches",
+        "luci-mod-network-config still contributes cgi-io exec to the root session"
+      ],
+      "note": "Stock root list read '*' / list write '*'; not a violation."
+    }
+  ],
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:cgi-exec-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "lockfile": "corpus/lock.json",
+    "endpoint": "cgi_io:cgi-exec"
+  },
+  "scope": "cgi-io cgi-exec \u2192 session.access exec read only",
+  "harness": {
+    "canonical": "python3 -c 'from policy.cgi_exec import write_artifacts; write_artifacts()'",
+    "c_double": "policy/c_double/cgi_exec.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_cgi_io": false,
+    "live_execv": false
+  },
+  "assumptions": [
+    "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+    "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+    "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+    "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+  ],
+  "unknowns": [
+    "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+    "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+    "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+    "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-cgi-exec-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "unauthenticated",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io exec",
+        "cgi-io@31cb3c89 main.c main_exec: session_access false -> 403 Exec permission denied",
+        "do not invent an unauthenticated cgi-exec grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "00000000000000000000000000000000",
+            "scope": "cgi-io",
+            "object": "exec",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_cases.json#unauthenticated-cgi-exec-deny",
+        "c_double": "policy/c_double/cgi_exec.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+        "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+        "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-exec",
+      "op": "exec",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sessionid-cgi-exec-forbidden",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": false,
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: !fields[1] -> 403 Exec permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_cases.json#missing-sessionid-cgi-exec-forbidden",
+        "c_double": "policy/c_double/cgi_exec.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+        "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+        "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "execv",
+        "dispatcher",
+        "path_found"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:invalid-content-type-cgi-exec-bad-request",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "bad_request",
+      "http_status": 400,
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_exec: !post -> 400 Invalid form data"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": false,
+          "sessionid_present": true
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_400",
+          "message": "Invalid form data"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_cases.json#invalid-content-type-cgi-exec-bad-request",
+        "c_double": "policy/c_double/cgi_exec.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+        "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+        "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "acl_bypass",
+        "execv"
+      ],
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-cgi-exec-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "allow",
+      "http_status": 200,
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "input_rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
+        "fixture rpcd.config login luci-mod-network-config list read luci-mod-network-config",
+        "cgi-io@31cb3c89 main.c main_exec session_access(sid, cgi-io, exec, read)",
+        "rpcd@d99f703 session.c rpc_handle_access uses supplied scope=cgi-io"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "scope": "cgi-io",
+            "object": "exec",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "match": "literal",
+          "acl_group": "luci-mod-network-config",
+          "acl_source": "luci-mod-network.json",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_cases.json#luci-mod-network-config-cgi-exec-allow",
+        "c_double": "policy/c_double/cgi_exec.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+        "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+        "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-exec",
+      "op": "exec",
+      "expectation_id": "luci-mod-network-config-cgi-exec",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-network-config is not a stock device login. This grant is the cgi-io exec read gate only, not file.exec of a command.",
+      "synthetic_session": true,
+      "matched_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-cgi-exec-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "allow",
+      "http_status": 200,
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches",
+        "luci-mod-network-config still contributes cgi-io exec to the root session"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "scope": "cgi-io",
+            "object": "exec",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "match": "literal",
+          "acl_group": "luci-mod-network-config",
+          "acl_source": "luci-mod-network.json",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_cases.json#root-star-cgi-exec-allow",
+        "c_double": "policy/c_double/cgi_exec.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+        "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+        "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-exec",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-config-cgi-exec-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "luci-mod-system-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system-config grants luci.setPassword/setLocaltime, not cgi-io exec",
+        "do not treat a luci exec-method grant as cgi-exec"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "dddddddddddddddddddddddddddddddd",
+            "scope": "cgi-io",
+            "object": "exec",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_cases.json#luci-mod-system-config-cgi-exec-deny",
+        "c_double": "policy/c_double/cgi_exec.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+        "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+        "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-exec",
+      "op": "exec",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-cgi-exec-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system-flash.read.cgi-io=[backup, download], not exec",
+        "do not treat cgi-io backup or download as cgi-exec"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "scope": "cgi-io",
+            "object": "exec",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_cases.json#luci-mod-system-flash-cgi-exec-deny",
+        "c_double": "policy/c_double/cgi_exec.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+        "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+        "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-exec",
+      "op": "exec",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-realtime-cgi-exec-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-v1",
+      "session_class": "luci-mod-status-realtime",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "sid_present": true,
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-realtime grants luci.getRealtimeStats/getConntrackList, not cgi-io exec",
+        "do not invent a luci-mod-status-realtime cgi-exec grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true
+        },
+        {
+          "step": "session_access",
+          "scope_supplied_by_cgi_io": true,
+          "args": {
+            "ubus_rpc_session": "cccccccccccccccccccccccccccccccc",
+            "scope": "cgi-io",
+            "object": "exec",
+            "function": "read"
+          }
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_cases.json#luci-mod-status-realtime-cgi-exec-deny",
+        "c_double": "policy/c_double/cgi_exec.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec checks session.access scope=cgi-io object=exec function=read before any command ACL. This oracle stops at that gate.",
+        "Successful form-body framing and URL decoding are preconditions; CONTENT_LENGTH/body/URL-decoding failures are outside this slice.",
+        "This oracle does not parse a command, canonicalize argv0, look up an executable, or fork execv; the exec effect is synthetic from the C gate.",
+        "shellquote and basename are not sanitizers. This slice does not treat them, or canonicalize_path, as taint sanitizers."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
+        "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+        "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "cgi_endpoint:cgi-exec",
+      "op": "exec",
+      "synthetic_session": true,
+      "grant_emitted": false
+    }
+  ]
+}
