@@ -9,3 +9,4 @@ First slice: `/ubus` → `luci.getFeatures` → `callPackageVersionCheck('netifd
 See [docs/pack-contract.md](docs/pack-contract.md), `corpus/lock.json`, and [policy/README.md](policy/README.md) for the M2 `/ubus` `luci.getFeatures` oracle.
 
 M4 request.args inventory: [reports/m4-request-args.md](reports/m4-request-args.md).
+M4 getFeatures direct helpers: [reports/m4-getfeatures-direct-exec.md](reports/m4-getfeatures-direct-exec.md).
