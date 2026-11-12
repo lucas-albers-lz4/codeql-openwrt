@@ -1,0 +1,422 @@
+[
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m3:getfeatures-netifd-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.callPackageVersionCheck.popen",
+    "target_id": "command:callPackageVersionCheck:netifd",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": [
+      "same-file callPackageVersionCheck('netifd')",
+      "named popen imported from fs"
+    ],
+    "assumptions": [
+      "TreeSitter same-file call resolution only; not a taint path",
+      "Collected from reports/findings.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "policy:grant:root:ubus_http:luci.getFeatures",
+      "ql/src/m3/GetFeaturesPopen.ql"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-hostapd-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.hostapd.system",
+    "target_id": "command:hostapd-vfeature",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "wifi_features literal list"],
+    "assumptions": [
+      "TreeSitter call reachability inside getFeatures.call; not a taint path",
+      "feature comes from a closed literal list, not request.args",
+      "Collected from reports/m4-getfeatures-direct-exec.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "policy:grant:root:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-wpasupplicant-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.wpasupplicant.system",
+    "target_id": "command:wpa_supplicant-vfeature",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "wifi_features literal list"],
+    "assumptions": [
+      "TreeSitter call reachability inside getFeatures.call; not a taint path",
+      "feature comes from a closed literal list, not request.args",
+      "Collected from reports/m4-getfeatures-direct-exec.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "policy:grant:root:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-dnsmasq-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.dnsmasq.popen",
+    "target_id": "command:dnsmasq-version",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "literal dnsmasq --version"],
+    "assumptions": [
+      "TreeSitter call reachability; not a taint path",
+      "Collected from reports/m4-getfeatures-direct-exec.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "policy:grant:root:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-odhcpd-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.odhcpd.popen",
+    "target_id": "command:odhcpd-h",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "literal odhcpd -h"],
+    "assumptions": [
+      "TreeSitter call reachability; not a taint path",
+      "Collected from reports/m4-getfeatures-direct-exec.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "policy:grant:root:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-ipset-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.ipset.popen",
+    "target_id": "command:ipset-help",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "literal ipset --help"],
+    "assumptions": [
+      "TreeSitter call reachability; not a taint path",
+      "Collected from reports/m4-getfeatures-direct-exec.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "policy:grant:root:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:effect:luci-getSwconfigFeatures-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
+    "ubus_object": "luci",
+    "method": "getSwconfigFeatures",
+    "effect_id": "getSwconfigFeatures.swconfig.popen",
+    "target_id": "command:swconfig",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-network-swconfig",
+    "conditions": [
+      "getSwconfigFeatures.call body",
+      "named popen of literal swconfig",
+      "request.args.switch appears in the command"
+    ],
+    "assumptions": [
+      "Projected from taint_path m4:luci-getSwconfigFeatures-request-args-popen; not a new query run",
+      "shellquote wraps request.args.switch as a complete argument; shellquote is not modeled as a sanitizer",
+      "Executable is the literal swconfig; this is not arbitrary executable selection"
+    ],
+    "evidence_refs": [
+      "m4:luci-getSwconfigFeatures-request-args-popen",
+      "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigFeatures",
+      "policy:grant:root:ubus_http:luci.getSwconfigFeatures",
+      "ql/src/m4/RequestArgsExec.ql"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "shellquote barrier not modeled"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:effect:luci-getSwconfigPortState-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
+    "ubus_object": "luci",
+    "method": "getSwconfigPortState",
+    "effect_id": "getSwconfigPortState.swconfig.popen",
+    "target_id": "command:swconfig",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-network-swconfig",
+    "conditions": [
+      "getSwconfigPortState.call body",
+      "named popen of literal swconfig",
+      "request.args.switch appears in the command"
+    ],
+    "assumptions": [
+      "Projected from taint_path m4:luci-getSwconfigPortState-request-args-popen; not a new query run",
+      "shellquote wraps request.args.switch as a complete argument; shellquote is not modeled as a sanitizer",
+      "Executable is the literal swconfig"
+    ],
+    "evidence_refs": [
+      "m4:luci-getSwconfigPortState-request-args-popen",
+      "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigPortState",
+      "policy:grant:root:ubus_http:luci.getSwconfigPortState",
+      "ql/src/m4/RequestArgsExec.ql"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "shellquote barrier not modeled"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:effect:luci-getRealtimeStats-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getRealtimeStats",
+    "ubus_object": "luci",
+    "method": "getRealtimeStats",
+    "effect_id": "getRealtimeStats.luci-bwc.popen",
+    "target_id": "command:luci-bwc",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-status-realtime",
+    "conditions": [
+      "getRealtimeStats.call body",
+      "named popen of literal luci-bwc",
+      "flags = shellquote(request.args.device) then popen"
+    ],
+    "assumptions": [
+      "Projected from taint_path m4:luci-getRealtimeStats-request-args-popen; not a new query run",
+      "Not CFG/SSA: later reassignment in the same method is not distinguished",
+      "shellquote is observed, not modeled as a sanitizer",
+      "Executable is the literal luci-bwc"
+    ],
+    "evidence_refs": [
+      "m4:luci-getRealtimeStats-request-args-popen",
+      "policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats",
+      "policy:grant:root:ubus_http:luci.getRealtimeStats",
+      "ql/src/m4/RequestArgsExec.ql"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "shellquote barrier not modeled"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:effect:luci-setPassword-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setPassword",
+    "ubus_object": "luci",
+    "method": "setPassword",
+    "effect_id": "setPassword.busybox-passwd.system",
+    "target_id": "command:busybox-passwd",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-system-setPassword",
+    "conditions": [
+      "setPassword.call body",
+      "builtin system of busybox passwd",
+      "const u/p = shellquote(request.args.username/password)"
+    ],
+    "assumptions": [
+      "Projected from taint_path m4:luci-setPassword-request-args-system; not a new query run",
+      "Unauthenticated setPassword is already a M2 deny; this record is the handler sink, not a new unauthenticated grant",
+      "shellquote is observed, not modeled as a sanitizer",
+      "A tainted construction used only by an authorized password-change caller is a code-review candidate, not authorization_violation, unless an additional boundary is crossed"
+    ],
+    "evidence_refs": [
+      "m4:luci-setPassword-request-args-system",
+      "policy:decision:unauthenticated-setPassword-deny",
+      "policy:grant:luci-mod-system-config:ubus_http:luci.setPassword",
+      "policy:grant:root:ubus_http:luci.setPassword",
+      "ql/src/m4/RequestArgsExec.ql"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "shellquote barrier not modeled"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:effect:luci-setLocaltime-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setLocaltime",
+    "ubus_object": "luci",
+    "method": "setLocaltime",
+    "effect_id": "setLocaltime.date.system",
+    "target_id": "command:date",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-system-setLocaltime",
+    "conditions": [
+      "setLocaltime.call body",
+      "builtin system of date",
+      "let t = localtime(request.args.localtime) then system(sprintf %d fields of t)"
+    ],
+    "assumptions": [
+      "Projected from taint_path m4:luci-setLocaltime-request-args-system; not a new query run",
+      "The model does not treat localtime or sprintf %d as sanitizers",
+      "No shellquote on this path"
+    ],
+    "evidence_refs": [
+      "m4:luci-setLocaltime-request-args-system",
+      "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime",
+      "policy:grant:root:ubus_http:luci.setLocaltime",
+      "ql/src/m4/RequestArgsExec.ql"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "int/sprintf conversion is not modeled as a barrier"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:luci-sys-init-action-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:luci-sys-init-action-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setInitAction",
+    "ubus_object": "luci",
+    "method": "setInitAction",
+    "effect_id": "luci.sys.init_action.system",
+    "target_id": "command:init_action",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "unassessed",
+    "conditions": [
+      "export function init_action in sys.uc",
+      "builtin system template interpolates basename(name) and action"
+    ],
+    "assumptions": [
+      "TreeSitter same-file body only; not interprocedural taint from request.args",
+      "basename is not a modeled sanitizer",
+      "setInitAction action token switch is not proven by this query",
+      "Collected from reports/m4-luci-sys-init-action-findings.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "ql/src/m4/InitActionSystem.ql"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "no M2 grant row for setInitAction in the first-release evaluator"
+    ]
+  }
+]

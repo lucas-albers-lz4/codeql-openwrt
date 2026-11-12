@@ -10,6 +10,6 @@ These are **call reachability** records (`handler_effect` / `fact`), not taint p
 | 294 | `popen` | `odhcpd -h` |
 | 315 | `popen` | `ipset --help` |
 
-The netifd `callPackageVersionCheck` popens stay on the M3 `GetFeaturesPopen` records. Assessment: **intended_access** for stock unauthenticated feature probing. Reaching these sinks is not BAC or RCE.
+The netifd `callPackageVersionCheck` popens stay on the M3 `GetFeaturesPopen` records. Assessment: **intended_access** for stock unauthenticated feature probing. Reaching these sinks is not BAC or RCE. Canonical catalog: [handler_effects.md](handler_effects.md).
 
 Loop bodies over `wifi_features` are not unrolled; the query reports the `system()` call sites once each.

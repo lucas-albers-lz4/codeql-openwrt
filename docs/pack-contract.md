@@ -20,6 +20,7 @@ Joins require identical `corpus_revision` and `profile`. `analysis_revision` is 
 
 M2 writes `policy/grants.json` (`policy_grant` / `fact`) and `policy/policy_decisions.json` for `/ubus` `luci.getFeatures` plus the five inventoried request.args exec methods (`getSwconfigFeatures`, `getSwconfigPortState`, `getRealtimeStats`, `setPassword`, `setLocaltime`). Do not emit `alloy_input.json`, `producer: step4`, `file.exec`, cgi-io, `hostapd.*`, or `setInitAction` in M2.
 
+M3/M4 collect `reports/handler_effects.json` (`handler_effect` / `fact`) from existing `/ubus` luci effect records. That file does not rewrite `grants.json`. Join the inventoried request.args exec-method grants on the keys above; unauthenticated is a non-join (deny) for those five methods. `setInitAction` has an effect and no M2 grant. Do not invent cgi-io or dispatcher effects here.
 
 ## M1 extraction
 

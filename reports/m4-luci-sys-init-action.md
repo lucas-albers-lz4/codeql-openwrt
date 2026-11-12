@@ -8,4 +8,4 @@ The stock `setInitAction` caller switches on `request.args.action` tokens `enabl
 
 Evidence: `handler_effect` / `fact` for the helper `system` sink, `backend_method` / `fact` for the token switch, and `taint_path` / `inconclusive` for the syntactic caller/sink pair (not interprocedural dataflow, not `path_found`). Assessment stays **unassessed** (no M2 grant row for this method in the first-release evaluator).
 
-See `reports/m4-luci-sys-init-action-findings.json`.
+See `reports/m4-luci-sys-init-action-findings.json`. Canonical catalog: [handler_effects.md](handler_effects.md) (no M2 grant join).
