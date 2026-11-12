@@ -796,6 +796,7 @@
       "op": "invoke",
       "expectation_id": "luci-mod-network-swconfig",
       "assessment": "intended_access",
+      "synthetic_session": true,
       "matched_acl": {
         "group": "luci-mod-network-config",
         "scope": "ubus",
@@ -883,6 +884,7 @@
       "op": "invoke",
       "expectation_id": "luci-mod-network-swconfig",
       "assessment": "intended_access",
+      "synthetic_session": true,
       "matched_acl": {
         "group": "luci-mod-network-config",
         "scope": "ubus",
@@ -970,6 +972,7 @@
       "op": "invoke",
       "expectation_id": "luci-mod-status-realtime",
       "assessment": "intended_access",
+      "synthetic_session": true,
       "matched_acl": {
         "group": "luci-mod-status-realtime",
         "scope": "ubus",
@@ -1057,6 +1060,7 @@
       "op": "invoke",
       "expectation_id": "luci-mod-system-setPassword",
       "assessment": "intended_access",
+      "synthetic_session": true,
       "matched_acl": {
         "group": "luci-mod-system-config",
         "scope": "ubus",
@@ -1144,6 +1148,7 @@
       "op": "invoke",
       "expectation_id": "luci-mod-system-setLocaltime",
       "assessment": "intended_access",
+      "synthetic_session": true,
       "matched_acl": {
         "group": "luci-mod-system-config",
         "scope": "ubus",

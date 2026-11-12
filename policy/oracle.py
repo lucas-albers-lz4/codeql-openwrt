@@ -80,6 +80,7 @@ SESSION_SIDS = {
     "luci-mod-status-realtime": STATUS_FIXTURE_SID,
     "luci-mod-system-config": SYSTEM_FIXTURE_SID,
 }
+SYNTHETIC_SESSION_CLASSES = frozenset(SESSION_SIDS) - {"unauthenticated", "root"}
 
 UNKNOWN_LIVE = (
     "Live rpcd and uhttpd were not executed; decisions are transcribed "
@@ -445,10 +446,12 @@ def evaluate_call(
         }
     )
     matched = uh_ubus_allowed(sessions, parsed_sid, parsed_obj, parsed_fun)
-    resolved_class = session_class
-    if resolved_class is None:
-        hit = sessions.get(parsed_sid)
-        resolved_class = hit.session_class if hit else None
+    hit = sessions.get(parsed_sid)
+    resolved_class = hit.session_class if hit else None
+    if hit is not None and session_class is not None and session_class != resolved_class:
+        raise ValueError(
+            f"session_class {session_class!r} does not match SID session {resolved_class!r}"
+        )
     steps.append(
         {
             "step": "rpc_session_acl_allowed",
@@ -534,6 +537,8 @@ def evaluate_expected_case(
 
 
 def grant_record(case: dict[str, Any], result: EvalResult) -> dict[str, Any]:
+    if result.session_class is None or case["session_class"] != result.session_class:
+        raise ValueError("grant case session_class does not match evaluated SID session")
     record = _identity(
         "policy_grant",
         f"policy:grant:{case['session_class']}:ubus_http:{case['object']}.{case['function']}",
@@ -559,6 +564,8 @@ def grant_record(case: dict[str, Any], result: EvalResult) -> dict[str, Any]:
     )
     if case.get("note"):
         record["note"] = case["note"]
+    if result.session_class in SYNTHETIC_SESSION_CLASSES:
+        record["synthetic_session"] = True
     return record
 
 
@@ -601,6 +608,8 @@ def decision_record(case: dict[str, Any], result: EvalResult) -> dict[str, Any]:
         record["not"] = list(case["not"])
     if case.get("note"):
         record["note"] = case["note"]
+    if result.session_class in SYNTHETIC_SESSION_CLASSES:
+        record["synthetic_session"] = True
     if result.outcome == "deny":
         record["grant_emitted"] = False
     if result.matched:

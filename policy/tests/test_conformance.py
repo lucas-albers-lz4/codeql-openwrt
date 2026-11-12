@@ -28,12 +28,14 @@ from policy.oracle import (  # noqa: E402
     ROOT_FIXTURE_SID,
     STATUS_FIXTURE_SID,
     SYSTEM_FIXTURE_SID,
+    SYNTHETIC_SESSION_CLASSES,
     acl_match,
     build_artifacts,
     corpus_revision,
     emit_artifacts,
     evaluate_call,
     evaluate_expected_case,
+    grant_record,
     load_acl_catalog,
     load_expected_cases,
     load_world,
@@ -229,6 +231,30 @@ class TestHandwrittenCases(unittest.TestCase):
             "deny",
         )
 
+    def test_supplied_class_must_match_known_sid(self) -> None:
+        for supplied, sid in (
+            ("unauthenticated", ROOT_FIXTURE_SID),
+            ("root", NETWORK_FIXTURE_SID),
+            ("luci-mod-network-config", STATUS_FIXTURE_SID),
+            ("luci-mod-system-config", DEFAULT_SID),
+        ):
+            with self.subTest(supplied=supplied, sid=sid):
+                with self.assertRaisesRegex(ValueError, "does not match SID session"):
+                    evaluate_call(session_class=supplied, sid=sid, data={}, sessions=self.sessions)
+
+        unknown = evaluate_call(session_class="root", sid="f" * 32, data={}, sessions=self.sessions)
+        self.assertEqual(unknown.outcome, "deny")
+        self.assertIsNone(unknown.session_class)
+        missing = evaluate_call(session_class="root", sid=None, data={}, sessions=self.sessions)
+        self.assertEqual(missing.outcome, "jsonrpc_parse_error")
+
+    def test_grant_rejects_case_identity_not_evaluated_identity(self) -> None:
+        case = dict(self.cases["root-star-setPassword-allow"])
+        result = self._result(case["id"])
+        case["session_class"] = "unauthenticated"
+        with self.assertRaisesRegex(ValueError, "does not match evaluated SID session"):
+            grant_record(case, result)
+
     def test_evaluator_matches_every_handwritten_outcome(self) -> None:
         for case in self.cases.values():
             result = self._result(case["id"])
@@ -314,6 +340,19 @@ class TestGrantsAndDecisions(unittest.TestCase):
         self.assertIn(UNKNOWN_SNIPPET, " ".join(parse["unknowns"]))
         assessments = {row.get("assessment") for row in self.bundle["decisions"]}
         self.assertNotIn("authorization_violation", assessments)
+
+    def test_fixture_roles_are_marked_synthetic(self) -> None:
+        for row in self.grants + self.bundle["decisions"]:
+            with self.subTest(record_id=row["record_id"]):
+                self.assertEqual(
+                    row.get("synthetic_session", False),
+                    row.get("session_class") in SYNTHETIC_SESSION_CLASSES,
+                )
+        findings = json.loads((REPO / "reports" / "m4-findings.json").read_text())
+        for row in findings:
+            with self.subTest(record_id=row["record_id"]):
+                self.assertIn(row["session_class"], SYNTHETIC_SESSION_CLASSES)
+                self.assertIs(row.get("synthetic_session"), True)
 
     def test_unknowns_on_decisions(self) -> None:
         for row in self.bundle["decisions"]:

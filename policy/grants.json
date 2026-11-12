@@ -85,7 +85,8 @@
       "fixture rpcd.config login luci-mod-network-config list read luci-mod-network-config",
       "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
       "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getSwconfigFeatures"
-    ]
+    ],
+    "synthetic_session": true
   },
   {
     "record_type": "policy_grant",
@@ -114,7 +115,8 @@
       "fixture rpcd.config login luci-mod-network-config list read luci-mod-network-config",
       "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
       "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getSwconfigPortState"
-    ]
+    ],
+    "synthetic_session": true
   },
   {
     "record_type": "policy_grant",
@@ -143,7 +145,8 @@
       "fixture rpcd.config login luci-mod-status-realtime list read luci-mod-status-realtime",
       "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
       "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getRealtimeStats"
-    ]
+    ],
+    "synthetic_session": true
   },
   {
     "record_type": "policy_grant",
@@ -172,7 +175,8 @@
       "fixture rpcd.config login luci-mod-system-config list write luci-mod-system-config",
       "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
       "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/setPassword"
-    ]
+    ],
+    "synthetic_session": true
   },
   {
     "record_type": "policy_grant",
@@ -201,7 +205,8 @@
       "fixture rpcd.config login luci-mod-system-config list write luci-mod-system-config",
       "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
       "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/setLocaltime"
-    ]
+    ],
+    "synthetic_session": true
   },
   {
     "record_type": "policy_grant",

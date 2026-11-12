@@ -27,7 +27,7 @@ That C double covers parse + `session.access` matching without a live ubus daemo
 - Profile `luci-ssl-25.12`, `no_ubusauth=0`
 - Stock unauthenticated session (present all-zero SID) → `luci`/`getFeatures` allow
 - Same session → `luci`/`getSwconfigFeatures`, `getSwconfigPortState`, `getRealtimeStats`, `setPassword`, `setLocaltime` deny (no invented grant)
-- Delegated fixture sessions → matching methods allow (`luci-mod-network-config`, `luci-mod-status-realtime`, `luci-mod-system-config`)
+- Synthetic delegated fixture sessions → matching methods allow (`luci-mod-network-config`, `luci-mod-status-realtime`, `luci-mod-system-config`); these are not stock logins. Their intended-access assessments are conditional on those fixture roles.
 - Missing SID → JSON-RPC parse failure
 - Stock root `list read '*' / list write '*'` → those methods allow (not a violation)
 - Literal object/method names only
