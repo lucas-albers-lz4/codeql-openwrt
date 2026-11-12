@@ -10,9 +10,6 @@ See [docs/pack-contract.md](docs/pack-contract.md), `corpus/lock.json`, and [pol
 
 M4 request.args inventory: [reports/m4-request-args.md](reports/m4-request-args.md).
 M4 getFeatures direct helpers: [reports/m4-getfeatures-direct-exec.md](reports/m4-getfeatures-direct-exec.md).
-<<<<<<< HEAD
 M4 `shellquote` complete-argument barrier: [reports/m4-shellquote.md](reports/m4-shellquote.md). `shellquote` is not a global sanitizer.
-M4 imported callee: [reports/m4-imported-callee.md](reports/m4-imported-callee.md). `setInitAction` → `luci.sys` `init_action` is `inconclusive` / `unresolved_call`.
-=======
+M4 imported callee: [reports/m4-imported-callee.md](reports/m4-imported-callee.md). `setInitAction` → `luci.sys` `init_action` is `inconclusive` under the M3 extract set (`unresolved_call`).
 M4 luci.sys: [reports/m4-luci-sys-init-action.md](reports/m4-luci-sys-init-action.md). `init_action` reaches builtin `system` with interpolated `name`/`action`; `basename` is not a sanitizer.
->>>>>>> 16f2f61 (Record luci.sys init_action reaching builtin system.)

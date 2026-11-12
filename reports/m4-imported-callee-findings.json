@@ -15,11 +15,15 @@
     "assessment": "unassessed",
     "assumptions": [
       "Syntactic taint into the call arguments only",
-      "init_action is imported from luci.sys; that file is not in the M3 extract set"
+      "init_action is imported from luci.sys; that file is not in the M1/M3 extract set",
+      "luci.sys body evidence is a separate M4 slice (reports/m4-luci-sys-init-action-findings.json)"
     ],
-    "evidence_refs": ["ql/src/m4/ImportedCalleeTaint.ql"],
+    "evidence_refs": [
+      "ql/src/m4/ImportedCalleeTaint.ql",
+      "reports/m4-luci-sys-init-action-findings.json"
+    ],
     "unknowns": [
-      "unresolved_call: luci.sys init_action body not extracted",
+      "unresolved_call under M3 extract glob; not interprocedural path_found",
       "live uhttpd/rpcd not executed"
     ]
   }

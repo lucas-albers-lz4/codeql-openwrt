@@ -20,9 +20,7 @@
     "taint_pos/taint_neg excluded by luci basename"
   ],
   "unmodeled_branches": [
-    "setInitAction → init_action (interprocedural)",
-    "getFeatures hostapd/wpa_supplicant system() template probes",
-    "getFeatures dnsmasq/odhcpd/ipset popen",
+    "setInitAction → init_action interprocedural taint (helper body in reports/m4-luci-sys-init-action-coverage.json)",
     "remaining luci methods without request.args in a popen/system argument"
   ],
   "unsupported_constructs": [
