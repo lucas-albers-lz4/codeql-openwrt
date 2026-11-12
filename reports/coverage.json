@@ -18,7 +18,7 @@
   "unmodeled_branches": [
     "getFeatures hostapd/wpa_supplicant system() template probes",
     "getFeatures dnsmasq/odhcpd/ipset popen",
-    "non-getFeatures methods in luci (including request.args switch popen)"
+    "non-getFeatures request.args exec moved to reports/m4-coverage.json"
   ],
   "unsupported_constructs": [
     "generated AST.qll/CFG.qll (not imported)",
