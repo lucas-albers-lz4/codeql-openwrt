@@ -1,0 +1,47 @@
+{
+  "record_type": "handler_effect",
+  "evidence_status": "fact",
+  "producer": "policy_facts",
+  "record_id": "policy:effect:cgi-upload-file-write",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:cgi-upload-v1",
+  "ingress": "cgi_io",
+  "entrypoint_id": "cgi_io:cgi-upload",
+  "cgi_endpoint": "cgi-upload",
+  "effect_id": "cgi-upload.canonicalize-path.write",
+  "target_id": "cgi_endpoint:cgi-upload",
+  "op": "write",
+  "sink_kind": "file_write",
+  "asset_id": "file:luci-uploads",
+  "assessment": "intended_access",
+  "expectation_id": "luci-base-upload",
+  "conditions": [
+    "argv0 contains cgi-upload",
+    "CONTENT_TYPE multipart/form-data; with boundary '='",
+    "sessionid part present",
+    "filename = canonicalize_path(multipart filename)"
+  ],
+  "requirements": [
+    "session.access scope=cgi-io object=upload function=write",
+    "session.access scope=file object=canonicalize_path(filename) function=write"
+  ],
+  "assumptions": [
+    "Synthetic handler_effect transcribed from cgi-io main_upload; C, not ucode",
+    "cgi-io main_upload requires session.access scope=cgi-io object=upload function=write AND session.access scope=file object=canonicalize_path(filename) function=write. A cgi-io grant without the file-write grant cannot authorize.",
+    "cgi-io upload failures use response() which prints Status 200 with a JSON failure body, not failure(403). http_status stays 200; outcome distinguishes invalid_request / upload_denied / path_denied.",
+    "Filename is canonicalized before the file ACL check so a '../' suffix cannot match /etc/luci-uploads/* while linkat/open resolves outside that prefix.",
+    "This oracle does not create tempfiles, chmod, or copy bytes",
+    "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer."
+  ],
+  "evidence_refs": [
+    "policy:grant:luci-base:cgi_io:cgi-upload",
+    "policy:grant:root:cgi_io:cgi-upload",
+    "cgi-io@31cb3c89 main.c main_upload session_access(sid, cgi-io, upload, write) then file write of canonicalize_path(filename)"
+  ],
+  "unknowns": [
+    "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "Multipart framing, boundary scanning, and temp-file copy/chmod are not modeled; this slice assumes already-decoded sessionid and filename fields.",
+    "cgi-download and cgi-exec are not emitted in this slice. cgi-backup stays on policy:cgi-backup-v1."
+  ]
+}

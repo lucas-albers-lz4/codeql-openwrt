@@ -1,0 +1,167 @@
+{
+  "comment": "Hand-transcribed expected cgi-upload decisions from pinned cgi-io C and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "cgi-io main_upload requires CONTENT_TYPE multipart/form-data; with a boundary '=', then session.access(sid, cgi-io, upload, write) AND file write of canonicalize_path(filename).",
+    "Failures use response() Status 200 + JSON, not HTTP 403/400.",
+    "luci-base write grants cgi-io upload and /etc/luci-uploads/* file write. luci-mod-system-flash ACL has cgi-io upload write, but the fixture login is list read only so write ACLs are not in session.",
+    "Unauthenticated has no cgi-io upload. Root * allows.",
+    "This oracle does not copy/chmod files. cgi-download and cgi-exec are not this slice."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-cgi-upload-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "filename": "/etc/luci-uploads/example.bin",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "upload_denied",
+      "http_status": 200,
+      "expect_grant": false,
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "cgi-io@31cb3c89 main.c main_upload: session_access false -> Upload permission denied via response()",
+        "do not invent an unauthenticated cgi-upload grant"
+      ]
+    },
+    {
+      "id": "missing-sessionid-cgi-upload-denied",
+      "session_class": null,
+      "sid": null,
+      "filename": "/etc/luci-uploads/example.bin",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "upload_denied",
+      "http_status": 200,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "not": ["http_403", "dispatcher"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c data_end_cb PART_SESSIONID: missing sid -> Upload permission denied via response() Status 200"
+      ]
+    },
+    {
+      "id": "invalid-content-type-cgi-upload-invalid-request",
+      "session_class": "luci-base",
+      "sid": "22222222222222222222222222222222",
+      "content_type": "application/x-www-form-urlencoded",
+      "filename": "/etc/luci-uploads/example.bin",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "invalid_request",
+      "http_status": 200,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "not": ["http_400", "acl_bypass"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c init_parser: CONTENT_TYPE must start with multipart/form-data; and include '='",
+        "upload uses response(false, Invalid request) Status 200, not failure(400)"
+      ]
+    },
+    {
+      "id": "luci-base-cgi-upload-allow",
+      "session_class": "luci-base",
+      "sid": "22222222222222222222222222222222",
+      "filename": "/etc/luci-uploads/example.bin",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "expectation_id": "luci-base-upload",
+      "assessment": "intended_access",
+      "acl_group": "luci-base",
+      "note": "Fixture login luci-base is not a stock device login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json luci-base.write.cgi-io=[upload]",
+        "luci@b2e0be4b luci-base.json luci-base.write.file./etc/luci-uploads/*=[write]",
+        "cgi-io@31cb3c89 main.c main_upload conjunctive cgi-io upload write and file write"
+      ]
+    },
+    {
+      "id": "root-star-cgi-upload-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "filename": "/etc/luci-uploads/example.bin",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "cgi_endpoint:cgi-upload",
+      "op": "write",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-base",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "luci-base still contributes cgi-io upload to the root session"
+      ]
+    },
+    {
+      "id": "luci-base-cgi-upload-passwd-deny",
+      "session_class": "luci-base",
+      "sid": "22222222222222222222222222222222",
+      "filename": "/etc/passwd",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "path_denied",
+      "http_status": 200,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "not": ["authorization_violation", "cgi-io-only-suffices"],
+      "rule_refs": [
+        "cgi-io upload write is not enough without file write of the canonical path",
+        "luci-base file write is /etc/luci-uploads/*, not /etc/passwd"
+      ]
+    },
+    {
+      "id": "luci-base-cgi-upload-dotdot-deny",
+      "session_class": "luci-base",
+      "sid": "22222222222222222222222222222222",
+      "filename": "/etc/luci-uploads/../passwd",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "path_denied",
+      "http_status": 200,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "not": ["glob_prefix_bypass"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c canonicalizes filename before file ACL so ../ cannot ride /etc/luci-uploads/*"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-cgi-upload-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "filename": "/tmp/firmware.bin",
+      "cgi_endpoint": "cgi-upload",
+      "expected_outcome": "upload_denied",
+      "http_status": 200,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "not": ["invented_write_login"],
+      "rule_refs": [
+        "luci-mod-system-flash ACL has cgi-io upload write, but the fixture login is list read only",
+        "rpc_login_test_permission write does not fall back to read",
+        "do not invent a luci-ssl write grant for this fixture"
+      ]
+    }
+  ]
+}
