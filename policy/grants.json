@@ -475,6 +475,124 @@
     "record_type": "policy_grant",
     "evidence_status": "fact",
     "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-realtime:ubus_http:luci.getConntrackList",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+    "session_class": "luci-mod-status-realtime",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getConntrackList",
+    "ubus_object": "luci",
+    "method": "getConntrackList",
+    "target_id": "ubus:luci.getConntrackList",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-realtime",
+    "expectation_id": "luci-mod-status-realtime",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-realtime.read.ubus.luci=[getConntrackList, getRealtimeStats]",
+      "fixture rpcd.config login luci-mod-status-realtime list read luci-mod-status-realtime",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+      "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getConntrackList"
+    ],
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-processes:ubus_http:luci.getProcessList",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+    "session_class": "luci-mod-status-processes",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getProcessList",
+    "ubus_object": "luci",
+    "method": "getProcessList",
+    "target_id": "ubus:luci.getProcessList",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-processes",
+    "expectation_id": "luci-mod-status-processes",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-processes.read.ubus.luci=[getProcessList]",
+      "fixture rpcd.config login luci-mod-status-processes list read luci-mod-status-processes (write file.exec /bin/kill is not granted to this fixture)",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+      "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getProcessList"
+    ],
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.getConntrackList",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getConntrackList",
+    "ubus_object": "luci",
+    "method": "getConntrackList",
+    "target_id": "ubus:luci.getConntrackList",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-realtime",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-realtime\", 0) matches",
+      "luci-mod-status-realtime still contributes luci.getConntrackList to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.getProcessList",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-exec-methods-v2",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getProcessList",
+    "ubus_object": "luci",
+    "method": "getProcessList",
+    "target_id": "ubus:luci.getProcessList",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-processes",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-processes\", 0) matches",
+      "luci-mod-status-processes still contributes luci.getProcessList to the root session"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
     "record_id": "policy:grant:luci-mod-system-flash:cgi_io:cgi-backup",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",

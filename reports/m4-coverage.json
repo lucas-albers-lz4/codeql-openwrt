@@ -24,7 +24,8 @@
     "setInitAction → init_action interprocedural taint (helper body in reports/m4-luci-sys-init-action-coverage.json)",
     "getRealtimeStats later flags reassignment (CFG/SSA)",
     "setPassword u/p shellquote barrier (observed, not modeled)",
-    "fixed getBlockDevices/setBlockDetect/sysfixtime exec in reports/m4-block-device-exec-coverage.json"
+    "fixed getBlockDevices/setBlockDetect/sysfixtime exec in reports/m4-block-device-exec-coverage.json",
+    "luci.sys getConntrackList/getProcessList fixed popen in reports/m4-luci-sys-status-exec-coverage.json"
   ],
   "unsupported_constructs": [
     "generated AST.qll/CFG.qll (not imported)",

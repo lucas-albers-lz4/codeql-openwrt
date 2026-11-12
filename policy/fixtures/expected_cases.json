@@ -12,10 +12,10 @@
     "JSON-RPC call params are [sid, object, function, data_table]. Missing SID with no_ubusauth=0 is ERROR_PARSE (-32700), not the all-zero sentinel and not rpcd file/uci if (!sid) return true.",
     "uh_ubus_allowed invokes session.access with {ubus_rpc_session, object, function} and omits scope; rpcd defaults scope to ubus.",
     "A present all-zero SID is RPC_DEFAULT_SESSION_ID and is still checked via session.access.",
-    "Unauthenticated ACLs grant only luci.getFeatures. They do not name getSwconfigFeatures, getSwconfigPortState, getRealtimeStats, setPassword, setLocaltime, getBlockDevices, or setBlockDetect.",
+    "Unauthenticated ACLs grant only luci.getFeatures. They do not name getSwconfigFeatures, getSwconfigPortState, getRealtimeStats, setPassword, setLocaltime, getBlockDevices, setBlockDetect, getConntrackList, or getProcessList.",
     "Delegated fixture logins grant only the matching luci-mod-* group. Matching methods ALLOW; unauthenticated is no-grant deny.",
     "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
-    "Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods and getBlockDevices/setBlockDetect. Do not emit file.exec, cgi-io, hostapd.*, or setInitAction (no luci-ssl delegated grant at this pin).",
+    "Emission is bounded to luci.getFeatures plus the inventoried request.args exec methods, getBlockDevices/setBlockDetect, and luci.sys getConntrackList/getProcessList. Do not emit file.exec, cgi-io, hostapd.*, or setInitAction (no luci-ssl delegated grant at this pin).",
     "no_ubusauth=1 SID rewrite exists in uhttpd ubus.c but is not a luci-ssl-25.12 profile case."
   ],
   "cases": [
@@ -588,6 +588,148 @@
         "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
         "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-system-mounts\", 0) matches",
         "luci-mod-system-mounts still contributes luci.setBlockDetect to the root session"
+      ]
+    },
+    {
+      "id": "unauthenticated-getConntrackList-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "object": "luci",
+      "function": "getConntrackList",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getConntrackList",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackList",
+      "jsonrpc_error_code": -32002,
+      "jsonrpc_error_name": "ERROR_ACCESS",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-realtime.read.ubus.luci includes getConntrackList; unauthenticated does not",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed false -> ERROR_ACCESS (-32002)",
+        "do not invent an unauthenticated grant for getConntrackList"
+      ]
+    },
+    {
+      "id": "unauthenticated-getProcessList-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "object": "luci",
+      "function": "getProcessList",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getProcessList",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getProcessList",
+      "jsonrpc_error_code": -32002,
+      "jsonrpc_error_name": "ERROR_ACCESS",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.read.ubus.luci includes getProcessList; unauthenticated does not",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed false -> ERROR_ACCESS (-32002)",
+        "do not invent an unauthenticated grant for getProcessList"
+      ]
+    },
+    {
+      "id": "luci-mod-status-realtime-getConntrackList-allow",
+      "session_class": "luci-mod-status-realtime",
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "object": "luci",
+      "function": "getConntrackList",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getConntrackList",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackList",
+      "expectation_id": "luci-mod-status-realtime",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-realtime",
+      "rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-realtime.read.ubus.luci=[getConntrackList, getRealtimeStats]",
+        "fixture rpcd.config login luci-mod-status-realtime list read luci-mod-status-realtime",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+        "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getConntrackList"
+      ]
+    },
+    {
+      "id": "luci-mod-status-processes-getProcessList-allow",
+      "session_class": "luci-mod-status-processes",
+      "sid": "22222222222222222222222222222222",
+      "object": "luci",
+      "function": "getProcessList",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getProcessList",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getProcessList",
+      "expectation_id": "luci-mod-status-processes",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-processes",
+      "rule_refs": [
+        "luci@b2e0be4b modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-processes.read.ubus.luci=[getProcessList]",
+        "fixture rpcd.config login luci-mod-status-processes list read luci-mod-status-processes (write file.exec /bin/kill is not granted to this fixture)",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+        "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getProcessList"
+      ]
+    },
+    {
+      "id": "root-star-getConntrackList-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "object": "luci",
+      "function": "getConntrackList",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getConntrackList",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackList",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "acl_group": "luci-mod-status-realtime",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-realtime\", 0) matches",
+        "luci-mod-status-realtime still contributes luci.getConntrackList to the root session"
+      ]
+    },
+    {
+      "id": "root-star-getProcessList-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "object": "luci",
+      "function": "getProcessList",
+      "data_present": true,
+      "no_ubusauth": 0,
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getProcessList",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getProcessList",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "acl_group": "luci-mod-status-processes",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-processes\", 0) matches",
+        "luci-mod-status-processes still contributes luci.getProcessList to the root session"
       ]
     }
   ]

@@ -12,6 +12,7 @@ Canonical handler effects and grant joins: [reports/handler_effects.md](reports/
 
 M4 request.args inventory: [reports/m4-request-args.md](reports/m4-request-args.md).
 M4 fixed `/sbin/block` exec and `setLocaltime` sysfixtime: [reports/m4-block-device-exec.md](reports/m4-block-device-exec.md).
+M4 luci.sys status popen: [reports/m4-luci-sys-status-exec.md](reports/m4-luci-sys-status-exec.md). `getConntrackList` / `getProcessList` are fixed argv; QL waits on codeql-ucode#12.
 M4 getFeatures direct helpers: [reports/m4-getfeatures-direct-exec.md](reports/m4-getfeatures-direct-exec.md).
 M4 `shellquote` complete-argument barrier: [reports/m4-shellquote.md](reports/m4-shellquote.md). `shellquote` is not a global sanitizer.
 M4 imported callee: [reports/m4-imported-callee.md](reports/m4-imported-callee.md). `setInitAction` → `luci.sys` `init_action` is `inconclusive` under the M3 extract set (`unresolved_call`).

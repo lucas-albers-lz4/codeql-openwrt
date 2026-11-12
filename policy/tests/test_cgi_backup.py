@@ -164,6 +164,8 @@ class TestGrantsAndEffect(unittest.TestCase):
                 "setLocaltime",
                 "getBlockDevices",
                 "setBlockDetect",
+                "getConntrackList",
+                "getProcessList",
             },
         )
         blob = json.dumps(self.luci_grants)

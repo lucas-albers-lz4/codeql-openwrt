@@ -1,6 +1,6 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-backup effect. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query); cgi-backup is policy-facts (`policy:cgi-backup-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-backup effect. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-backup is policy-facts (`policy:cgi-backup-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
 
 Findings are evidence, not proof. This catalog does not emit `authorization_violation`, cgi-exec/upload/download, or dispatcher effects. `shellquote` and `basename` are not sanitizers.
 
@@ -12,6 +12,7 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m4-getfeatures-direct-exec.json](m4-getfeatures-direct-exec.json) | `getFeatures.call` hostapd / wpa_supplicant `system`, dnsmasq / odhcpd / ipset `popen` |
 | [m4-findings.json](m4-findings.json) | five request.args exec sinks, projected from existing `taint_path` rows (no new query) |
 | [m4-block-device-exec.json](m4-block-device-exec.json) | `getBlockDevices` / `setBlockDetect` fixed `/sbin/block` exec plus `setLocaltime` sysfixtime |
+| [m4-luci-sys-status-exec.json](m4-luci-sys-status-exec.json) | `getConntrackList` / `getProcessList` luci.sys fixed popen |
 | [m4-luci-sys-init-action-findings.json](m4-luci-sys-init-action-findings.json) | `luci.sys` `init_action` → builtin `system` (no M2 grant) |
 | policy-facts `cgi_backup` | synthetic `cgi-backup` → `sensitive_backup_read` (C, not ucode) |
 
@@ -46,6 +47,15 @@ Those five effects are handler sinks collected from the existing request.args in
 | `getBlockDevices` | `getBlockDevices.block-info.popen` | `policy:grant:luci-mod-system-mounts:ubus_http:luci.getBlockDevices` | `policy:grant:root:ubus_http:luci.getBlockDevices` | no-join (`policy:decision:unauthenticated-getBlockDevices-deny`) |
 | `setBlockDetect` | `setBlockDetect.block-detect.system` | `policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect` | `policy:grant:root:ubus_http:luci.setBlockDetect` | no-join (`policy:decision:unauthenticated-setBlockDetect-deny`) |
 | `setLocaltime` | `setLocaltime.sysfixtime.system` | `policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime` | `policy:grant:root:ubus_http:luci.setLocaltime` | no-join (`policy:decision:unauthenticated-setLocaltime-deny`) |
+
+### luci.sys status popen (`luci-mod-status-realtime` + `luci-mod-status-processes`)
+
+`getConntrackList` and `getProcessList` are **fixed** luci.sys helper exec (`call: function()`, no `request.args`). The plugin methods are thin wrappers. Unauthenticated is a **non-join**. `getConntrackList` joins the existing `luci-mod-status-realtime` session (ACL already listed it next to `getRealtimeStats`), not a new session class. The `luci-mod-status-processes` fixture is read-only; write `file.exec` `/bin/kill` is not emitted. QL for these helpers waits on `codeql-ucode#12`.
+
+| Method | `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- | --- |
+| `getConntrackList` | `getConntrackList.conntrack.popen` | `policy:grant:luci-mod-status-realtime:ubus_http:luci.getConntrackList` | `policy:grant:root:ubus_http:luci.getConntrackList` | no-join (`policy:decision:unauthenticated-getConntrackList-deny`) |
+| `getProcessList` | `getProcessList.busybox-top.popen` | `policy:grant:luci-mod-status-processes:ubus_http:luci.getProcessList` | `policy:grant:root:ubus_http:luci.getProcessList` | no-join (`policy:decision:unauthenticated-getProcessList-deny`) |
 
 ### `getFeatures` grants (pre-#12, still join)
 

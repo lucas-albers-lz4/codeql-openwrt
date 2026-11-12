@@ -27,6 +27,7 @@ from policy.oracle import (  # noqa: E402
     MOUNTS_FIXTURE_SID,
     NETWORK_FIXTURE_SID,
     PRODUCER,
+    PROCESSES_FIXTURE_SID,
     REQUEST_ARGS_EXEC_METHODS,
     ROOT_FIXTURE_SID,
     STATUS_FIXTURE_SID,
@@ -175,6 +176,16 @@ class TestHandwrittenCases(unittest.TestCase):
                 MOUNTS_FIXTURE_SID,
                 "luci-mod-system.json",
             ),
+            "getConntrackList": (
+                "luci-mod-status-realtime",
+                STATUS_FIXTURE_SID,
+                "luci-mod-status.json",
+            ),
+            "getProcessList": (
+                "luci-mod-status-processes",
+                PROCESSES_FIXTURE_SID,
+                "luci-mod-status.json",
+            ),
         }
         for method, (session_class, sid, source) in expected.items():
             with self.subTest(method=method):
@@ -212,6 +223,7 @@ class TestHandwrittenCases(unittest.TestCase):
         status = self.sessions[STATUS_FIXTURE_SID]
         system = self.sessions[SYSTEM_FIXTURE_SID]
         mounts = self.sessions[MOUNTS_FIXTURE_SID]
+        processes = self.sessions[PROCESSES_FIXTURE_SID]
         self.assertEqual(
             evaluate_call(
                 sid=network.sid, object="luci", function="setPassword", data={}, sessions=self.sessions
@@ -255,6 +267,36 @@ class TestHandwrittenCases(unittest.TestCase):
                 sid=system.sid,
                 object="luci",
                 function="getBlockDevices",
+                data={},
+                sessions=self.sessions,
+            ).outcome,
+            "deny",
+        )
+        self.assertEqual(
+            evaluate_call(
+                sid=processes.sid,
+                object="luci",
+                function="getRealtimeStats",
+                data={},
+                sessions=self.sessions,
+            ).outcome,
+            "deny",
+        )
+        self.assertEqual(
+            evaluate_call(
+                sid=status.sid,
+                object="luci",
+                function="getProcessList",
+                data={},
+                sessions=self.sessions,
+            ).outcome,
+            "deny",
+        )
+        self.assertEqual(
+            evaluate_call(
+                sid=processes.sid,
+                object="file",
+                function="exec",
                 data={},
                 sessions=self.sessions,
             ).outcome,
@@ -328,6 +370,7 @@ class TestGrantsAndDecisions(unittest.TestCase):
                 "luci-mod-status-realtime",
                 "luci-mod-system-config",
                 "luci-mod-system-mounts",
+                "luci-mod-status-processes",
             },
         )
         getfeatures = [row for row in self.grants if row["method"] == "getFeatures"]
@@ -341,6 +384,8 @@ class TestGrantsAndDecisions(unittest.TestCase):
             "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime",
             "policy:grant:luci-mod-system-mounts:ubus_http:luci.getBlockDevices",
             "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect",
+            "policy:grant:luci-mod-status-realtime:ubus_http:luci.getConntrackList",
+            "policy:grant:luci-mod-status-processes:ubus_http:luci.getProcessList",
         }
         record_ids = {row["record_id"] for row in self.grants}
         self.assertTrue(delegated_ids <= record_ids)
@@ -484,6 +529,12 @@ class TestMatching(unittest.TestCase):
         self.assertTrue(login_test_permission(mounts, "read", "luci-mod-system-mounts"))
         self.assertTrue(login_test_permission(mounts, "write", "luci-mod-system-mounts"))
         self.assertFalse(login_test_permission(mounts, "write", "luci-mod-system-config"))
+        processes = Login(
+            username="luci-mod-status-processes",
+            read=["luci-mod-status-processes"],
+        )
+        self.assertTrue(login_test_permission(processes, "read", "luci-mod-status-processes"))
+        self.assertFalse(login_test_permission(processes, "write", "luci-mod-status-processes"))
 
     def test_acl_catalog_loads_module_files_without_setinitaction(self) -> None:
         catalog = load_acl_catalog()
@@ -495,6 +546,8 @@ class TestMatching(unittest.TestCase):
         self.assertIn(("luci-mod-system-config", "luci", "setLocaltime"), by_fun)
         self.assertIn(("luci-mod-system-mounts", "luci", "getBlockDevices"), by_fun)
         self.assertIn(("luci-mod-system-mounts", "luci", "setBlockDetect"), by_fun)
+        self.assertIn(("luci-mod-status-realtime", "luci", "getConntrackList"), by_fun)
+        self.assertIn(("luci-mod-status-processes", "luci", "getProcessList"), by_fun)
         self.assertTrue(any(entry.object == "file" and entry.function == "exec" for entry in catalog))
         self.assertTrue(any(entry.scope == "cgi-io" for entry in catalog))
         self.assertTrue(any(entry.object == "hostapd.*" for entry in catalog))
