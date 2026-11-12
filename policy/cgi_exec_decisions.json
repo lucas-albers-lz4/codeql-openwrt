@@ -70,7 +70,7 @@
   },
   "scope": "cgi-io cgi-exec \u2192 session.access exec read only",
   "harness": {
-    "canonical": "python3 -m policy emit",
+    "canonical": "python3 -c 'from policy.cgi_exec import write_artifacts; write_artifacts()'",
     "c_double": "policy/c_double/cgi_exec.c",
     "compiler": "gcc",
     "flags": [

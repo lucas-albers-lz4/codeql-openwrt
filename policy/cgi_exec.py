@@ -27,7 +27,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 
-from .cgi_backup import load_cgi_world, upsert_handler_effect
+from .cgi_backup import load_cgi_world
 from .oracle import (
     C_DOUBLE_FLAGS,
     FIXTURES,
@@ -417,7 +417,7 @@ def build_artifacts(
         "pins": _pins(),
         "scope": "cgi-io cgi-exec → session.access exec read only",
         "harness": {
-            "canonical": "python3 -m policy emit",
+            "canonical": "python3 -c 'from policy.cgi_exec import write_artifacts; write_artifacts()'",
             "c_double": "policy/c_double/cgi_exec.c",
             "compiler": "gcc",
             "flags": C_DOUBLE_FLAGS,
@@ -448,5 +448,4 @@ def write_artifacts(repo_root: Path = REPO_ROOT) -> tuple[Path, Path]:
     effect_path = repo_root / "reports" / "m2-cgi-exec-effect.json"
     dump_json(bundle_path, {"grants": grants, **bundle})
     dump_json(effect_path, effect)
-    upsert_handler_effect(effect, repo_root)
     return bundle_path, effect_path

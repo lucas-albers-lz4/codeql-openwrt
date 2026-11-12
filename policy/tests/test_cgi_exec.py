@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -32,6 +33,7 @@ from policy.cgi_exec import (  # noqa: E402
     evaluate_exec,
     evaluate_expected_case,
     load_expected_cases,
+    write_artifacts,
 )
 from policy.oracle import (  # noqa: E402
     C_DOUBLE_FLAGS,
@@ -352,14 +354,32 @@ class TestCommittedArtifacts(unittest.TestCase):
         committed_effect = json.loads(
             (REPO / "reports" / "m2-cgi-exec-effect.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(committed["grants"], grants)
-        self.assertEqual(committed["decisions"], bundle["decisions"])
+        self.assertEqual(committed, {"grants": grants, **bundle})
         self.assertEqual(committed_effect, effect)
 
-    def test_does_not_rewrite_canonical_grants_json(self) -> None:
-        committed = json.loads((REPO / "policy" / "grants.json").read_text(encoding="utf-8"))
-        blob = json.dumps(committed)
-        self.assertNotIn("cgi-exec", blob)
+    def test_writer_preserves_canonical_artifacts(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            shutil.copytree(REPO / "policy" / "fixtures", root / "policy" / "fixtures")
+            (root / "corpus").mkdir()
+            shutil.copy2(REPO / "corpus" / "lock.json", root / "corpus" / "lock.json")
+            (root / "reports").mkdir()
+            canonical_paths = (Path("policy/grants.json"), Path("reports/handler_effects.json"))
+            before = {}
+            for relative_path in canonical_paths:
+                shutil.copy2(REPO / relative_path, root / relative_path)
+                before[relative_path] = (root / relative_path).read_bytes()
+
+            paths = write_artifacts(root)
+
+            self.assertEqual(
+                paths,
+                (root / "policy" / "cgi_exec_decisions.json", root / "reports" / "m2-cgi-exec-effect.json"),
+            )
+            for relative_path in canonical_paths:
+                self.assertEqual((root / relative_path).read_bytes(), before[relative_path], str(relative_path))
+            for path in paths:
+                self.assertTrue(path.is_file(), str(path))
 
 
 if __name__ == "__main__":
