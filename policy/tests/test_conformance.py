@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -207,6 +208,26 @@ class TestParseRules(unittest.TestCase):
         self.assertEqual(err, ERROR_PARSE)
         self.assertFalse(rewritten)
 
+    def test_non_object_data_is_parse_error(self) -> None:
+        for bad in ([], "not a table", 123, False, True, 1.5):
+            with self.subTest(data=bad):
+                _sid, _obj, _fun, _data, _rewritten, err = parse_call_params(
+                    DEFAULT_SID, "luci", "getFeatures", bad, 0
+                )
+                self.assertEqual(err, ERROR_PARSE)
+                result = evaluate_call(
+                    sid=DEFAULT_SID, object="luci", function="getFeatures", data=bad
+                )
+                self.assertEqual(result.outcome, "jsonrpc_parse_error")
+                self.assertEqual(result.jsonrpc_error, ERROR_PARSE)
+                self.assertNotEqual(result.outcome, "allow")
+
+    def test_empty_object_data_reaches_acl_gate(self) -> None:
+        result = evaluate_call(
+            sid=DEFAULT_SID, object="luci", function="getFeatures", data={}
+        )
+        self.assertEqual(result.outcome, "allow")
+
 
 class TestMatching(unittest.TestCase):
     def test_literal_getfeatures(self) -> None:
@@ -249,6 +270,17 @@ class TestCDouble(unittest.TestCase):
         proc = self._run("parse", "0", "-", "luci", "getFeatures", "1")
         self.assertEqual(proc.stdout.strip(), "ERROR_PARSE")
         self.assertNotEqual(proc.returncode, 0)
+
+    def test_parse_non_table_data(self) -> None:
+        for kind in ("array", "string", "number", "bool"):
+            with self.subTest(kind=kind):
+                proc = self._run("parse", "0", DEFAULT_SID, "luci", "getFeatures", kind)
+                self.assertEqual(proc.stdout.strip(), "ERROR_PARSE")
+                self.assertNotEqual(proc.returncode, 0)
+                decide = self._run(
+                    "decide", "0", DEFAULT_SID, "luci", "getFeatures", kind, "luci", "getFeatures"
+                )
+                self.assertEqual(decide.stdout.strip(), "ERROR_PARSE")
 
     def test_parse_present_zero_sid(self) -> None:
         proc = self._run("parse", "0", DEFAULT_SID, "luci", "getFeatures", "1")
@@ -294,9 +326,31 @@ class TestCommittedArtifacts(unittest.TestCase):
         self.assertEqual(committed_decisions, bundle)
 
     def test_emit_helper_roundtrip(self) -> None:
-        grants_path, decisions_path = emit_artifacts(REPO)
-        self.assertEqual(grants_path, REPO / "policy" / "grants.json")
-        self.assertTrue(decisions_path.exists())
+        committed_grants = (REPO / "policy" / "grants.json").read_text(encoding="utf-8")
+        committed_decisions = (REPO / "policy" / "policy_decisions.json").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "policy").mkdir()
+            (root / "corpus").mkdir()
+            shutil.copytree(REPO / "policy" / "fixtures", root / "policy" / "fixtures")
+            shutil.copy2(REPO / "corpus" / "lock.json", root / "corpus" / "lock.json")
+            grants_path, decisions_path = emit_artifacts(root)
+            self.assertEqual(grants_path, root / "policy" / "grants.json")
+            self.assertTrue(decisions_path.exists())
+            expected_grants, expected_bundle = build_artifacts(
+                root / "policy" / "fixtures", root
+            )
+            self.assertEqual(json.loads(grants_path.read_text(encoding="utf-8")), expected_grants)
+            self.assertEqual(
+                json.loads(decisions_path.read_text(encoding="utf-8")), expected_bundle
+            )
+        self.assertEqual(
+            (REPO / "policy" / "grants.json").read_text(encoding="utf-8"), committed_grants
+        )
+        self.assertEqual(
+            (REPO / "policy" / "policy_decisions.json").read_text(encoding="utf-8"),
+            committed_decisions,
+        )
 
 
 if __name__ == "__main__":

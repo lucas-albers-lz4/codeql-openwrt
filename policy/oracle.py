@@ -292,6 +292,11 @@ def load_world(fixtures: Path = FIXTURES) -> dict[str, Session]:
     return {unauth.sid: unauth, root_ses.sid: root_ses}
 
 
+def is_blobmsg_table(data: Any) -> bool:
+    """uhttpd parse_call_params requires BLOBMSG_TYPE_TABLE for the fourth parameter."""
+    return isinstance(data, dict)
+
+
 def parse_call_params(
     sid: Optional[str],
     object_name: Optional[str],
@@ -305,7 +310,10 @@ def parse_call_params(
     if no_ubusauth and (resolved_sid is None or resolved_sid == ""):
         resolved_sid = DEFAULT_SID
         rewritten = True
-    if resolved_sid is None or object_name is None or function is None or data is None:
+    if resolved_sid is None or object_name is None or function is None:
+        return resolved_sid, object_name, function, data, rewritten, ERROR_PARSE
+    # Presence is not enough: array/string/number/boolean do not populate d->data.
+    if not is_blobmsg_table(data):
         return resolved_sid, object_name, function, data, rewritten, ERROR_PARSE
     return resolved_sid, object_name, function, data, rewritten, None
 
@@ -338,8 +346,6 @@ def evaluate_call(
 ) -> EvalResult:
     if sessions is None:
         sessions = load_world()
-    if data is True:
-        data = {}
     steps: list[dict[str, Any]] = []
     parsed_sid, parsed_obj, parsed_fun, parsed_data, rewritten, parse_err = parse_call_params(
         sid, object, function, data, no_ubusauth
@@ -353,6 +359,7 @@ def evaluate_call(
             "object_present": object is not None,
             "function_present": function is not None,
             "data_present": data is not None,
+            "data_is_table": is_blobmsg_table(data),
             "result": "ERROR_PARSE" if parse_err else "ok",
         }
     )
