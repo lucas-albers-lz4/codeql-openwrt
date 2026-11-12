@@ -1,0 +1,1089 @@
+[
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/rpcd/ucode/luci",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/rpcd/ucode/luci",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+    "luci_mk_rule": "luci.mk root/ -> installed",
+    "rule": 1,
+    "reason": "rpcd raw_mode plugin",
+    "shebang": null,
+    "content_prefix": "// Copyright 2022 Jo-Philipp Wich",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci",
+      "installed /usr/share/rpcd/ucode/luci via luci.mk root/ -> installed",
+      "docs/file-routing.md classification rule 1: rpcd raw_mode plugin",
+      "extracted basename luci (M1/M3); remaining methods inventoried separately"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/sys.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/sys.uc",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/sys.uc",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 5,
+    "reason": ".uc/.ucode",
+    "shebang": null,
+    "content_prefix": "// Copyright 2022 Jo-Philipp Wich",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/sys.uc",
+      "installed /usr/share/ucode/luci/sys.uc via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
+      "extracted basename sys.uc for luci.sys helpers"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/sys.uc",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/dispatcher.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/dispatcher.uc",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/dispatcher.uc",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 5,
+    "reason": ".uc/.ucode",
+    "shebang": null,
+    "content_prefix": "// Copyright 2022 Jo-Philipp Wich",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/dispatcher.uc",
+      "installed /usr/share/ucode/luci/dispatcher.uc via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
+      "plain .uc; dispatcher ingress not staffed"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Dispatcher ingress and menu.d are not staffed; this is routing only."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/dispatcher.uc",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/http.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/http.uc",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/http.uc",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 5,
+    "reason": ".uc/.ucode",
+    "shebang": null,
+    "content_prefix": "// Copyright 2022 Jo-Philipp Wich",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/http.uc",
+      "installed /usr/share/ucode/luci/http.uc via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
+      "plain .uc; dispatcher support not staffed"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Dispatcher ingress and menu.d are not staffed; this is routing only."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/http.uc",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/runtime.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/runtime.uc",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/runtime.uc",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 5,
+    "reason": ".uc/.ucode",
+    "shebang": null,
+    "content_prefix": "// Copyright 2022 Jo-Philipp Wich",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/runtime.uc",
+      "installed /usr/share/ucode/luci/runtime.uc via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
+      "plain .uc; dispatcher support not staffed"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Dispatcher ingress and menu.d are not staffed; this is routing only."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/runtime.uc",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/zoneinfo.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/zoneinfo.uc",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/zoneinfo.uc",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 5,
+    "reason": ".uc/.ucode",
+    "shebang": null,
+    "content_prefix": "// Autogenerated by zoneinfo2ucode.pl",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/zoneinfo.uc",
+      "installed /usr/share/ucode/luci/zoneinfo.uc via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
+      "plain .uc; not extracted in this slice"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/zoneinfo.uc",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/controller/admin/index.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/controller/admin/index.uc",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/controller/admin/index.uc",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 5,
+    "reason": ".uc/.ucode",
+    "shebang": null,
+    "content_prefix": "// Copyright 2022 Jo-Philipp Wich",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/controller/admin/index.uc",
+      "installed /usr/share/ucode/luci/controller/admin/index.uc via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
+      "plain .uc; dispatcher controller not staffed"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Dispatcher ingress and menu.d are not staffed; this is routing only."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/controller/admin/index.uc",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/controller/admin/uci.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/controller/admin/uci.uc",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/controller/admin/uci.uc",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 5,
+    "reason": ".uc/.ucode",
+    "shebang": null,
+    "content_prefix": "// Copyright 2022 Jo-Philipp Wich",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/controller/admin/uci.uc",
+      "installed /usr/share/ucode/luci/controller/admin/uci.uc via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
+      "plain .uc; dispatcher controller not staffed"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Dispatcher ingress and menu.d are not staffed; this is routing only."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/controller/admin/uci.uc",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/uhttpd.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/uhttpd.uc",
+    "classification": "markup",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/uhttpd.uc",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 4,
+    "reason": "tagged markup content",
+    "shebang": null,
+    "content_prefix": "{%",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/uhttpd.uc",
+      "installed /usr/share/ucode/luci/uhttpd.uc via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 4: tagged markup content",
+      "markup_not_modeled; luci-base postinst ucode_prefix /cgi-bin/luci=/usr/share/ucode/luci/uhttpd.uc; dispatcher ingress not staffed"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar.",
+      "Dispatcher ingress and menu.d are not staffed; this is routing only."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/uhttpd.uc",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/csrftoken.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/csrftoken.ut",
+    "classification": "markup",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/template/csrftoken.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/csrftoken.ut",
+      "installed /usr/share/ucode/luci/template/csrftoken.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/csrftoken.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/error404.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/error404.ut",
+    "classification": "markup",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/template/error404.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/error404.ut",
+      "installed /usr/share/ucode/luci/template/error404.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/error404.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/error500.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/error500.ut",
+    "classification": "markup",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/template/error500.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/error500.ut",
+      "installed /usr/share/ucode/luci/template/error500.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/error500.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/footer.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/footer.ut",
+    "classification": "markup",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/template/footer.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/footer.ut",
+      "installed /usr/share/ucode/luci/template/footer.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/footer.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/header.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/header.ut",
+    "classification": "markup",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/template/header.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/header.ut",
+      "installed /usr/share/ucode/luci/template/header.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/header.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/sysauth.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/sysauth.ut",
+    "classification": "markup",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/template/sysauth.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/sysauth.ut",
+      "installed /usr/share/ucode/luci/template/sysauth.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/sysauth.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/view.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/view.ut",
+    "classification": "markup",
+    "package": "luci-base",
+    "source": "modules/luci-base/ucode/template/view.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{% include('header') %}",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/view.ut",
+      "installed /usr/share/ucode/luci/template/view.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/template/view.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/www/cgi-bin/luci",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/www/cgi-bin/luci",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/cgi-bin/luci",
+    "luci_mk_rule": "luci.mk htdocs/ -> installed",
+    "rule": 3,
+    "reason": "shebang ucode",
+    "shebang": "#!/usr/bin/env ucode",
+    "content_prefix": "#!/usr/bin/env ucode",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/htdocs/cgi-bin/luci",
+      "installed /www/cgi-bin/luci via luci.mk htdocs/ -> installed",
+      "docs/file-routing.md classification rule 3: shebang ucode",
+      "plain shebang CGI at /www/cgi-bin/luci; imports luci.dispatcher; dispatcher ingress not staffed"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Dispatcher ingress and menu.d are not staffed; this is routing only."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/htdocs/cgi-bin/luci",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "fact",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/version.uc",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/version.uc",
+    "classification": "plain",
+    "package": "luci-base",
+    "source": "modules/luci-base/src/Makefile",
+    "luci_mk_rule": "src Package/install (core.so + generated version.uc)",
+    "rule": 5,
+    "reason": ".uc/.ucode",
+    "shebang": null,
+    "content_prefix": "export const revision = '",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/src/Makefile",
+      "installed /usr/share/ucode/luci/version.uc via src Package/install (core.so + generated version.uc)",
+      "docs/file-routing.md classification rule 5: .uc/.ucode",
+      "generated by luci-base src install (not a git blob); plain .uc; not extracted"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/src/Makefile",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/admin_status/index.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/admin_status/index.ut",
+    "classification": "markup",
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/ucode/template/admin_status/index.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/ucode/template/admin_status/index.ut",
+      "installed /usr/share/ucode/luci/template/admin_status/index.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/ucode/template/admin_status/index.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/themes/bootstrap/header.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/themes/bootstrap/header.ut",
+    "classification": "markup",
+    "package": "luci-theme-bootstrap",
+    "source": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+      "installed /usr/share/ucode/luci/template/themes/bootstrap/header.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/themes/bootstrap/footer.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/themes/bootstrap/footer.ut",
+    "classification": "markup",
+    "package": "luci-theme-bootstrap",
+    "source": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "\t\t{% if (!blank_page): %}",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+      "installed /usr/share/ucode/luci/template/themes/bootstrap/footer.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/themes/bootstrap/sysauth.ut",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/themes/bootstrap/sysauth.ut",
+    "classification": "markup",
+    "package": "luci-theme-bootstrap",
+    "source": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 2,
+    "reason": ".ut",
+    "shebang": null,
+    "content_prefix": "{#",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut",
+      "installed /usr/share/ucode/luci/template/themes/bootstrap/sysauth.ut via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 2: .ut",
+      "markup_not_modeled"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Markup classification is markup_not_modeled; no second grammar."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ]
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/themes/bootstrap-dark",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/themes/bootstrap-dark",
+    "classification": "uncertain",
+    "package": "luci-theme-bootstrap",
+    "source": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 6,
+    "reason": "remaining usr/share/ucode",
+    "shebang": null,
+    "content_prefix": "",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
+      "installed /usr/share/ucode/luci/template/themes/bootstrap-dark via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 6: remaining usr/share/ucode",
+      "extensionless symlink to bootstrap/ .ut directory; remaining usr/share/ucode",
+      "git symlink -> bootstrap"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Unresolved remaining usr/share/ucode path is uncertain, not extracted."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ],
+    "symlink_target": "bootstrap"
+  },
+  {
+    "record_type": "routing",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:routing:luci-ssl:/usr/share/ucode/luci/template/themes/bootstrap-light",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/share/ucode/luci/template/themes/bootstrap-light",
+    "classification": "uncertain",
+    "package": "luci-theme-bootstrap",
+    "source": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light",
+    "luci_mk_rule": "luci.mk ucode/ -> installed",
+    "rule": 6,
+    "reason": "remaining usr/share/ucode",
+    "shebang": null,
+    "content_prefix": "",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light",
+      "installed /usr/share/ucode/luci/template/themes/bootstrap-light via luci.mk ucode/ -> installed",
+      "docs/file-routing.md classification rule 6: remaining usr/share/ucode",
+      "extensionless symlink to bootstrap/ .ut directory; remaining usr/share/ucode",
+      "git symlink -> bootstrap"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "Unresolved remaining usr/share/ucode path is uncertain, not extracted."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here"
+    ],
+    "symlink_target": "bootstrap"
+  },
+  {
+    "record_type": "exec_helper_inventory",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:exec-helper:luci-ssl:/usr/libexec/syslog-wrapper",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/libexec/syslog-wrapper",
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/root/usr/libexec/syslog-wrapper",
+    "luci_mk_rule": "luci.mk root/ -> /",
+    "shebang": "#!/bin/sh",
+    "op": "exec",
+    "sink_kind": "file_exec",
+    "target_id": "command:syslog-wrapper",
+    "acl_group": "luci-mod-status-logs",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/libexec/syslog-wrapper",
+      "installed /usr/libexec/syslog-wrapper via luci.mk root/",
+      "shebang #!/bin/sh",
+      "Not a luci object method; file.exec is C rpcd, not granted here"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
+      "Do not invent a luci-ssl ubus grant for this helper."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/libexec/syslog-wrapper",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
+      "file.exec matching of the helper argv is C and is not this slice"
+    ]
+  },
+  {
+    "record_type": "exec_helper_inventory",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:exec-helper:luci-ssl:/usr/libexec/luci-peeraddr",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/libexec/luci-peeraddr",
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/root/usr/libexec/luci-peeraddr",
+    "luci_mk_rule": "luci.mk root/ -> /",
+    "shebang": "#!/bin/sh",
+    "op": "exec",
+    "sink_kind": "file_exec",
+    "target_id": "command:luci-peeraddr",
+    "acl_group": "luci-mod-network-config",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/libexec/luci-peeraddr",
+      "installed /usr/libexec/luci-peeraddr via luci.mk root/",
+      "shebang #!/bin/sh",
+      "Not a luci object method; file.exec is C rpcd, not granted here"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
+      "Do not invent a luci-ssl ubus grant for this helper."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/libexec/luci-peeraddr",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
+      "file.exec matching of the helper argv is C and is not this slice"
+    ]
+  },
+  {
+    "record_type": "exec_helper_inventory",
+    "evidence_status": "inconclusive",
+    "producer": "corpus",
+    "record_id": "m4:exec-helper:luci-ssl:/usr/libexec/package-manager-call",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "inventory:luci-ssl-files-v1",
+    "fs_path": "/usr/libexec/package-manager-call",
+    "package": "luci-app-package-manager",
+    "source": "applications/luci-app-package-manager/root/usr/libexec/package-manager-call",
+    "luci_mk_rule": "luci.mk root/ -> /",
+    "shebang": "#!/bin/sh",
+    "op": "exec",
+    "sink_kind": "file_exec",
+    "target_id": "command:package-manager-call",
+    "acl_group": "luci-app-package-manager",
+    "conditions": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/root/usr/libexec/package-manager-call",
+      "installed /usr/libexec/package-manager-call via luci.mk root/",
+      "shebang #!/bin/sh",
+      "Not a luci object method; file.exec is C rpcd, not granted here"
+    ],
+    "assumptions": [
+      "Transcribed from luci pin b2e0be4b luci.mk install rules and file contents; not a new query run and not a live make install.",
+      "The extractor seven-case gate lives in codeql-ucode and is not claimed.",
+      "This slice does not rewrite the luci emitter, does not invent luci-ssl grants, and does not claim path_found.",
+      "Dispatcher/menu.d, Alloy, markup extraction, Track A, and setInitAction are not staffed.",
+      "shell_not_analyzed. This is not a ucode shebang and not routing rule 3.",
+      "Do not invent a luci-ssl ubus grant for this helper."
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/root/usr/libexec/package-manager-call",
+      "luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 luci.mk Package/install root/",
+      "docs/file-routing.md#classification-order"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
+      "file.exec matching of the helper argv is C and is not this slice"
+    ]
+  }
+]

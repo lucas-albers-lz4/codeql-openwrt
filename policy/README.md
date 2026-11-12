@@ -50,6 +50,7 @@ Those C doubles cover the decoded-input gate + `session.access` matching without
 
 - M4, Alloy, `alloy_input.json`, `producer: step4`
 - Markup, Track A, dispatcher / `admin/ubus` SID rewrite (`no_ubusauth` does not apply there)
+- luci-ssl `files[]` routing (`inventory:luci-ssl-files-v1`); not emitted into `grants.json`
 - `file.exec` / `hostapd.*` rows present in the loaded ACL files (matching accuracy only; not emitted)
 - `setInitAction` (no luci-ssl delegated grant at luci `b2e0be4b`)
 - fnmatch-witness generation (transcribed wildcard rows only; see `TestMatching.test_ubus_wildcard_object_hostapd_dot_star`)

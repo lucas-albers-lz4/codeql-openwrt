@@ -1,0 +1,222 @@
+{
+  "analysis_revision": "inventory:luci-ssl-files-v1",
+  "profile": "luci-ssl-25.12",
+  "status": "partial",
+  "extracted_files": [
+    "luci",
+    "taint_pos",
+    "taint_neg",
+    "sys.uc"
+  ],
+  "analyzed": [
+    "luci-ssl package closure from collections/luci-ssl and luci-light Makefiles at b2e0be4b with CONFIG_IPV6=y",
+    "luci.mk ucode/ -> /usr/share/ucode/luci/, htdocs/ -> /www/, root/ -> /",
+    "luci-base postinst uhttpd ucode_prefix /cgi-bin/luci=/usr/share/ucode/luci/uhttpd.uc",
+    "luci-base src install generated version.uc and core.so",
+    "docs/file-routing.md classification order on installed paths (inventory, not extractor)",
+    "shebang CGI /www/cgi-bin/luci (#!/usr/bin/env ucode)",
+    "uhttpd.uc tagged markup before .uc fallback",
+    "theme bootstrap-dark/light extensionless symlinks as uncertain",
+    "libexec helpers are #!/bin/sh (shell_not_analyzed), not ucode shebang",
+    "luci-mod-network -> luci-lib-uqr -> /www/luci-static/resources/uqr.js through luci.mk htdocs/"
+  ],
+  "routing_counts": {
+    "plain": 10,
+    "markup": 12,
+    "uncertain": 2,
+    "exec_helper_shell": 3
+  },
+  "negative_controls": [
+    "not path_found",
+    "not a new query",
+    "not a new method grant",
+    "luci emitter unchanged",
+    "extractor seven-case gate not claimed",
+    "unauthenticated remains no-grant deny for inventoried exec methods"
+  ],
+  "unmodeled_branches": [
+    "dispatcher / menu.d (classified but not staffed)",
+    "markup AST extraction (classified markup_not_modeled)",
+    "Track A / JS htdocs (88 counted; uqr.js install evidence listed; no JS analysis)",
+    "C plugins rpcd-mod-luci/rrdns/iwinfo/file/ucode, luci-bwc, core.so",
+    "setInitAction (no luci-ssl delegated grant)",
+    "OpenWrt rpcd/uhttpd/cgi-io/firewall4 trees (not luci.mk)"
+  ],
+  "unsupported_constructs": [
+    "extractor in-tree full-path classifier (codeql-ucode)",
+    "generated AST.qll/CFG.qll (not imported)",
+    "runtime quoting or command-safety inference from routing classification"
+  ],
+  "unknowns": [
+    "live uhttpd/rpcd not executed; which of /www/cgi-bin/luci vs uhttpd ucode_prefix is the live dispatcher on a given image is unassessed",
+    "custom feeds and non-luci-ssl packages are outside this profile"
+  ],
+  "extractor_seven_cases_in_luci_ssl": {
+    "shebang-less-extensionless-plugin": true,
+    "dot-uc-rpcd-plugin": false,
+    "shebang-libexec-ucode": false,
+    "ordinary-ut": true,
+    "tagged-uc": true,
+    "ut-under-rpcd": false,
+    "extensionless-usr-share-ucode": true
+  },
+  "luci_package_closure": [
+    "luci-ssl",
+    "luci-light",
+    "luci-mod-admin-full",
+    "luci-base",
+    "luci-mod-status",
+    "luci-mod-system",
+    "luci-mod-network",
+    "luci-lib-uqr",
+    "luci-app-firewall",
+    "luci-theme-bootstrap",
+    "luci-proto-ppp",
+    "luci-proto-ipv6",
+    "luci-app-package-manager"
+  ],
+  "package_dependency_evidence": [
+    {
+      "package": "luci-ssl",
+      "source": "collections/luci-ssl/Makefile",
+      "luci_dependencies": [
+        "luci-light",
+        "luci-app-package-manager"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-light",
+      "source": "collections/luci-light/Makefile",
+      "luci_dependencies": [
+        "luci-mod-admin-full",
+        "luci-app-firewall",
+        "luci-theme-bootstrap",
+        "luci-proto-ppp",
+        "luci-proto-ipv6"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-mod-admin-full",
+      "source": "modules/luci-mod-admin-full/Makefile",
+      "luci_dependencies": [
+        "luci-base",
+        "luci-mod-status",
+        "luci-mod-system",
+        "luci-mod-network"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-base",
+      "source": "modules/luci-base/Makefile",
+      "luci_dependencies": [],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-mod-status",
+      "source": "modules/luci-mod-status/Makefile",
+      "luci_dependencies": [
+        "luci-base"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-mod-system",
+      "source": "modules/luci-mod-system/Makefile",
+      "luci_dependencies": [
+        "luci-base"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-mod-network",
+      "source": "modules/luci-mod-network/Makefile",
+      "luci_dependencies": [
+        "luci-base",
+        "luci-lib-uqr"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-lib-uqr",
+      "source": "libs/luci-lib-uqr/Makefile",
+      "luci_dependencies": [],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-app-firewall",
+      "source": "applications/luci-app-firewall/Makefile",
+      "luci_dependencies": [
+        "luci-base"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-theme-bootstrap",
+      "source": "themes/luci-theme-bootstrap/Makefile",
+      "luci_dependencies": [
+        "luci-base"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-proto-ppp",
+      "source": "protocols/luci-proto-ppp/Makefile",
+      "luci_dependencies": [],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-proto-ipv6",
+      "source": "protocols/luci-proto-ipv6/Makefile",
+      "luci_dependencies": [],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    {
+      "package": "luci-app-package-manager",
+      "source": "applications/luci-app-package-manager/Makefile",
+      "luci_dependencies": [
+        "luci-base"
+      ],
+      "pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    }
+  ],
+  "javascript_files_by_package": {
+    "luci-ssl": 0,
+    "luci-light": 0,
+    "luci-mod-admin-full": 0,
+    "luci-app-package-manager": 1,
+    "luci-app-firewall": 7,
+    "luci-theme-bootstrap": 2,
+    "luci-proto-ppp": 5,
+    "luci-proto-ipv6": 8,
+    "luci-base": 17,
+    "luci-mod-status": 21,
+    "luci-mod-system": 17,
+    "luci-mod-network": 9,
+    "luci-lib-uqr": 1
+  },
+  "javascript_files_total": 88,
+  "additional_file_evidence": [
+    {
+      "package": "luci-lib-uqr",
+      "dependency_source": "modules/luci-mod-network/Makefile",
+      "source": "libs/luci-lib-uqr/htdocs/luci-static/resources/uqr.js",
+      "kind": "htdocs",
+      "rel": "luci-static/resources/uqr.js",
+      "installed": "/www/luci-static/resources/uqr.js",
+      "source_blob": "8d8ad4a31a8edc77eef187205d81922cfbf5deab",
+      "analysis": "JavaScript; Track A not staffed; not a ucode routing row"
+    }
+  ],
+  "routing_inheritance": {
+    "profile": "luci-ssl-25.12-no-ubusauth",
+    "files_inventory_profile": "luci-ssl-25.12",
+    "mode": "routing_only",
+    "record_types": [
+      "routing"
+    ],
+    "retag_records": false
+  }
+}
