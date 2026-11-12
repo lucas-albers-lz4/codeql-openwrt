@@ -1,0 +1,30 @@
+{
+  "profile": "luci-ssl-25.12",
+  "lockfile": "corpus/lock.json",
+  "config_seed": {
+    "arch": "x86_64",
+    "CONFIG_IPV6": "y",
+    "CONFIG_PACKAGE_luci-ssl": "y"
+  },
+  "uhttpd": {
+    "no_ubusauth": 0,
+    "note": "no_ubusauth=1 is a separate profile and only affects /ubus"
+  },
+  "first_endpoint": {
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "helper_chain": "callPackageVersionCheck('netifd') -> named popen from fs"
+  },
+  "files_preview": [
+    {
+      "source": "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+      "installed": "/usr/share/rpcd/ucode/luci",
+      "classification": "plain",
+      "reason": "rpcd raw_mode plugin, no extension, no shebang"
+    }
+  ],
+  "unknowns": [
+    "Full luci-ssl files[] mapping via luci.mk is not in wave 1; only the first-endpoint plugin is listed.",
+    "C plugins (rpcd-mod-luci, rpcd-mod-rrdns, rpcd-mod-rpcsys, rpcd-mod-iwinfo) remain c_plugin_not_analyzed."
+  ]
+}

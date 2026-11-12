@@ -1,0 +1,96 @@
+{
+  "profile": "luci-ssl-25.12",
+  "notes": [
+    "An asset relationship does not grant file access from a UCI permission.",
+    "A narrow UCI option update is not the same as replacing the backing file."
+  ],
+  "assets": [
+    {
+      "asset_id": "uci:dropbear",
+      "kind": "uci_config",
+      "uci_config": "dropbear",
+      "backing_file": "/etc/config/dropbear",
+      "sensitivity": "credential_service"
+    },
+    {
+      "asset_id": "uci:rpcd",
+      "kind": "uci_config",
+      "uci_config": "rpcd",
+      "backing_file": "/etc/config/rpcd",
+      "sensitivity": "credential_service"
+    },
+    {
+      "asset_id": "uci:uhttpd",
+      "kind": "uci_config",
+      "uci_config": "uhttpd",
+      "backing_file": "/etc/config/uhttpd",
+      "sensitivity": "service"
+    },
+    {
+      "asset_id": "uci:system",
+      "kind": "uci_config",
+      "uci_config": "system",
+      "backing_file": "/etc/config/system",
+      "sensitivity": "service"
+    },
+    {
+      "asset_id": "uci:firewall",
+      "kind": "uci_config",
+      "uci_config": "firewall",
+      "backing_file": "/etc/config/firewall",
+      "sensitivity": "network_policy"
+    },
+    {
+      "asset_id": "uci:network",
+      "kind": "uci_config",
+      "uci_config": "network",
+      "backing_file": "/etc/config/network",
+      "sensitivity": "network_policy"
+    },
+    {
+      "asset_id": "file:crontabs",
+      "kind": "file",
+      "fs_path": "/etc/crontabs/*",
+      "sensitivity": "startup"
+    },
+    {
+      "asset_id": "file:passwd",
+      "kind": "file",
+      "fs_path": "/etc/passwd",
+      "sensitivity": "credential"
+    },
+    {
+      "asset_id": "file:shadow",
+      "kind": "file",
+      "fs_path": "/etc/shadow",
+      "sensitivity": "credential"
+    },
+    {
+      "asset_id": "file:dropbear-keys",
+      "kind": "file",
+      "fs_path": "/etc/dropbear/*",
+      "sensitivity": "credential"
+    },
+    {
+      "asset_id": "file:rc-local",
+      "kind": "file",
+      "fs_path": "/etc/rc.local",
+      "sensitivity": "startup"
+    },
+    {
+      "asset_id": "file:rpcd-acl",
+      "kind": "file",
+      "fs_path": "/usr/share/rpcd/acl.d/*",
+      "sensitivity": "acl"
+    },
+    {
+      "asset_id": "cgi:backup",
+      "kind": "cgi_endpoint",
+      "cgi_endpoint": "cgi-backup",
+      "sensitivity": "sensitive_backup_read"
+    }
+  ],
+  "unknowns": [
+    "Custom UCI config directories and aliases are coverage gaps until listed."
+  ]
+}

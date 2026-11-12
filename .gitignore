@@ -1,0 +1,8 @@
+/target/
+*.trap.gz
+*.qlx
+.qltest/
+.codeql-database/
+extractor-pack/
+__pycache__/
+.DS_Store

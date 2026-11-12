@@ -1,0 +1,104 @@
+{
+  "profile": "luci-ssl-25.12",
+  "notes": [
+    "These are independently justified intended capabilities, not a copy of acl.d grants.",
+    "Copying every grant into this file would make violations impossible by construction.",
+    "Synthetic roles below are labeled synthetic; they are not stock-device logins."
+  ],
+  "expectations": [
+    {
+      "expectation_id": "unauthenticated-getFeatures",
+      "session_class": "unauthenticated",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getFeatures",
+          "op": "invoke"
+        }
+      ],
+      "allowed_helper_effects": [
+        {
+          "sink_kind": "popen",
+          "constraint": "fixed_command",
+          "examples": [
+            "opkg list-installed netifd",
+            "apk list -I netifd",
+            "dnsmasq --version",
+            "odhcpd -h",
+            "ipset --help"
+          ]
+        },
+        {
+          "sink_kind": "system",
+          "constraint": "fixed_command",
+          "examples": [
+            "hostapd -v<feature>",
+            "wpa_supplicant -v<feature>",
+            "/etc/init.d/ufp running"
+          ],
+          "coverage": "unmodeled_branch_until_m3_ledger_includes_them"
+        }
+      ],
+      "denied_authority": [
+        "uci write",
+        "file write",
+        "file.exec",
+        "cgi-io backup",
+        "command construction from request.args"
+      ],
+      "if_fixed_helpers_reach_popen": "intended_access",
+      "rationale": "Stock luci-base unauthenticated ACL grants only ubus luci getFeatures. getFeatures.call takes no request.args. callPackageVersionCheck interpolates a literal package name through shellquote.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/acl.d/luci-base.json unauthenticated.luci.getFeatures",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci getFeatures.call and callPackageVersionCheck"
+      ]
+    },
+    {
+      "expectation_id": "root-administration",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "intended_access": [
+        {
+          "target_id": "*",
+          "op": "read"
+        },
+        {
+          "target_id": "*",
+          "op": "write"
+        }
+      ],
+      "rationale": "Stock rpcd login for root is read/write '*'. A tainted construction used only by this caller is a code-review candidate, not an authorization_violation, unless evidence shows an additional crossed boundary.",
+      "review_provenance": [
+        "openwrt/rpcd@d99f703e4035d03fbcfbada3cb697db346c2b984 package overlay rpcd.config root read/write '*'"
+      ]
+    },
+    {
+      "expectation_id": "synthetic-diagnostic-exec",
+      "session_class": "synthetic-diagnostic",
+      "synthetic": true,
+      "intended_access": [
+        {
+          "constraint": "fixed_executable_exec",
+          "note": "Bare-exe file.exec means arbitrary arguments to that executable, not arbitrary executable selection or demonstrated RCE."
+        }
+      ],
+      "denied_authority": [
+        "arbitrary executable selection",
+        "uci/file writes outside the diagnostic grant"
+      ]
+    },
+    {
+      "expectation_id": "synthetic-backup-read",
+      "session_class": "synthetic-backup",
+      "synthetic": true,
+      "intended_access": [
+        {
+          "target_id": "cgi_endpoint:cgi-backup",
+          "op": "read"
+        }
+      ],
+      "note": "A backup read is not a violation merely because the role lacks write permission. Unauthorized roles holding the grant are assessed against their own expectation."
+    }
+  ]
+}

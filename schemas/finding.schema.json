@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/lucas-albers-lz4/codeql-openwrt/schemas/finding.schema.json",
+  "title": "codeql-openwrt interchange record",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "record_type",
+    "evidence_status",
+    "producer",
+    "corpus_revision",
+    "profile"
+  ],
+  "properties": {
+    "record_type": {
+      "enum": [
+        "rpc_surface",
+        "backend_method",
+        "dispatcher_route",
+        "policy_grant",
+        "handler_effect",
+        "taint_path",
+        "access_control_finding",
+        "exec_helper_inventory",
+        "uci_consumer",
+        "acl_counterexample",
+        "triage",
+        "routing"
+      ]
+    },
+    "access_control_subkind": {
+      "enum": [
+        "bac",
+        "readonly_write",
+        "session_bypass_ubus_call",
+        "exec_grant_bare_or_glob",
+        "missing_local_guard"
+      ]
+    },
+    "evidence_status": {
+      "enum": [
+        "fact",
+        "candidate",
+        "path_found",
+        "no_path",
+        "counterexample",
+        "inconclusive"
+      ]
+    },
+    "producer": {
+      "description": "M0 corpus; M2 policy_facts; M3 step3; JS step1; Track A track_a; Alloy step4 after promotion only",
+      "enum": [
+        "corpus",
+        "step1",
+        "track_a",
+        "policy_facts",
+        "step3",
+        "step4"
+      ]
+    },
+    "record_id": { "type": "string" },
+    "corpus_revision": { "type": "string" },
+    "profile": { "type": "string" },
+    "analysis_revision": { "type": "string" },
+    "ingress": {
+      "enum": ["ubus_http", "dispatcher", "cgi_io"]
+    },
+    "session_class": { "type": "string" },
+    "ubus_object": { "type": "string" },
+    "method": { "type": "string" },
+    "param_name": { "type": "string" },
+    "route_path": { "type": "string" },
+    "cgi_endpoint": { "type": "string" },
+    "fs_path": { "type": "string" },
+    "uci_config": { "type": "string" },
+    "acl_group": { "type": "string" },
+    "entrypoint_id": { "type": "string" },
+    "target_id": { "type": "string" },
+    "op": {
+      "enum": ["invoke", "read", "write", "exec"]
+    },
+    "effect_id": { "type": "string" },
+    "conditions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "requirements": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "sink_kind": {
+      "enum": [
+        "exec",
+        "popen",
+        "system",
+        "file_read",
+        "file_write",
+        "file_unlink",
+        "file_exec",
+        "uci_set",
+        "ubus_call",
+        "sensitive_backup_read"
+      ]
+    },
+    "declared_type": {
+      "enum": ["string", "int", "bool", "double", "table", "array"]
+    },
+    "classification": {
+      "enum": ["plain", "markup", "uncertain"]
+    },
+    "assessment": {
+      "enum": [
+        "intended_access",
+        "risky_delegation",
+        "authorization_violation",
+        "unassessed"
+      ]
+    },
+    "expectation_id": { "type": "string" },
+    "asset_id": { "type": "string" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "not": {
+          "properties": {
+            "evidence_status": {
+              "enum": ["fact", "candidate"]
+            }
+          },
+          "required": ["evidence_status"]
+        }
+      },
+      "then": {
+        "required": ["assumptions", "unknowns"]
+      }
+    }
+  ]
+}

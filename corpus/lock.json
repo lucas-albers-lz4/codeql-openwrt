@@ -1,0 +1,100 @@
+{
+  "profile": "luci-ssl-25.12",
+  "pinned_date": "2026-11-12",
+  "notes": [
+    "Branch SHAs are openwrt-25.12 (or master for leaf projects without a 25.12 branch) as resolved on pinned_date.",
+    "Package PKG_SOURCE_VERSION values are copied from those trees' Makefiles, not from floating master.",
+    "ucode interpreter SHA is the 25.12 package pin (b885dd0), not an older plan placeholder.",
+    "CodeQL CLI version is filled when M1 runs (not installed on this host at lock time)."
+  ],
+  "repos": {
+    "openwrt": {
+      "url": "https://github.com/openwrt/openwrt.git",
+      "ref": "openwrt-25.12",
+      "sha": "4e9642517b48bae612ff10fb72fb9199e559500e"
+    },
+    "luci": {
+      "url": "https://github.com/openwrt/luci.git",
+      "ref": "openwrt-25.12",
+      "sha": "b2e0be4b46ec0fd43394c081fa7c50657af14011"
+    },
+    "packages": {
+      "url": "https://github.com/openwrt/packages.git",
+      "ref": "openwrt-25.12",
+      "sha": "07e0d16305d2b5903b37ad7913e33e18795f81a4"
+    },
+    "tree-sitter-ucode": {
+      "url": "https://github.com/m00qek/tree-sitter-ucode.git",
+      "ref": "v0.9.0",
+      "sha": "4a243af329fae2f4ff01e0fc80133cbab8314600",
+      "abi": 15,
+      "rust-version": "1.85",
+      "tree-sitter": "0.27.1"
+    },
+    "codeql-extractor-generator": {
+      "url": "https://github.com/advanced-security/codeql-extractor-generator.git",
+      "ref": "1d5c2de",
+      "sha": "1d5c2de7441bb3b2180c1efbe303561d5342c379"
+    }
+  },
+  "packages": {
+    "rpcd": {
+      "makefile": "openwrt:package/system/rpcd/Makefile",
+      "PKG_SOURCE_VERSION": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+      "PKG_MIRROR_HASH": "01eed566d6d5f54460225ccfa93a572bca66ca8b1458b947060bf00d360f65b4"
+    },
+    "uhttpd": {
+      "makefile": "openwrt:package/network/services/uhttpd/Makefile",
+      "PKG_SOURCE_VERSION": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+      "PKG_MIRROR_HASH": "8305c6d4c63aa3c8f6471c55256a378dd9ee3b2898e0b3c096540ba4ec23f2db"
+    },
+    "cgi-io": {
+      "makefile": "packages:net/cgi-io/Makefile",
+      "PKG_SOURCE_VERSION": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+      "PKG_MIRROR_HASH": "ecb2ce93b5f62d9fa35ca2b514faa5ef14e462d782bc1dd0de0e4b2ecabcec71"
+    },
+    "firewall4": {
+      "makefile": "openwrt:package/network/config/firewall4/Makefile",
+      "PKG_SOURCE_VERSION": "b6e5157527d361f99ad52eaa6da273cb0f2dfd59",
+      "PKG_MIRROR_HASH": "fb563b493411922a8fbddf6a5a6766cffa47f87621e056b8dcf38309091835eb"
+    },
+    "ubus": {
+      "makefile": "openwrt:package/system/ubus/Makefile",
+      "PKG_SOURCE_VERSION": "24864e7840b3a02a9ef76284a373f6b2f00b8a9b",
+      "PKG_MIRROR_HASH": "33072c12e6d9a1fd59e3774f029575df61393b5a465486726609ff59314b8a84"
+    },
+    "libubox": {
+      "makefile": "openwrt:package/libs/libubox/Makefile",
+      "PKG_SOURCE_VERSION": "ff13b89e82e64cdd7853419504e51ec0c7e487e0",
+      "PKG_MIRROR_HASH": "85cd7eb507b6f48922aab16c1dd6b5ce62493dbb1c7369536b73a350c94e1a15"
+    },
+    "uci": {
+      "makefile": "openwrt:package/system/uci/Makefile",
+      "PKG_SOURCE_VERSION": "66127cd76c5d0bd46d5a90302cc6110f53a4e2f8",
+      "PKG_MIRROR_HASH": "ff23a9825aeac8da14a7142e985d598043c0287a463279f24863c580622bf18d"
+    },
+    "ucode": {
+      "makefile": "openwrt:package/utils/ucode/Makefile",
+      "PKG_SOURCE_VERSION": "b885dd0fe1e974551fb1233ca5f3aa74d80b74d9",
+      "PKG_MIRROR_HASH": "654ba9dc8714aa8caf75ef422962fb465c2b21c8fbe4518a47f9de391cce6e71"
+    },
+    "netifd": {
+      "makefile": "openwrt:package/network/config/netifd/Makefile",
+      "PKG_SOURCE_VERSION": "cbb83a1857407a28a63dc09412a1f209195914ef",
+      "PKG_MIRROR_HASH": "3fdfcd46ed319b38b79af708bd0d14c11471b8ed9e0bcfa120858a9db07423f8"
+    }
+  },
+  "toolchain": {
+    "codeql_cli": null,
+    "rustc_observed_at_lock": "1.99.1"
+  },
+  "first_endpoint": {
+    "ingress": "ubus_http",
+    "object": "luci",
+    "method": "getFeatures",
+    "helper": "callPackageVersionCheck('netifd')",
+    "sink": "popen",
+    "source": "luci:modules/luci-base/root/usr/share/rpcd/ucode/luci",
+    "installed_path": "/usr/share/rpcd/ucode/luci"
+  }
+}
