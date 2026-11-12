@@ -159,7 +159,10 @@ class TestHandlerEffectJoins(unittest.TestCase):
         copied_sources = []
         for relative_path in COPIED_EFFECT_SNAPSHOTS:
             for row in _load(REPO / relative_path):
-                if row.get("record_type") == "handler_effect":
+                if (
+                    row.get("record_type") == "handler_effect"
+                    and row.get("evidence_status") == "fact"
+                ):
                     copied_sources.append((relative_path, row))
 
         path_sources = [
