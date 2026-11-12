@@ -21,4 +21,4 @@ Nine named `fs` `popen` calls and six builtin `system()` calls exist in the plug
 
 ## Coverage
 
-See `reports/coverage.json`. M2 draft `policy/grants.json` records `policy:grant:unauthenticated:ubus_http:luci.getFeatures` as `intended_access` (uhttpd `uh_ubus_allowed` → `session.access`). This report does not claim a live daemon run or a plugin-side session check (the default `getFeatures` body has none).
+See `reports/coverage.json`. M2 `policy/grants.json` records `policy:grant:unauthenticated:ubus_http:luci.getFeatures` as `intended_access` (uhttpd `uh_ubus_allowed` → `session.access`). Step-3 records use the same `corpus_revision` (`sha256:e806b5f8…` of `corpus/lock.json` on main) so they can join those grants. This report does not claim a live daemon run or a plugin-side session check (the default `getFeatures` body has none).
