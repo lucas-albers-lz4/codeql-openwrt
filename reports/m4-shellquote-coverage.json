@@ -1,0 +1,17 @@
+{
+  "analysis_revision": "step3:shellquote-barrier-v1",
+  "profile": "luci-ssl-25.12",
+  "status": "partial",
+  "extracted_files": ["luci", "taint_pos", "taint_neg", "quote_ok", "quote_exe"],
+  "analyzed": [
+    "complete-argument shellquote as template substitution into popen/system",
+    "quoted entire command retained as executable-selection candidate",
+    "unquoted taint_pos remains a shell-injection candidate"
+  ],
+  "unsupported_constructs": [
+    "shellquote as a global sanitizer",
+    "same-function locals (getRealtimeStats flags, setPassword u/p)",
+    "interpreter program input",
+    "quoted value embedded or concatenated unsafely beyond a single substitution"
+  ]
+}
