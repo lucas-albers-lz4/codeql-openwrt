@@ -16,7 +16,7 @@ python3 -m policy emit
 python3 -m unittest discover -s policy/tests -t .
 ```
 
-`emit` rewrites `policy/grants.json` (luci grants, then cgi-backup grants), `policy/policy_decisions.json` (luci), and `policy/cgi_backup_decisions.json`. The luci grant emitter refuses anything except `luci.getFeatures`, the inventoried request.args exec methods, and `getBlockDevices` / `setBlockDetect`. The synthetic cgi-backup `handler_effect` is maintained in `reports/handler_effects.json` and checked against the oracle.
+`emit` rewrites `policy/grants.json` (luci grants, then cgi-backup grants), `policy/policy_decisions.json` (luci), and `policy/cgi_backup_decisions.json`. The luci grant emitter refuses anything except `luci.getFeatures`, the inventoried request.args exec methods, `getBlockDevices` / `setBlockDetect`, and luci.sys `getConntrackList` / `getProcessList`. The synthetic cgi-backup `handler_effect` is maintained in `reports/handler_effects.json` and checked against the oracle.
 
 Tests compare the luci evaluator to handwritten cases in `policy/fixtures/expected_cases.json` and the cgi-backup evaluator to `policy/fixtures/cgi_backup_cases.json` (transcribed from pinned C and ACL JSON, not from the evaluator). They compile the C doubles with:
 
@@ -31,12 +31,12 @@ Those C doubles cover the decoded-input gate + `session.access` matching without
 
 - Profile `luci-ssl-25.12`, `no_ubusauth=0`
 - Stock unauthenticated session (present all-zero SID) → `luci`/`getFeatures` allow
-- Same session → `luci`/`getSwconfigFeatures`, `getSwconfigPortState`, `getRealtimeStats`, `setPassword`, `setLocaltime`, `getBlockDevices`, `setBlockDetect` deny (no invented grant)
-- Synthetic delegated fixture sessions → matching methods allow (`luci-mod-network-config`, `luci-mod-status-realtime`, `luci-mod-system-config`, `luci-mod-system-mounts`); these are not stock logins. Their intended-access assessments are conditional on those fixture roles.
+- Same session → `luci`/`getSwconfigFeatures`, `getSwconfigPortState`, `getRealtimeStats`, `setPassword`, `setLocaltime`, `getBlockDevices`, `setBlockDetect`, `getConntrackList`, `getProcessList` deny (no invented grant)
+- Synthetic delegated fixture sessions → matching methods allow (`luci-mod-network-config`, `luci-mod-status-realtime`, `luci-mod-status-processes`, `luci-mod-system-config`, `luci-mod-system-mounts`); these are not stock logins. Their intended-access assessments are conditional on those fixture roles. The processes fixture is read-only (write `file.exec` `/bin/kill` is not granted).
 - Missing SID → JSON-RPC parse failure
 - Stock root `list read '*' / list write '*'` → those methods allow (not a violation)
 - Literal object/method names only
-- Emission bounded to `getFeatures` plus the inventoried request.args exec methods and `getBlockDevices` / `setBlockDetect`
+- Emission bounded to `getFeatures` plus the inventoried request.args exec methods, `getBlockDevices` / `setBlockDetect`, and luci.sys `getConntrackList` / `getProcessList`
 - cgi-backup (`/cgi-bin/cgi-backup`) → `sensitive_backup_read` only: unauthenticated 403; fixture `luci-mod-system-flash` allow; root `*` allow (not a violation). cgi-io supplies `scope=cgi-io`.
 
 ## Out of scope (not M2)
@@ -54,4 +54,4 @@ Handwritten rows in `policy/tests/test_conformance.py` tie Python `acl_match` / 
 
 Pins live in `corpus/lock.json`. Luci join keys: `session_class`, `ingress=ubus_http`, `entrypoint_id`, `analysis_revision=policy:ubus-luci-exec-methods-v2`. cgi-backup: `ingress=cgi_io`, `cgi_endpoint=cgi-backup`, `analysis_revision=policy:cgi-backup-v1`. Do not reuse `policy:ubus-getfeatures-v1` for this catalog.
 
-Grant ↔ effect joins against `reports/handler_effects.json` use `corpus_revision`, `profile`, `ingress`, `entrypoint_id`, plus `ubus_object`/`method` or `cgi_endpoint`, and grant `record_id` in the effect `evidence_refs`. See [reports/handler_effects.md](../reports/handler_effects.md).
+Grant ↔ effect joins against `reports/handler_effects.json` use `corpus_revision`, `profile`, `ingress`, `entrypoint_id`, plus `ubus_object`/`method` or `cgi_endpoint`, and grant `record_id` in the effect `evidence_refs`. See [reports/handler_effects.md](../reports/handler_effects.md). luci.sys `getConntrackList` / `getProcessList` popens join those grants; see [m4-luci-sys-status-exec.md](../reports/m4-luci-sys-status-exec.md).

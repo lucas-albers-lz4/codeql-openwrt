@@ -35,10 +35,11 @@ COPIED_EFFECT_SNAPSHOTS = (
     "reports/m4-getfeatures-direct-exec.json",
     "reports/m4-luci-sys-init-action-findings.json",
     "reports/m4-block-device-exec.json",
+    "reports/m4-luci-sys-status-exec.json",
 )
 PROJECTED_PATH_SNAPSHOT = "reports/m4-findings.json"
-LUCI_EFFECT_COUNT = 15
-COPIED_EFFECT_COUNT = 10
+LUCI_EFFECT_COUNT = 17
+COPIED_EFFECT_COUNT = 12
 SOURCE_FIELDS = (
     "corpus_revision",
     "profile",
@@ -269,10 +270,15 @@ class TestHandlerEffectJoins(unittest.TestCase):
             "m4:effect:luci-getBlockDevices-popen",
             "m4:effect:luci-setBlockDetect-system",
             "m4:effect:luci-setLocaltime-sysfixtime-system",
+            "m4:effect:luci-getConntrackList-popen",
+            "m4:effect:luci-getProcessList-popen",
         ):
             text = " ".join(by_id[record_id]["assumptions"]).lower()
             self.assertIn("not a taint path", text)
             self.assertNotIn("path_found", text)
+        process_text = " ".join(by_id["m4:effect:luci-getProcessList-popen"]["assumptions"]).lower()
+        self.assertIn("file.exec", process_text)
+        self.assertIn("not", process_text)
         cgi_text = " ".join(by_id[CGI_EFFECT_ID]["assumptions"]).lower()
         self.assertIn("shellquote", cgi_text)
         self.assertIn("basename", cgi_text)

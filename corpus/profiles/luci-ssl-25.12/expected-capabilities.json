@@ -114,6 +114,10 @@
         {
           "target_id": "ubus:luci.getRealtimeStats",
           "op": "invoke"
+        },
+        {
+          "target_id": "ubus:luci.getConntrackList",
+          "op": "invoke"
         }
       ],
       "allowed_helper_effects": [
@@ -121,15 +125,52 @@
           "sink_kind": "popen",
           "constraint": "fixed_executable_quoted_arg",
           "examples": ["luci-bwc -i|-r <quoted device>"]
+        },
+        {
+          "sink_kind": "popen",
+          "constraint": "fixed_command_fallback",
+          "examples": ["/usr/sbin/conntrack -L -o extended"],
+          "note": "Reached only when open('/proc/net/nf_conntrack') fails inside luci.sys conntrack_list."
         }
       ],
       "denied_authority": [
         "unauthenticated invoke",
         "arbitrary executable selection"
       ],
-      "rationale": "luci-mod-status-realtime grants read of luci getRealtimeStats. Unauthenticated ACLs do not name it.",
+      "rationale": "luci-mod-status-realtime grants read of luci getRealtimeStats and getConntrackList. Unauthenticated ACLs do not name them. getConntrackList.call takes no request.args; the conntrack popen is a fixed-argv fallback in luci.sys.",
       "review_provenance": [
-        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-realtime"
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-realtime",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/sys.uc conntrack_list"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-processes",
+      "session_class": "luci-mod-status-processes",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getProcessList",
+          "op": "invoke"
+        }
+      ],
+      "allowed_helper_effects": [
+        {
+          "sink_kind": "popen",
+          "constraint": "fixed_command",
+          "examples": ["/bin/busybox top -bn1"]
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated invoke",
+        "arbitrary executable selection",
+        "file.exec /bin/kill",
+        "ubus file.exec"
+      ],
+      "rationale": "luci-mod-status-processes read grants luci.getProcessList. The handler takes no request.args; luci.sys process_list popens a fixed busybox top argv. The same ACL group's write file.exec /bin/kill is not this fixture and is not emitted. Unauthenticated ACLs do not name this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-processes",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/sys.uc process_list"
       ]
     },
     {

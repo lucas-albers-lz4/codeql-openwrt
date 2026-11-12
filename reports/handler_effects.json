@@ -527,6 +527,87 @@
     "record_type": "handler_effect",
     "evidence_status": "fact",
     "producer": "step3",
+    "record_id": "m4:effect:luci-getConntrackList-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:luci-sys-fixed-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getConntrackList",
+    "ubus_object": "luci",
+    "method": "getConntrackList",
+    "effect_id": "getConntrackList.conntrack.popen",
+    "target_id": "command:conntrack-list",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-status-realtime",
+    "conditions": [
+      "getConntrackList.call is a thin wrapper of imported conntrack_list()",
+      "named popen of literal /usr/sbin/conntrack -L -o extended",
+      "popen is the fallback when open('/proc/net/nf_conntrack') fails",
+      "call takes no request.args"
+    ],
+    "assumptions": [
+      "Transcribed from pinned luci.sys at b2e0be4b; not a taint path",
+      "Fixed argv; this is not request.args interpolation",
+      "shellquote and basename are not sanitizers; they are not present on this sink",
+      "Not a new query run; QL for these luci.sys helpers waits on codeql-ucode#12",
+      "Collected from reports/m4-luci-sys-status-exec.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-status-realtime:ubus_http:luci.getConntrackList",
+      "policy:grant:root:ubus_http:luci.getConntrackList",
+      "luci@b2e0be4b modules/luci-base/ucode/sys.uc conntrack_list popen('/usr/sbin/conntrack -L -o extended')"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "whether /proc/net/nf_conntrack is present on a given device"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:effect:luci-getProcessList-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:luci-sys-fixed-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getProcessList",
+    "ubus_object": "luci",
+    "method": "getProcessList",
+    "effect_id": "getProcessList.busybox-top.popen",
+    "target_id": "command:busybox-top",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-status-processes",
+    "conditions": [
+      "getProcessList.call is a thin wrapper of imported process_list()",
+      "named popen of literal /bin/busybox top -bn1",
+      "call takes no request.args"
+    ],
+    "assumptions": [
+      "Transcribed from pinned luci.sys at b2e0be4b; not a taint path",
+      "Fixed argv; this is not request.args interpolation",
+      "shellquote and basename are not sanitizers; they are not present on this sink",
+      "luci-mod-status-processes write file.exec /bin/kill is not this effect and is not emitted",
+      "Not a new query run; QL for these luci.sys helpers waits on codeql-ucode#12",
+      "Collected from reports/m4-luci-sys-status-exec.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-status-processes:ubus_http:luci.getProcessList",
+      "policy:grant:root:ubus_http:luci.getProcessList",
+      "luci@b2e0be4b modules/luci-base/ucode/sys.uc process_list popen('/bin/busybox top -bn1')"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
     "record_id": "m4:luci-sys-init-action-system",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",

@@ -1,0 +1,37 @@
+{
+  "analysis_revision": "step3:luci-sys-fixed-exec-v1",
+  "profile": "luci-ssl-25.12",
+  "status": "partial",
+  "extracted_files": ["sys.uc"],
+  "analyzed": [
+    "getConntrackList.call forwards to luci.sys conntrack_list with no request.args",
+    "conntrack_list named fs popen of literal /usr/sbin/conntrack -L -o extended as fallback",
+    "getProcessList.call forwards to luci.sys process_list with no request.args",
+    "process_list named fs popen of literal /bin/busybox top -bn1",
+    "M2 policy-facts grants for luci-mod-status-realtime getConntrackList and luci-mod-status-processes getProcessList (analysis_revision policy:ubus-luci-exec-methods-v2)"
+  ],
+  "call_sites": [
+    {"file": "sys.uc", "line": 7, "method": "getProcessList", "kind": "popen", "command": "/bin/busybox top -bn1"},
+    {"file": "sys.uc", "line": 49, "method": "getConntrackList", "kind": "popen", "command": "/usr/sbin/conntrack -L -o extended", "reach": "fallback"}
+  ],
+  "negative_controls": [
+    "getConntrackList/getProcessList take no request.args",
+    "luci-mod-status-processes fixture is read-only; write file.exec /bin/kill is not emitted",
+    "not path_found",
+    "not a new query; QL waits on codeql-ucode#12"
+  ],
+  "unmodeled_branches": [
+    "conntrack_list open('/proc/net/nf_conntrack') file_read",
+    "getRealtimeStats flags reassignment and setPassword u/p barrier stay on the request.args inventory"
+  ],
+  "unsupported_constructs": [
+    "generated AST.qll/CFG.qll (not imported for this transcription)",
+    "interprocedural dataflow from the rpcd wrappers",
+    "shellquote as a sanitizer",
+    "basename as a sanitizer"
+  ],
+  "unknowns": [
+    "live uhttpd/rpcd not executed",
+    "whether /proc/net/nf_conntrack is present on a given device"
+  ]
+}
