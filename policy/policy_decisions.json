@@ -1,0 +1,369 @@
+{
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:ubus-getfeatures-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "lockfile": "corpus/lock.json",
+    "first_endpoint": "ubus_http:luci.getFeatures"
+  },
+  "scope": "/ubus luci.getFeatures only; literal object/method names",
+  "harness": {
+    "canonical": "python3 -m policy emit",
+    "c_double": "policy/c_double/uh_ubus_policy.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_uhttpd": false,
+    "live_rpcd": false
+  },
+  "assumptions": [
+    "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+    "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+  ],
+  "unknowns": [
+    "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "Wave 1 does not inventory every luci-ssl acl.d file. M2 loads rpcd unauthenticated.json and luci-base.json, the sources of the default session and the getFeatures grant."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-getFeatures-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-getfeatures-v1",
+      "session_class": "unauthenticated",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "ubus_object": "luci",
+      "method": "getFeatures",
+      "outcome": "allow",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "input_rule_refs": [
+        "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/acl.d/luci-base.json unauthenticated.read.ubus.luci=[getFeatures]",
+        "rpcd@d99f703 session.c rpc_session_api_init default SID 0000... loads group unauthenticated only",
+        "uhttpd@93b05e0 ubus.c parse_call_params: present SID is not rewritten when no_ubusauth=0",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access(ubus_rpc_session, object, function), no scope",
+        "rpcd@d99f703 session.c rpc_handle_access default scope=ubus; rpc_session_acl_allowed literal luci/getFeatures"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "00000000000000000000000000000000",
+            "object": "luci",
+            "function": "getFeatures"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getFeatures",
+          "match": "literal",
+          "acl_group": "unauthenticated",
+          "acl_source": "luci-base.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#unauthenticated-getFeatures-allow",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Wave 1 does not inventory every luci-ssl acl.d file. M2 loads rpcd unauthenticated.json and luci-base.json, the sources of the default session and the getFeatures grant."
+      ],
+      "target_id": "ubus:luci.getFeatures",
+      "op": "invoke",
+      "expectation_id": "unauthenticated-getFeatures",
+      "assessment": "intended_access",
+      "matched_acl": {
+        "group": "unauthenticated",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getFeatures",
+        "source": "luci-base.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-setPassword-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-getfeatures-v1",
+      "session_class": "unauthenticated",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setPassword",
+      "ubus_object": "luci",
+      "method": "setPassword",
+      "outcome": "deny",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/ucode/luci methods.setPassword exists",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed false -> ERROR_ACCESS (-32002)",
+        "do not invent an unauthenticated grant for setPassword"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "00000000000000000000000000000000",
+            "object": "luci",
+            "function": "setPassword"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "setPassword",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#unauthenticated-setPassword-deny",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Wave 1 does not inventory every luci-ssl acl.d file. M2 loads rpcd unauthenticated.json and luci-base.json, the sources of the default session and the getFeatures grant."
+      ],
+      "target_id": "ubus:luci.setPassword",
+      "op": "invoke",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sid-parse-error",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-getfeatures-v1",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "ubus_object": "luci",
+      "method": "getFeatures",
+      "outcome": "jsonrpc_parse_error",
+      "no_ubusauth": 0,
+      "sid_present": false,
+      "input_rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params SID rewrite only if conf.ubus_noauth",
+        "uhttpd@93b05e0 ubus.c uh_ubus_handle_request_object: if (!data.sid || !data.object || !data.function || !data.data) ERROR_PARSE (-32700)",
+        "rpcd file.c/uci.c if (!sid) return true is a different object and must not be applied to /ubus"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": false,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ERROR_PARSE"
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_PARSE",
+          "not": [
+            "unauthenticated_allow",
+            "sentinel_rewrite",
+            "file_uci_absent_sid_skip"
+          ]
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#missing-sid-parse-error",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Wave 1 does not inventory every luci-ssl acl.d file. M2 loads rpcd unauthenticated.json and luci-base.json, the sources of the default session and the getFeatures grant."
+      ],
+      "jsonrpc_error": {
+        "code": -32700,
+        "name": "ERROR_PARSE",
+        "message": "Parse error"
+      },
+      "not": [
+        "unauthenticated_allow",
+        "sentinel_rewrite",
+        "file_uci_absent_sid_skip"
+      ]
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-getFeatures-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-getfeatures-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "ubus_object": "luci",
+      "method": "getFeatures",
+      "outcome": "allow",
+      "no_ubusauth": 0,
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"unauthenticated\", 0) matches",
+        "unauthenticated group still contributes luci.getFeatures to the root session"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "object": "luci",
+            "function": "getFeatures"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getFeatures",
+          "match": "literal",
+          "acl_group": "unauthenticated",
+          "acl_source": "luci-base.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/expected_cases.json#root-star-getFeatures-allow",
+        "c_double": "policy/c_double/uh_ubus_policy.c"
+      },
+      "assumptions": [
+        "Profile luci-ssl-25.12 has uhttpd.no_ubusauth=0. uhttpd ubus.c rewrites empty/missing SID to UH_UBUS_DEFAULT_SID only when conf.ubus_noauth is set; that rewrite is not a case in this profile.",
+        "ubus object luci is present (luci-base plugin). Object-not-found is out of M2 scope."
+      ],
+      "unknowns": [
+        "Live rpcd and uhttpd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "Wave 1 does not inventory every luci-ssl acl.d file. M2 loads rpcd unauthenticated.json and luci-base.json, the sources of the default session and the getFeatures grant."
+      ],
+      "target_id": "ubus:luci.getFeatures",
+      "op": "invoke",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_acl": {
+        "group": "unauthenticated",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getFeatures",
+        "source": "luci-base.json"
+      }
+    }
+  ]
+}
