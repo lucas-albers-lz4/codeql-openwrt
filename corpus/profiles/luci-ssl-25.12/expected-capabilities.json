@@ -613,10 +613,38 @@
         "ubus rc.init grant",
         "ubus rc.list grant"
       ],
-      "rationale": "system.js uses rpc.declare object=luci method=getTimezones. luci-mod-system-config read grants ubus luci.getTimezones. The existing write fixture matches because rpcd write implies read. An allow is the HTTP gate, not the luci-base getTimezones handler (/etc/TZ, UCI zonename, timezones table). Does not rewrite the luci exec-methods emitter. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. getLEDs / getUSBDevices stay unstaffed. Unauthenticated ACLs do not grant this method.",
+      "rationale": "system.js uses rpc.declare object=luci method=getTimezones. luci-mod-system-config read grants ubus luci.getTimezones. The existing write fixture matches because rpcd write implies read. An allow is the HTTP gate, not the luci-base getTimezones handler (/etc/TZ, UCI zonename, timezones table). Does not rewrite the luci exec-methods emitter. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. getLEDs is policy:ubus-luci-getleds-v1. getUSBDevices stay unstaffed. Unauthenticated ACLs do not grant this method.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js rpc.declare object=luci method=getTimezones"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-config-getleds",
+      "session_class": "luci-mod-system-config",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getLEDs",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getLEDs",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getLEDs",
+        "luci-base getLEDs handler",
+        "luci.getTimezones grant",
+        "luci.getUSBDevices grant",
+        "luci-mod-system-config getUnixtime grant",
+        "ubus rc.init grant",
+        "ubus rc.list grant"
+      ],
+      "rationale": "leds.js uses rpc.declare object=luci method=getLEDs. admin/system/leds depends on luci-mod-system-config. luci-mod-system-config read grants ubus luci.getLEDs. The existing write fixture matches because rpcd write implies read. An allow is the HTTP gate, not the luci-base getLEDs handler (/sys/class/leds). Extra keys in the data table are intended_access, not a violation and not a PoC. Does not rewrite the luci exec-methods emitter. luci.getTimezones stays on policy:ubus-luci-gettimezones-v1. getUSBDevices stay unstaffed. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/leds.js rpc.declare object=luci method=getLEDs",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json admin/system/leds depends on luci-mod-system-config"
       ]
     },
     {

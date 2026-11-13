@@ -25,6 +25,7 @@ from . import (
     ubus_hostapd_wps_start,
     ubus_hostapd_wps_status,
     ubus_luci_getodhcp6cstats,
+    ubus_luci_getleds,
     ubus_luci_gettimezones,
     ubus_luci_getunixtime,
     ubus_luci_getversion,
@@ -104,6 +105,9 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     gettimezones_grants, gettimezones_bundle, gettimezones_effects = (
         ubus_luci_gettimezones.build_artifacts(fixtures, repo_root)
     )
+    getleds_grants, getleds_bundle, getleds_effects = (
+        ubus_luci_getleds.build_artifacts(fixtures, repo_root)
+    )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
     grants_path = repo_root / "policy" / "grants.json"
     luci_decisions_path = repo_root / "policy" / "policy_decisions.json"
@@ -131,6 +135,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     wps_status_decisions_path = repo_root / "policy" / "ubus_hostapd_wps_status_decisions.json"
     getodhcp6cstats_decisions_path = repo_root / "policy" / "ubus_luci_getodhcp6cstats_decisions.json"
     gettimezones_decisions_path = repo_root / "policy" / "ubus_luci_gettimezones_decisions.json"
+    getleds_decisions_path = repo_root / "policy" / "ubus_luci_getleds_decisions.json"
     noauth_decisions_path = repo_root / "policy" / "no_ubusauth_decisions.json"
     upload_effect_path = repo_root / "reports" / "m2-cgi-upload-effect.json"
     download_effect_path = repo_root / "reports" / "m2-cgi-download-effect.json"
@@ -155,6 +160,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     wps_status_effect_path = repo_root / "reports" / "m2-ubus-hostapd-wps-status-effect.json"
     getodhcp6cstats_effect_path = repo_root / "reports" / "m2-ubus-luci-getodhcp6cstats-effect.json"
     gettimezones_effect_path = repo_root / "reports" / "m2-ubus-luci-gettimezones-effect.json"
+    getleds_effect_path = repo_root / "reports" / "m2-ubus-luci-getleds-effect.json"
     oracle.dump_json(
         grants_path,
         luci_grants
@@ -181,7 +187,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         + wps_cancel_grants
         + wps_status_grants
         + getodhcp6cstats_grants
-        + gettimezones_grants,
+        + gettimezones_grants
+        + getleds_grants,
     )
     oracle.dump_json(luci_decisions_path, luci_bundle)
     oracle.dump_json(backup_decisions_path, backup_bundle)
@@ -208,6 +215,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(wps_status_decisions_path, {"grants": wps_status_grants, **wps_status_bundle})
     oracle.dump_json(getodhcp6cstats_decisions_path, {"grants": getodhcp6cstats_grants, **getodhcp6cstats_bundle})
     oracle.dump_json(gettimezones_decisions_path, {"grants": gettimezones_grants, **gettimezones_bundle})
+    oracle.dump_json(getleds_decisions_path, {"grants": getleds_grants, **getleds_bundle})
     oracle.dump_json(noauth_decisions_path, noauth_bundle)
     oracle.dump_json(upload_effect_path, upload_effect)
     oracle.dump_json(download_effect_path, download_effect)
@@ -232,6 +240,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(wps_status_effect_path, wps_status_effects)
     oracle.dump_json(getodhcp6cstats_effect_path, getodhcp6cstats_effects)
     oracle.dump_json(gettimezones_effect_path, gettimezones_effects)
+    oracle.dump_json(getleds_effect_path, getleds_effects)
     cgi_backup.upsert_handler_effect(backup_effect, repo_root)
     cgi_backup.upsert_handler_effect(upload_effect, repo_root)
     cgi_backup.upsert_handler_effect(download_effect, repo_root)
@@ -277,6 +286,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         effect_path = cgi_backup.upsert_handler_effect(getodhcp6cstats_effect, repo_root)
     for gettimezones_effect in gettimezones_effects:
         effect_path = cgi_backup.upsert_handler_effect(gettimezones_effect, repo_root)
+    for getleds_effect in getleds_effects:
+        effect_path = cgi_backup.upsert_handler_effect(getleds_effect, repo_root)
     return (
         grants_path,
         luci_decisions_path,
@@ -304,6 +315,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         wps_status_decisions_path,
         getodhcp6cstats_decisions_path,
         gettimezones_decisions_path,
+        getleds_decisions_path,
         noauth_decisions_path,
         effect_path,
     )

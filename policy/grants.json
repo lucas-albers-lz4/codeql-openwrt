@@ -2950,5 +2950,65 @@
       "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
     ],
     "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-config:ubus_http:luci.getLEDs",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-getleds-v1",
+    "session_class": "luci-mod-system-config",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getLEDs",
+    "ubus_object": "luci",
+    "method": "getLEDs",
+    "target_id": "ubus:luci.getLEDs",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-config",
+    "expectation_id": "luci-mod-system-config-getleds",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=luci function=getLEDs (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+      "luci@b2e0be4b leds.js rpc.declare object=luci method=getLEDs",
+      "luci@b2e0be4b luci-mod-system.json admin/system/leds depends on luci-mod-system-config",
+      "rpcd session.c login_test_permission: write implies read",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getLEDs",
+      "fixture rpcd.config login luci-mod-system-config list write luci-mod-system-config"
+    ],
+    "note": "Fixture login luci-mod-system-config is not a stock device login. Existing write fixture grants getLEDs via write-implies-read. leds.js uses rpc.declare object=luci method=getLEDs. Intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.getLEDs",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-getleds-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getLEDs",
+    "ubus_object": "luci",
+    "method": "getLEDs",
+    "target_id": "ubus:luci.getLEDs",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=luci function=getLEDs (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]
