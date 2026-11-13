@@ -320,6 +320,30 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-system-reboot",
+      "session_class": "luci-mod-system-reboot",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "intended_access": [
+        {
+          "target_id": "ubus:system.reboot",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus system.reboot",
+        "reboot()",
+        "rpc-sys.reboot",
+        "write file.exec /sbin/reboot without this fixture"
+      ],
+      "rationale": "reboot.js uses rpc.declare object=system method=reboot. luci-mod-system-reboot write grants ubus system.reboot. That is procd system, not rpcd rpc-sys. file.exec of /sbin/reboot on the same ACL is unused by reboot.js; flash.js /sbin/reboot stays unstaffed. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js rpc.declare object=system method=reboot"
+      ]
+    },
+    {
       "expectation_id": "synthetic-backup-read",
       "session_class": "synthetic-backup",
       "synthetic": true,

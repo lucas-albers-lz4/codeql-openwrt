@@ -51,7 +51,7 @@ fixture is list-read only. Do not invent a write flash login.
 no cgi-io exec grant; that mismatch is not this slice.
 crontab.js `fs.exec` of `/etc/init.d/cron reload` has file.exec of the
 cmdline but ubus `file.write`, not `file.exec`.
-reboot.js uses `system.reboot`, not `file.exec`.
+reboot.js `system.reboot` is `policy:ubus-system-reboot-v1`.
 
 `shellquote` and `basename` are not sanitizers. `rpc_canonicalize_path` is a
 textual path normalizer, not a taint sanitizer.

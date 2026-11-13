@@ -2069,5 +2069,63 @@
       "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
     ],
     "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-reboot:ubus_http:system.reboot",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-system-reboot-v1",
+    "session_class": "luci-mod-system-reboot",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:system.reboot",
+    "ubus_object": "system",
+    "method": "reboot",
+    "target_id": "ubus:system.reboot",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-reboot",
+    "expectation_id": "luci-mod-system-reboot",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=system function=reboot (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+      "luci@b2e0be4b reboot.js rpc.declare object=system method=reboot",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access system/reboot",
+      "fixture rpcd.config login luci-mod-system-reboot list write luci-mod-system-reboot"
+    ],
+    "note": "Fixture login luci-mod-system-reboot is not a stock device login. reboot.js uses rpc.declare object=system method=reboot. Intended_access, not a violation and not a PoC. Does not invent a write flash login.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:system.reboot",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-system-reboot-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:system.reboot",
+    "ubus_object": "system",
+    "method": "reboot",
+    "target_id": "ubus:system.reboot",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-reboot",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=system function=reboot (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]

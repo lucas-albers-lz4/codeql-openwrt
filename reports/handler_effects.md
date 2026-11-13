@@ -175,16 +175,24 @@ Same conjunctive HTTP `/ubus` `file.exec` gate. Bounded to luci-mod-system-mount
 
 ### ubus file.exec luci-mod-system-flash sysupgrade --list-backup (policy-facts synthetic, conjunctive)
 
-Same conjunctive HTTP `/ubus` `file.exec` gate. Bounded to luci-mod-system-flash read `fs.exec` of `/sbin/sysupgrade --list-backup` at luci `b2e0be4b`: `flash.js` `handleBackupList`. Inventoried luci-ssl ACLs grant the cmdline, not the bare executable; extra tokens are `PERMISSION_DENIED`, not `authorization_violation` and not a PoC. Unauthenticated is a **non-join** (`ERROR_ACCESS`). Missing SID is `ERROR_PARSE`. A ubus `file.exec` grant without the matching file ACL is a **non-join**. Catalog copy: [m2-ubus-file-exec-list-backup-effect.json](m2-ubus-file-exec-list-backup-effect.json). Join keys use `entrypoint_id` `ubus_http:file.exec:/sbin/sysupgrade:--list-backup` plus `ubus_object=file` / `method=exec`. Reuses the existing `luci-mod-system-flash` list-read session already used for cgi-backup / cgi-download. Does not model `execv`, live PATH search, diagnostics ping, cron (`ubus` `file.write` not `file.exec`), or flash.js write sysupgrade/firstboot (write ACLs exist but the fixture is list-read only).
+Same conjunctive HTTP `/ubus` `file.exec` gate. Bounded to luci-mod-system-flash read `fs.exec` of `/sbin/sysupgrade --list-backup` at luci `b2e0be4b`: `flash.js` `handleBackupList`. Inventoried luci-ssl ACLs grant the cmdline, not the bare executable; extra tokens are `PERMISSION_DENIED`, not `authorization_violation` and not a PoC. Unauthenticated is a **non-join** (`ERROR_ACCESS`). Missing SID is `ERROR_PARSE`. A ubus `file.exec` grant without the matching file ACL is a **non-join**. Catalog copy: [m2-ubus-file-exec-list-backup-effect.json](m2-ubus-file-exec-list-backup-effect.json). Join keys use `entrypoint_id` `ubus_http:file.exec:/sbin/sysupgrade:--list-backup` plus `ubus_object=file` / `method=exec`. Reuses the existing `luci-mod-system-flash` list-read session already used for cgi-backup / cgi-download. Does not model `execv`, live PATH search, diagnostics ping, cron (`ubus` `file.write` not `file.exec`), or flash.js write sysupgrade/firstboot (write ACLs exist but the fixture is list-read only). reboot.js `system.reboot` is `policy:ubus-system-reboot-v1`.
 
 | `effect_id` | Delegated grant | Root grant | Unauthenticated |
 | --- | --- | --- | --- |
 | `file.exec.list-backup` | `policy:grant:luci-mod-system-flash:ubus_http:file.exec:list-backup` | `policy:grant:root:ubus_http:file.exec:list-backup` | no-join |
 
+### ubus system.reboot luci-mod-system-reboot (policy-facts synthetic)
+
+HTTP `/ubus` gate only. Bounded to `reboot.js` `rpc.declare` of `system.reboot` at luci `b2e0be4b`. Inventoried luci-ssl ACLs grant ubus `system` / `reboot` to `luci-mod-system-reboot` write. Unauthenticated is a **non-join** (`ERROR_ACCESS`). Missing SID is `ERROR_PARSE`. The list-read flash fixture and other system fixtures without `system.reboot` are **non-joins**. Catalog copy: [m2-ubus-system-reboot-effect.json](m2-ubus-system-reboot-effect.json). Join keys use `entrypoint_id` `ubus_http:system.reboot` plus `ubus_object=system` / `method=reboot`. An allow is the HTTP gate, not procd `reboot()`. `rpc-sys.reboot` is a different object. `file.exec` of `/sbin/reboot` is unused by `reboot.js`; flash.js `/sbin/reboot` stays unstaffed. Does not invent a write flash login.
+
+| `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- |
+| `system.reboot` | `policy:grant:luci-mod-system-reboot:ubus_http:system.reboot` | `policy:grant:root:ubus_http:system.reboot` | no-join |
+
 ## Out of this file
 
 - dispatcher / `menu.d` routes
 - luci-ssl `files[]` routing classification ([m4-luci-ssl-files.md](m4-luci-ssl-files.md))
-- remaining ubus `file.exec` without a matching luci-ssl grant + caller pair in this catalog (`/bin/ping` via `fs.exec_direct` with no cgi-io on luci-mod-network-diagnostics; crontab.js `fs.exec` of cron reload has file.exec of the cmdline but ubus `file.write` not `file.exec`; luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed — write ACLs exist but the flash fixture is list-read only)
+- remaining ubus `file.exec` without a matching luci-ssl grant + caller pair in this catalog (`/bin/ping` via `fs.exec_direct` with no cgi-io on luci-mod-network-diagnostics; crontab.js `fs.exec` of cron reload has file.exec of the cmdline but ubus `file.write` not `file.exec`; luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed — write ACLs exist but the flash fixture is list-read only; flash.js tar `-tzf` and `/sbin/reboot` stay unstaffed)
 - `authorization_violation` / BrokenAccessControl `path_found`
 - Alloy `producer: step4`
