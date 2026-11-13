@@ -1,0 +1,338 @@
+{
+  "comment": "Hand-transcribed expected ubus file.exec decisions for luci-mod-system-mounts /bin/umount and /sbin/block from pinned rpcd-mod-file C, mounts.js callers, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then checks file.exec of the canonicalized executable first, then the cmdline.",
+    "Bounded to fs.exec callers at luci b2e0be4b: mounts.js handleUmount /bin/umount and handleMountAll /sbin/block mount.",
+    "Inventoried luci-ssl ACLs grant the bare executables. Extra tokens therefore match at the executable stage as intended_access for the existing read/write mounts fixture, not authorization_violation and not a PoC.",
+    "The luci-mod-system-mounts fixture is already list read/write (getBlockDevices / setBlockDetect). This slice reuses that session.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed. A ubus file.exec grant without the matching file ACL is UBUS_STATUS_PERMISSION_DENIED.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or execv.",
+    "shellquote and basename are not sanitizers. rpc_canonicalize_path is not a taint sanitizer.",
+    "luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1.",
+    "luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1.",
+    "luci-mod-status-processes /bin/kill stay on policy:ubus-file-exec-kill-v1.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec).",
+    "flash.js sysupgrade/firstboot stay unstaffed."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-umount-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "command:umount",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus file.exec",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access file/exec false -> ERROR_ACCESS",
+        "do not invent an unauthenticated umount grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "not": ["unauthenticated_allow", "execv", "dispatcher", "path_found", "sentinel_rewrite"],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-umount-allow",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:umount",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "expectation_id": "luci-mod-system-mounts-umount",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-mounts",
+      "note": "Fixture login luci-mod-system-mounts is not a stock device login. mounts.js handleUmount uses fs.exec('/bin/umount', [path]). Bare executable ACL; intended_access, not a violation and not a PoC. Reuses the existing read/write mounts fixture.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]",
+        "luci@b2e0be4b mounts.js handleUmount fs.exec('/bin/umount', [path])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first",
+        "fixture rpcd.config login luci-mod-system-mounts list read/write luci-mod-system-mounts"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-umount-extra-argv-allow",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1", "extra"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "target_id": "command:umount",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "expectation_id": "luci-mod-system-mounts-umount",
+      "assessment": "intended_access",
+      "note": "Bare-exe file.exec means extra tokens to /bin/umount are intended_access for this fixture, not authorization_violation and not a PoC. Grant is emitted from the inventoried caller case.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first; extra argv still matches the executable object"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-block-allow",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/sbin/block",
+      "params": ["mount"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:block",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+      "expectation_id": "luci-mod-system-mounts-block",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-mounts",
+      "note": "mounts.js handleMountAll uses fs.exec('/sbin/block', ['mount']). Bare executable ACL; intended_access, not a violation and not a PoC. luci.getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./sbin/block=[exec]",
+        "luci@b2e0be4b mounts.js handleMountAll fs.exec('/sbin/block', ['mount'])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-umount-command-denied",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "note": "The luci-mod-system-flash read fixture has ubus file.exec (sysupgrade --list-backup) but not file.exec of /bin/umount. flash.js sysupgrade/firstboot stay unstaffed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]",
+        "fixture rpcd.config luci-mod-system-flash is list read only"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-umount-command-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "rule_refs": [
+        "luci-mod-status-firewall grants ubus file.exec but file.exec of /bin/umount is luci-mod-system-mounts write"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-umount-deny",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "rule_refs": [
+        "luci-mod-status-logs read ubus.file=[stat] and cgi-io exec of dmesg; no ubus file.exec"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-umount-command-denied",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "note": "The luci-mod-network-config read fixture has ubus file.exec but not file.exec of /bin/umount.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]"
+      ]
+    },
+    {
+      "id": "kill-not-found",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "rule_refs": [
+        "/bin/kill stays on policy:ubus-file-exec-kill-v1; not inventoried in this oracle"
+      ]
+    },
+    {
+      "id": "ping-not-found",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/bin/ping",
+      "params": ["-c", "5", "openwrt.org"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "note": "diagnostics.js uses fs.exec_direct; luci-mod-network-diagnostics is not this slice and lookup is not a live PATH search.",
+      "rule_refs": [
+        "this oracle treats only inventoried /bin/umount and /sbin/block as found"
+      ]
+    },
+    {
+      "id": "sysupgrade-not-found",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "note": "flash.js sysupgrade/firstboot stay unstaffed. This oracle does not treat /sbin/sysupgrade as found.",
+      "rule_refs": [
+        "luci-mod-system flash.js sysupgrade/firstboot stay unstaffed after this slice"
+      ]
+    },
+    {
+      "id": "env-with-sid-permission-denied",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "env": {"FOO": "bar"},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: SID plus env is PERMISSION_DENIED",
+        "inventoried callers do not pass env"
+      ]
+    },
+    {
+      "id": "empty-env-with-sid-permission-denied",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "env": {},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: a present env TABLE with SID is PERMISSION_DENIED even when empty"
+      ]
+    },
+    {
+      "id": "root-star-umount-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/bin/umount",
+      "params": ["/mnt/sda1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:umount",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    },
+    {
+      "id": "root-star-block-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/sbin/block",
+      "params": ["mount"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:block",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}
