@@ -648,6 +648,81 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-status-index-storage-getmountpoints",
+      "session_class": "luci-mod-status-index-storage",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getMountPoints",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getMountPoints",
+        "luci-base getMountPoints handler",
+        "luci.getVersion grant",
+        "luci.getUnixtime grant",
+        "luci.getOdhcp6cStats grant",
+        "ubus system.board grant",
+        "ubus system.info grant",
+        "ubus system.reboot",
+        "luci.getBlockDevices grant"
+      ],
+      "rationale": "25_storage.js uses rpc.declare object=luci method=getMountPoints. luci-mod-status-index-storage read grants ubus luci.getMountPoints. An allow is the HTTP gate, not the luci-base getMountPoints handler (/proc/mounts / statvfs). Does not rewrite the luci exec-methods emitter. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. system.info on the same ACL stays on policy:ubus-system-info-v1. luci-mod-status-index grants getVersion / getUnixtime / getOdhcp6cStats, not getMountPoints. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.luci=[getMountPoints]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js rpc.declare object=luci method=getMountPoints"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-mounts-getmountpoints",
+      "session_class": "luci-mod-system-mounts",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getMountPoints",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getMountPoints",
+        "luci-base getMountPoints handler",
+        "luci.getBlockDevices grant",
+        "luci.setBlockDetect grant"
+      ],
+      "rationale": "mounts.js uses rpc.declare object=luci method=getMountPoints. luci-mod-system-mounts read grants ubus luci.getMountPoints. An allow is the HTTP gate, not the luci-base getMountPoints handler. luci.getBlockDevices / setBlockDetect stay on the luci exec-methods emitter. umount/block file.exec stay on policy:ubus-file-exec-mounts-v1. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts.read.ubus.luci=[getBlockDevices, getMountPoints]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/mounts.js rpc.declare object=luci method=getMountPoints"
+      ]
+    },
+    {
+      "expectation_id": "luci-app-package-manager-getmountpoints",
+      "session_class": "luci-app-package-manager",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getMountPoints",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getMountPoints",
+        "luci-base getMountPoints handler"
+      ],
+      "rationale": "package-manager.js uses rpc.declare object=luci method=getMountPoints. luci-app-package-manager read grants ubus luci.getMountPoints. An allow is the HTTP gate, not the luci-base getMountPoints handler. File.exec of package-manager-call stays on policy:cgi-exec-file-v1. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json luci-app-package-manager.read.ubus.luci=[getMountPoints]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js rpc.declare object=luci method=getMountPoints"
+      ]
+    },
+    {
       "expectation_id": "luci-mod-network-config-hostapd-del-client",
       "session_class": "luci-mod-network-config-write",
       "synthetic": true,

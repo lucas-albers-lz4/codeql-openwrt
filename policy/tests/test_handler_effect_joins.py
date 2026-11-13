@@ -151,6 +151,7 @@ LUCI_GETUNIXTIME_SNAPSHOT = "reports/m2-ubus-luci-getunixtime-effect.json"
 LUCI_GETODHCP6CSTATS_SNAPSHOT = "reports/m2-ubus-luci-getodhcp6cstats-effect.json"
 LUCI_GETTIMEZONES_SNAPSHOT = "reports/m2-ubus-luci-gettimezones-effect.json"
 LUCI_GETLEDS_SNAPSHOT = "reports/m2-ubus-luci-getleds-effect.json"
+LUCI_GETMOUNTPOINTS_SNAPSHOT = "reports/m2-ubus-luci-getmountpoints-effect.json"
 HOSTAPD_DEL_CLIENT_SNAPSHOT = "reports/m2-ubus-hostapd-del-client-effect.json"
 HOSTAPD_WPS_START_SNAPSHOT = "reports/m2-ubus-hostapd-wps-start-effect.json"
 HOSTAPD_WPS_CANCEL_SNAPSHOT = "reports/m2-ubus-hostapd-wps-cancel-effect.json"
@@ -346,6 +347,17 @@ LUCI_GETLEDS_CATALOG = {
         "entrypoint_id": "ubus_http:luci.getLEDs",
     },
 }
+LUCI_GETMOUNTPOINTS_CATALOG = {
+    "policy:effect:ubus-luci-getmountpoints": {
+        "ubus_object": "luci",
+        "method": "getMountPoints",
+        "sink_kind": "ubus_call",
+        "op": "invoke",
+        "snapshot": LUCI_GETMOUNTPOINTS_SNAPSHOT,
+        "delegated_class": "luci-mod-status-index-storage",
+        "entrypoint_id": "ubus_http:luci.getMountPoints",
+    },
+}
 HOSTAPD_DEL_CLIENT_CATALOG = {
     "policy:effect:ubus-hostapd-del-client": {
         "ubus_object": "hostapd.*",
@@ -491,6 +503,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
             for row in self.effects
             if row.get("ubus_object") == "luci" and row.get("method") == "getLEDs"
         ]
+        getmountpoints_rows = [
+            row
+            for row in self.effects
+            if row.get("ubus_object") == "luci" and row.get("method") == "getMountPoints"
+        ]
         hostapd_rows = [
             row
             for row in self.effects
@@ -553,6 +570,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual(len(getodhcp6cstats_rows), len(LUCI_GETODHCP6CSTATS_CATALOG))
         self.assertEqual(len(gettimezones_rows), len(LUCI_GETTIMEZONES_CATALOG))
         self.assertEqual(len(getleds_rows), len(LUCI_GETLEDS_CATALOG))
+        self.assertEqual(len(getmountpoints_rows), len(LUCI_GETMOUNTPOINTS_CATALOG))
         self.assertEqual(len(hostapd_rows), len(HOSTAPD_DEL_CLIENT_CATALOG))
         self.assertEqual(len(hostapd_wps_rows), len(HOSTAPD_WPS_START_CATALOG))
         self.assertEqual(len(hostapd_wps_cancel_rows), len(HOSTAPD_WPS_CANCEL_CATALOG))
@@ -569,6 +587,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual({row["record_id"] for row in getodhcp6cstats_rows}, set(LUCI_GETODHCP6CSTATS_CATALOG))
         self.assertEqual({row["record_id"] for row in gettimezones_rows}, set(LUCI_GETTIMEZONES_CATALOG))
         self.assertEqual({row["record_id"] for row in getleds_rows}, set(LUCI_GETLEDS_CATALOG))
+        self.assertEqual({row["record_id"] for row in getmountpoints_rows}, set(LUCI_GETMOUNTPOINTS_CATALOG))
         self.assertEqual({row["record_id"] for row in hostapd_rows}, set(HOSTAPD_DEL_CLIENT_CATALOG))
         self.assertEqual({row["record_id"] for row in hostapd_wps_rows}, set(HOSTAPD_WPS_START_CATALOG))
         self.assertEqual({row["record_id"] for row in hostapd_wps_cancel_rows}, set(HOSTAPD_WPS_CANCEL_CATALOG))
@@ -588,6 +607,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             + len(getodhcp6cstats_rows)
             + len(gettimezones_rows)
             + len(getleds_rows)
+            + len(getmountpoints_rows)
             + len(hostapd_rows)
             + len(hostapd_wps_rows)
             + len(hostapd_wps_cancel_rows)
@@ -754,6 +774,20 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotEqual(getleds["evidence_status"], "path_found")
             self.assertEqual(getleds["entrypoint_id"], spec["entrypoint_id"])
             self.assertNotIn("cgi_endpoint", getleds)
+        for getmountpoints in getmountpoints_rows:
+            spec = LUCI_GETMOUNTPOINTS_CATALOG[getmountpoints["record_id"]]
+            self.assertEqual(getmountpoints["ubus_object"], spec["ubus_object"])
+            self.assertEqual(getmountpoints["method"], spec["method"])
+            self.assertEqual(getmountpoints["producer"], "policy_facts")
+            self.assertEqual(getmountpoints["sink_kind"], spec["sink_kind"])
+            self.assertEqual(getmountpoints["op"], spec["op"])
+            self.assertEqual(getmountpoints["assessment"], "intended_access")
+            self.assertNotEqual(getmountpoints["assessment"], "authorization_violation")
+            self.assertEqual(getmountpoints["corpus_revision"], lock_hash)
+            self.assertEqual(getmountpoints["evidence_status"], "fact")
+            self.assertNotEqual(getmountpoints["evidence_status"], "path_found")
+            self.assertEqual(getmountpoints["entrypoint_id"], spec["entrypoint_id"])
+            self.assertNotIn("cgi_endpoint", getmountpoints)
         for hostapd in hostapd_rows:
             spec = HOSTAPD_DEL_CLIENT_CATALOG[hostapd["record_id"]]
             self.assertEqual(hostapd["ubus_object"], spec["ubus_object"])
@@ -1450,6 +1484,48 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertEqual(root["corpus_revision"], lock_hash)
             self.assertEqual(effect["ubus_object"], "luci")
             self.assertEqual(effect["method"], "getLEDs")
+            self.assertEqual(effect["sink_kind"], "ubus_call")
+            self.assertEqual(effect["entrypoint_id"], spec["entrypoint_id"])
+            unauth = [
+                grant
+                for grant in self.grants
+                if grant.get("entrypoint_id") == effect["entrypoint_id"]
+                and grant["session_class"] == "unauthenticated"
+            ]
+            self.assertEqual(unauth, [])
+            snapshot = next(
+                row for row in snapshots[spec["snapshot"]] if row["record_id"] == record_id
+            )
+            self.assertEqual(effect, snapshot)
+
+    def test_luci_getmountpoints_effects_join_delegated_and_root_grants(self) -> None:
+        lock_hash = corpus_revision()
+        snapshots = {}
+        for spec in LUCI_GETMOUNTPOINTS_CATALOG.values():
+            snapshots[spec["snapshot"]] = _load(REPO / spec["snapshot"])
+        for record_id, spec in LUCI_GETMOUNTPOINTS_CATALOG.items():
+            effect = next(row for row in self.effects if row["record_id"] == record_id)
+            delegated = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == spec["delegated_class"]
+            )
+            root = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "root"
+            )
+            refs = effect["evidence_refs"]
+            self.assertIn(delegated["record_id"], refs)
+            self.assertIn(root["record_id"], refs)
+            self.assertEqual(effect["assessment"], "intended_access")
+            self.assertEqual(effect["corpus_revision"], lock_hash)
+            self.assertEqual(delegated["corpus_revision"], lock_hash)
+            self.assertEqual(root["corpus_revision"], lock_hash)
+            self.assertEqual(effect["ubus_object"], "luci")
+            self.assertEqual(effect["method"], "getMountPoints")
             self.assertEqual(effect["sink_kind"], "ubus_call")
             self.assertEqual(effect["entrypoint_id"], spec["entrypoint_id"])
             unauth = [
