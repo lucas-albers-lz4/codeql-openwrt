@@ -1819,5 +1819,67 @@
       "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
     ],
     "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-processes-write:ubus_http:file.exec:kill",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-kill-v1",
+    "session_class": "luci-mod-status-processes-write",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/bin/kill",
+    "target_id": "command:kill",
+    "op": "exec",
+    "acl_group": "luci-mod-status-processes",
+    "expectation_id": "luci-mod-status-processes-kill",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.write.ubus.file=[exec]",
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.write.file./bin/kill=[exec]",
+      "luci@b2e0be4b processes.js handleSignal fs.exec('/bin/kill', ['-%d'.format(signum), '%s'.format(pid)])",
+      "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first"
+    ],
+    "note": "Fixture login luci-mod-status-processes-write is not a stock device login. processes.js handleSignal uses fs.exec('/bin/kill', ['-%d'.format(signum), '%s'.format(pid)]) for Hang Up/Terminate/Kill on a listed process. Bare executable ACL; intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:file.exec:kill",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-kill-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/bin/kill",
+    "target_id": "command:kill",
+    "op": "exec",
+    "acl_group": "luci-mod-status-processes",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]

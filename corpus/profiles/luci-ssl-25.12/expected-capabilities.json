@@ -167,7 +167,7 @@
         "file.exec /bin/kill",
         "ubus file.exec"
       ],
-      "rationale": "luci-mod-status-processes read grants luci.getProcessList. The handler takes no request.args; luci.sys process_list popens a fixed busybox top argv. The same ACL group's write file.exec /bin/kill is not this fixture and is not emitted. Unauthenticated ACLs do not name this method.",
+      "rationale": "luci-mod-status-processes read grants luci.getProcessList. The handler takes no request.args; luci.sys process_list popens a fixed busybox top argv. The same ACL group's write file.exec /bin/kill is not this fixture; that grant is policy:ubus-file-exec-kill-v1. Unauthenticated ACLs do not name this method.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-processes",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/ucode/sys.uc process_list"
@@ -672,6 +672,29 @@
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.write.file./sbin/wifi=[exec]",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-processes-kill",
+      "session_class": "luci-mod-status-processes-write",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "intended_access": [
+        {
+          "target_id": "command:kill",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus file.exec",
+        "read-only processes fixture kill",
+        "execv"
+      ],
+      "rationale": "processes.js handleSignal uses fs.exec('/bin/kill', ['-%d'.format(signum), '%s'.format(pid)]) for Hang Up/Terminate/Kill on a listed process. luci-mod-status-processes write grants ubus file.exec and file.exec of the bare /bin/kill executable. Extra tokens match at the executable stage as intended_access for this fixture, not a violation and not a PoC. The read luci-mod-status-processes fixture has luci.getProcessList only.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-processes.write.file./bin/kill=[exec]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/processes.js"
       ]
     }
   ]

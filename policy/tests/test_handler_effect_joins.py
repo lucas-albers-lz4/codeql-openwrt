@@ -140,6 +140,7 @@ CGI_CATALOG = {
 }
 FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-effect.json"
 IFUP_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-ifup-effect.json"
+KILL_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-kill-effect.json"
 FILE_EXEC_CATALOG = {
     "policy:effect:ubus-file-exec:iptables": {
         "ubus_object": "file",
@@ -203,6 +204,15 @@ FILE_EXEC_CATALOG = {
         "snapshot": IFUP_FILE_EXEC_SNAPSHOT,
         "delegated_class": "luci-mod-network-config-write",
         "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
+    },
+    "policy:effect:ubus-file-exec-kill:kill": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": KILL_FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-status-processes-write",
+        "entrypoint_id": "ubus_http:file.exec:/bin/kill",
     },
 }
 COPIED_EFFECT_SNAPSHOTS = (
@@ -512,6 +522,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             "policy:effect:ubus-file-exec:iptables",
             "policy:effect:ubus-file-exec:ip",
             "policy:effect:ubus-file-exec-ifup:ifup",
+            "policy:effect:ubus-file-exec-kill:kill",
         ):
             cgi_text = " ".join(by_id[record_id]["assumptions"]).lower()
             self.assertIn("shellquote", cgi_text)
