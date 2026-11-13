@@ -159,7 +159,7 @@ class TestRealtimePasswordQuotedLocals(unittest.TestCase):
             self.assertIn("${shellquote", conditions)
 
     def test_luci_emitter_is_unchanged(self) -> None:
-        methods = {row["method"] for row in self.grants if row.get("ingress") == "ubus_http"}
+        methods = {row["method"] for row in self.grants if row.get("ubus_object") == "luci"}
         self.assertEqual(
             methods,
             {

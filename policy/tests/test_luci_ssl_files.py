@@ -295,7 +295,7 @@ class TestLuciSslFiles(unittest.TestCase):
             classify_installed("/www/luci-static/resources/uqr.js", None, "")
 
     def test_luci_emitter_and_handler_effects_are_unchanged(self) -> None:
-        methods = {row["method"] for row in self.grants if row.get("ingress") == "ubus_http"}
+        methods = {row["method"] for row in self.grants if row.get("ubus_object") == "luci"}
         self.assertEqual(methods, GRANT_METHODS)
         blob = json.dumps(self.grants)
         self.assertNotIn(ANALYSIS_REVISION, blob)

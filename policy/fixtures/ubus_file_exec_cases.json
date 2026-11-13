@@ -1,0 +1,513 @@
+{
+  "comment": "Hand-transcribed expected ubus file.exec decisions for luci-mod-status iptables -Z and routes ip from pinned rpcd-mod-file C, status JS callers, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then checks file.exec of the canonicalized executable first, then the cmdline.",
+    "Bounded to fs.exec callers at luci b2e0be4b: iptables.js handleCounterReset iptables/ip6tables -Z, routes.js /sbin/ip -[46] neigh/route/rule, routesj.js /sbin/ip -[46] -j neigh/route/rule.",
+    "Inventoried luci-ssl ACLs grant those cmdlines, not the bare executables. Extra tokens therefore miss.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed. A ubus file.exec grant without the matching file ACL is UBUS_STATUS_PERMISSION_DENIED.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or execv.",
+    "shellquote and basename are not sanitizers. rpc_canonicalize_path is not a taint sanitizer.",
+    "cgi-io cgi-exec listing of iptables stays on policy:cgi-exec-status-v1.",
+    "luci-mod-network diagnostics/ifup and luci-mod-status-processes /bin/kill are not this slice."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-iptables-z-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "command:iptables-z",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus file.exec",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access file/exec false -> ERROR_ACCESS",
+        "do not invent an unauthenticated iptables -Z grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": ["unauthenticated_allow", "execv", "dispatcher", "path_found", "sentinel_rewrite"],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-iptables-z-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:iptables-z",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "expectation_id": "luci-mod-status-firewall-iptables-z",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "Fixture login luci-mod-status-firewall is not a stock device login. iptables.js handleCounterReset uses fs.exec('/usr/sbin/iptables', ['-Z']). Exact cmdline ACL; intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.write.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.write.file./usr/sbin/iptables -Z=[exec]",
+        "luci@b2e0be4b iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z'])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable miss then cmdline ACL"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-ip6tables-z-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/ip6tables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ip6tables-z",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/ip6tables",
+      "expectation_id": "luci-mod-status-firewall-ip6tables-z",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "Fixture login luci-mod-status-firewall is not a stock device login. handleCounterReset calls ip6tables -Z when ip6tables is present. Exact cmdline ACL; intended_access, not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.write.file./usr/sbin/ip6tables -Z=[exec]",
+        "luci@b2e0be4b iptables.js handleCounterReset fs.exec('/usr/sbin/ip6tables', ['-Z'])"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-iptables-z-extra-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z", "extra"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "target_id": "command:iptables-z",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": ["bare_exe_fallback", "path_found", "authorization_violation"],
+      "rule_refs": [
+        "luci@b2e0be4b write file ACL object is the exact cmdline /usr/sbin/iptables -Z, not the bare executable",
+        "rpcd@d99f703 file.c: executable miss then cmdline miss -> UBUS_STATUS_PERMISSION_DENIED"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-iptables-bare-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables",
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": ["bare_exe_fallback", "path_found"],
+      "rule_refs": [
+        "rpcd@d99f703 file.c: executable ACL miss with null params skips cmdline fallback"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-read-iptables-z-deny",
+      "session_class": "luci-mod-status-firewall-read",
+      "sid": "66666666666666666666666666666666",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": ["ubus_file_stat_is_exec", "path_found"],
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-firewall read ubus.file=[stat] only; write ubus.file=[exec] is not in this fixture",
+        "uhttpd@93b05e0 uh_ubus_allowed file/exec false -> ERROR_ACCESS"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-iptables-z-deny",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "rule_refs": [
+        "luci-mod-status-logs read ubus.file=[stat] and cgi-io exec of dmesg; no ubus file.exec"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-iptables-z-command-denied",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "target_id": "command:iptables-z",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": ["ubus_file_exec_is_enough", "path_found"],
+      "rule_refs": [
+        "luci-mod-network-config grants ubus file.exec but file.exec of iptables -Z is luci-mod-status-firewall write",
+        "rpcd@d99f703 file.c: file ACL miss -> UBUS_STATUS_PERMISSION_DENIED"
+      ]
+    },
+    {
+      "id": "luci-mod-status-routes-ip-neigh-allow",
+      "session_class": "luci-mod-status-routes",
+      "sid": "77777777777777777777777777777777",
+      "command": "/sbin/ip",
+      "params": ["-4", "neigh", "show"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ip",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip",
+      "expectation_id": "luci-mod-status-routes-ip",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-routes",
+      "note": "Fixture login luci-mod-status-routes is not a stock device login. routes.js uses fs.exec('/sbin/ip', ['-4', 'neigh', 'show']). ACL glob /sbin/ip -[46] neigh show; intended_access, not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-routes.read.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-routes.read.file./sbin/ip -[46] neigh show=[exec]",
+        "luci@b2e0be4b routes.js load fs.exec('/sbin/ip', ['-4', 'neigh', 'show'])",
+        "rpcd@d99f703 session.c rpc_session_acl_allowed fnmatch FNM_NOESCAPE"
+      ]
+    },
+    {
+      "id": "luci-mod-status-routes-ip-route-allow",
+      "session_class": "luci-mod-status-routes",
+      "sid": "77777777777777777777777777777777",
+      "command": "/sbin/ip",
+      "params": ["-4", "route", "show", "table", "all"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "target_id": "command:ip",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip",
+      "expectation_id": "luci-mod-status-routes-ip",
+      "assessment": "intended_access",
+      "note": "Same routes fixture; routes.js fs.exec('/sbin/ip', ['-4', 'route', 'show', 'table', 'all']) matches /sbin/ip -[46] route show table all. Grant is emitted from the neigh case.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-routes.read.file./sbin/ip -[46] route show table all=[exec]",
+        "luci@b2e0be4b routes.js load fs.exec('/sbin/ip', ['-4', 'route', 'show', 'table', 'all'])"
+      ]
+    },
+    {
+      "id": "luci-mod-status-routes-ip-rule-allow",
+      "session_class": "luci-mod-status-routes",
+      "sid": "77777777777777777777777777777777",
+      "command": "/sbin/ip",
+      "params": ["-6", "rule", "show"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "target_id": "command:ip",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip",
+      "assessment": "intended_access",
+      "note": "ACL glob -[46] matches -6. routes.js also calls rule show.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-routes.read.file./sbin/ip -[46] rule show=[exec]",
+        "luci@b2e0be4b routes.js load fs.exec('/sbin/ip', ['-6', 'rule', 'show'])"
+      ]
+    },
+    {
+      "id": "luci-mod-status-routes-ip-json-command-denied",
+      "session_class": "luci-mod-status-routes",
+      "sid": "77777777777777777777777777777777",
+      "command": "/sbin/ip",
+      "params": ["-4", "-j", "neigh", "show"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "target_id": "command:ip-json",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip:-j",
+      "not": ["routes_acl_covers_json", "path_found"],
+      "rule_refs": [
+        "luci-mod-status-routes file ACLs omit -j; luci-mod-status-routes-json owns /sbin/ip -[46] -j ..."
+      ]
+    },
+    {
+      "id": "luci-mod-status-routes-json-ip-json-allow",
+      "session_class": "luci-mod-status-routes-json",
+      "sid": "88888888888888888888888888888888",
+      "command": "/sbin/ip",
+      "params": ["-4", "-j", "neigh", "show"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ip-json",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip:-j",
+      "expectation_id": "luci-mod-status-routes-json-ip",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-routes-json",
+      "note": "Fixture login luci-mod-status-routes-json is not a stock device login. routesj.js uses fs.exec('/sbin/ip', ['-4', '-j', 'neigh', 'show']). Intended_access, not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-routes-json.read.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-routes-json.read.file./sbin/ip -[46] -j neigh show=[exec]",
+        "luci@b2e0be4b routesj.js load fs.exec('/sbin/ip', ['-4', '-j', 'neigh', 'show'])"
+      ]
+    },
+    {
+      "id": "luci-mod-status-routes-json-plain-ip-command-denied",
+      "session_class": "luci-mod-status-routes-json",
+      "sid": "88888888888888888888888888888888",
+      "command": "/sbin/ip",
+      "params": ["-4", "neigh", "show"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "target_id": "command:ip",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip",
+      "not": ["json_acl_covers_plain", "path_found"],
+      "rule_refs": [
+        "luci-mod-status-routes-json file ACLs require -j; plain routes.js argv is luci-mod-status-routes"
+      ]
+    },
+    {
+      "id": "luci-mod-status-routes-iptables-z-command-denied",
+      "session_class": "luci-mod-status-routes",
+      "sid": "77777777777777777777777777777777",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": ["ubus_file_exec_is_enough"],
+      "rule_refs": [
+        "luci-mod-status-routes has ubus file.exec but iptables -Z file ACL is luci-mod-status-firewall write"
+      ]
+    },
+    {
+      "id": "root-star-iptables-z-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:iptables-z",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-ip6tables-z-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/sbin/ip6tables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ip6tables-z",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/ip6tables",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-ip-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/sbin/ip",
+      "params": ["-4", "neigh", "show"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ip",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-routes",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-ip-json-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/sbin/ip",
+      "params": ["-4", "-j", "neigh", "show"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ip-json",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip:-j",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-routes-json",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "iptables-legacy-not-found",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables-legacy",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": ["path_found", "live_path_search"],
+      "rule_refs": [
+        "rpc_file_exec_lookup is not a live PATH/stat search; only inventoried absolute paths are found"
+      ]
+    },
+    {
+      "id": "missing-command-invalid-argument",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": null,
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "invalid_argument",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec: missing command -> UBUS_STATUS_INVALID_ARGUMENT"
+      ]
+    },
+    {
+      "id": "env-with-sid-permission-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "env": {"FOO": "bar"},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": ["execv"],
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: sid && env -> UBUS_STATUS_PERMISSION_DENIED",
+        "inventoried callers do not pass env"
+      ]
+    },
+    {
+      "id": "empty-env-with-sid-permission-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables",
+      "params": [
+        "-Z"
+      ],
+      "env": {},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": [
+        "execv"
+      ],
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: sid && env checks attribute presence, including an empty table"
+      ],
+      "note": "An empty env table is still a present BLOBMSG_TYPE_TABLE and is rejected with SID before executable lookup."
+    }
+  ]
+}
