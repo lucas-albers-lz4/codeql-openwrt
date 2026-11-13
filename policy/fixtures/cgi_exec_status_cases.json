@@ -1,0 +1,542 @@
+{
+  "comment": "Hand-transcribed expected cgi-exec file.exec decisions for luci-mod-status dmesg/firewall from pinned cgi-io C, status JS callers, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "cgi-io main_exec requires application/x-www-form-urlencoded then session.access(sid, cgi-io, exec, read), then parse_command, canonicalize argv0, session.access(file, cmdline, exec) or session.access(file, exe, exec).",
+    "This oracle is bounded to luci-mod-status commands reached via fs.exec_direct → cgi-exec: /bin/dmesg, /usr/sbin/nft, iptables/ip6tables -t glob, iptables-save/ip6tables-save, /etc/init.d/firewall restart. Other commands are HTTP 404 in this slice (lookup_executable is not a live PATH search).",
+    "dmesg/nft/iptables-save ACLs are exact cmdlines. iptables/ip6tables list uses a trailing -t * glob. Bare executable fallback is not granted for these commands.",
+    "Missing or empty sessionid after a valid content-type is HTTP 403, not 400.",
+    "A cgi-io exec read grant without the matching file.exec ACL is HTTP 403 Access to command denied by ACL.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or execv.",
+    "shellquote and basename are not sanitizers. canonicalize_path is not a taint sanitizer.",
+    "ubus file.exec (rpcd-mod-file) is not staffed, including iptables.js handleCounterReset fs.exec iptables -Z.",
+    "The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-dmesg-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "command": "/bin/dmesg -r",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io exec",
+        "cgi-io@31cb3c89 main.c main_exec: session_access cgi-io exec read false -> 403 Exec permission denied",
+        "do not invent an unauthenticated dmesg grant"
+      ]
+    },
+    {
+      "id": "missing-sessionid-nft-forbidden",
+      "session_class": null,
+      "sid": null,
+      "command": "/usr/sbin/nft --terse --json list ruleset",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "not": ["unauthenticated_allow", "execv", "dispatcher", "path_found"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: !fields[1] -> 403 Exec permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ]
+    },
+    {
+      "id": "invalid-content-type-dmesg-bad-request",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "content_type": "application/json",
+      "command": "/bin/dmesg -r",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "bad_request",
+      "http_status": 400,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "not": ["acl_bypass", "execv"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_exec: !post -> 400 Invalid form data"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-dmesg-allow",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/bin/dmesg -r",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "expectation_id": "luci-mod-status-logs-dmesg",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-logs",
+      "note": "Fixture login luci-mod-status-logs is not a stock device login. dmesg.js uses fs.exec_direct('/bin/dmesg', ['-r']). Exact cmdline ACL; not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-logs.read.file./bin/dmesg -r=[exec]",
+        "luci@b2e0be4b modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js retrieveLog fs.exec_direct",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline then executable"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-dmesg-extra-argv-denied",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/bin/dmesg -r extra",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "not": ["bare_exe_fallback", "path_found"],
+      "rule_refs": [
+        "luci@b2e0be4b file ACL object is the exact cmdline /bin/dmesg -r, not the bare /bin/dmesg path",
+        "cgi-io@31cb3c89 main.c main_exec: cmdline miss then executable miss -> 403 Access to command denied by ACL"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-nft-command-denied",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/usr/sbin/nft --terse --json list ruleset",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:nft",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "not": ["cgi_io_exec_is_enough", "path_found"],
+      "rule_refs": [
+        "luci-mod-status-logs has cgi-io exec read but file.exec of nft is luci-mod-status-firewall",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-nft-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/nft --terse --json list ruleset",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:nft",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "expectation_id": "luci-mod-status-firewall-nft",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "Fixture login luci-mod-status-firewall is not a stock device login. nftables.js uses fs.exec_direct. Exact cmdline ACL; intended_access, not a violation.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/nft --terse --json list ruleset=[exec]",
+        "luci@b2e0be4b modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js fs.exec_direct nft",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-iptables-glob-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:iptables",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "expectation_id": "luci-mod-status-firewall-iptables",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "iptables.js pollFirewallLists lists Filter/NAT/Mangle/Raw via -t <table>. The ACL glob -t * matches. Intended_access for this fixture, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables --line-numbers -w -nvxL -t *=[exec]",
+        "luci@b2e0be4b iptables.js table_names Filter NAT Mangle Raw fs.exec_direct",
+        "rpcd@d99f703 session.c rpc_session_acl_allowed fnmatch FNM_NOESCAPE"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-iptables-glob-extra-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter extra",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:iptables",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "expectation_id": "luci-mod-status-firewall-iptables",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "Trailing * on the joined cmdline matches extra tokens. Intended_access for this fixture, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b file ACL /usr/sbin/iptables --line-numbers -w -nvxL -t *",
+        "rpcd@d99f703 fnmatch FNM_NOESCAPE: * matches extra argv",
+        "not a PoC"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-iptables-bare-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:iptables",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "not": ["bare_exe_fallback", "path_found"],
+      "rule_refs": [
+        "luci@b2e0be4b has no bare /usr/sbin/iptables exec object; list of /usr/sbin/ip6tables is not exec",
+        "cgi-io@31cb3c89 main.c main_exec: cmdline and executable file ACL miss -> 403"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-ip6tables-glob-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:ip6tables",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+      "expectation_id": "luci-mod-status-firewall-ip6tables",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "ip6tables.js path uses the same -t * glob. /usr/sbin/ip6tables list is not exec.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables --line-numbers -w -nvxL -t *=[exec]",
+        "luci@b2e0be4b /usr/sbin/ip6tables list is fs.stat, not file.exec"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-iptables-save-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables-save",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:iptables-save",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+      "expectation_id": "luci-mod-status-firewall-iptables-save",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "nftables.js falls back to fs.exec_direct('/usr/sbin/iptables-save'). Exact cmdline.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables-save=[exec]",
+        "luci@b2e0be4b nftables.js fs.exec_direct iptables-save"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-ip6tables-save-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/ip6tables-save",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:ip6tables-save",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+      "expectation_id": "luci-mod-status-firewall-ip6tables-save",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "nftables.js falls back to fs.exec_direct('/usr/sbin/ip6tables-save'). Exact cmdline.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables-save=[exec]",
+        "luci@b2e0be4b nftables.js fs.exec_direct ip6tables-save"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-read-restart-command-denied",
+      "session_class": "luci-mod-status-firewall-read",
+      "sid": "66666666666666666666666666666666",
+      "command": "/etc/init.d/firewall restart",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:firewall-init",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "not": ["read_implies_write_exec", "path_found"],
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-firewall.write.file./etc/init.d/firewall restart=[exec]",
+        "fixture luci-mod-status-firewall-read is list read only; write file.exec is not in session",
+        "read still has cgi-io exec, so the miss is the file ACL"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-restart-allow",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/etc/init.d/firewall restart",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:firewall-init",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "expectation_id": "luci-mod-status-firewall-restart",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-firewall",
+      "note": "iptables.js handleRestart uses fs.exec_direct('/etc/init.d/firewall', ['restart']). Write file.exec. Intended_access for this fixture, not a violation.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.write.file./etc/init.d/firewall restart=[exec]",
+        "luci@b2e0be4b iptables.js handleRestart fs.exec_direct"
+      ]
+    },
+    {
+      "id": "iptables-legacy-save-not-found",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables-legacy-save",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "not_found",
+      "http_status": 404,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "not": ["path_found", "execv"],
+      "rule_refs": [
+        "nftables.js also tries iptables-legacy-save; that path is not in the luci-ssl file ACL and is not inventoried as found",
+        "this slice does not live-stat lookup_executable; HTTP 404 Executable not found"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-dmesg-command-denied",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/bin/dmesg -r",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "not": ["cgi_io_exec_is_enough", "path_found"],
+      "rule_refs": [
+        "luci-mod-network-config has cgi-io exec read (cgi-exec-v1) but file.exec of dmesg is luci-mod-status-logs",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ]
+    },
+    {
+      "id": "root-star-nft-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/sbin/nft --terse --json list ruleset",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:nft",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "root",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-dmesg-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/bin/dmesg -r",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "root",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-firewall-restart-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/etc/init.d/firewall restart",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:firewall-init",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "root",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-iptables-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:iptables",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "root",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-ip6tables-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:ip6tables",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "root",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-iptables-save-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/sbin/iptables-save",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:iptables-save",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "root",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "root-star-ip6tables-save-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/sbin/ip6tables-save",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:ip6tables-save",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "root",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ]
+    },
+    {
+      "id": "luci-mod-status-realtime-dmesg-deny",
+      "session_class": "luci-mod-status-realtime",
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "command": "/bin/dmesg -r",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "not": ["unauthenticated_allow", "path_found"],
+      "rule_refs": [
+        "luci-mod-status-realtime has no cgi-io exec; gate fails before file.exec",
+        "cgi-io@31cb3c89 main.c main_exec: session_access cgi-io exec read false -> 403 Exec permission denied"
+      ]
+    }
+  ]
+}

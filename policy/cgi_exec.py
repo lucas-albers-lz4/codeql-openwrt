@@ -74,13 +74,16 @@ UNKNOWN_POSTDECODE = (
 UNKNOWN_FILE_EXEC = (
     "After the cgi-io exec read gate, main_exec still requires file.exec of "
     "the command. The three luci-ssl libexec helpers are modeled by "
-    "policy:cgi-exec-file-v1. lookup_executable PATH search, execv, and "
-    "file.exec of other commands are not modeled here."
+    "policy:cgi-exec-file-v1. luci-mod-status dmesg/nft/iptables/firewall-init "
+    "commands are policy:cgi-exec-status-v1. lookup_executable PATH search, "
+    "execv, and file.exec of other commands are not modeled here."
 )
 UNKNOWN_UNSTAFFED = (
-    "luci-mod-status-firewall also grants cgi-io exec at luci b2e0be4b; this "
-    "slice does not staff that fixture login. luci-mod-status-logs and "
-    "luci-app-package-manager file.exec helpers are policy:cgi-exec-file-v1."
+    "This cgi-exec-v1 oracle still only models the cgi-io exec read gate and "
+    "does not emit a luci-mod-status-firewall cgi-exec-v1 grant. "
+    "luci-mod-status-firewall file.exec is policy:cgi-exec-status-v1. "
+    "luci-mod-status-logs and luci-app-package-manager file.exec helpers are "
+    "policy:cgi-exec-file-v1."
 )
 ASSUMPTION_EXEC_ONLY = (
     "cgi-io main_exec checks session.access scope=cgi-io object=exec "

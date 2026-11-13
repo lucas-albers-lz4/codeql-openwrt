@@ -88,6 +88,55 @@ CGI_CATALOG = {
         "snapshot": CGI_EXEC_FILE_SNAPSHOT,
         "delegated_class": "luci-app-package-manager",
     },
+    "policy:effect:cgi-exec-status:dmesg": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": "reports/m2-cgi-exec-status-effect.json",
+        "delegated_class": "luci-mod-status-logs",
+    },
+    "policy:effect:cgi-exec-status:nft": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": "reports/m2-cgi-exec-status-effect.json",
+        "delegated_class": "luci-mod-status-firewall",
+    },
+    "policy:effect:cgi-exec-status:iptables": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": "reports/m2-cgi-exec-status-effect.json",
+        "delegated_class": "luci-mod-status-firewall",
+    },
+    "policy:effect:cgi-exec-status:ip6tables": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": "reports/m2-cgi-exec-status-effect.json",
+        "delegated_class": "luci-mod-status-firewall",
+    },
+    "policy:effect:cgi-exec-status:iptables-save": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": "reports/m2-cgi-exec-status-effect.json",
+        "delegated_class": "luci-mod-status-firewall",
+    },
+    "policy:effect:cgi-exec-status:ip6tables-save": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": "reports/m2-cgi-exec-status-effect.json",
+        "delegated_class": "luci-mod-status-firewall",
+    },
+    "policy:effect:cgi-exec-status:firewall-init": {
+        "cgi_endpoint": "cgi-exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": "reports/m2-cgi-exec-status-effect.json",
+        "delegated_class": "luci-mod-status-firewall",
+    },
 }
 COPIED_EFFECT_SNAPSHOTS = (
     "reports/findings.json",
@@ -356,6 +405,10 @@ class TestHandlerEffectJoins(unittest.TestCase):
             "policy:effect:cgi-exec-file:syslog-wrapper",
             "policy:effect:cgi-exec-file:luci-peeraddr",
             "policy:effect:cgi-exec-file:package-manager-call",
+            "policy:effect:cgi-exec-status:dmesg",
+            "policy:effect:cgi-exec-status:nft",
+            "policy:effect:cgi-exec-status:iptables",
+            "policy:effect:cgi-exec-status:firewall-init",
         ):
             cgi_text = " ".join(by_id[record_id]["assumptions"]).lower()
             self.assertIn("shellquote", cgi_text)

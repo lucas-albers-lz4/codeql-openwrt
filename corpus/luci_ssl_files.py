@@ -627,7 +627,7 @@ def _helper_record(evidence: dict[str, Any], revision: str) -> dict[str, Any]:
         + [
             "lookup_executable PATH search and execv are not modeled",
             "ubus file.exec (rpcd-mod-file) is not this helper gate",
-            "luci-mod-status-firewall cgi-io exec is not staffed",
+            "luci-mod-status dmesg/nft/iptables cgi-io file.exec is policy:cgi-exec-status-v1",
         ],
     }
 

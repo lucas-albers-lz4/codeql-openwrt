@@ -1,6 +1,6 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
 
 Findings are evidence, not proof. This catalog does not emit `authorization_violation` or dispatcher effects. `shellquote` and `basename` are not sanitizers. `canonicalize_path` is not a taint sanitizer.
 
@@ -19,12 +19,13 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m2-cgi-download-effect.json](m2-cgi-download-effect.json) | synthetic `cgi-download` → conjunctive `file_read` (C, not ucode) |
 | [m2-cgi-exec-effect.json](m2-cgi-exec-effect.json) | synthetic `cgi-exec` → cgi-io exec read gate only (C, not ucode) |
 | [m2-cgi-exec-file-effect.json](m2-cgi-exec-file-effect.json) | synthetic `cgi-exec` file.exec of three luci-ssl libexec helpers (C, not ucode) |
+| [m2-cgi-exec-status-effect.json](m2-cgi-exec-status-effect.json) | synthetic `cgi-exec` file.exec of luci-mod-status dmesg/nft/iptables/firewall-init (C, not ucode) |
 
 Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing classification ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher. Helper `exec_helper_inventory` rows stay in the files inventory; this catalog holds the cgi-exec file.exec effects those helpers join.
 
 ## Grant ↔ effect joins
 
-Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
+Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
 
 Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
 
@@ -115,9 +116,24 @@ cgi-io `main_exec` still requires `file.exec` of the canonicalized cmdline or ex
 | `cgi-exec.luci-peeraddr.file-exec` | `policy:grant:luci-mod-network-config:cgi_io:cgi-exec:luci-peeraddr` | `policy:grant:root:cgi_io:cgi-exec:luci-peeraddr` | no-join |
 | `cgi-exec.package-manager-call.file-exec` | `policy:grant:luci-app-package-manager:cgi_io:cgi-exec:package-manager-call` | `policy:grant:root:cgi_io:cgi-exec:package-manager-call` | no-join |
 
+### cgi-exec file.exec luci-mod-status (policy-facts synthetic, conjunctive)
+
+Same cgi-io `main_exec` file.exec conjunct as the libexec helpers, bounded to commands the pinned status views reach via `fs.exec_direct`. dmesg / nft / `*-save` / firewall restart are exact cmdlines. iptables/ip6tables listing uses a trailing `-t *` glob; extra tokens on that glob are `intended_access` for the firewall fixture, not `authorization_violation` and not a PoC. Bare executable fallback is not granted. A read-only firewall fixture has cgi-io exec but not write `file.exec` of `/etc/init.d/firewall restart`. `iptables -Z` is `fs.exec` (ubus `file.exec`) and is not this slice. Catalog copy: [m2-cgi-exec-status-effect.json](m2-cgi-exec-status-effect.json).
+
+| `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- |
+| `cgi-exec.dmesg.file-exec` | `policy:grant:luci-mod-status-logs:cgi_io:cgi-exec:dmesg` | `policy:grant:root:cgi_io:cgi-exec:dmesg` | no-join |
+| `cgi-exec.nft.file-exec` | `policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:nft` | `policy:grant:root:cgi_io:cgi-exec:nft` | no-join |
+| `cgi-exec.iptables.file-exec` | `policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:iptables` | `policy:grant:root:cgi_io:cgi-exec:iptables` | no-join |
+| `cgi-exec.ip6tables.file-exec` | `policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:ip6tables` | `policy:grant:root:cgi_io:cgi-exec:ip6tables` | no-join |
+| `cgi-exec.iptables-save.file-exec` | `policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:iptables-save` | `policy:grant:root:cgi_io:cgi-exec:iptables-save` | no-join |
+| `cgi-exec.ip6tables-save.file-exec` | `policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:ip6tables-save` | `policy:grant:root:cgi_io:cgi-exec:ip6tables-save` | no-join |
+| `cgi-exec.firewall-init.file-exec` | `policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:firewall-init` | `policy:grant:root:cgi_io:cgi-exec:firewall-init` | no-join |
+
 ## Out of this file
 
 - dispatcher / `menu.d` routes
 - luci-ssl `files[]` routing classification ([m4-luci-ssl-files.md](m4-luci-ssl-files.md))
+- ubus `file.exec` (rpcd-mod-file), including `iptables.js` `handleCounterReset` and routes `ip`
 - `authorization_violation` / BrokenAccessControl `path_found`
 - Alloy `producer: step4`

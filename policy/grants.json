@@ -986,5 +986,407 @@
       "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-app-package-manager\", 0) matches"
     ],
     "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-logs:cgi_io:cgi-exec:dmesg",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "luci-mod-status-logs",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/bin/dmesg",
+    "target_id": "command:dmesg",
+    "op": "exec",
+    "acl_group": "luci-mod-status-logs",
+    "expectation_id": "luci-mod-status-logs-dmesg",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-logs.read.file./bin/dmesg -r=[exec]",
+      "luci@b2e0be4b modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js retrieveLog fs.exec_direct",
+      "cgi-io@31cb3c89 main.c main_exec session_access file cmdline then executable"
+    ],
+    "note": "Fixture login luci-mod-status-logs is not a stock device login. dmesg.js uses fs.exec_direct('/bin/dmesg', ['-r']). Exact cmdline ACL; not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:nft",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "luci-mod-status-firewall",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/nft",
+    "target_id": "command:nft",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "luci-mod-status-firewall-nft",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/nft --terse --json list ruleset=[exec]",
+      "luci@b2e0be4b modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js fs.exec_direct nft",
+      "cgi-io@31cb3c89 main.c main_exec session_access file cmdline"
+    ],
+    "note": "Fixture login luci-mod-status-firewall is not a stock device login. nftables.js uses fs.exec_direct. Exact cmdline ACL; intended_access, not a violation.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:iptables",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "luci-mod-status-firewall",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/iptables",
+    "target_id": "command:iptables",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "luci-mod-status-firewall-iptables",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables --line-numbers -w -nvxL -t *=[exec]",
+      "luci@b2e0be4b iptables.js table_names Filter NAT Mangle Raw fs.exec_direct",
+      "rpcd@d99f703 session.c rpc_session_acl_allowed fnmatch FNM_NOESCAPE"
+    ],
+    "note": "iptables.js pollFirewallLists lists Filter/NAT/Mangle/Raw via -t <table>. The ACL glob -t * matches. Intended_access for this fixture, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:ip6tables",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "luci-mod-status-firewall",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/ip6tables",
+    "target_id": "command:ip6tables",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "luci-mod-status-firewall-ip6tables",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables --line-numbers -w -nvxL -t *=[exec]",
+      "luci@b2e0be4b /usr/sbin/ip6tables list is fs.stat, not file.exec"
+    ],
+    "note": "ip6tables.js path uses the same -t * glob. /usr/sbin/ip6tables list is not exec.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:iptables-save",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "luci-mod-status-firewall",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/iptables-save",
+    "target_id": "command:iptables-save",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "luci-mod-status-firewall-iptables-save",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables-save=[exec]",
+      "luci@b2e0be4b nftables.js fs.exec_direct iptables-save"
+    ],
+    "note": "nftables.js falls back to fs.exec_direct('/usr/sbin/iptables-save'). Exact cmdline.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:ip6tables-save",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "luci-mod-status-firewall",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/ip6tables-save",
+    "target_id": "command:ip6tables-save",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "luci-mod-status-firewall-ip6tables-save",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables-save=[exec]",
+      "luci@b2e0be4b nftables.js fs.exec_direct ip6tables-save"
+    ],
+    "note": "nftables.js falls back to fs.exec_direct('/usr/sbin/ip6tables-save'). Exact cmdline.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:firewall-init",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "luci-mod-status-firewall",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/etc/init.d/firewall",
+    "target_id": "command:firewall-init",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "luci-mod-status-firewall-restart",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.write.file./etc/init.d/firewall restart=[exec]",
+      "luci@b2e0be4b iptables.js handleRestart fs.exec_direct"
+    ],
+    "note": "iptables.js handleRestart uses fs.exec_direct('/etc/init.d/firewall', ['restart']). Write file.exec. Intended_access for this fixture, not a violation.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:nft",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/nft",
+    "target_id": "command:nft",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+      "expectation_id root-administration"
+    ],
+    "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:dmesg",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/bin/dmesg",
+    "target_id": "command:dmesg",
+    "op": "exec",
+    "acl_group": "luci-mod-status-logs",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+      "expectation_id root-administration"
+    ],
+    "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:firewall-init",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/etc/init.d/firewall",
+    "target_id": "command:firewall-init",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+      "expectation_id root-administration"
+    ],
+    "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:iptables",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/iptables",
+    "target_id": "command:iptables",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+      "expectation_id root-administration"
+    ],
+    "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:ip6tables",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/ip6tables",
+    "target_id": "command:ip6tables",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+      "expectation_id root-administration"
+    ],
+    "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:iptables-save",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/iptables-save",
+    "target_id": "command:iptables-save",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+      "expectation_id root-administration"
+    ],
+    "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:ip6tables-save",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-status-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/sbin/ip6tables-save",
+    "target_id": "command:ip6tables-save",
+    "op": "exec",
+    "acl_group": "luci-mod-status-firewall",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+      "expectation_id root-administration"
+    ],
+    "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]

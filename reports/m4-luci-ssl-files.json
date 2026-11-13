@@ -1008,7 +1008,7 @@
       "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
       "lookup_executable PATH search and execv are not modeled",
       "ubus file.exec (rpcd-mod-file) is not this helper gate",
-      "luci-mod-status-firewall cgi-io exec is not staffed"
+      "luci-mod-status dmesg/nft/iptables cgi-io file.exec is policy:cgi-exec-status-v1"
     ]
   },
   {
@@ -1059,7 +1059,7 @@
       "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
       "lookup_executable PATH search and execv are not modeled",
       "ubus file.exec (rpcd-mod-file) is not this helper gate",
-      "luci-mod-status-firewall cgi-io exec is not staffed"
+      "luci-mod-status dmesg/nft/iptables cgi-io file.exec is policy:cgi-exec-status-v1"
     ]
   },
   {
@@ -1110,7 +1110,7 @@
       "OpenWrt C packages rpcd/uhttpd/cgi-io/firewall4 are not luci.mk copies and are not file-listed here",
       "lookup_executable PATH search and execv are not modeled",
       "ubus file.exec (rpcd-mod-file) is not this helper gate",
-      "luci-mod-status-firewall cgi-io exec is not staffed"
+      "luci-mod-status dmesg/nft/iptables cgi-io file.exec is policy:cgi-exec-status-v1"
     ]
   }
 ]
