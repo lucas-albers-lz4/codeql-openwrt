@@ -150,6 +150,7 @@ LUCI_GETVERSION_SNAPSHOT = "reports/m2-ubus-luci-getversion-effect.json"
 LUCI_GETUNIXTIME_SNAPSHOT = "reports/m2-ubus-luci-getunixtime-effect.json"
 HOSTAPD_DEL_CLIENT_SNAPSHOT = "reports/m2-ubus-hostapd-del-client-effect.json"
 HOSTAPD_WPS_START_SNAPSHOT = "reports/m2-ubus-hostapd-wps-start-effect.json"
+HOSTAPD_WPS_CANCEL_SNAPSHOT = "reports/m2-ubus-hostapd-wps-cancel-effect.json"
 RC_INIT_SNAPSHOT = "reports/m2-ubus-rc-init-effect.json"
 RC_LIST_SNAPSHOT = "reports/m2-ubus-rc-list-effect.json"
 FILE_EXEC_CATALOG = {
@@ -330,6 +331,17 @@ HOSTAPD_WPS_START_CATALOG = {
         "entrypoint_id": "ubus_http:hostapd.wps_start",
     },
 }
+HOSTAPD_WPS_CANCEL_CATALOG = {
+    "policy:effect:ubus-hostapd-wps-cancel": {
+        "ubus_object": "hostapd.*",
+        "method": "wps_cancel",
+        "sink_kind": "ubus_call",
+        "op": "invoke",
+        "snapshot": HOSTAPD_WPS_CANCEL_SNAPSHOT,
+        "delegated_class": "luci-mod-status-index-wifi",
+        "entrypoint_id": "ubus_http:hostapd.wps_cancel",
+    },
+}
 SYSTEM_CATALOG = {**SYSTEM_REBOOT_CATALOG, **SYSTEM_BOARD_CATALOG, **SYSTEM_INFO_CATALOG}
 RC_INIT_CATALOG = {
     "policy:effect:ubus-rc-init": {
@@ -426,6 +438,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
             for row in self.effects
             if row.get("ubus_object") == "hostapd.*" and row.get("method") == "wps_start"
         ]
+        hostapd_wps_cancel_rows = [
+            row
+            for row in self.effects
+            if row.get("ubus_object") == "hostapd.*" and row.get("method") == "wps_cancel"
+        ]
         file_exec_rows = [
             row
             for row in self.effects
@@ -467,6 +484,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual(len(getunixtime_rows), len(LUCI_GETUNIXTIME_CATALOG))
         self.assertEqual(len(hostapd_rows), len(HOSTAPD_DEL_CLIENT_CATALOG))
         self.assertEqual(len(hostapd_wps_rows), len(HOSTAPD_WPS_START_CATALOG))
+        self.assertEqual(len(hostapd_wps_cancel_rows), len(HOSTAPD_WPS_CANCEL_CATALOG))
         self.assertEqual(len(rc_init_rows), len(RC_INIT_CATALOG))
         self.assertEqual(len(rc_list_rows), len(RC_LIST_CATALOG))
         self.assertEqual({row["record_id"] for row in cgi_rows}, set(CGI_CATALOG))
@@ -478,6 +496,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual({row["record_id"] for row in getunixtime_rows}, set(LUCI_GETUNIXTIME_CATALOG))
         self.assertEqual({row["record_id"] for row in hostapd_rows}, set(HOSTAPD_DEL_CLIENT_CATALOG))
         self.assertEqual({row["record_id"] for row in hostapd_wps_rows}, set(HOSTAPD_WPS_START_CATALOG))
+        self.assertEqual({row["record_id"] for row in hostapd_wps_cancel_rows}, set(HOSTAPD_WPS_CANCEL_CATALOG))
         self.assertEqual({row["record_id"] for row in rc_init_rows}, set(RC_INIT_CATALOG))
         self.assertEqual({row["record_id"] for row in rc_list_rows}, set(RC_LIST_CATALOG))
         self.assertEqual(
@@ -492,6 +511,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             + len(getunixtime_rows)
             + len(hostapd_rows)
             + len(hostapd_wps_rows)
+            + len(hostapd_wps_cancel_rows)
             + len(rc_init_rows)
             + len(rc_list_rows),
         )
@@ -640,6 +660,20 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotEqual(hostapd_wps["evidence_status"], "path_found")
             self.assertEqual(hostapd_wps["entrypoint_id"], spec["entrypoint_id"])
             self.assertNotIn("cgi_endpoint", hostapd_wps)
+        for hostapd_wps_cancel in hostapd_wps_cancel_rows:
+            spec = HOSTAPD_WPS_CANCEL_CATALOG[hostapd_wps_cancel["record_id"]]
+            self.assertEqual(hostapd_wps_cancel["ubus_object"], spec["ubus_object"])
+            self.assertEqual(hostapd_wps_cancel["method"], spec["method"])
+            self.assertEqual(hostapd_wps_cancel["producer"], "policy_facts")
+            self.assertEqual(hostapd_wps_cancel["sink_kind"], spec["sink_kind"])
+            self.assertEqual(hostapd_wps_cancel["op"], spec["op"])
+            self.assertEqual(hostapd_wps_cancel["assessment"], "intended_access")
+            self.assertNotEqual(hostapd_wps_cancel["assessment"], "authorization_violation")
+            self.assertEqual(hostapd_wps_cancel["corpus_revision"], lock_hash)
+            self.assertEqual(hostapd_wps_cancel["evidence_status"], "fact")
+            self.assertNotEqual(hostapd_wps_cancel["evidence_status"], "path_found")
+            self.assertEqual(hostapd_wps_cancel["entrypoint_id"], spec["entrypoint_id"])
+            self.assertNotIn("cgi_endpoint", hostapd_wps_cancel)
         for rc_init in rc_init_rows:
             spec = RC_INIT_CATALOG[rc_init["record_id"]]
             self.assertEqual(rc_init["ubus_object"], spec["ubus_object"])
@@ -1217,6 +1251,55 @@ class TestHandlerEffectJoins(unittest.TestCase):
             )
             self.assertEqual(effect, snapshot)
 
+    def test_hostapd_wps_cancel_effects_join_delegated_and_root_grants(self) -> None:
+        lock_hash = corpus_revision()
+        snapshots = {}
+        for spec in HOSTAPD_WPS_CANCEL_CATALOG.values():
+            snapshots[spec["snapshot"]] = _load(REPO / spec["snapshot"])
+        for record_id, spec in HOSTAPD_WPS_CANCEL_CATALOG.items():
+            effect = next(row for row in self.effects if row["record_id"] == record_id)
+            delegated = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == spec["delegated_class"]
+            )
+            root = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "root"
+            )
+            refs = effect["evidence_refs"]
+            self.assertIn(delegated["record_id"], refs)
+            self.assertIn(root["record_id"], refs)
+            self.assertEqual(effect["assessment"], "intended_access")
+            self.assertEqual(effect["corpus_revision"], lock_hash)
+            self.assertEqual(delegated["corpus_revision"], lock_hash)
+            self.assertEqual(root["corpus_revision"], lock_hash)
+            self.assertEqual(effect["ubus_object"], "hostapd.*")
+            self.assertEqual(effect["method"], "wps_cancel")
+            self.assertEqual(effect["sink_kind"], "ubus_call")
+            self.assertEqual(effect["entrypoint_id"], spec["entrypoint_id"])
+            network_write = [
+                grant
+                for grant in self.grants
+                if grant.get("entrypoint_id") == effect["entrypoint_id"]
+                and grant["session_class"] == "luci-mod-network-config-write"
+            ]
+            self.assertEqual(network_write, [])
+            unauth = [
+                grant
+                for grant in self.grants
+                if grant.get("entrypoint_id") == effect["entrypoint_id"]
+                and grant["session_class"] == "unauthenticated"
+            ]
+            self.assertEqual(unauth, [])
+            snapshot = next(
+                row for row in snapshots[spec["snapshot"]] if row["record_id"] == record_id
+            )
+            self.assertEqual(effect, snapshot)
+
     def test_hostapd_del_client_effects_join_delegated_and_root_grants(self) -> None:
         lock_hash = corpus_revision()
         snapshots = {}
@@ -1394,7 +1477,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
                 self.assertEqual(row.get("method"), spec["method"])
                 self.assertNotIn("cgi_endpoint", row)
             elif row.get("ubus_object") == "hostapd.*":
-                spec = {**HOSTAPD_DEL_CLIENT_CATALOG, **HOSTAPD_WPS_START_CATALOG}[
+                spec = {
+                    **HOSTAPD_DEL_CLIENT_CATALOG,
+                    **HOSTAPD_WPS_START_CATALOG,
+                    **HOSTAPD_WPS_CANCEL_CATALOG,
+                }[
                     row["record_id"]
                 ]
                 self.assertEqual(row.get("sink_kind"), spec["sink_kind"])

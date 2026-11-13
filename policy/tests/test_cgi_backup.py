@@ -52,6 +52,7 @@ from policy.ubus_luci_getversion import build_artifacts as getversion_build_arti
 from policy.ubus_luci_getunixtime import build_artifacts as getunixtime_build_artifacts  # noqa: E402
 from policy.ubus_hostapd_del_client import build_artifacts as hostapd_build_artifacts  # noqa: E402
 from policy.ubus_hostapd_wps_start import build_artifacts as hostapd_wps_build_artifacts  # noqa: E402
+from policy.ubus_hostapd_wps_cancel import build_artifacts as hostapd_wps_cancel_build_artifacts  # noqa: E402
 from policy.ubus_file_exec_mounts import build_artifacts as mounts_build_artifacts  # noqa: E402
 from policy.cgi_upload import build_artifacts as upload_build_artifacts  # noqa: E402
 from policy.oracle import (  # noqa: E402
@@ -382,6 +383,7 @@ class TestCommittedArtifacts(unittest.TestCase):
         getunixtime_grants, _, _ = getunixtime_build_artifacts()
         hostapd_grants, _, _ = hostapd_build_artifacts()
         hostapd_wps_grants, _, _ = hostapd_wps_build_artifacts()
+        hostapd_wps_cancel_grants, _, _ = hostapd_wps_cancel_build_artifacts()
         self.assertEqual(
             committed_grants,
             luci_grants
@@ -404,7 +406,8 @@ class TestCommittedArtifacts(unittest.TestCase):
             + getversion_grants
             + getunixtime_grants
             + hostapd_grants
-            + hostapd_wps_grants,
+            + hostapd_wps_grants
+            + hostapd_wps_cancel_grants,
         )
         self.assertEqual(committed_luci, luci_bundle)
         self.assertEqual(committed_cgi, cgi_bundle)

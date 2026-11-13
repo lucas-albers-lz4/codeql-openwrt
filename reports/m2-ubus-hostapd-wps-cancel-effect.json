@@ -1,0 +1,56 @@
+[
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:effect:ubus-hostapd-wps-cancel",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-hostapd-wps-cancel-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:hostapd.wps_cancel",
+    "ubus_object": "hostapd.*",
+    "method": "wps_cancel",
+    "effect_id": "hostapd.wps_cancel",
+    "target_id": "ubus:hostapd.wps_cancel",
+    "op": "invoke",
+    "sink_kind": "ubus_call",
+    "asset_id": "ubus:hostapd.wps_cancel",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-status-index-wifi-hostapd-wps-cancel",
+    "conditions": [
+      "JSON-RPC /ubus call object=hostapd.<ifname> method=wps_cancel",
+      "data parameter is a BLOBMSG_TYPE_TABLE",
+      "60_wifi.js handleCancelWPS rpc.declare object=hostapd.<ifname> method=wps_cancel"
+    ],
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=hostapd.* function=wps_cancel (uhttpd omits scope; FNM_NOESCAPE)"
+    ],
+    "assumptions": [
+      "Synthetic handler_effect transcribed from uhttpd uh_ubus_allowed; C, not ucode",
+      "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=wps_cancel (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd cancelled WPS. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+      "This oracle does not invoke hostapd wps_cancel or model PBC cancel arguments.",
+      "shellquote and basename are not sanitizers.",
+      "hostapd.wps_cancel is not a luci object method. Do not invent a luci object grant. 60_wifi.js at luci b2e0be4b handleCancelWPS rpc.declare object=hostapd.<ifname> method=wps_cancel.",
+      "hostapd.del_client stays on policy:ubus-hostapd-del-client-v1. luci-mod-network-config write grants hostapd.* del_client, not wps_cancel. The network-config-write fixture cannot pass this slice.",
+      "hostapd.wps_start stays on policy:ubus-hostapd-wps-start-v1. luci-mod-status-index-wifi write also grants hostapd.* wps_status. This slice does not emit that grant.",
+      "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.wps_cancel.",
+      "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.wps_cancel.",
+      "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.wps_cancel.",
+      "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.wps_cancel.",
+      "Fixture login luci-mod-status-index-wifi is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login."
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-status-index-wifi:ubus_http:hostapd.wps_cancel",
+      "policy:grant:root:ubus_http:hostapd.wps_cancel",
+      "uhttpd@93b05e0b ubus.c uh_ubus_allowed session.access hostapd.*/wps_cancel",
+      "luci@b2e0be4b 60_wifi.js handleCancelWPS rpc.declare hostapd.<ifname> wps_cancel"
+    ],
+    "unknowns": [
+      "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+      "hostapd ubus wps_cancel (PBC cancel handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+      "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci-mod-network-config-write / luci-mod-status-index-wifi hostapd.del_client stays on policy:ubus-hostapd-del-client-v1. luci-mod-status-index-wifi hostapd.wps_start stays on policy:ubus-hostapd-wps-start-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_status; this slice does not emit that grant. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+    ]
+  }
+]
