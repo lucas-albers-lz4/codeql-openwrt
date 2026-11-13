@@ -253,7 +253,7 @@
         "arbitrary executable selection",
         "command construction from request.args"
       ],
-      "rationale": "luci-mod-system-mounts grants read of luci.getBlockDevices and write of luci.setBlockDetect. Both handlers take no request.args; they exec fixed /sbin/block argv. Unauthenticated ACLs do not name these methods. This is not a luci.sys helper.",
+      "rationale": "luci-mod-system-mounts grants read of luci.getBlockDevices and write of luci.setBlockDetect. Both handlers take no request.args; they exec fixed /sbin/block argv. Write file.exec of /bin/umount and /sbin/block mount is the separate M2 slice policy:ubus-file-exec-mounts-v1 on this same fixture. Unauthenticated ACLs do not name these methods. This is not a luci.sys helper.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci getBlockDevices.call and setBlockDetect.call"
@@ -695,6 +695,50 @@
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-processes.write.file./bin/kill=[exec]",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/processes.js"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-mounts-umount",
+      "session_class": "luci-mod-system-mounts",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "intended_access": [
+        {
+          "target_id": "command:umount",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus file.exec",
+        "execv"
+      ],
+      "rationale": "mounts.js handleUmount uses fs.exec('/bin/umount', [path]). luci-mod-system-mounts write grants ubus file.exec and file.exec of the bare /bin/umount executable. Extra tokens match at the executable stage as intended_access for this existing read/write fixture, not a violation and not a PoC.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/mounts.js handleUmount"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-mounts-block",
+      "session_class": "luci-mod-system-mounts",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+      "intended_access": [
+        {
+          "target_id": "command:block",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus file.exec",
+        "execv"
+      ],
+      "rationale": "mounts.js handleMountAll uses fs.exec('/sbin/block', ['mount']). Bare executable ACL. Extra tokens are intended_access for this fixture, not a PoC. luci.getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-mounts.write.file./sbin/block=[exec]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/mounts.js handleMountAll"
       ]
     }
   ]

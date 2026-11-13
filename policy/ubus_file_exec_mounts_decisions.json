@@ -1,0 +1,1650 @@
+{
+  "grants": [
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-system-mounts:ubus_http:file.exec:umount",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/bin/umount",
+      "target_id": "command:umount",
+      "op": "exec",
+      "acl_group": "luci-mod-system-mounts",
+      "expectation_id": "luci-mod-system-mounts-umount",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+        "session.access scope=file object=canonicalized executable or cmdline function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]",
+        "luci@b2e0be4b mounts.js handleUmount fs.exec('/bin/umount', [path])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first",
+        "fixture rpcd.config login luci-mod-system-mounts list read/write luci-mod-system-mounts"
+      ],
+      "note": "Fixture login luci-mod-system-mounts is not a stock device login. mounts.js handleUmount uses fs.exec('/bin/umount', [path]). Bare executable ACL; intended_access, not a violation and not a PoC. Reuses the existing read/write mounts fixture.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-system-mounts:ubus_http:file.exec:block",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/sbin/block",
+      "target_id": "command:block",
+      "op": "exec",
+      "acl_group": "luci-mod-system-mounts",
+      "expectation_id": "luci-mod-system-mounts-block",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+        "session.access scope=file object=canonicalized executable or cmdline function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./sbin/block=[exec]",
+        "luci@b2e0be4b mounts.js handleMountAll fs.exec('/sbin/block', ['mount'])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first"
+      ],
+      "note": "mounts.js handleMountAll uses fs.exec('/sbin/block', ['mount']). Bare executable ACL; intended_access, not a violation and not a PoC. luci.getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:ubus_http:file.exec:umount",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/bin/umount",
+      "target_id": "command:umount",
+      "op": "exec",
+      "acl_group": "luci-mod-system-mounts",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+        "session.access scope=file object=canonicalized executable or cmdline function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ],
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:ubus_http:file.exec:block",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/sbin/block",
+      "target_id": "command:block",
+      "op": "exec",
+      "acl_group": "luci-mod-system-mounts",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+        "session.access scope=file object=canonicalized executable or cmdline function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ],
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+    }
+  ],
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "lockfile": "corpus/lock.json",
+    "object": "file",
+    "method": "exec",
+    "commands": [
+      "umount",
+      "block"
+    ]
+  },
+  "scope": "ubus file.exec of luci-mod-system-mounts umount/block",
+  "harness": {
+    "canonical": "python3 -m policy emit",
+    "c_double": "policy/c_double/ubus_file_exec_mounts.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_uhttpd": false,
+    "live_rpcd": false,
+    "live_execv": false,
+    "live_rpc_file_exec_lookup": false
+  },
+  "assumptions": [
+    "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+    "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+    "This oracle does not fork execv or run the command body.",
+    "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+    "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+    "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+    "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+  ],
+  "unknowns": [
+    "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+    "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+    "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+    "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-umount-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "unauthenticated",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "deny",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus file.exec",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access file/exec false -> ERROR_ACCESS",
+        "do not invent an unauthenticated umount grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#unauthenticated-umount-deny",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "target_id": "command:umount",
+      "op": "exec",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sid-parse-error",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "jsonrpc_parse_error",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "sid_present": false,
+      "sid": "file",
+      "jsonrpc_error": {
+        "code": -32700,
+        "name": "ERROR_PARSE",
+        "message": "Parse error"
+      },
+      "input_rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": false,
+          "object": "exec",
+          "function": null,
+          "data_is_table": false,
+          "result": "ERROR_PARSE"
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_PARSE"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#missing-sid-parse-error",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "execv",
+        "dispatcher",
+        "path_found",
+        "sentinel_rewrite"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-mounts-umount-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/bin/umount",
+      "outcome": "allow",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "canon": "/bin/umount",
+      "cmdline": "/bin/umount /mnt/sda1",
+      "match_stage": "executable",
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "ubus_status": 0,
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]",
+        "luci@b2e0be4b mounts.js handleUmount fs.exec('/bin/umount', [path])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first",
+        "fixture rpcd.config login luci-mod-system-mounts list read/write luci-mod-system-mounts"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_canonicalize_path",
+          "cmd": "/bin/umount",
+          "canon": "/bin/umount"
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount",
+          "function": "exec",
+          "stage": "executable",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "executable"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#luci-mod-system-mounts-umount-allow",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "target_id": "command:umount",
+      "op": "exec",
+      "expectation_id": "luci-mod-system-mounts-umount",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-system-mounts is not a stock device login. mounts.js handleUmount uses fs.exec('/bin/umount', [path]). Bare executable ACL; intended_access, not a violation and not a PoC. Reuses the existing read/write mounts fixture.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "file",
+        "object": "/bin/umount",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-mounts-umount-extra-argv-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/bin/umount",
+      "outcome": "allow",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1",
+        "extra"
+      ],
+      "canon": "/bin/umount",
+      "cmdline": "/bin/umount /mnt/sda1 extra",
+      "match_stage": "executable",
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "ubus_status": 0,
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first; extra argv still matches the executable object"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_canonicalize_path",
+          "cmd": "/bin/umount",
+          "canon": "/bin/umount"
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount",
+          "function": "exec",
+          "stage": "executable",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "executable"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#luci-mod-system-mounts-umount-extra-argv-allow",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "target_id": "command:umount",
+      "op": "exec",
+      "expectation_id": "luci-mod-system-mounts-umount",
+      "assessment": "intended_access",
+      "note": "Bare-exe file.exec means extra tokens to /bin/umount are intended_access for this fixture, not authorization_violation and not a PoC. Grant is emitted from the inventoried caller case.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "file",
+        "object": "/bin/umount",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-mounts-block-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/sbin/block",
+      "outcome": "allow",
+      "command": "/sbin/block",
+      "params": [
+        "mount"
+      ],
+      "canon": "/sbin/block",
+      "cmdline": "/sbin/block mount",
+      "match_stage": "executable",
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "ubus_status": 0,
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./sbin/block=[exec]",
+        "luci@b2e0be4b mounts.js handleMountAll fs.exec('/sbin/block', ['mount'])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_canonicalize_path",
+          "cmd": "/sbin/block",
+          "canon": "/sbin/block"
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/sbin/block",
+          "function": "exec",
+          "stage": "executable",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "executable"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#luci-mod-system-mounts-block-allow",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "target_id": "command:block",
+      "op": "exec",
+      "expectation_id": "luci-mod-system-mounts-block",
+      "assessment": "intended_access",
+      "note": "mounts.js handleMountAll uses fs.exec('/sbin/block', ['mount']). Bare executable ACL; intended_access, not a violation and not a PoC. luci.getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "file",
+        "object": "/sbin/block",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-umount-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/bin/umount",
+      "outcome": "command_denied",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "canon": "/bin/umount",
+      "cmdline": "/bin/umount /mnt/sda1",
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "ubus_status": 6,
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]",
+        "fixture rpcd.config luci-mod-system-flash is list read only"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_canonicalize_path",
+          "cmd": "/bin/umount",
+          "canon": "/bin/umount"
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount /mnt/sda1",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "UBUS_STATUS_PERMISSION_DENIED"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#luci-mod-system-flash-umount-command-denied",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "note": "The luci-mod-system-flash read fixture has ubus file.exec (sysupgrade --list-backup) but not file.exec of /bin/umount. flash.js sysupgrade/firstboot stay unstaffed.",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-flash",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-umount-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/bin/umount",
+      "outcome": "command_denied",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "canon": "/bin/umount",
+      "cmdline": "/bin/umount /mnt/sda1",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "ubus_status": 6,
+      "input_rule_refs": [
+        "luci-mod-status-firewall grants ubus file.exec but file.exec of /bin/umount is luci-mod-system-mounts write"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_canonicalize_path",
+          "cmd": "/bin/umount",
+          "canon": "/bin/umount"
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount /mnt/sda1",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "UBUS_STATUS_PERMISSION_DENIED"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#luci-mod-status-firewall-umount-command-denied",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-logs-umount-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "deny",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci-mod-status-logs read ubus.file=[stat] and cgi-io exec of dmesg; no ubus file.exec"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#luci-mod-status-logs-umount-deny",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-umount-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/bin/umount",
+      "outcome": "command_denied",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "canon": "/bin/umount",
+      "cmdline": "/bin/umount /mnt/sda1",
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "ubus_status": 6,
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.file./bin/umount=[exec]"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_canonicalize_path",
+          "cmd": "/bin/umount",
+          "canon": "/bin/umount"
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount /mnt/sda1",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "UBUS_STATUS_PERMISSION_DENIED"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#luci-mod-network-config-umount-command-denied",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "note": "The luci-mod-network-config read fixture has ubus file.exec but not file.exec of /bin/umount.",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:kill-not-found",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "not_found",
+      "command": "/bin/kill",
+      "params": [
+        "-15",
+        "42"
+      ],
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "ubus_status": 4,
+      "input_rule_refs": [
+        "/bin/kill stays on policy:ubus-file-exec-kill-v1; not inventoried in this oracle"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_lookup",
+          "result": "UBUS_STATUS_NOT_FOUND",
+          "cmd": "/bin/kill"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#kill-not-found",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:ping-not-found",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "not_found",
+      "command": "/bin/ping",
+      "params": [
+        "-c",
+        "5",
+        "openwrt.org"
+      ],
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "ubus_status": 4,
+      "input_rule_refs": [
+        "this oracle treats only inventoried /bin/umount and /sbin/block as found"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_lookup",
+          "result": "UBUS_STATUS_NOT_FOUND",
+          "cmd": "/bin/ping"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#ping-not-found",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "note": "diagnostics.js uses fs.exec_direct; luci-mod-network-diagnostics is not this slice and lookup is not a live PATH search.",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:sysupgrade-not-found",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "not_found",
+      "command": "/sbin/sysupgrade",
+      "params": [
+        "--list-backup"
+      ],
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "ubus_status": 4,
+      "input_rule_refs": [
+        "luci-mod-system flash.js sysupgrade/firstboot stay unstaffed after this slice"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_lookup",
+          "result": "UBUS_STATUS_NOT_FOUND",
+          "cmd": "/sbin/sysupgrade"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#sysupgrade-not-found",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "note": "flash.js sysupgrade/firstboot stay unstaffed. This oracle does not treat /sbin/sysupgrade as found.",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:env-with-sid-permission-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "command_denied",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "ubus_status": 6,
+      "input_rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: SID plus env is PERMISSION_DENIED",
+        "inventoried callers do not pass env"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "UBUS_STATUS_PERMISSION_DENIED",
+          "reason": "sid_and_env"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#env-with-sid-permission-denied",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:empty-env-with-sid-permission-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "command_denied",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "ubus_status": 6,
+      "input_rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: a present env TABLE with SID is PERMISSION_DENIED even when empty"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "UBUS_STATUS_PERMISSION_DENIED",
+          "reason": "sid_and_env"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#empty-env-with-sid-permission-denied",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-umount-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/bin/umount",
+      "outcome": "allow",
+      "command": "/bin/umount",
+      "params": [
+        "/mnt/sda1"
+      ],
+      "canon": "/bin/umount",
+      "cmdline": "/bin/umount /mnt/sda1",
+      "match_stage": "executable",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_status": 0,
+      "input_rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_canonicalize_path",
+          "cmd": "/bin/umount",
+          "canon": "/bin/umount"
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/bin/umount",
+          "function": "exec",
+          "stage": "executable",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "executable"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#root-star-umount-allow",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "target_id": "command:umount",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_ubus_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "file",
+        "object": "/bin/umount",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-block-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-mounts-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+      "ubus_object": "file",
+      "method": "exec",
+      "fs_path": "/sbin/block",
+      "outcome": "allow",
+      "command": "/sbin/block",
+      "params": [
+        "mount"
+      ],
+      "canon": "/sbin/block",
+      "cmdline": "/sbin/block mount",
+      "match_stage": "executable",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_status": 0,
+      "input_rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_canonicalize_path",
+          "cmd": "/sbin/block",
+          "canon": "/sbin/block"
+        },
+        {
+          "step": "rpc_file_access",
+          "scope": "file",
+          "object": "/sbin/block",
+          "function": "exec",
+          "stage": "executable",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "executable"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_mounts_cases.json#root-star-block-allow",
+        "c_double": "policy/c_double/ubus_file_exec_mounts.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /bin/umount and /sbin/block executables, so extra tokens match at the executable stage as intended_access for the mounts fixture, not authorization_violation and not a PoC.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. getBlockDevices / setBlockDetect popen/system of /sbin/block stay on the luci object grants.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+        "The luci-mod-system-mounts fixture is already list read/write for luci.getBlockDevices / luci.setBlockDetect. This slice reuses that session; it does not invent a second mounts login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /bin/umount and /sbin/block are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js sysupgrade/firstboot stay unstaffed. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "target_id": "command:block",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_ubus_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-system-mounts",
+        "scope": "file",
+        "object": "/sbin/block",
+        "function": "exec",
+        "source": "luci-mod-system.json"
+      }
+    }
+  ]
+}

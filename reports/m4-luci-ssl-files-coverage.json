@@ -22,6 +22,7 @@
     "luci-mod-status iptables/ip6tables -Z and routes ip fs.exec commands join policy:ubus-file-exec-v1",
     "luci-mod-network-config ifup/ifdown/wifi fs.exec commands join policy:ubus-file-exec-ifup-v1",
     "luci-mod-status-processes /bin/kill fs.exec commands join policy:ubus-file-exec-kill-v1",
+    "luci-mod-system-mounts umount/block mount fs.exec commands join policy:ubus-file-exec-mounts-v1",
     "luci-mod-network -> luci-lib-uqr -> /www/luci-static/resources/uqr.js through luci.mk htdocs/"
   ],
   "routing_counts": {
