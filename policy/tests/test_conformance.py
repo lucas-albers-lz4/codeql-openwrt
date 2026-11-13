@@ -723,6 +723,11 @@ class TestCommittedArtifacts(unittest.TestCase):
             for row in tail
             if row.get("ubus_object") == "hostapd.*" and row.get("method") == "wps_start"
         ]
+        hostapd_wps_cancel_rows = [
+            row
+            for row in tail
+            if row.get("ubus_object") == "hostapd.*" and row.get("method") == "wps_cancel"
+        ]
         self.assertEqual(
             len(cgi_rows)
             + len(file_exec_rows)
@@ -734,7 +739,8 @@ class TestCommittedArtifacts(unittest.TestCase):
             + len(getversion_rows)
             + len(getunixtime_rows)
             + len(hostapd_rows)
-            + len(hostapd_wps_rows),
+            + len(hostapd_wps_rows)
+            + len(hostapd_wps_cancel_rows),
             len(tail),
         )
         cgi_endpoints = {row["cgi_endpoint"] for row in cgi_rows}
@@ -806,6 +812,11 @@ class TestCommittedArtifacts(unittest.TestCase):
         for row in hostapd_wps_rows:
             self.assertEqual(row["ingress"], "ubus_http")
             self.assertEqual(row["analysis_revision"], "policy:ubus-hostapd-wps-start-v1")
+            self.assertNotIn("cgi_endpoint", row)
+        self.assertTrue(hostapd_wps_cancel_rows)
+        for row in hostapd_wps_cancel_rows:
+            self.assertEqual(row["ingress"], "ubus_http")
+            self.assertEqual(row["analysis_revision"], "policy:ubus-hostapd-wps-cancel-v1")
             self.assertNotIn("cgi_endpoint", row)
 
     def test_emit_helper_roundtrip(self) -> None:
