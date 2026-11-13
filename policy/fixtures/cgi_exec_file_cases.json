@@ -1,0 +1,403 @@
+{
+  "comment": "Hand-transcribed expected cgi-exec file.exec decisions from pinned cgi-io C, helper scripts, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "cgi-io main_exec requires application/x-www-form-urlencoded then session.access(sid, cgi-io, exec, read), then parse_command, canonicalize argv0, session.access(file, cmdline, exec) or session.access(file, exe, exec).",
+    "This oracle is bounded to the three luci-ssl libexec helpers. Other commands are HTTP 404 in this slice (lookup_executable is not a live PATH search).",
+    "Missing or empty sessionid after a valid content-type is HTTP 403, not 400.",
+    "A cgi-io exec read grant without the helper file.exec ACL is HTTP 403 Access to command denied by ACL.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or execv.",
+    "shellquote and basename are not sanitizers. canonicalize_path is not a taint sanitizer.",
+    "luci-mod-status-firewall cgi-io exec is not staffed."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-syslog-wrapper-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "command": "/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io exec",
+        "cgi-io@31cb3c89 main.c main_exec: session_access cgi-io exec read false -> 403 Exec permission denied",
+        "do not invent an unauthenticated helper grant"
+      ]
+    },
+    {
+      "id": "missing-sessionid-syslog-wrapper-forbidden",
+      "session_class": null,
+      "sid": null,
+      "command": "/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "not": ["unauthenticated_allow", "execv", "dispatcher", "path_found"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: !fields[1] -> 403 Exec permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ]
+    },
+    {
+      "id": "invalid-content-type-syslog-wrapper-bad-request",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "content_type": "application/json",
+      "command": "/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "bad_request",
+      "http_status": 400,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "not": ["acl_bypass", "execv"],
+      "rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_exec: !post -> 400 Invalid form data"
+      ]
+    },
+    {
+      "id": "empty-command-bad-request",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "bad_request",
+      "http_status": 400,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: parse_command NULL -> 400 Invalid command parameter"
+      ]
+    },
+    {
+      "id": "unknown-command-not-found",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/bin/true",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "not_found",
+      "http_status": 404,
+      "expect_grant": false,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "not": ["path_found", "execv"],
+      "rule_refs": [
+        "this slice does not live-stat lookup_executable; /bin/true is not an inventoried luci-ssl libexec helper",
+        "cgi-io@31cb3c89 main.c main_exec: !exe -> 404 Executable not found"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-syslog-wrapper-allow",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-logs",
+      "note": "Fixture login luci-mod-status-logs is not a stock device login. cgi-io exec read and file.exec of the helper are both required.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-logs.read.cgi-io=[exec] file./usr/libexec/syslog-wrapper=[exec]",
+        "fixture rpcd.config login luci-mod-status-logs list read luci-mod-status-logs",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline then executable"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-syslog-wrapper-extra-argv-allow",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/usr/libexec/syslog-wrapper ignored",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-logs",
+      "note": "Executable-path ACL matches after the cmdline miss. The helper ignores argv. Not a luci-ssl grant and not a PoC.",
+      "rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: cmdline file ACL miss then session_access(file, exe, exec)",
+        "luci@b2e0be4b syslog-wrapper file.exec is the bare helper path",
+        "modules/luci-mod-status/root/usr/libexec/syslog-wrapper does not use $1"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-syslog-wrapper-canonicalize-allow",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/usr/libexec/../libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-logs",
+      "note": "argv0 is canonicalized before the file ACL. canonicalize_path is not a taint sanitizer.",
+      "rule_refs": [
+        "cgi-io@31cb3c89 util.c canonicalize_path of the leading token before session_access file",
+        "luci@b2e0be4b file ACL object is /usr/libexec/syslog-wrapper"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-syslog-wrapper-command-denied",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "not": ["cgi_io_exec_is_enough", "path_found"],
+      "rule_refs": [
+        "luci-mod-network-config has cgi-io exec read (cgi-exec-v1) but file.exec of syslog-wrapper is luci-mod-status-logs",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ]
+    },
+    {
+      "id": "root-star-syslog-wrapper-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-logs",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-logs\", 0) matches"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-luci-peeraddr-allow",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/usr/libexec/luci-peeraddr",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:luci-peeraddr",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "expectation_id": "luci-mod-network-config-luci-peeraddr",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-network-config",
+      "note": "Fixture login luci-mod-network-config is not a stock device login. This is the file.exec conjunct, not the cgi-exec-v1 gate alone.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.file./usr/libexec/luci-peeraddr=[exec]",
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
+        "cgi-io@31cb3c89 main.c main_exec conjunctive file ACL"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-luci-peeraddr-command-denied",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/usr/libexec/luci-peeraddr",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:luci-peeraddr",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "rule_refs": [
+        "luci-mod-status-logs has cgi-io exec read but not file.exec of luci-peeraddr",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ]
+    },
+    {
+      "id": "root-star-luci-peeraddr-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/libexec/luci-peeraddr",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:luci-peeraddr",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-network-config",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches"
+      ]
+    },
+    {
+      "id": "luci-app-package-manager-list-installed-allow",
+      "session_class": "luci-app-package-manager",
+      "sid": "44444444444444444444444444444444",
+      "command": "/usr/libexec/package-manager-call list-installed",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "expectation_id": "luci-app-package-manager-call",
+      "assessment": "intended_access",
+      "acl_group": "luci-app-package-manager",
+      "note": "Fixture login luci-app-package-manager is not a stock device login. Whole-cmdline file ACL matches list-installed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-app-package-manager.json read.file./usr/libexec/package-manager-call list-installed=[exec]",
+        "luci@b2e0be4b luci-app-package-manager.json read.cgi-io=[exec]",
+        "cgi-io@31cb3c89 main.c main_exec cmdline file ACL before executable fallback"
+      ]
+    },
+    {
+      "id": "luci-app-package-manager-install-glob-allow",
+      "session_class": "luci-app-package-manager",
+      "sid": "44444444444444444444444444444444",
+      "command": "/usr/libexec/package-manager-call install luci",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "expectation_id": "luci-app-package-manager-call",
+      "assessment": "intended_access",
+      "acl_group": "luci-app-package-manager",
+      "note": "Write ACL glob install * matches additional package tokens. Intended_access for this fixture role, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-app-package-manager.json write.file./usr/libexec/package-manager-call install *=[exec]",
+        "rpcd@d99f703 session.c rpc_session_acl_allowed fnmatch without FNM_PATHNAME",
+        "do not treat the glob as authorization_violation for this role"
+      ]
+    },
+    {
+      "id": "luci-app-package-manager-list-installed-extra-denied",
+      "session_class": "luci-app-package-manager",
+      "sid": "44444444444444444444444444444444",
+      "command": "/usr/libexec/package-manager-call list-installed extra",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "note": "Bare helper path is not a file.exec ACL object. Extra argv miss both the exact cmdline grant and the executable fallback.",
+      "rule_refs": [
+        "luci@b2e0be4b list-installed file.exec is exact cmdline, not a glob and not the bare helper",
+        "cgi-io@31cb3c89 main.c main_exec executable fallback uses argv0 only"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-package-manager-call-command-denied",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/usr/libexec/package-manager-call list-installed",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "command_denied",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "rule_refs": [
+        "luci-mod-network-config has cgi-io exec read but not file.exec of package-manager-call",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ]
+    },
+    {
+      "id": "root-star-package-manager-call-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/usr/libexec/package-manager-call list-installed",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "allow",
+      "http_status": 200,
+      "expect_grant": true,
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "luci-app-package-manager",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-app-package-manager\", 0) matches"
+      ]
+    },
+    {
+      "id": "luci-mod-status-realtime-syslog-wrapper-deny",
+      "session_class": "luci-mod-status-realtime",
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "command": "/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "expected_outcome": "deny",
+      "http_status": 403,
+      "expect_grant": false,
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "rule_refs": [
+        "luci-mod-status-realtime has no cgi-io exec; fail before the file ACL",
+        "do not invent a luci-mod-status-realtime helper grant"
+      ]
+    }
+  ]
+}

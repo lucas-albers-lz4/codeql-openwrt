@@ -18,8 +18,9 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m2-cgi-upload-effect.json](m2-cgi-upload-effect.json) | synthetic `cgi-upload` → conjunctive `file_write` (C, not ucode) |
 | [m2-cgi-download-effect.json](m2-cgi-download-effect.json) | synthetic `cgi-download` → conjunctive `file_read` (C, not ucode) |
 | [m2-cgi-exec-effect.json](m2-cgi-exec-effect.json) | synthetic `cgi-exec` → cgi-io exec read gate only (C, not ucode) |
+| [m2-cgi-exec-file-effect.json](m2-cgi-exec-file-effect.json) | synthetic `cgi-exec` file.exec of three luci-ssl libexec helpers (C, not ucode) |
 
-Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher.
+Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing classification ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher. Helper `exec_helper_inventory` rows stay in the files inventory; this catalog holds the cgi-exec file.exec effects those helpers join.
 
 ## Grant ↔ effect joins
 
@@ -98,11 +99,21 @@ The `luci-base` upload fixture is a **write** login (not stock). The `luci-mod-s
 
 ### cgi-exec (policy-facts synthetic, session gate only)
 
-cgi-io `main_exec` @ `31cb3c89` checks `session.access(sid, "cgi-io", "exec", "read")` before command parsing. This catalog row is that gate only: it does **not** model `file.exec` of a command, `parse_command`, or `execv`. Unauthenticated is a **non-join** (403). Fixture `luci-mod-network-config` and stock root `*` join as `intended_access`. Catalog copy: [m2-cgi-exec-effect.json](m2-cgi-exec-effect.json).
+cgi-io `main_exec` @ `31cb3c89` checks `session.access(sid, "cgi-io", "exec", "read")` before command parsing. This catalog row is that gate only: it does **not** model `execv`. File.exec of the three luci-ssl libexec helpers is the next section. Unauthenticated is a **non-join** (403). Fixture `luci-mod-network-config` and stock root `*` join as `intended_access`. Catalog copy: [m2-cgi-exec-effect.json](m2-cgi-exec-effect.json).
 
 | `effect_id` | Delegated grant | Root grant | Unauthenticated |
 | --- | --- | --- | --- |
 | `cgi-exec.session-access.exec` | `policy:grant:luci-mod-network-config:cgi_io:cgi-exec` | `policy:grant:root:cgi_io:cgi-exec` | no-join (`policy:decision:unauthenticated-cgi-exec-deny`) |
+
+### cgi-exec file.exec helpers (policy-facts synthetic, conjunctive)
+
+cgi-io `main_exec` still requires `file.exec` of the canonicalized cmdline or executable. This catalog models that conjunct only for `/usr/libexec/{syslog-wrapper,luci-peeraddr,package-manager-call}`. `lookup_executable` PATH search and `execv` are not modeled. Unauthenticated is a **non-join**. A cgi-io exec grant without the helper file ACL is a **non-join**. Catalog copy: [m2-cgi-exec-file-effect.json](m2-cgi-exec-file-effect.json). Join keys use `entrypoint_id` `cgi_io:cgi-exec:<fs_path>` plus `cgi_endpoint=cgi-exec`.
+
+| `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- |
+| `cgi-exec.syslog-wrapper.file-exec` | `policy:grant:luci-mod-status-logs:cgi_io:cgi-exec:syslog-wrapper` | `policy:grant:root:cgi_io:cgi-exec:syslog-wrapper` | no-join |
+| `cgi-exec.luci-peeraddr.file-exec` | `policy:grant:luci-mod-network-config:cgi_io:cgi-exec:luci-peeraddr` | `policy:grant:root:cgi_io:cgi-exec:luci-peeraddr` | no-join |
+| `cgi-exec.package-manager-call.file-exec` | `policy:grant:luci-app-package-manager:cgi_io:cgi-exec:package-manager-call` | `policy:grant:root:cgi_io:cgi-exec:package-manager-call` | no-join |
 
 ## Out of this file
 

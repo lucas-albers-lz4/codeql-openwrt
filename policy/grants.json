@@ -812,5 +812,179 @@
       "luci-mod-network-config still contributes cgi-io exec to the root session"
     ],
     "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-logs:cgi_io:cgi-exec:syslog-wrapper",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-file-v1",
+    "session_class": "luci-mod-status-logs",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/libexec/syslog-wrapper",
+    "target_id": "command:syslog-wrapper",
+    "op": "exec",
+    "acl_group": "luci-mod-status-logs",
+    "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status.json luci-mod-status-logs.read.cgi-io=[exec] file./usr/libexec/syslog-wrapper=[exec]",
+      "fixture rpcd.config login luci-mod-status-logs list read luci-mod-status-logs",
+      "cgi-io@31cb3c89 main.c main_exec session_access file cmdline then executable"
+    ],
+    "note": "Fixture login luci-mod-status-logs is not a stock device login. cgi-io exec read and file.exec of the helper are both required.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:syslog-wrapper",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-file-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/libexec/syslog-wrapper",
+    "target_id": "command:syslog-wrapper",
+    "op": "exec",
+    "acl_group": "luci-mod-status-logs",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-logs\", 0) matches"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-network-config:cgi_io:cgi-exec:luci-peeraddr",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-file-v1",
+    "session_class": "luci-mod-network-config",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/libexec/luci-peeraddr",
+    "target_id": "command:luci-peeraddr",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "luci-mod-network-config-luci-peeraddr",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.file./usr/libexec/luci-peeraddr=[exec]",
+      "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
+      "cgi-io@31cb3c89 main.c main_exec conjunctive file ACL"
+    ],
+    "note": "Fixture login luci-mod-network-config is not a stock device login. This is the file.exec conjunct, not the cgi-exec-v1 gate alone.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:luci-peeraddr",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-file-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/libexec/luci-peeraddr",
+    "target_id": "command:luci-peeraddr",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-app-package-manager:cgi_io:cgi-exec:package-manager-call",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-file-v1",
+    "session_class": "luci-app-package-manager",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/libexec/package-manager-call",
+    "target_id": "command:package-manager-call",
+    "op": "exec",
+    "acl_group": "luci-app-package-manager",
+    "expectation_id": "luci-app-package-manager-call",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-app-package-manager.json read.file./usr/libexec/package-manager-call list-installed=[exec]",
+      "luci@b2e0be4b luci-app-package-manager.json read.cgi-io=[exec]",
+      "cgi-io@31cb3c89 main.c main_exec cmdline file ACL before executable fallback"
+    ],
+    "note": "Fixture login luci-app-package-manager is not a stock device login. Whole-cmdline file ACL matches list-installed.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:cgi_io:cgi-exec:package-manager-call",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:cgi-exec-file-v1",
+    "session_class": "root",
+    "ingress": "cgi_io",
+    "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+    "cgi_endpoint": "cgi-exec",
+    "fs_path": "/usr/libexec/package-manager-call",
+    "target_id": "command:package-manager-call",
+    "op": "exec",
+    "acl_group": "luci-app-package-manager",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "session.access scope=cgi-io object=exec function=read",
+      "session.access scope=file object=canonicalized cmdline or executable function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+      "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-app-package-manager\", 0) matches"
+    ],
+    "note": "Stock root list read '*' / list write '*'; not a violation."
   }
 ]

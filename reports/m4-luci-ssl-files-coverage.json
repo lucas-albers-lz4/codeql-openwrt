@@ -17,7 +17,7 @@
     "shebang CGI /www/cgi-bin/luci (#!/usr/bin/env ucode)",
     "uhttpd.uc tagged markup before .uc fallback",
     "theme bootstrap-dark/light extensionless symlinks as uncertain",
-    "libexec helpers are #!/bin/sh (shell_not_analyzed), not ucode shebang",
+    "libexec helpers are #!/bin/sh; cgi-exec file.exec is policy:cgi-exec-file-v1",
     "luci-mod-network -> luci-lib-uqr -> /www/luci-static/resources/uqr.js through luci.mk htdocs/"
   ],
   "routing_counts": {

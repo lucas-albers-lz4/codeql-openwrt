@@ -174,8 +174,10 @@ class TestLuciSslFiles(unittest.TestCase):
             row = by_path[helper]
             self.assertEqual(row["record_type"], "exec_helper_inventory")
             self.assertEqual(row["shebang"], "#!/bin/sh")
-            self.assertEqual(row["evidence_status"], "inconclusive")
-            self.assertIn("shell_not_analyzed", " ".join(row["assumptions"]))
+            self.assertEqual(row["evidence_status"], "fact")
+            self.assertNotIn("shell_not_analyzed", " ".join(row["assumptions"]))
+            self.assertIn("policy:cgi-exec-file-v1", row["evidence_refs"])
+            self.assertIn("not sanitizers", " ".join(row["assumptions"]).lower())
         cgi = by_path["/www/cgi-bin/luci"]
         self.assertEqual(cgi["shebang"], "#!/usr/bin/env ucode")
         self.assertEqual(cgi["classification"], "plain")

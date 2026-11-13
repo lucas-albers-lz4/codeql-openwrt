@@ -40,8 +40,8 @@
   "unknowns": [
     "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
     "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
-    "After the cgi-io exec read gate, main_exec still requires file.exec of the canonicalized cmdline or lookup_executable result. That conjunctive file ACL, parse_command, canonicalize_path, and execv are not modeled.",
-    "luci-mod-status-logs, luci-mod-status-firewall, and luci-app-package-manager also grant cgi-io exec at luci b2e0be4b; this slice does not staff those fixture logins or invent those grants.",
+    "After the cgi-io exec read gate, main_exec still requires file.exec of the command. The three luci-ssl libexec helpers are modeled by policy:cgi-exec-file-v1. lookup_executable PATH search, execv, and file.exec of other commands are not modeled here.",
+    "luci-mod-status-firewall also grants cgi-io exec at luci b2e0be4b; this slice does not staff that fixture login. luci-mod-status-logs and luci-app-package-manager file.exec helpers are policy:cgi-exec-file-v1.",
     "cgi-backup stays on policy:cgi-backup-v1. cgi-upload and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
   ]
 }

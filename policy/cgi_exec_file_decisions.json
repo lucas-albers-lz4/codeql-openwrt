@@ -1,0 +1,2159 @@
+{
+  "grants": [
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-logs:cgi_io:cgi-exec:syslog-wrapper",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/syslog-wrapper",
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "acl_group": "luci-mod-status-logs",
+      "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-logs.read.cgi-io=[exec] file./usr/libexec/syslog-wrapper=[exec]",
+        "fixture rpcd.config login luci-mod-status-logs list read luci-mod-status-logs",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline then executable"
+      ],
+      "note": "Fixture login luci-mod-status-logs is not a stock device login. cgi-io exec read and file.exec of the helper are both required.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:syslog-wrapper",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/syslog-wrapper",
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "acl_group": "luci-mod-status-logs",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-logs\", 0) matches"
+      ],
+      "note": "Stock root list read '*' / list write '*'; not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-network-config:cgi_io:cgi-exec:luci-peeraddr",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/luci-peeraddr",
+      "target_id": "command:luci-peeraddr",
+      "op": "exec",
+      "acl_group": "luci-mod-network-config",
+      "expectation_id": "luci-mod-network-config-luci-peeraddr",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.file./usr/libexec/luci-peeraddr=[exec]",
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
+        "cgi-io@31cb3c89 main.c main_exec conjunctive file ACL"
+      ],
+      "note": "Fixture login luci-mod-network-config is not a stock device login. This is the file.exec conjunct, not the cgi-exec-v1 gate alone.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:luci-peeraddr",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/luci-peeraddr",
+      "target_id": "command:luci-peeraddr",
+      "op": "exec",
+      "acl_group": "luci-mod-network-config",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches"
+      ],
+      "note": "Stock root list read '*' / list write '*'; not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-app-package-manager:cgi_io:cgi-exec:package-manager-call",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-app-package-manager",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/package-manager-call",
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "acl_group": "luci-app-package-manager",
+      "expectation_id": "luci-app-package-manager-call",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-app-package-manager.json read.file./usr/libexec/package-manager-call list-installed=[exec]",
+        "luci@b2e0be4b luci-app-package-manager.json read.cgi-io=[exec]",
+        "cgi-io@31cb3c89 main.c main_exec cmdline file ACL before executable fallback"
+      ],
+      "note": "Fixture login luci-app-package-manager is not a stock device login. Whole-cmdline file ACL matches list-installed.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:package-manager-call",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/package-manager-call",
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "acl_group": "luci-app-package-manager",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-app-package-manager\", 0) matches"
+      ],
+      "note": "Stock root list read '*' / list write '*'; not a violation."
+    }
+  ],
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:cgi-exec-file-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "lockfile": "corpus/lock.json",
+    "endpoint": "cgi_io:cgi-exec",
+    "helpers": [
+      "/usr/libexec/syslog-wrapper",
+      "/usr/libexec/luci-peeraddr",
+      "/usr/libexec/package-manager-call"
+    ]
+  },
+  "scope": "cgi-io cgi-exec file.exec of three luci-ssl libexec helpers",
+  "harness": {
+    "canonical": "python3 -m policy emit",
+    "c_double": "policy/c_double/cgi_exec_file.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_cgi_io": false,
+    "live_execv": false,
+    "live_lookup_executable": false
+  },
+  "assumptions": [
+    "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+    "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+    "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+    "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+    "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+  ],
+  "unknowns": [
+    "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+    "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+    "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+    "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+    "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-syslog-wrapper-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "unauthenticated",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "command": "/usr/libexec/syslog-wrapper",
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io exec",
+        "cgi-io@31cb3c89 main.c main_exec: session_access cgi-io exec read false -> 403 Exec permission denied",
+        "do not invent an unauthenticated helper grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#unauthenticated-syslog-wrapper-deny",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sessionid-syslog-wrapper-forbidden",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "command": "/usr/libexec/syslog-wrapper",
+      "sid_present": false,
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: !fields[1] -> 403 Exec permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": false,
+          "command_present": true
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#missing-sessionid-syslog-wrapper-forbidden",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "execv",
+        "dispatcher",
+        "path_found"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:invalid-content-type-syslog-wrapper-bad-request",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "bad_request",
+      "http_status": 400,
+      "command": "/usr/libexec/syslog-wrapper",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_exec: !post -> 400 Invalid form data"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": false,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_400",
+          "message": "Invalid form data"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#invalid-content-type-syslog-wrapper-bad-request",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "acl_bypass",
+        "execv"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:empty-command-bad-request",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "bad_request",
+      "http_status": 400,
+      "command": "",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: parse_command NULL -> 400 Invalid command parameter"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "",
+          "args": null
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_400",
+          "message": "Invalid command parameter"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#empty-command-bad-request",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unknown-command-not-found",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "not_found",
+      "http_status": 404,
+      "command": "/bin/true",
+      "canon": "/bin/true",
+      "cmdline": "/bin/true",
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "input_rule_refs": [
+        "this slice does not live-stat lookup_executable; /bin/true is not an inventoried luci-ssl libexec helper",
+        "cgi-io@31cb3c89 main.c main_exec: !exe -> 404 Executable not found"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/bin/true",
+          "args": [
+            "/bin/true"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/bin/true",
+          "canon": "/bin/true"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/bin/true"
+        },
+        {
+          "step": "lookup_executable",
+          "result": "HTTP_404",
+          "exe": "/bin/true"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#unknown-command-not-found",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "path_found",
+        "execv"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-logs-syslog-wrapper-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/syslog-wrapper",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/syslog-wrapper",
+      "canon": "/usr/libexec/syslog-wrapper",
+      "cmdline": "/usr/libexec/syslog-wrapper",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-logs.read.cgi-io=[exec] file./usr/libexec/syslog-wrapper=[exec]",
+        "fixture rpcd.config login luci-mod-status-logs list read luci-mod-status-logs",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline then executable"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/syslog-wrapper",
+          "args": [
+            "/usr/libexec/syslog-wrapper"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/syslog-wrapper",
+          "canon": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/syslog-wrapper",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-mod-status-logs-syslog-wrapper-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-status-logs is not a stock device login. cgi-io exec read and file.exec of the helper are both required.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "file",
+        "object": "/usr/libexec/syslog-wrapper",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-logs-syslog-wrapper-extra-argv-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/syslog-wrapper",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/syslog-wrapper ignored",
+      "canon": "/usr/libexec/syslog-wrapper",
+      "cmdline": "/usr/libexec/syslog-wrapper ignored",
+      "match_stage": "executable",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: cmdline file ACL miss then session_access(file, exe, exec)",
+        "luci@b2e0be4b syslog-wrapper file.exec is the bare helper path",
+        "modules/luci-mod-status/root/usr/libexec/syslog-wrapper does not use $1"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/syslog-wrapper ignored",
+          "args": [
+            "/usr/libexec/syslog-wrapper",
+            "ignored"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/syslog-wrapper",
+          "canon": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/syslog-wrapper ignored"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/syslog-wrapper ignored",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/syslog-wrapper",
+          "function": "exec",
+          "stage": "executable",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "executable"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-mod-status-logs-syslog-wrapper-extra-argv-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+      "assessment": "intended_access",
+      "note": "Executable-path ACL matches after the cmdline miss. The helper ignores argv. Not a luci-ssl grant and not a PoC.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "file",
+        "object": "/usr/libexec/syslog-wrapper",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-logs-syslog-wrapper-canonicalize-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/syslog-wrapper",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/../libexec/syslog-wrapper",
+      "canon": "/usr/libexec/syslog-wrapper",
+      "cmdline": "/usr/libexec/syslog-wrapper",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 util.c canonicalize_path of the leading token before session_access file",
+        "luci@b2e0be4b file ACL object is /usr/libexec/syslog-wrapper"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/../libexec/syslog-wrapper",
+          "args": [
+            "/usr/libexec/../libexec/syslog-wrapper"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/../libexec/syslog-wrapper",
+          "canon": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/syslog-wrapper",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-mod-status-logs-syslog-wrapper-canonicalize-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-logs-syslog-wrapper",
+      "assessment": "intended_access",
+      "note": "argv0 is canonicalized before the file ACL. canonicalize_path is not a taint sanitizer.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "file",
+        "object": "/usr/libexec/syslog-wrapper",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-syslog-wrapper-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/syslog-wrapper",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/usr/libexec/syslog-wrapper",
+      "canon": "/usr/libexec/syslog-wrapper",
+      "cmdline": "/usr/libexec/syslog-wrapper",
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "input_rule_refs": [
+        "luci-mod-network-config has cgi-io exec read (cgi-exec-v1) but file.exec of syslog-wrapper is luci-mod-status-logs",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/syslog-wrapper",
+          "args": [
+            "/usr/libexec/syslog-wrapper"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/syslog-wrapper",
+          "canon": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/syslog-wrapper",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/syslog-wrapper",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-mod-network-config-syslog-wrapper-command-denied",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "not": [
+        "cgi_io_exec_is_enough",
+        "path_found"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-syslog-wrapper-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/syslog-wrapper",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/syslog-wrapper",
+      "canon": "/usr/libexec/syslog-wrapper",
+      "cmdline": "/usr/libexec/syslog-wrapper",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-status-logs\", 0) matches"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/syslog-wrapper",
+          "args": [
+            "/usr/libexec/syslog-wrapper"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/syslog-wrapper",
+          "canon": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/syslog-wrapper"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/syslog-wrapper",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#root-star-syslog-wrapper-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "file",
+        "object": "/usr/libexec/syslog-wrapper",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-luci-peeraddr-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/luci-peeraddr",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/luci-peeraddr",
+      "canon": "/usr/libexec/luci-peeraddr",
+      "cmdline": "/usr/libexec/luci-peeraddr",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.file./usr/libexec/luci-peeraddr=[exec]",
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
+        "cgi-io@31cb3c89 main.c main_exec conjunctive file ACL"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/luci-peeraddr",
+          "args": [
+            "/usr/libexec/luci-peeraddr"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/luci-peeraddr",
+          "canon": "/usr/libexec/luci-peeraddr"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/luci-peeraddr"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/luci-peeraddr",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-mod-network-config-luci-peeraddr-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:luci-peeraddr",
+      "op": "exec",
+      "expectation_id": "luci-mod-network-config-luci-peeraddr",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-network-config is not a stock device login. This is the file.exec conjunct, not the cgi-exec-v1 gate alone.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "file",
+        "object": "/usr/libexec/luci-peeraddr",
+        "function": "exec",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-logs-luci-peeraddr-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/luci-peeraddr",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/usr/libexec/luci-peeraddr",
+      "canon": "/usr/libexec/luci-peeraddr",
+      "cmdline": "/usr/libexec/luci-peeraddr",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "luci-mod-status-logs has cgi-io exec read but not file.exec of luci-peeraddr",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/luci-peeraddr",
+          "args": [
+            "/usr/libexec/luci-peeraddr"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/luci-peeraddr",
+          "canon": "/usr/libexec/luci-peeraddr"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/luci-peeraddr"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/luci-peeraddr",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/luci-peeraddr",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-mod-status-logs-luci-peeraddr-command-denied",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:luci-peeraddr",
+      "op": "exec",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-luci-peeraddr-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/luci-peeraddr",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/luci-peeraddr",
+      "canon": "/usr/libexec/luci-peeraddr",
+      "cmdline": "/usr/libexec/luci-peeraddr",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-mod-network-config\", 0) matches"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/luci-peeraddr",
+          "args": [
+            "/usr/libexec/luci-peeraddr"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/luci-peeraddr",
+          "canon": "/usr/libexec/luci-peeraddr"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/luci-peeraddr"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/luci-peeraddr",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#root-star-luci-peeraddr-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:luci-peeraddr",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "file",
+        "object": "/usr/libexec/luci-peeraddr",
+        "function": "exec",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-app-package-manager-list-installed-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-app-package-manager",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/package-manager-call",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/package-manager-call list-installed",
+      "canon": "/usr/libexec/package-manager-call",
+      "cmdline": "/usr/libexec/package-manager-call list-installed",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "44444444444444444444444444444444",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-app-package-manager.json read.file./usr/libexec/package-manager-call list-installed=[exec]",
+        "luci@b2e0be4b luci-app-package-manager.json read.cgi-io=[exec]",
+        "cgi-io@31cb3c89 main.c main_exec cmdline file ACL before executable fallback"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/package-manager-call list-installed",
+          "args": [
+            "/usr/libexec/package-manager-call",
+            "list-installed"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/package-manager-call",
+          "canon": "/usr/libexec/package-manager-call"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/package-manager-call list-installed"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/package-manager-call list-installed",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-app-package-manager-list-installed-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "expectation_id": "luci-app-package-manager-call",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-app-package-manager is not a stock device login. Whole-cmdline file ACL matches list-installed.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-app-package-manager",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-app-package-manager.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-app-package-manager",
+        "scope": "file",
+        "object": "/usr/libexec/package-manager-call list-installed",
+        "function": "exec",
+        "source": "luci-app-package-manager.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-app-package-manager-install-glob-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-app-package-manager",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/package-manager-call",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/package-manager-call install luci",
+      "canon": "/usr/libexec/package-manager-call",
+      "cmdline": "/usr/libexec/package-manager-call install luci",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "44444444444444444444444444444444",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-app-package-manager.json write.file./usr/libexec/package-manager-call install *=[exec]",
+        "rpcd@d99f703 session.c rpc_session_acl_allowed fnmatch without FNM_PATHNAME",
+        "do not treat the glob as authorization_violation for this role"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/package-manager-call install luci",
+          "args": [
+            "/usr/libexec/package-manager-call",
+            "install",
+            "luci"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/package-manager-call",
+          "canon": "/usr/libexec/package-manager-call"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/package-manager-call install luci"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/package-manager-call install luci",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-app-package-manager-install-glob-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "expectation_id": "luci-app-package-manager-call",
+      "assessment": "intended_access",
+      "note": "Write ACL glob install * matches additional package tokens. Intended_access for this fixture role, not a violation and not a PoC.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-app-package-manager",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-app-package-manager.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-app-package-manager",
+        "scope": "file",
+        "object": "/usr/libexec/package-manager-call install *",
+        "function": "exec",
+        "source": "luci-app-package-manager.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-app-package-manager-list-installed-extra-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-app-package-manager",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/package-manager-call",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/usr/libexec/package-manager-call list-installed extra",
+      "canon": "/usr/libexec/package-manager-call",
+      "cmdline": "/usr/libexec/package-manager-call list-installed extra",
+      "sid_present": true,
+      "sid": "44444444444444444444444444444444",
+      "input_rule_refs": [
+        "luci@b2e0be4b list-installed file.exec is exact cmdline, not a glob and not the bare helper",
+        "cgi-io@31cb3c89 main.c main_exec executable fallback uses argv0 only"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/package-manager-call list-installed extra",
+          "args": [
+            "/usr/libexec/package-manager-call",
+            "list-installed",
+            "extra"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/package-manager-call",
+          "canon": "/usr/libexec/package-manager-call"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/package-manager-call list-installed extra"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/package-manager-call list-installed extra",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/package-manager-call",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-app-package-manager-list-installed-extra-denied",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "note": "Bare helper path is not a file.exec ACL object. Extra argv miss both the exact cmdline grant and the executable fallback.",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-app-package-manager",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-app-package-manager.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-package-manager-call-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/package-manager-call",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/usr/libexec/package-manager-call list-installed",
+      "canon": "/usr/libexec/package-manager-call",
+      "cmdline": "/usr/libexec/package-manager-call list-installed",
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "input_rule_refs": [
+        "luci-mod-network-config has cgi-io exec read but not file.exec of package-manager-call",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/package-manager-call list-installed",
+          "args": [
+            "/usr/libexec/package-manager-call",
+            "list-installed"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/package-manager-call",
+          "canon": "/usr/libexec/package-manager-call"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/package-manager-call list-installed"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/package-manager-call list-installed",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/package-manager-call",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-mod-network-config-package-manager-call-command-denied",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-package-manager-call-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/libexec/package-manager-call",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/libexec/package-manager-call list-installed",
+      "canon": "/usr/libexec/package-manager-call",
+      "cmdline": "/usr/libexec/package-manager-call list-installed",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config list read '*' list write '*'",
+        "rpcd@d99f703 session.c rpc_login_test_permission: fnmatch(\"*\", \"luci-app-package-manager\", 0) matches"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/libexec/package-manager-call list-installed",
+          "args": [
+            "/usr/libexec/package-manager-call",
+            "list-installed"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/libexec/package-manager-call",
+          "canon": "/usr/libexec/package-manager-call"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/libexec/package-manager-call list-installed"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/libexec/package-manager-call list-installed",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#root-star-package-manager-call-allow",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:package-manager-call",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read '*' / list write '*'; not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-app-package-manager",
+        "scope": "file",
+        "object": "/usr/libexec/package-manager-call list-installed",
+        "function": "exec",
+        "source": "luci-app-package-manager.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-realtime-syslog-wrapper-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-file-v1",
+      "session_class": "luci-mod-status-realtime",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "command": "/usr/libexec/syslog-wrapper",
+      "sid_present": true,
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "input_rule_refs": [
+        "luci-mod-status-realtime has no cgi-io exec; fail before the file ACL",
+        "do not invent a luci-mod-status-realtime helper grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_file_cases.json#luci-mod-status-realtime-syslog-wrapper-deny",
+        "c_double": "policy/c_double/cgi_exec_file.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the helper body. Helper-internal exec is inventory in reports/m4-luci-ssl-files.json, not a live run.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These helpers are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
+        "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
+        "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:syslog-wrapper",
+      "op": "exec",
+      "grant_emitted": false
+    }
+  ]
+}
