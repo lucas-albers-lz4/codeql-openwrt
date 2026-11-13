@@ -159,7 +159,12 @@ class TestRealtimePasswordQuotedLocals(unittest.TestCase):
             self.assertIn("${shellquote", conditions)
 
     def test_luci_emitter_is_unchanged(self) -> None:
-        methods = {row["method"] for row in self.grants if row.get("ubus_object") == "luci"}
+        methods = {
+            row["method"]
+            for row in self.grants
+            if row.get("ubus_object") == "luci"
+            and row.get("analysis_revision") == "policy:ubus-luci-exec-methods-v2"
+        }
         self.assertEqual(
             methods,
             {
@@ -174,6 +179,15 @@ class TestRealtimePasswordQuotedLocals(unittest.TestCase):
                 "getConntrackList",
                 "getProcessList",
             },
+        )
+        getversion = [
+            row
+            for row in self.grants
+            if row.get("ubus_object") == "luci" and row.get("method") == "getVersion"
+        ]
+        self.assertTrue(getversion)
+        self.assertTrue(
+            all(row["analysis_revision"] == "policy:ubus-luci-getversion-v1" for row in getversion)
         )
         blob = json.dumps(self.grants)
         self.assertNotIn(ANALYSIS_REVISION, blob)

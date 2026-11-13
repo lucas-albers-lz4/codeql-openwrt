@@ -295,8 +295,22 @@ class TestLuciSslFiles(unittest.TestCase):
             classify_installed("/www/luci-static/resources/uqr.js", None, "")
 
     def test_luci_emitter_and_handler_effects_are_unchanged(self) -> None:
-        methods = {row["method"] for row in self.grants if row.get("ubus_object") == "luci"}
+        methods = {
+            row["method"]
+            for row in self.grants
+            if row.get("ubus_object") == "luci"
+            and row.get("analysis_revision") == "policy:ubus-luci-exec-methods-v2"
+        }
         self.assertEqual(methods, GRANT_METHODS)
+        getversion = [
+            row
+            for row in self.grants
+            if row.get("ubus_object") == "luci" and row.get("method") == "getVersion"
+        ]
+        self.assertTrue(getversion)
+        self.assertTrue(
+            all(row["analysis_revision"] == "policy:ubus-luci-getversion-v1" for row in getversion)
+        )
         blob = json.dumps(self.grants)
         self.assertNotIn(ANALYSIS_REVISION, blob)
         self.assertNotIn("authorization_violation", blob)
