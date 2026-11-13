@@ -20,6 +20,7 @@ from . import (
     ubus_file_exec_mounts,
     ubus_rc_init,
     ubus_rc_list,
+    ubus_hostapd_del_client,
     ubus_luci_getunixtime,
     ubus_luci_getversion,
     ubus_system_board,
@@ -80,6 +81,9 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     getunixtime_grants, getunixtime_bundle, getunixtime_effects = (
         ubus_luci_getunixtime.build_artifacts(fixtures, repo_root)
     )
+    hostapd_grants, hostapd_bundle, hostapd_effects = ubus_hostapd_del_client.build_artifacts(
+        fixtures, repo_root
+    )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
     grants_path = repo_root / "policy" / "grants.json"
     luci_decisions_path = repo_root / "policy" / "policy_decisions.json"
@@ -101,6 +105,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     info_decisions_path = repo_root / "policy" / "ubus_system_info_decisions.json"
     getversion_decisions_path = repo_root / "policy" / "ubus_luci_getversion_decisions.json"
     getunixtime_decisions_path = repo_root / "policy" / "ubus_luci_getunixtime_decisions.json"
+    hostapd_decisions_path = repo_root / "policy" / "ubus_hostapd_del_client_decisions.json"
     noauth_decisions_path = repo_root / "policy" / "no_ubusauth_decisions.json"
     upload_effect_path = repo_root / "reports" / "m2-cgi-upload-effect.json"
     download_effect_path = repo_root / "reports" / "m2-cgi-download-effect.json"
@@ -119,6 +124,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     info_effect_path = repo_root / "reports" / "m2-ubus-system-info-effect.json"
     getversion_effect_path = repo_root / "reports" / "m2-ubus-luci-getversion-effect.json"
     getunixtime_effect_path = repo_root / "reports" / "m2-ubus-luci-getunixtime-effect.json"
+    hostapd_effect_path = repo_root / "reports" / "m2-ubus-hostapd-del-client-effect.json"
     oracle.dump_json(
         grants_path,
         luci_grants
@@ -139,7 +145,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         + board_grants
         + info_grants
         + getversion_grants
-        + getunixtime_grants,
+        + getunixtime_grants
+        + hostapd_grants,
     )
     oracle.dump_json(luci_decisions_path, luci_bundle)
     oracle.dump_json(backup_decisions_path, backup_bundle)
@@ -160,6 +167,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(info_decisions_path, {"grants": info_grants, **info_bundle})
     oracle.dump_json(getversion_decisions_path, {"grants": getversion_grants, **getversion_bundle})
     oracle.dump_json(getunixtime_decisions_path, {"grants": getunixtime_grants, **getunixtime_bundle})
+    oracle.dump_json(hostapd_decisions_path, {"grants": hostapd_grants, **hostapd_bundle})
     oracle.dump_json(noauth_decisions_path, noauth_bundle)
     oracle.dump_json(upload_effect_path, upload_effect)
     oracle.dump_json(download_effect_path, download_effect)
@@ -178,6 +186,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(info_effect_path, info_effects)
     oracle.dump_json(getversion_effect_path, getversion_effects)
     oracle.dump_json(getunixtime_effect_path, getunixtime_effects)
+    oracle.dump_json(hostapd_effect_path, hostapd_effects)
     cgi_backup.upsert_handler_effect(backup_effect, repo_root)
     cgi_backup.upsert_handler_effect(upload_effect, repo_root)
     cgi_backup.upsert_handler_effect(download_effect, repo_root)
@@ -211,6 +220,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         effect_path = cgi_backup.upsert_handler_effect(getversion_effect, repo_root)
     for getunixtime_effect in getunixtime_effects:
         effect_path = cgi_backup.upsert_handler_effect(getunixtime_effect, repo_root)
+    for hostapd_effect in hostapd_effects:
+        effect_path = cgi_backup.upsert_handler_effect(hostapd_effect, repo_root)
     return (
         grants_path,
         luci_decisions_path,
@@ -232,6 +243,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         info_decisions_path,
         getversion_decisions_path,
         getunixtime_decisions_path,
+        hostapd_decisions_path,
         noauth_decisions_path,
         effect_path,
     )

@@ -1,0 +1,1377 @@
+{
+  "grants": [
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-network-config-write:ubus_http:hostapd.del_client",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-network-config-write",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.*",
+      "method": "del_client",
+      "target_id": "ubus:hostapd.del_client",
+      "op": "invoke",
+      "acl_group": "luci-mod-network-config",
+      "expectation_id": "luci-mod-network-config-hostapd-del-client",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE)"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.ubus.hostapd.*=[del_client]",
+        "luci@b2e0be4b network.js disconnectClient rpc.declare hostapd.<ifname> del_client",
+        "luci@b2e0be4b wireless.js associated-station Disconnect",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access hostapd.*/del_client",
+        "fixture rpcd.config login luci-mod-network-config-write list write luci-mod-network-config"
+      ],
+      "note": "Fixture login luci-mod-network-config-write is not a stock device login. wireless.js uses network.js disconnectClient rpc.declare object=hostapd.<ifname> method=del_client. Intended_access, not a violation and not a PoC.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-index-wifi:ubus_http:hostapd.del_client",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-status-index-wifi",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.*",
+      "method": "del_client",
+      "target_id": "ubus:hostapd.del_client",
+      "op": "invoke",
+      "acl_group": "luci-mod-status-index-wifi",
+      "expectation_id": "luci-mod-status-index-wifi-hostapd-del-client",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE)"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-wifi.write.ubus.hostapd.*=[del_client, wps_start, wps_cancel, wps_status]",
+        "luci@b2e0be4b 60_wifi.js handleDelClient disconnectClient",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access hostapd.*/del_client",
+        "fixture rpcd.config login luci-mod-status-index-wifi list write luci-mod-status-index-wifi"
+      ],
+      "note": "Fixture login luci-mod-status-index-wifi is not a stock device login. 60_wifi.js handleDelClient uses network.js disconnectClient. Intended_access, not a violation and not a PoC.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:ubus_http:hostapd.del_client",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.*",
+      "method": "del_client",
+      "target_id": "ubus:hostapd.del_client",
+      "op": "invoke",
+      "acl_group": "luci-mod-network-config",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE)"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ],
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+    }
+  ],
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "lockfile": "corpus/lock.json",
+    "object_pattern": "hostapd.*",
+    "method": "del_client",
+    "example_object": "hostapd.wlan0",
+    "not_methods": [
+      "wps_start",
+      "wps_cancel",
+      "wps_status"
+    ]
+  },
+  "scope": "ubus hostapd.del_client of luci-mod-network-config-write and luci-mod-status-index-wifi",
+  "harness": {
+    "canonical": "python3 -m policy emit",
+    "c_double": "policy/c_double/ubus_hostapd_del_client.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_uhttpd": false,
+    "live_rpcd": false,
+    "live_hostapd": false
+  },
+  "assumptions": [
+    "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+    "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+    "shellquote and basename are not sanitizers.",
+    "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+    "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+    "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+    "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+    "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+    "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+    "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+  ],
+  "unknowns": [
+    "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+    "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-hostapd-del-client-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "unauthenticated",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus hostapd.del_client",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access hostapd.*/del_client false -> ERROR_ACCESS",
+        "do not invent an unauthenticated hostapd.del_client grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "00000000000000000000000000000000",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#unauthenticated-hostapd-del-client-deny",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "target_id": "ubus:hostapd.del_client",
+      "op": "invoke",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sid-parse-error",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "jsonrpc_parse_error",
+      "sid_present": false,
+      "sid": "hostapd.wlan0",
+      "jsonrpc_error": {
+        "code": -32700,
+        "name": "ERROR_PARSE",
+        "message": "Parse error"
+      },
+      "input_rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": false,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ERROR_PARSE"
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_PARSE",
+          "not": [
+            "unauthenticated_allow",
+            "sentinel_rewrite",
+            "file_uci_absent_sid_skip"
+          ]
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#missing-sid-parse-error",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "hostapd_deauth",
+        "dispatcher",
+        "path_found",
+        "sentinel_rewrite",
+        "setInitAction"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-write-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-network-config-write",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "99999999999999999999999999999999",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.ubus.hostapd.*=[del_client]",
+        "luci@b2e0be4b network.js disconnectClient rpc.declare hostapd.<ifname> del_client",
+        "luci@b2e0be4b wireless.js associated-station Disconnect",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access hostapd.*/del_client",
+        "fixture rpcd.config login luci-mod-network-config-write list write luci-mod-network-config"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "99999999999999999999999999999999",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": "luci-mod-network-config",
+          "acl_source": "luci-mod-network.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#luci-mod-network-config-write-allow",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "target_id": "ubus:hostapd.del_client",
+      "op": "invoke",
+      "expectation_id": "luci-mod-network-config-hostapd-del-client",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-network-config-write is not a stock device login. wireless.js uses network.js disconnectClient rpc.declare object=hostapd.<ifname> method=del_client. Intended_access, not a violation and not a PoC.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "ubus",
+        "object": "hostapd.*",
+        "function": "del_client",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-index-wifi-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-status-index-wifi",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-wifi.write.ubus.hostapd.*=[del_client, wps_start, wps_cancel, wps_status]",
+        "luci@b2e0be4b 60_wifi.js handleDelClient disconnectClient",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access hostapd.*/del_client",
+        "fixture rpcd.config login luci-mod-status-index-wifi list write luci-mod-status-index-wifi"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index-wifi",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#luci-mod-status-index-wifi-allow",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "target_id": "ubus:hostapd.del_client",
+      "op": "invoke",
+      "expectation_id": "luci-mod-status-index-wifi-hostapd-del-client",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-status-index-wifi is not a stock device login. 60_wifi.js handleDelClient uses network.js disconnectClient. Intended_access, not a violation and not a PoC.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index-wifi",
+        "scope": "ubus",
+        "object": "hostapd.*",
+        "function": "del_client",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-read-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read has no hostapd.*",
+        "hostapd.* del_client is write-only on luci-mod-network-config"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#luci-mod-network-config-read-deny",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "note": "The read luci-mod-network-config fixture has ubus file.exec and luci swconfig methods, not hostapd.del_client. ERROR_ACCESS at uh_ubus_allowed.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-hostapd-del-client-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus hostapd.del_client"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#luci-mod-system-flash-hostapd-del-client-deny",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "target_id": "ubus:hostapd.del_client",
+      "op": "invoke",
+      "note": "The list-read flash fixture has ubus file.exec, not hostapd.del_client. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-reboot-hostapd-del-client-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-system-reboot",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci-mod-system-reboot has no ubus hostapd.del_client"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "bebebebebebebebebebebebebebebebe",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#luci-mod-system-reboot-hostapd-del-client-deny",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-init-read-hostapd-del-client-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-system-init-read",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+        "luci-mod-system-init-read has no ubus hostapd.del_client",
+        "rc.list stays on policy:ubus-rc-list-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#luci-mod-system-init-read-hostapd-del-client-deny",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "note": "The read luci-mod-system-init-read fixture grants rc.list, not hostapd.del_client. ERROR_ACCESS at uh_ubus_allowed.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-index-hostapd-del-client-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-status-index",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci-mod-status-index has no ubus hostapd.del_client",
+        "system.board stays on policy:ubus-system-board-v1",
+        "system.info stays on policy:ubus-system-info-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "afafafafafafafafafafafafafafafaf",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#luci-mod-status-index-hostapd-del-client-deny",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "note": "The read luci-mod-status-index fixture grants system.board, not hostapd.del_client. ERROR_ACCESS at uh_ubus_allowed.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:setInitAction-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-network-config-write",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setInitAction",
+      "ubus_object": "luci",
+      "method": "setInitAction",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "99999999999999999999999999999999",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json has no luci.setInitAction",
+        "do not invent a setInitAction luci-ssl grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "99999999999999999999999999999999",
+            "object": "luci",
+            "function": "setInitAction"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "setInitAction",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#setInitAction-not-this-slice",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "not": [
+        "hostapd.del_client grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci.setInitAction has no luci-ssl delegated grant at luci b2e0be4b. This slice is hostapd.del_client, not the luci object method.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:hostapd-bare-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-network-config-write",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd",
+      "method": "del_client",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "99999999999999999999999999999999",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "policy/tests/test_conformance.py test_ubus_wildcard_object_hostapd_dot_star",
+        "luci@b2e0be4b network.js disconnectClient object=hostapd.%s.format(ifname)"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "99999999999999999999999999999999",
+            "object": "hostapd",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#hostapd-bare-not-this-slice",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "not": [
+        "hostapd.* match",
+        "path_found"
+      ],
+      "note": "ACL pattern hostapd.* does not match object hostapd (no BSS suffix). network.js uses hostapd.<ifname>.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:wps-start-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "luci-mod-status-index-wifi",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_start",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_start",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-wifi.write.ubus.hostapd.*=[del_client, wps_start, wps_cancel, wps_status]",
+        "luci@b2e0be4b 60_wifi.js handleCallWPS rpc.declare method=wps_start",
+        "do not staff wps_start"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+            "object": "hostapd.wlan0",
+            "function": "wps_start"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "wps_start",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index-wifi",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#wps-start-not-this-slice",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "not": [
+        "hostapd.del_client grant",
+        "path_found"
+      ],
+      "note": "luci-mod-status-index-wifi write grants hostapd.* wps_start. 60_wifi.js handleCallWPS uses that method. This slice does not emit a wps_start grant.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index-wifi",
+        "scope": "ubus",
+        "object": "hostapd.*",
+        "function": "wps_start",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-hostapd-del-client-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-hostapd-del-client-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "object": "hostapd.wlan0",
+            "function": "del_client"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "hostapd.wlan0",
+          "function": "del_client",
+          "match": "literal",
+          "acl_group": "luci-mod-network-config",
+          "acl_source": "luci-mod-network.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_hostapd_del_client_cases.json#root-star-hostapd-del-client-allow",
+        "c_double": "policy/c_double/ubus_hostapd_del_client.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=del_client (uhttpd omits scope; FNM_NOESCAPE). An allow means this HTTP gate was passed, not that hostapd deauthenticated a client. Call objects are hostapd.<ifname> (example hostapd.wlan0); the inventoried ACL pattern is hostapd.*.",
+        "This oracle does not invoke hostapd del_client or model MAC/ban_time arguments.",
+        "shellquote and basename are not sanitizers.",
+        "hostapd.del_client is not a luci object method. Do not invent a luci object grant. wireless.js and 60_wifi.js at luci b2e0be4b call network.js disconnectClient, which rpc.declare object=hostapd.<ifname> method=del_client.",
+        "luci-mod-status-index-wifi write also grants hostapd.* wps_start / wps_cancel / wps_status. This slice does not emit those grants.",
+        "luci-mod-status-index read grants system.board. That method stays on policy:ubus-system-board-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index also grants system.info. That method stays on policy:ubus-system-info-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. The index fixture cannot pass hostapd.del_client.",
+        "luci-mod-status-index read grants luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. The index fixture cannot pass hostapd.del_client.",
+        "Fixture logins luci-mod-network-config-write and luci-mod-status-index-wifi are not stock device logins. Those ACL groups exist at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and hostapd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "hostapd ubus del_client (addr/deauth/reason/ban_time handling) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. luci-mod-status-index luci.getVersion stays on policy:ubus-luci-getversion-v1. luci-mod-status-index luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-status-index-wifi also grants hostapd.* wps_start / wps_cancel / wps_status; this slice does not emit those grants. luci object methods are not this slice. Track A is unstaffed. dispatcher is not this slice."
+      ],
+      "target_id": "ubus:hostapd.del_client",
+      "op": "invoke",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_ubus_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "ubus",
+        "object": "hostapd.*",
+        "function": "del_client",
+        "source": "luci-mod-network.json"
+      }
+    }
+  ]
+}

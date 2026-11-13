@@ -148,6 +148,7 @@ SYSTEM_BOARD_SNAPSHOT = "reports/m2-ubus-system-board-effect.json"
 SYSTEM_INFO_SNAPSHOT = "reports/m2-ubus-system-info-effect.json"
 LUCI_GETVERSION_SNAPSHOT = "reports/m2-ubus-luci-getversion-effect.json"
 LUCI_GETUNIXTIME_SNAPSHOT = "reports/m2-ubus-luci-getunixtime-effect.json"
+HOSTAPD_DEL_CLIENT_SNAPSHOT = "reports/m2-ubus-hostapd-del-client-effect.json"
 RC_INIT_SNAPSHOT = "reports/m2-ubus-rc-init-effect.json"
 RC_LIST_SNAPSHOT = "reports/m2-ubus-rc-list-effect.json"
 FILE_EXEC_CATALOG = {
@@ -306,6 +307,17 @@ LUCI_GETUNIXTIME_CATALOG = {
         "entrypoint_id": "ubus_http:luci.getUnixtime",
     },
 }
+HOSTAPD_DEL_CLIENT_CATALOG = {
+    "policy:effect:ubus-hostapd-del-client": {
+        "ubus_object": "hostapd.*",
+        "method": "del_client",
+        "sink_kind": "ubus_call",
+        "op": "invoke",
+        "snapshot": HOSTAPD_DEL_CLIENT_SNAPSHOT,
+        "delegated_class": "luci-mod-network-config-write",
+        "entrypoint_id": "ubus_http:hostapd.del_client",
+    },
+}
 SYSTEM_CATALOG = {**SYSTEM_REBOOT_CATALOG, **SYSTEM_BOARD_CATALOG, **SYSTEM_INFO_CATALOG}
 RC_INIT_CATALOG = {
     "policy:effect:ubus-rc-init": {
@@ -392,6 +404,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
             for row in self.effects
             if row.get("ubus_object") == "luci" and row.get("method") == "getUnixtime"
         ]
+        hostapd_rows = [
+            row
+            for row in self.effects
+            if row.get("ubus_object") == "hostapd.*" and row.get("method") == "del_client"
+        ]
         file_exec_rows = [
             row
             for row in self.effects
@@ -431,6 +448,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual(len(info_rows), len(SYSTEM_INFO_CATALOG))
         self.assertEqual(len(getversion_rows), len(LUCI_GETVERSION_CATALOG))
         self.assertEqual(len(getunixtime_rows), len(LUCI_GETUNIXTIME_CATALOG))
+        self.assertEqual(len(hostapd_rows), len(HOSTAPD_DEL_CLIENT_CATALOG))
         self.assertEqual(len(rc_init_rows), len(RC_INIT_CATALOG))
         self.assertEqual(len(rc_list_rows), len(RC_LIST_CATALOG))
         self.assertEqual({row["record_id"] for row in cgi_rows}, set(CGI_CATALOG))
@@ -440,6 +458,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual({row["record_id"] for row in info_rows}, set(SYSTEM_INFO_CATALOG))
         self.assertEqual({row["record_id"] for row in getversion_rows}, set(LUCI_GETVERSION_CATALOG))
         self.assertEqual({row["record_id"] for row in getunixtime_rows}, set(LUCI_GETUNIXTIME_CATALOG))
+        self.assertEqual({row["record_id"] for row in hostapd_rows}, set(HOSTAPD_DEL_CLIENT_CATALOG))
         self.assertEqual({row["record_id"] for row in rc_init_rows}, set(RC_INIT_CATALOG))
         self.assertEqual({row["record_id"] for row in rc_list_rows}, set(RC_LIST_CATALOG))
         self.assertEqual(
@@ -452,6 +471,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             + len(info_rows)
             + len(getversion_rows)
             + len(getunixtime_rows)
+            + len(hostapd_rows)
             + len(rc_init_rows)
             + len(rc_list_rows),
         )
@@ -572,6 +592,20 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotEqual(getunixtime["evidence_status"], "path_found")
             self.assertEqual(getunixtime["entrypoint_id"], spec["entrypoint_id"])
             self.assertNotIn("cgi_endpoint", getunixtime)
+        for hostapd in hostapd_rows:
+            spec = HOSTAPD_DEL_CLIENT_CATALOG[hostapd["record_id"]]
+            self.assertEqual(hostapd["ubus_object"], spec["ubus_object"])
+            self.assertEqual(hostapd["method"], spec["method"])
+            self.assertEqual(hostapd["producer"], "policy_facts")
+            self.assertEqual(hostapd["sink_kind"], spec["sink_kind"])
+            self.assertEqual(hostapd["op"], spec["op"])
+            self.assertEqual(hostapd["assessment"], "intended_access")
+            self.assertNotEqual(hostapd["assessment"], "authorization_violation")
+            self.assertEqual(hostapd["corpus_revision"], lock_hash)
+            self.assertEqual(hostapd["evidence_status"], "fact")
+            self.assertNotEqual(hostapd["evidence_status"], "path_found")
+            self.assertEqual(hostapd["entrypoint_id"], spec["entrypoint_id"])
+            self.assertNotIn("cgi_endpoint", hostapd)
         for rc_init in rc_init_rows:
             spec = RC_INIT_CATALOG[rc_init["record_id"]]
             self.assertEqual(rc_init["ubus_object"], spec["ubus_object"])
@@ -1100,6 +1134,55 @@ class TestHandlerEffectJoins(unittest.TestCase):
             )
             self.assertEqual(effect, snapshot)
 
+    def test_hostapd_del_client_effects_join_delegated_and_root_grants(self) -> None:
+        lock_hash = corpus_revision()
+        snapshots = {}
+        for spec in HOSTAPD_DEL_CLIENT_CATALOG.values():
+            snapshots[spec["snapshot"]] = _load(REPO / spec["snapshot"])
+        for record_id, spec in HOSTAPD_DEL_CLIENT_CATALOG.items():
+            effect = next(row for row in self.effects if row["record_id"] == record_id)
+            delegated = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == spec["delegated_class"]
+            )
+            wifi = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "luci-mod-status-index-wifi"
+            )
+            root = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "root"
+            )
+            refs = effect["evidence_refs"]
+            self.assertIn(delegated["record_id"], refs)
+            self.assertIn(wifi["record_id"], refs)
+            self.assertIn(root["record_id"], refs)
+            self.assertEqual(effect["assessment"], "intended_access")
+            self.assertEqual(effect["corpus_revision"], lock_hash)
+            self.assertEqual(delegated["corpus_revision"], lock_hash)
+            self.assertEqual(root["corpus_revision"], lock_hash)
+            self.assertEqual(effect["ubus_object"], "hostapd.*")
+            self.assertEqual(effect["method"], "del_client")
+            self.assertEqual(effect["sink_kind"], "ubus_call")
+            self.assertEqual(effect["entrypoint_id"], spec["entrypoint_id"])
+            unauth = [
+                grant
+                for grant in self.grants
+                if grant.get("entrypoint_id") == effect["entrypoint_id"]
+                and grant["session_class"] == "unauthenticated"
+            ]
+            self.assertEqual(unauth, [])
+            snapshot = next(
+                row for row in snapshots[spec["snapshot"]] if row["record_id"] == record_id
+            )
+            self.assertEqual(effect, snapshot)
+
     def test_rc_init_effects_join_delegated_and_root_grants(self) -> None:
         lock_hash = corpus_revision()
         snapshots = {}
@@ -1226,6 +1309,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
                 spec = RC_CATALOG[row["record_id"]]
                 self.assertEqual(row.get("sink_kind"), spec["sink_kind"])
                 self.assertEqual(row.get("method"), spec["method"])
+                self.assertNotIn("cgi_endpoint", row)
+            elif row.get("ubus_object") == "hostapd.*":
+                spec = HOSTAPD_DEL_CLIENT_CATALOG[row["record_id"]]
+                self.assertEqual(row.get("sink_kind"), spec["sink_kind"])
+                self.assertEqual(row.get("method"), "del_client")
                 self.assertNotIn("cgi_endpoint", row)
             else:
                 self.assertNotIn("cgi_endpoint", row)
