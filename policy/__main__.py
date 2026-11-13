@@ -25,6 +25,7 @@ from . import (
     ubus_hostapd_wps_start,
     ubus_hostapd_wps_status,
     ubus_luci_getodhcp6cstats,
+    ubus_luci_gettimezones,
     ubus_luci_getunixtime,
     ubus_luci_getversion,
     ubus_system_board,
@@ -100,6 +101,9 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     getodhcp6cstats_grants, getodhcp6cstats_bundle, getodhcp6cstats_effects = (
         ubus_luci_getodhcp6cstats.build_artifacts(fixtures, repo_root)
     )
+    gettimezones_grants, gettimezones_bundle, gettimezones_effects = (
+        ubus_luci_gettimezones.build_artifacts(fixtures, repo_root)
+    )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
     grants_path = repo_root / "policy" / "grants.json"
     luci_decisions_path = repo_root / "policy" / "policy_decisions.json"
@@ -126,6 +130,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     wps_cancel_decisions_path = repo_root / "policy" / "ubus_hostapd_wps_cancel_decisions.json"
     wps_status_decisions_path = repo_root / "policy" / "ubus_hostapd_wps_status_decisions.json"
     getodhcp6cstats_decisions_path = repo_root / "policy" / "ubus_luci_getodhcp6cstats_decisions.json"
+    gettimezones_decisions_path = repo_root / "policy" / "ubus_luci_gettimezones_decisions.json"
     noauth_decisions_path = repo_root / "policy" / "no_ubusauth_decisions.json"
     upload_effect_path = repo_root / "reports" / "m2-cgi-upload-effect.json"
     download_effect_path = repo_root / "reports" / "m2-cgi-download-effect.json"
@@ -149,6 +154,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     wps_cancel_effect_path = repo_root / "reports" / "m2-ubus-hostapd-wps-cancel-effect.json"
     wps_status_effect_path = repo_root / "reports" / "m2-ubus-hostapd-wps-status-effect.json"
     getodhcp6cstats_effect_path = repo_root / "reports" / "m2-ubus-luci-getodhcp6cstats-effect.json"
+    gettimezones_effect_path = repo_root / "reports" / "m2-ubus-luci-gettimezones-effect.json"
     oracle.dump_json(
         grants_path,
         luci_grants
@@ -174,7 +180,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         + wps_grants
         + wps_cancel_grants
         + wps_status_grants
-        + getodhcp6cstats_grants,
+        + getodhcp6cstats_grants
+        + gettimezones_grants,
     )
     oracle.dump_json(luci_decisions_path, luci_bundle)
     oracle.dump_json(backup_decisions_path, backup_bundle)
@@ -200,6 +207,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(wps_cancel_decisions_path, {"grants": wps_cancel_grants, **wps_cancel_bundle})
     oracle.dump_json(wps_status_decisions_path, {"grants": wps_status_grants, **wps_status_bundle})
     oracle.dump_json(getodhcp6cstats_decisions_path, {"grants": getodhcp6cstats_grants, **getodhcp6cstats_bundle})
+    oracle.dump_json(gettimezones_decisions_path, {"grants": gettimezones_grants, **gettimezones_bundle})
     oracle.dump_json(noauth_decisions_path, noauth_bundle)
     oracle.dump_json(upload_effect_path, upload_effect)
     oracle.dump_json(download_effect_path, download_effect)
@@ -223,6 +231,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(wps_cancel_effect_path, wps_cancel_effects)
     oracle.dump_json(wps_status_effect_path, wps_status_effects)
     oracle.dump_json(getodhcp6cstats_effect_path, getodhcp6cstats_effects)
+    oracle.dump_json(gettimezones_effect_path, gettimezones_effects)
     cgi_backup.upsert_handler_effect(backup_effect, repo_root)
     cgi_backup.upsert_handler_effect(upload_effect, repo_root)
     cgi_backup.upsert_handler_effect(download_effect, repo_root)
@@ -266,6 +275,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         effect_path = cgi_backup.upsert_handler_effect(wps_status_effect, repo_root)
     for getodhcp6cstats_effect in getodhcp6cstats_effects:
         effect_path = cgi_backup.upsert_handler_effect(getodhcp6cstats_effect, repo_root)
+    for gettimezones_effect in gettimezones_effects:
+        effect_path = cgi_backup.upsert_handler_effect(gettimezones_effect, repo_root)
     return (
         grants_path,
         luci_decisions_path,
@@ -292,6 +303,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         wps_cancel_decisions_path,
         wps_status_decisions_path,
         getodhcp6cstats_decisions_path,
+        gettimezones_decisions_path,
         noauth_decisions_path,
         effect_path,
     )

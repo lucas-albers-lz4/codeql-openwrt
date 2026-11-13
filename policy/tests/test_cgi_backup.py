@@ -51,6 +51,7 @@ from policy.ubus_system_info import build_artifacts as info_build_artifacts  # n
 from policy.ubus_luci_getversion import build_artifacts as getversion_build_artifacts  # noqa: E402
 from policy.ubus_luci_getunixtime import build_artifacts as getunixtime_build_artifacts  # noqa: E402
 from policy.ubus_luci_getodhcp6cstats import build_artifacts as getodhcp6cstats_build_artifacts  # noqa: E402
+from policy.ubus_luci_gettimezones import build_artifacts as gettimezones_build_artifacts  # noqa: E402
 from policy.ubus_hostapd_del_client import build_artifacts as hostapd_build_artifacts  # noqa: E402
 from policy.ubus_hostapd_wps_start import build_artifacts as hostapd_wps_build_artifacts  # noqa: E402
 from policy.ubus_hostapd_wps_cancel import build_artifacts as hostapd_wps_cancel_build_artifacts  # noqa: E402
@@ -388,6 +389,7 @@ class TestCommittedArtifacts(unittest.TestCase):
         hostapd_wps_cancel_grants, _, _ = hostapd_wps_cancel_build_artifacts()
         hostapd_wps_status_grants, _, _ = hostapd_wps_status_build_artifacts()
         getodhcp6cstats_grants, _, _ = getodhcp6cstats_build_artifacts()
+        gettimezones_grants, _, _ = gettimezones_build_artifacts()
         self.assertEqual(
             committed_grants,
             luci_grants
@@ -413,7 +415,8 @@ class TestCommittedArtifacts(unittest.TestCase):
             + hostapd_wps_grants
             + hostapd_wps_cancel_grants
             + hostapd_wps_status_grants
-            + getodhcp6cstats_grants,
+            + getodhcp6cstats_grants
+            + gettimezones_grants,
         )
         self.assertEqual(committed_luci, luci_bundle)
         self.assertEqual(committed_cgi, cgi_bundle)
