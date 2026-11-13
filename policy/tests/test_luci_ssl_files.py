@@ -320,6 +320,15 @@ class TestLuciSslFiles(unittest.TestCase):
         self.assertTrue(
             all(row["analysis_revision"] == "policy:ubus-luci-getunixtime-v1" for row in getunixtime)
         )
+        getodhcp6cstats = [
+            row
+            for row in self.grants
+            if row.get("ubus_object") == "luci" and row.get("method") == "getOdhcp6cStats"
+        ]
+        self.assertTrue(getodhcp6cstats)
+        self.assertTrue(
+            all(row["analysis_revision"] == "policy:ubus-luci-getodhcp6cstats-v1" for row in getodhcp6cstats)
+        )
         blob = json.dumps(self.grants)
         self.assertNotIn(ANALYSIS_REVISION, blob)
         self.assertNotIn("authorization_violation", blob)

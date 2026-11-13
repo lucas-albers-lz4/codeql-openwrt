@@ -558,10 +558,38 @@
         "ubus system.info grant",
         "ubus system.reboot"
       ],
-      "rationale": "10_system.js uses rpc.declare object=luci method=getUnixtime. luci-mod-status-index read grants ubus luci.getUnixtime. An allow is the HTTP gate, not the luci-base getUnixtime handler (builtin time()). Does not rewrite the luci exec-methods emitter. luci.getVersion stays on policy:ubus-luci-getversion-v1. getOdhcp6cStats is a different method on the same ACL. luci-mod-system-config / system.js also grant getUnixtime and are not this slice. Unauthenticated ACLs do not grant this method.",
+      "rationale": "10_system.js uses rpc.declare object=luci method=getUnixtime. luci-mod-status-index read grants ubus luci.getUnixtime. An allow is the HTTP gate, not the luci-base getUnixtime handler (builtin time()). Does not rewrite the luci exec-methods emitter. luci.getVersion stays on policy:ubus-luci-getversion-v1. getOdhcp6cStats is policy:ubus-luci-getodhcp6cstats-v1. luci-mod-system-config / system.js also grant getUnixtime and are not this slice. Unauthenticated ACLs do not grant this method.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js rpc.declare object=luci method=getUnixtime"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-index-getodhcp6cstats",
+      "session_class": "luci-mod-status-index",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getOdhcp6cStats",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getOdhcp6cStats",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getOdhcp6cStats",
+        "luci-base getOdhcp6cStats handler",
+        "luci.getVersion grant",
+        "luci.getUnixtime grant",
+        "luci-mod-system-config getOdhcp6cStats",
+        "ubus system.board grant",
+        "ubus system.info grant",
+        "ubus system.reboot"
+      ],
+      "rationale": "30_network.js uses rpc.declare object=luci method=getOdhcp6cStats. luci-mod-status-index read grants ubus luci.getOdhcp6cStats. An allow is the HTTP gate, not the luci-base getOdhcp6cStats handler (network.device status / odhcp6c.<dev> get_statistics). Does not rewrite the luci exec-methods emitter. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci-mod-system-config grants getUnixtime, not getOdhcp6cStats. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/30_network.js rpc.declare object=luci method=getOdhcp6cStats"
       ]
     },
     {
