@@ -460,6 +460,31 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-status-index",
+      "session_class": "luci-mod-status-index",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.board",
+      "intended_access": [
+        {
+          "target_id": "ubus:system.board",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus system.board",
+        "procd board_info",
+        "ubus system.info grant",
+        "ubus system.reboot",
+        "luci.getVersion grant"
+      ],
+      "rationale": "10_system.js uses rpc.declare object=system method=board. luci-mod-status-index read grants ubus system.board. That is procd system, not luci.getVersion. An allow is the HTTP gate, not board_info. system.info is a different method on the same ACL and is not this slice. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js rpc.declare object=system method=board"
+      ]
+    },
+    {
       "expectation_id": "synthetic-backup-read",
       "session_class": "synthetic-backup",
       "synthetic": true,
