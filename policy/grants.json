@@ -2395,5 +2395,63 @@
       "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
     ],
     "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-index:ubus_http:system.info",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-system-info-v1",
+    "session_class": "luci-mod-status-index",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:system.info",
+    "ubus_object": "system",
+    "method": "info",
+    "target_id": "ubus:system.info",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-index",
+    "expectation_id": "luci-mod-status-index-info",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=system function=info (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+      "luci@b2e0be4b 10_system.js rpc.declare object=system method=info",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access system/info",
+      "fixture rpcd.config login luci-mod-status-index list read luci-mod-status-index"
+    ],
+    "note": "Fixture login luci-mod-status-index is not a stock device login. 10_system.js uses rpc.declare object=system method=info. Intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:system.info",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-system-info-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:system.info",
+    "ubus_object": "system",
+    "method": "info",
+    "target_id": "ubus:system.info",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-index",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=system function=info (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]

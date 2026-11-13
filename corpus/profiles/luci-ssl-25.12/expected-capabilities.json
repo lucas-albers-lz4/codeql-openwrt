@@ -478,10 +478,35 @@
         "ubus system.reboot",
         "luci.getVersion grant"
       ],
-      "rationale": "10_system.js uses rpc.declare object=system method=board. luci-mod-status-index read grants ubus system.board. That is procd system, not luci.getVersion. An allow is the HTTP gate, not board_info. system.info is a different method on the same ACL and is not this slice. Unauthenticated ACLs do not grant this method.",
+      "rationale": "10_system.js uses rpc.declare object=system method=board. luci-mod-status-index read grants ubus system.board. That is procd system, not luci.getVersion. An allow is the HTTP gate, not board_info. system.info is a different method on the same ACL (policy:ubus-system-info-v1). Unauthenticated ACLs do not grant this method.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js rpc.declare object=system method=board"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-index-info",
+      "session_class": "luci-mod-status-index",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "intended_access": [
+        {
+          "target_id": "ubus:system.info",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus system.info",
+        "procd system.info handler",
+        "ubus system.board grant",
+        "ubus system.reboot",
+        "luci.getVersion grant"
+      ],
+      "rationale": "10_system.js uses rpc.declare object=system method=info. luci-mod-status-index read grants ubus system.info. That is procd system, not luci.getVersion. An allow is the HTTP gate, not the procd handler. system.board stays on policy:ubus-system-board-v1. Unauthenticated ACLs do not grant this method. luci-mod-status-index-storage also grants system.info and is not this slice.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js rpc.declare object=system method=info"
       ]
     },
     {
