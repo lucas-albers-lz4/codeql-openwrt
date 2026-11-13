@@ -660,6 +660,31 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-status-index-wifi-hostapd-wps-status",
+      "session_class": "luci-mod-status-index-wifi",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "intended_access": [
+        {
+          "target_id": "ubus:hostapd.wps_status",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus hostapd.wps_status",
+        "hostapd WPS status",
+        "luci-mod-network-config-write hostapd.wps_status",
+        "wps_start grant in this slice",
+        "wps_cancel grant in this slice"
+      ],
+      "rationale": "60_wifi.js handleGetWPSStatus uses rpc.declare object=hostapd.<ifname> method=wps_status. luci-mod-status-index-wifi write grants ubus hostapd.* / wps_status. luci-mod-network-config write grants del_client, not wps_status. hostapd.wps_start stays on policy:ubus-hostapd-wps-start-v1. hostapd.wps_cancel stays on policy:ubus-hostapd-wps-cancel-v1. hostapd.del_client stays on policy:ubus-hostapd-del-client-v1. An allow is the HTTP gate, not hostapd WPS status. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index-wifi.write.ubus.hostapd.*=[del_client, wps_start, wps_cancel, wps_status]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/60_wifi.js handleGetWPSStatus"
+      ]
+    },
+    {
       "expectation_id": "synthetic-backup-read",
       "session_class": "synthetic-backup",
       "synthetic": true,
