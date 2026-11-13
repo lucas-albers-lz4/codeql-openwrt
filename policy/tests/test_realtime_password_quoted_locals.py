@@ -216,6 +216,15 @@ class TestRealtimePasswordQuotedLocals(unittest.TestCase):
         self.assertTrue(
             all(row["analysis_revision"] == "policy:ubus-luci-gettimezones-v1" for row in gettimezones)
         )
+        getleds = [
+            row
+            for row in self.grants
+            if row.get("ubus_object") == "luci" and row.get("method") == "getLEDs"
+        ]
+        self.assertTrue(getleds)
+        self.assertTrue(
+            all(row["analysis_revision"] == "policy:ubus-luci-getleds-v1" for row in getleds)
+        )
         blob = json.dumps(self.grants)
         self.assertNotIn(ANALYSIS_REVISION, blob)
         self.assertNotIn("authorization_violation", blob)
