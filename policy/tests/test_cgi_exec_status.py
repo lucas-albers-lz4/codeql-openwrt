@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from urllib.parse import unquote
 
 import sys
 
@@ -40,6 +41,7 @@ from policy.cgi_exec_status import (  # noqa: E402
     NFT,
     build_artifacts,
     evaluate_expected_case,
+    evaluate_status_exec,
     grant_id,
     load_expected_cases,
     load_status_world,
@@ -50,6 +52,7 @@ from policy.oracle import (  # noqa: E402
     NETWORK_FIXTURE_SID,
     PRODUCER,
     build_artifacts as luci_build_artifacts,
+    corpus_revision,
 )
 
 SCHEMA = json.loads((REPO / "schemas" / "finding.schema.json").read_text(encoding="utf-8"))
@@ -364,6 +367,22 @@ class TestCDouble(unittest.TestCase):
         self.assertEqual(missing.stdout.strip(), "HTTP_404")
         self.assertEqual(restart_denied.stdout.strip(), "HTTP_403")
 
+    def test_decoded_percent_1c_is_preserved_in_executable_and_argument(self) -> None:
+        for encoded, status, outcome in (
+            ("/bin/dmesg%1c-r", 404, "not_found"),
+            ("/bin/dmesg -r%1c", 403, "command_denied"),
+        ):
+            with self.subTest(command=encoded):
+                command = unquote(encoded)
+                result = evaluate_status_exec(sid=LOGS_FIXTURE_SID, command=command)
+                double = self._run(
+                    "decide", CONTENT_TYPE_PREFIX, LOGS_FIXTURE_SID, command,
+                    CGI_SCOPE, CGI_OBJECT, CGI_FUNCTION,
+                    "/bin/dmesg -r", FILE_FUNCTION, "-", "-",
+                )
+                self.assertEqual((result.outcome, result.http_status), (outcome, status))
+                self.assertEqual(double.stdout.strip(), f"HTTP_{status}")
+
     def test_flags_record_pin(self) -> None:
         proc = self._run("flags")
         self.assertIn(f"CGI_IO_SHA={CGI_IO_SHA}", proc.stdout)
@@ -373,6 +392,21 @@ class TestCDouble(unittest.TestCase):
 
 
 class TestCommittedArtifacts(unittest.TestCase):
+    def test_custom_root_revision_is_shared_by_all_records(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "corpus").mkdir()
+            (root / "corpus" / "lock.json").write_bytes(
+                (REPO / "corpus" / "lock.json").read_bytes() + b"\n"
+            )
+            revision = corpus_revision(root)
+            self.assertNotEqual(revision, corpus_revision(REPO))
+            grants, bundle, effects = build_artifacts(repo_root=root)
+            self.assertEqual(bundle["corpus_revision"], revision)
+            for record in grants + bundle["decisions"] + effects:
+                with self.subTest(record=record["record_id"]):
+                    self.assertEqual(record["corpus_revision"], revision)
+
     def test_write_artifacts_roundtrip(self) -> None:
         grants, bundle, effects = build_artifacts()
         committed = json.loads((REPO / "policy" / "cgi_exec_status_decisions.json").read_text(encoding="utf-8"))
