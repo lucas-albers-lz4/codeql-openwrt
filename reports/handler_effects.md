@@ -1,6 +1,6 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects and synthetic ubus `file.exec` effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`); ubus `file.exec` rows are policy-facts (`policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1`); ubus `system.reboot` / `rc.init` / `rc.list` rows are policy-facts (`policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects and synthetic ubus `file.exec` effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`); ubus `file.exec` rows are policy-facts (`policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1`); ubus `system.reboot` / `rc.init` / `rc.list` / `hostapd.del_client` rows are policy-facts (`policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-hostapd-del-client-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
 
 Findings are evidence, not proof. This catalog does not emit `authorization_violation` or dispatcher effects. `shellquote` and `basename` are not sanitizers. `canonicalize_path` is not a taint sanitizer.
 
@@ -28,12 +28,13 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m2-ubus-system-reboot-effect.json](m2-ubus-system-reboot-effect.json) | synthetic ubus `system.reboot` of luci-mod-system-reboot (C, not ucode) |
 | [m2-ubus-rc-init-effect.json](m2-ubus-rc-init-effect.json) | synthetic ubus `rc.init` of luci-mod-system-init / luci-mod-system-config (C, not ucode) |
 | [m2-ubus-rc-list-effect.json](m2-ubus-rc-list-effect.json) | synthetic ubus `rc.list` of luci-mod-system-init / luci-mod-system-config (C, not ucode) |
+| [m2-ubus-hostapd-del-client-effect.json](m2-ubus-hostapd-del-client-effect.json) | synthetic ubus `hostapd.del_client` of luci-mod-network-config-write / luci-mod-status-index-wifi (C, not ucode) |
 
 Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing classification ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher. Helper `exec_helper_inventory` rows stay in the files inventory; this catalog holds the cgi-exec file.exec effects those helpers join.
 
 ## Grant ↔ effect joins
 
-Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1` / `policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
+Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1` / `policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-hostapd-del-client-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
 
 Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
 
@@ -212,10 +213,20 @@ HTTP `/ubus` gate only. Bounded to `startup.js` / `system.js` `rpc.declare` of `
 
 The existing write `luci-mod-system-init` and `luci-mod-system-config` fixtures also join (`policy:grant:luci-mod-system-init:ubus_http:rc.list`, `policy:grant:luci-mod-system-config:ubus_http:rc.list`).
 
+### ubus hostapd.del_client luci-ssl wifi views (policy-facts synthetic)
+
+HTTP `/ubus` gate only. Bounded to `network.js` `disconnectClient` `rpc.declare` of `hostapd.<ifname>.del_client` at luci `b2e0be4b` (`wireless.js` associated-station Disconnect, `60_wifi.js` `handleDelClient`). Inventoried luci-ssl ACLs grant ubus `hostapd.*` / `del_client` to `luci-mod-network-config` write and to `luci-mod-status-index-wifi` write. Unauthenticated is a **non-join** (`ERROR_ACCESS`). Missing SID is `ERROR_PARSE`. The read `luci-mod-network-config` fixture and other fixtures without `hostapd.del_client` are **non-joins**. Catalog copy: [m2-ubus-hostapd-del-client-effect.json](m2-ubus-hostapd-del-client-effect.json). Join keys use `entrypoint_id` `ubus_http:hostapd.del_client` plus `ubus_object=hostapd.*` / `method=del_client`. An allow is the HTTP gate, not hostapd deauth. Call objects are `hostapd.<ifname>` (example `hostapd.wlan0`); the inventoried ACL pattern is `hostapd.*`. Bare `hostapd` does not match. `wps_start` / `wps_cancel` / `wps_status` are different methods (the wifi-index fixture can pass those HTTP gates; this catalog does not emit those grants). Do not invent a `setInitAction` luci-ssl grant.
+
+| `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- |
+| `hostapd.del_client` | `policy:grant:luci-mod-network-config-write:ubus_http:hostapd.del_client` | `policy:grant:root:ubus_http:hostapd.del_client` | no-join |
+
+The `luci-mod-status-index-wifi` write fixture also joins (`policy:grant:luci-mod-status-index-wifi:ubus_http:hostapd.del_client`).
+
 ## Out of this file
 
 - dispatcher / `menu.d` routes
 - luci-ssl `files[]` routing classification ([m4-luci-ssl-files.md](m4-luci-ssl-files.md))
-- remaining ubus `file.exec` without a matching luci-ssl grant + caller pair in this catalog (`/bin/ping` via `fs.exec_direct` with no cgi-io on luci-mod-network-diagnostics; crontab.js `fs.exec` of cron reload has file.exec of the cmdline but ubus `file.write` not `file.exec`; luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed — write ACLs exist but the flash fixture is list-read only; flash.js tar `-tzf` and `/sbin/reboot` stay unstaffed)
+- remaining ubus `file.exec` without a matching luci-ssl grant + caller pair in this catalog (`/bin/ping` via `fs.exec_direct` with no cgi-io on luci-mod-network-diagnostics; crontab.js `fs.exec` of cron reload has file.exec of the cmdline but ubus `file.write` not `file.exec`; luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed — write ACLs exist but the flash fixture is list-read only; flash.js tar `-tzf` and `/sbin/reboot` stay unstaffed; hostapd `wps_start` / `wps_cancel` / `wps_status` are unstaffed — the wifi-index fixture can pass those HTTP gates, but this catalog does not emit those grants)
 - `authorization_violation` / BrokenAccessControl `path_found`
 - Alloy `producer: step4`

@@ -46,6 +46,7 @@ from policy.ubus_file_exec_list_backup import build_artifacts as list_backup_bui
 from policy.ubus_system_reboot import build_artifacts as reboot_build_artifacts  # noqa: E402
 from policy.ubus_rc_init import build_artifacts as rc_init_build_artifacts  # noqa: E402
 from policy.ubus_rc_list import build_artifacts as rc_list_build_artifacts  # noqa: E402
+from policy.ubus_hostapd_del_client import build_artifacts as hostapd_build_artifacts  # noqa: E402
 from policy.ubus_file_exec_mounts import build_artifacts as mounts_build_artifacts  # noqa: E402
 from policy.cgi_upload import build_artifacts as upload_build_artifacts  # noqa: E402
 from policy.oracle import (  # noqa: E402
@@ -370,6 +371,7 @@ class TestCommittedArtifacts(unittest.TestCase):
         reboot_grants, _, _ = reboot_build_artifacts()
         rc_init_grants, _, _ = rc_init_build_artifacts()
         rc_list_grants, _, _ = rc_list_build_artifacts()
+        hostapd_grants, _, _ = hostapd_build_artifacts()
         self.assertEqual(
             committed_grants,
             luci_grants
@@ -386,7 +388,8 @@ class TestCommittedArtifacts(unittest.TestCase):
             + list_backup_grants
             + reboot_grants
             + rc_init_grants
-            + rc_list_grants,
+            + rc_list_grants
+            + hostapd_grants,
         )
         self.assertEqual(committed_luci, luci_bundle)
         self.assertEqual(committed_cgi, cgi_bundle)
