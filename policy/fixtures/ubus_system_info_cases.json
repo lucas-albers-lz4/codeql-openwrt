@@ -1,0 +1,221 @@
+{
+  "comment": "Hand-transcribed expected ubus system.info decisions for luci-mod-status-index from pinned uhttpd uh_ubus_allowed, 10_system.js rpc.declare, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=system function=info (uhttpd omits scope).",
+    "Bounded to 10_system.js rpc.declare object=system method=info at luci b2e0be4b. That is procd system, not luci.getVersion.",
+    "Fixture login luci-mod-status-index is read of the existing ACL group in luci-mod-status-index.json.",
+    "system.board stays on policy:ubus-system-board-v1; this slice does not emit that grant.",
+    "system.reboot stays on policy:ubus-system-reboot-v1.",
+    "Do not invent a setInitAction luci-ssl grant.",
+    "Do not invent a luci-mod-status-index-storage login.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, or luci object grants.",
+    "shellquote and basename are not sanitizers.",
+    "luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec)."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-system-info-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:system.info",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus system.info",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access system/info false -> ERROR_ACCESS",
+        "do not invent an unauthenticated system.info grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "not": ["unauthenticated_allow", "procd_system_info", "dispatcher", "path_found", "sentinel_rewrite", "setInitAction"],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-allow",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:system.info",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "expectation_id": "luci-mod-status-index-info",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-index",
+      "note": "Fixture login luci-mod-status-index is not a stock device login. 10_system.js uses rpc.declare object=system method=info. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=system method=info",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access system/info",
+        "fixture rpcd.config login luci-mod-status-index list read luci-mod-status-index"
+      ]
+    },
+    {
+      "id": "luci-mod-status-realtime-system-info-deny",
+      "session_class": "luci-mod-status-realtime",
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-realtime.read.ubus.luci=[getConntrackList, getRealtimeStats]",
+        "luci-mod-status-realtime has no ubus system.info"
+      ]
+    },
+    {
+      "id": "luci-mod-system-reboot-system-info-deny",
+      "session_class": "luci-mod-system-reboot",
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci-mod-system-reboot has ubus system.reboot, not system.info"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-system-info-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:system.info",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "note": "The list-read flash fixture has ubus file.exec, not system.info. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus system.info"
+      ]
+    },
+    {
+      "id": "luci-mod-system-init-read-system-info-deny",
+      "session_class": "luci-mod-system-init-read",
+      "sid": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+        "luci-mod-system-init has no ubus system.info"
+      ]
+    },
+    {
+      "id": "system-board-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "system",
+      "method": "board",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.board",
+      "not": ["system.info grant", "path_found"],
+      "note": "The luci-mod-status-index fixture matches system.board at uh_ubus_allowed. That method stays on policy:ubus-system-board-v1. This slice does not emit a system.board grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=system method=board",
+        "system.board stays on policy:ubus-system-board-v1"
+      ]
+    },
+    {
+      "id": "system-reboot-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "not": ["system.info grant", "path_found"],
+      "note": "The luci-mod-status-index fixture grants system.info, not system.reboot. system.reboot stays on policy:ubus-system-reboot-v1.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "system.reboot stays on policy:ubus-system-reboot-v1"
+      ]
+    },
+    {
+      "id": "luci-getVersion-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getVersion",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getVersion",
+      "not": ["system.info grant", "path_found", "invented luci-ssl grant"],
+      "note": "10_system.js also declares luci.getVersion. That is a luci object method and is not this slice. This slice does not emit a luci object grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "do not invent a luci object grant"
+      ]
+    },
+    {
+      "id": "root-star-system-info-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:system.info",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}

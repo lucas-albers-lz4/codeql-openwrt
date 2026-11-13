@@ -698,13 +698,19 @@ class TestCommittedArtifacts(unittest.TestCase):
             for row in tail
             if row.get("ubus_object") == "system" and row.get("method") == "board"
         ]
+        info_rows = [
+            row
+            for row in tail
+            if row.get("ubus_object") == "system" and row.get("method") == "info"
+        ]
         self.assertEqual(
             len(cgi_rows)
             + len(file_exec_rows)
             + len(reboot_rows)
             + len(rc_init_rows)
             + len(rc_list_rows)
-            + len(board_rows),
+            + len(board_rows)
+            + len(info_rows),
             len(tail),
         )
         cgi_endpoints = {row["cgi_endpoint"] for row in cgi_rows}
@@ -751,6 +757,11 @@ class TestCommittedArtifacts(unittest.TestCase):
         for row in board_rows:
             self.assertEqual(row["ingress"], "ubus_http")
             self.assertEqual(row["analysis_revision"], "policy:ubus-system-board-v1")
+            self.assertNotIn("cgi_endpoint", row)
+        self.assertTrue(info_rows)
+        for row in info_rows:
+            self.assertEqual(row["ingress"], "ubus_http")
+            self.assertEqual(row["analysis_revision"], "policy:ubus-system-info-v1")
             self.assertNotIn("cgi_endpoint", row)
 
     def test_emit_helper_roundtrip(self) -> None:
