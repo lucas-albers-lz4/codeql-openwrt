@@ -708,6 +708,11 @@ class TestCommittedArtifacts(unittest.TestCase):
             for row in tail
             if row.get("ubus_object") == "luci" and row.get("method") == "getVersion"
         ]
+        getunixtime_rows = [
+            row
+            for row in tail
+            if row.get("ubus_object") == "luci" and row.get("method") == "getUnixtime"
+        ]
         self.assertEqual(
             len(cgi_rows)
             + len(file_exec_rows)
@@ -716,7 +721,8 @@ class TestCommittedArtifacts(unittest.TestCase):
             + len(rc_list_rows)
             + len(board_rows)
             + len(info_rows)
-            + len(getversion_rows),
+            + len(getversion_rows)
+            + len(getunixtime_rows),
             len(tail),
         )
         cgi_endpoints = {row["cgi_endpoint"] for row in cgi_rows}
@@ -773,6 +779,11 @@ class TestCommittedArtifacts(unittest.TestCase):
         for row in getversion_rows:
             self.assertEqual(row["ingress"], "ubus_http")
             self.assertEqual(row["analysis_revision"], "policy:ubus-luci-getversion-v1")
+            self.assertNotIn("cgi_endpoint", row)
+        self.assertTrue(getunixtime_rows)
+        for row in getunixtime_rows:
+            self.assertEqual(row["ingress"], "ubus_http")
+            self.assertEqual(row["analysis_revision"], "policy:ubus-luci-getunixtime-v1")
             self.assertNotIn("cgi_endpoint", row)
 
     def test_emit_helper_roundtrip(self) -> None:
