@@ -1,0 +1,270 @@
+{
+  "comment": "Hand-transcribed expected ubus file.exec decisions for luci-mod-status-processes /bin/kill from pinned rpcd-mod-file C, processes.js callers, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then checks file.exec of the canonicalized executable first, then the cmdline.",
+    "Bounded to fs.exec callers at luci b2e0be4b: processes.js handleSignal /bin/kill.",
+    "Inventoried luci-ssl ACLs grant the bare executable. Extra tokens therefore match at the executable stage as intended_access for the write fixture, not authorization_violation and not a PoC.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed. A ubus file.exec grant without the matching file ACL is UBUS_STATUS_PERMISSION_DENIED.",
+    "The luci-mod-status-processes read fixture has luci.getProcessList only; it has no ubus file.exec and no write file.exec of /bin/kill.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or execv.",
+    "shellquote and basename are not sanitizers. rpc_canonicalize_path is not a taint sanitizer.",
+    "luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1.",
+    "luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1.",
+    "luci-mod-network diagnostics ping is not this slice."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-kill-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "command:kill",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus file.exec",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access file/exec false -> ERROR_ACCESS",
+        "do not invent an unauthenticated kill grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "not": ["unauthenticated_allow", "execv", "dispatcher", "path_found", "sentinel_rewrite"],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-status-processes-write-kill-allow",
+      "session_class": "luci-mod-status-processes-write",
+      "sid": "acacacacacacacacacacacacacacacac",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:kill",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "expectation_id": "luci-mod-status-processes-kill",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-processes",
+      "note": "Fixture login luci-mod-status-processes-write is not a stock device login. processes.js handleSignal uses fs.exec('/bin/kill', ['-%d'.format(signum), '%s'.format(pid)]) for Hang Up/Terminate/Kill on a listed process. Bare executable ACL; intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.write.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.write.file./bin/kill=[exec]",
+        "luci@b2e0be4b processes.js handleSignal fs.exec('/bin/kill', ['-%d'.format(signum), '%s'.format(pid)])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first"
+      ]
+    },
+    {
+      "id": "luci-mod-status-processes-write-kill-extra-argv-allow",
+      "session_class": "luci-mod-status-processes-write",
+      "sid": "acacacacacacacacacacacacacacacac",
+      "command": "/bin/kill",
+      "params": ["-15", "42", "extra"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "target_id": "command:kill",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "expectation_id": "luci-mod-status-processes-kill",
+      "assessment": "intended_access",
+      "note": "Bare-exe file.exec means extra tokens to /bin/kill are intended_access for this fixture, not authorization_violation and not a PoC. Grant is emitted from the inventoried caller case.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.write.file./bin/kill=[exec]",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first; extra argv still matches the executable object"
+      ]
+    },
+    {
+      "id": "luci-mod-status-processes-kill-deny",
+      "session_class": "luci-mod-status-processes",
+      "sid": "22222222222222222222222222222222",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "note": "The luci-mod-status-processes read fixture has luci.getProcessList only; write file.exec of /bin/kill is not in session.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.read.ubus.luci=[getProcessList]",
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.write.file./bin/kill=[exec]",
+        "fixture rpcd.config luci-mod-status-processes is list read only"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-kill-command-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "rule_refs": [
+        "luci-mod-status-firewall grants ubus file.exec but file.exec of /bin/kill is luci-mod-status-processes write"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-kill-deny",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "rule_refs": [
+        "luci-mod-status-logs read ubus.file=[stat] and cgi-io exec of dmesg; no ubus file.exec"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-kill-command-denied",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "note": "The luci-mod-network-config read fixture has ubus file.exec but not file.exec of /bin/kill.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-processes.write.file./bin/kill=[exec]"
+      ]
+    },
+    {
+      "id": "ifup-not-found",
+      "session_class": "luci-mod-status-processes-write",
+      "sid": "acacacacacacacacacacacacacacacac",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "rule_refs": [
+        "ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1; not inventoried in this oracle"
+      ]
+    },
+    {
+      "id": "ping-not-found",
+      "session_class": "luci-mod-status-processes-write",
+      "sid": "acacacacacacacacacacacacacacacac",
+      "command": "/bin/ping",
+      "params": ["-c", "5", "openwrt.org"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "note": "diagnostics.js uses fs.exec_direct; luci-mod-network-diagnostics is not this slice and lookup is not a live PATH search.",
+      "rule_refs": [
+        "this oracle treats only inventoried /bin/kill as found"
+      ]
+    },
+    {
+      "id": "env-with-sid-permission-denied",
+      "session_class": "luci-mod-status-processes-write",
+      "sid": "acacacacacacacacacacacacacacacac",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "env": {"FOO": "bar"},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: SID plus env is PERMISSION_DENIED",
+        "inventoried callers do not pass env"
+      ]
+    },
+    {
+      "id": "empty-env-with-sid-permission-denied",
+      "session_class": "luci-mod-status-processes-write",
+      "sid": "acacacacacacacacacacacacacacacac",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "env": {},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: a present env TABLE with SID is PERMISSION_DENIED even when empty"
+      ]
+    },
+    {
+      "id": "root-star-kill-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/bin/kill",
+      "params": ["-15", "42"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:kill",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}

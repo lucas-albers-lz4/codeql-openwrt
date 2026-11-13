@@ -16,7 +16,7 @@
   ],
   "negative_controls": [
     "getConntrackList/getProcessList take no request.args",
-    "luci-mod-status-processes fixture is read-only; write file.exec /bin/kill is not emitted",
+    "luci-mod-status-processes fixture is read-only; write file.exec /bin/kill is policy:ubus-file-exec-kill-v1, not this luci.sys popen",
     "not path_found",
     "not a new query; QL waits on codeql-ucode#12"
   ],

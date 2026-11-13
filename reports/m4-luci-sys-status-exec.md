@@ -11,14 +11,14 @@ These are **call-body inventory** records (`handler_effect` / `fact`), not taint
 
 Unauthenticated `/ubus` still only grants `luci.getFeatures` (M2). These methods are **not** unauthenticated (no-grant deny). Both fixture roles are synthetic, not stock logins. Stock root `*` remains `intended_access` (`root-administration`), not a violation. Canonical catalog: [handler_effects.md](handler_effects.md).
 
-`getConntrackList` reuses the `#12` `luci-mod-status-realtime` session (the ACL array already listed it next to `getRealtimeStats`); that is not a new session class. The `luci-mod-status-processes` fixture is **read-only**. The same ACL group's write `file.exec` `/bin/kill` and ubus `file.exec` are **not** emitted.
+`getConntrackList` reuses the `#12` `luci-mod-status-realtime` session (the ACL array already listed it next to `getRealtimeStats`); that is not a new session class. The `luci-mod-status-processes` fixture for `getProcessList` is **read-only**. Write `file.exec` `/bin/kill` is the separate M2 slice `policy:ubus-file-exec-kill-v1`, not this luci.sys popen.
 
 See `reports/m4-luci-sys-status-exec-coverage.json`.
 
 ## Still unmodeled in this slice
 
 - `getConntrackList` primary `open('/proc/net/nf_conntrack')` (file_read, not exec)
-- `luci-mod-status-processes` write `file.exec` `/bin/kill` (C `file.exec`, not this luci.sys popen)
+- `luci-mod-status-processes` write `file.exec` `/bin/kill` (C `file.exec`; M2 is `policy:ubus-file-exec-kill-v1`, not this luci.sys popen)
 - `getRealtimeStats` later `flags` reassignment (CFG/SSA; QL waits on `codeql-ucode#12`)
 - same-function `flags` / `u`/`p` quoting ([m4-realtime-password-quoted-locals.md](m4-realtime-password-quoted-locals.md))
 - `setInitAction` → `luci.sys` `init_action` interprocedural dataflow (no luci-ssl delegated grant)

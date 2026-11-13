@@ -695,7 +695,11 @@ class TestCommittedArtifacts(unittest.TestCase):
             self.assertEqual(row["ingress"], "ubus_http")
             self.assertIn(
                 row["analysis_revision"],
-                {"policy:ubus-file-exec-v1", "policy:ubus-file-exec-ifup-v1"},
+                {
+                    "policy:ubus-file-exec-v1",
+                    "policy:ubus-file-exec-ifup-v1",
+                    "policy:ubus-file-exec-kill-v1",
+                },
             )
             self.assertNotIn("cgi_endpoint", row)
 

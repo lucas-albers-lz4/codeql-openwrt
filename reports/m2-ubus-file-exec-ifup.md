@@ -45,7 +45,7 @@ callers do not pass env.
 
 `luci-mod-network-diagnostics` ping/traceroute uses `fs.exec_direct` and has
 no cgi-io exec grant; that mismatch is not this slice.
-`luci-mod-status-processes` `/bin/kill` is not this slice.
+`luci-mod-status-processes` `/bin/kill` is not this slice (`policy:ubus-file-exec-kill-v1`).
 
 `shellquote` and `basename` are not sanitizers. `rpc_canonicalize_path` is a
 textual path normalizer, not a taint sanitizer.
