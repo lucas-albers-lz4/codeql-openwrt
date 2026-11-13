@@ -42,6 +42,7 @@ from policy.cgi_exec_status import build_artifacts as status_build_artifacts  # 
 from policy.ubus_file_exec import build_artifacts as file_exec_build_artifacts  # noqa: E402
 from policy.ubus_file_exec_ifup import build_artifacts as ifup_build_artifacts  # noqa: E402
 from policy.ubus_file_exec_kill import build_artifacts as kill_build_artifacts  # noqa: E402
+from policy.ubus_file_exec_list_backup import build_artifacts as list_backup_build_artifacts  # noqa: E402
 from policy.ubus_file_exec_mounts import build_artifacts as mounts_build_artifacts  # noqa: E402
 from policy.cgi_upload import build_artifacts as upload_build_artifacts  # noqa: E402
 from policy.oracle import (  # noqa: E402
@@ -362,6 +363,7 @@ class TestCommittedArtifacts(unittest.TestCase):
         ifup_grants, _, _ = ifup_build_artifacts()
         kill_grants, _, _ = kill_build_artifacts()
         mounts_grants, _, _ = mounts_build_artifacts()
+        list_backup_grants, _, _ = list_backup_build_artifacts()
         self.assertEqual(
             committed_grants,
             luci_grants
@@ -374,7 +376,8 @@ class TestCommittedArtifacts(unittest.TestCase):
             + file_exec_grants
             + ifup_grants
             + kill_grants
-            + mounts_grants,
+            + mounts_grants
+            + list_backup_grants,
         )
         self.assertEqual(committed_luci, luci_bundle)
         self.assertEqual(committed_cgi, cgi_bundle)

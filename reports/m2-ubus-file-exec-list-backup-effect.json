@@ -1,0 +1,57 @@
+[
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:effect:ubus-file-exec-list-backup:list-backup",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-list-backup-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/sysupgrade",
+    "effect_id": "file.exec.list-backup",
+    "target_id": "command:sysupgrade-list-backup",
+    "op": "exec",
+    "sink_kind": "file_exec",
+    "asset_id": "command:sysupgrade-list-backup",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-system-flash-list-backup",
+    "conditions": [
+      "JSON-RPC /ubus call object=file method=exec",
+      "data parameter is a BLOBMSG_TYPE_TABLE",
+      "command canonicalizes to /sbin/sysupgrade",
+      "flash.js handleBackupList fs.exec('/sbin/sysupgrade', ['--list-backup'])"
+    ],
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "assumptions": [
+      "Synthetic handler_effect transcribed from rpcd-mod-file rpc_file_exec; C, not ucode",
+      "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+      "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the cmdline /sbin/sysupgrade --list-backup, not the bare executable, so extra tokens are PERMISSION_DENIED, not authorization_violation and not a PoC.",
+      "This oracle does not fork execv or run the command body.",
+      "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+      "This command is not a luci object method. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec. cgi-backup / cgi-download stay on their cgi-io grants.",
+      "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env.",
+      "The luci-mod-system-flash fixture is already list read for cgi-backup and cgi-download. This slice reuses that session; it does not invent a write flash login."
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-system-flash:ubus_http:file.exec:list-backup",
+      "policy:grant:root:ubus_http:file.exec:list-backup",
+      "rpcd@d99f703e file.c rpc_file_exec_run executable then cmdline file ACL",
+      "luci@b2e0be4b flash.js handleBackupList fs.exec('/sbin/sysupgrade', ['--list-backup'])"
+    ],
+    "unknowns": [
+      "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+      "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command path as found.",
+      "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /sbin/sysupgrade --list-backup are not modeled.",
+      "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed (write ACLs exist but the flash fixture is list-read only). Track A is unstaffed. dispatcher is not this slice.",
+      "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+    ]
+  }
+]

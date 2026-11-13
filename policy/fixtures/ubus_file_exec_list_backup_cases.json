@@ -1,0 +1,290 @@
+{
+  "comment": "Hand-transcribed expected ubus file.exec decisions for luci-mod-system-flash /sbin/sysupgrade --list-backup from pinned rpcd-mod-file C, flash.js handleBackupList, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then checks file.exec of the canonicalized executable first, then the cmdline.",
+    "Bounded to fs.exec callers at luci b2e0be4b: flash.js handleBackupList /sbin/sysupgrade --list-backup.",
+    "Inventoried luci-ssl ACLs grant the cmdline, not the bare executable. Extra tokens therefore miss the cmdline object as PERMISSION_DENIED, not authorization_violation and not a PoC.",
+    "The luci-mod-system-flash fixture is already list read (cgi-backup / cgi-download). This slice reuses that session.",
+    "Write sysupgrade/firstboot stay unstaffed: write ACLs exist but the fixture is list-read only. Do not invent a write flash login.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed. A ubus file.exec grant without the matching file ACL is UBUS_STATUS_PERMISSION_DENIED.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or execv.",
+    "shellquote and basename are not sanitizers. rpc_canonicalize_path is not a taint sanitizer.",
+    "luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1.",
+    "luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1.",
+    "luci-mod-status-processes /bin/kill stay on policy:ubus-file-exec-kill-v1.",
+    "luci-mod-system-mounts umount/block stay on policy:ubus-file-exec-mounts-v1.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec)."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-list-backup-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "command:sysupgrade-list-backup",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus file.exec",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access file/exec false -> ERROR_ACCESS",
+        "do not invent an unauthenticated list-backup grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "not": ["unauthenticated_allow", "execv", "dispatcher", "path_found", "sentinel_rewrite"],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-list-backup-allow",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:sysupgrade-list-backup",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "expectation_id": "luci-mod-system-flash-list-backup",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-flash",
+      "note": "Fixture login luci-mod-system-flash is not a stock device login. flash.js handleBackupList uses fs.exec('/sbin/sysupgrade', ['--list-backup']). Cmdline ACL; intended_access, not a violation and not a PoC. Reuses the existing list-read flash fixture.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file./sbin/sysupgrade --list-backup=[exec]",
+        "luci@b2e0be4b flash.js handleBackupList fs.exec('/sbin/sysupgrade', ['--list-backup'])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first then cmdline",
+        "fixture rpcd.config login luci-mod-system-flash list read luci-mod-system-flash"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-list-backup-extra-argv-denied",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup", "extra"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "target_id": "command:sysupgrade-list-backup",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "note": "Cmdline file.exec of /sbin/sysupgrade --list-backup means extra tokens miss the object. PERMISSION_DENIED, not authorization_violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file./sbin/sysupgrade --list-backup=[exec]",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable miss then cmdline; extra argv is a different object"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-sysupgrade-bare-denied",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/sbin/sysupgrade",
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "note": "Read flash ACL grants the cmdline, not the bare /sbin/sysupgrade executable.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file has /sbin/sysupgrade --list-backup, not bare /sbin/sysupgrade"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-sysupgrade-test-denied",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/sbin/sysupgrade",
+      "params": ["--test", "/tmp/firmware.bin"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "note": "Write sysupgrade cmdlines exist on luci-mod-system-flash write but the fixture is list-read only. Do not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.write.file./sbin/sysupgrade --test /tmp/firmware.bin=[exec]",
+        "fixture rpcd.config luci-mod-system-flash is list read only"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-list-backup-command-denied",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "note": "The luci-mod-system-mounts fixture has ubus file.exec (umount/block) but not file.exec of /sbin/sysupgrade --list-backup.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file./sbin/sysupgrade --list-backup=[exec]"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-list-backup-command-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "rule_refs": [
+        "luci-mod-status-firewall grants ubus file.exec but file.exec of /sbin/sysupgrade --list-backup is luci-mod-system-flash read"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-list-backup-deny",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "rule_refs": [
+        "luci-mod-status-logs read ubus.file=[stat] and cgi-io exec of dmesg; no ubus file.exec"
+      ]
+    },
+    {
+      "id": "firstboot-not-found",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/sbin/firstboot",
+      "params": ["-r", "-y"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "note": "flash.js handleFirstboot stays unstaffed. This oracle does not treat /sbin/firstboot as found. Write ACLs exist but the flash fixture is list-read only.",
+      "rule_refs": [
+        "this oracle treats only inventoried /sbin/sysupgrade as found",
+        "do not invent a luci-mod-system-flash write login"
+      ]
+    },
+    {
+      "id": "ping-not-found",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/bin/ping",
+      "params": ["-c", "5", "openwrt.org"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "note": "diagnostics.js uses fs.exec_direct; luci-mod-network-diagnostics is not this slice and lookup is not a live PATH search.",
+      "rule_refs": [
+        "this oracle treats only inventoried /sbin/sysupgrade as found"
+      ]
+    },
+    {
+      "id": "env-with-sid-permission-denied",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "env": {"FOO": "bar"},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: SID plus env is PERMISSION_DENIED",
+        "inventoried callers do not pass env"
+      ]
+    },
+    {
+      "id": "empty-env-with-sid-permission-denied",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "env": {},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: a present env TABLE with SID is PERMISSION_DENIED even when empty"
+      ]
+    },
+    {
+      "id": "root-star-list-backup-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/sbin/sysupgrade",
+      "params": ["--list-backup"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:sysupgrade-list-backup",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}

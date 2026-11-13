@@ -1,6 +1,6 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects and synthetic ubus `file.exec` effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`); ubus `file.exec` rows are policy-facts (`policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects and synthetic ubus `file.exec` effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`); ubus `file.exec` rows are policy-facts (`policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
 
 Findings are evidence, not proof. This catalog does not emit `authorization_violation` or dispatcher effects. `shellquote` and `basename` are not sanitizers. `canonicalize_path` is not a taint sanitizer.
 
@@ -24,12 +24,13 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m2-ubus-file-exec-ifup-effect.json](m2-ubus-file-exec-ifup-effect.json) | synthetic ubus `file.exec` of luci-mod-network-config ifup/ifdown/wifi (C, not ucode) |
 | [m2-ubus-file-exec-kill-effect.json](m2-ubus-file-exec-kill-effect.json) | synthetic ubus `file.exec` of luci-mod-status-processes `/bin/kill` (C, not ucode) |
 | [m2-ubus-file-exec-mounts-effect.json](m2-ubus-file-exec-mounts-effect.json) | synthetic ubus `file.exec` of luci-mod-system-mounts umount/`block mount` (C, not ucode) |
+| [m2-ubus-file-exec-list-backup-effect.json](m2-ubus-file-exec-list-backup-effect.json) | synthetic ubus `file.exec` of luci-mod-system-flash `sysupgrade --list-backup` (C, not ucode) |
 
 Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing classification ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher. Helper `exec_helper_inventory` rows stay in the files inventory; this catalog holds the cgi-exec file.exec effects those helpers join.
 
 ## Grant ↔ effect joins
 
-Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
+Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
 
 Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
 
@@ -165,17 +166,25 @@ Same conjunctive HTTP `/ubus` `file.exec` gate. Bounded to luci-mod-status-proce
 
 ### ubus file.exec luci-mod-system-mounts umount/block (policy-facts synthetic, conjunctive)
 
-Same conjunctive HTTP `/ubus` `file.exec` gate. Bounded to luci-mod-system-mounts write `fs.exec` callers at luci `b2e0be4b`: `mounts.js` `handleUmount` `/bin/umount`, `handleMountAll` `/sbin/block mount`. Inventoried luci-ssl ACLs grant the bare executables; extra tokens are `intended_access` for the existing read/write mounts fixture, not `authorization_violation` and not a PoC. Unauthenticated is a **non-join** (`ERROR_ACCESS`). Missing SID is `ERROR_PARSE`. A ubus `file.exec` grant without the matching file ACL is a **non-join**. Catalog copy: [m2-ubus-file-exec-mounts-effect.json](m2-ubus-file-exec-mounts-effect.json). Join keys use `entrypoint_id` `ubus_http:file.exec:<fs_path>` plus `ubus_object=file` / `method=exec`. Reuses the existing `luci-mod-system-mounts` session already used for `getBlockDevices` / `setBlockDetect`; those luci object popen/system of `/sbin/block` stay on the luci grants. Does not model `execv`, live PATH search, diagnostics ping, cron (`ubus` `file.write` not `file.exec`), or flash.js sysupgrade/firstboot.
+Same conjunctive HTTP `/ubus` `file.exec` gate. Bounded to luci-mod-system-mounts write `fs.exec` callers at luci `b2e0be4b`: `mounts.js` `handleUmount` `/bin/umount`, `handleMountAll` `/sbin/block mount`. Inventoried luci-ssl ACLs grant the bare executables; extra tokens are `intended_access` for the existing read/write mounts fixture, not `authorization_violation` and not a PoC. Unauthenticated is a **non-join** (`ERROR_ACCESS`). Missing SID is `ERROR_PARSE`. A ubus `file.exec` grant without the matching file ACL is a **non-join**. Catalog copy: [m2-ubus-file-exec-mounts-effect.json](m2-ubus-file-exec-mounts-effect.json). Join keys use `entrypoint_id` `ubus_http:file.exec:<fs_path>` plus `ubus_object=file` / `method=exec`. Reuses the existing `luci-mod-system-mounts` session already used for `getBlockDevices` / `setBlockDetect`; those luci object popen/system of `/sbin/block` stay on the luci grants. Does not model `execv`, live PATH search, diagnostics ping, cron (`ubus` `file.write` not `file.exec`), or flash.js write sysupgrade/firstboot. luci-mod-system-flash `sysupgrade --list-backup` is `policy:ubus-file-exec-list-backup-v1`.
 
 | `effect_id` | Delegated grant | Root grant | Unauthenticated |
 | --- | --- | --- | --- |
 | `file.exec.umount` | `policy:grant:luci-mod-system-mounts:ubus_http:file.exec:umount` | `policy:grant:root:ubus_http:file.exec:umount` | no-join |
 | `file.exec.block` | `policy:grant:luci-mod-system-mounts:ubus_http:file.exec:block` | `policy:grant:root:ubus_http:file.exec:block` | no-join |
 
+### ubus file.exec luci-mod-system-flash sysupgrade --list-backup (policy-facts synthetic, conjunctive)
+
+Same conjunctive HTTP `/ubus` `file.exec` gate. Bounded to luci-mod-system-flash read `fs.exec` of `/sbin/sysupgrade --list-backup` at luci `b2e0be4b`: `flash.js` `handleBackupList`. Inventoried luci-ssl ACLs grant the cmdline, not the bare executable; extra tokens are `PERMISSION_DENIED`, not `authorization_violation` and not a PoC. Unauthenticated is a **non-join** (`ERROR_ACCESS`). Missing SID is `ERROR_PARSE`. A ubus `file.exec` grant without the matching file ACL is a **non-join**. Catalog copy: [m2-ubus-file-exec-list-backup-effect.json](m2-ubus-file-exec-list-backup-effect.json). Join keys use `entrypoint_id` `ubus_http:file.exec:/sbin/sysupgrade:--list-backup` plus `ubus_object=file` / `method=exec`. Reuses the existing `luci-mod-system-flash` list-read session already used for cgi-backup / cgi-download. Does not model `execv`, live PATH search, diagnostics ping, cron (`ubus` `file.write` not `file.exec`), or flash.js write sysupgrade/firstboot (write ACLs exist but the fixture is list-read only).
+
+| `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- |
+| `file.exec.list-backup` | `policy:grant:luci-mod-system-flash:ubus_http:file.exec:list-backup` | `policy:grant:root:ubus_http:file.exec:list-backup` | no-join |
+
 ## Out of this file
 
 - dispatcher / `menu.d` routes
 - luci-ssl `files[]` routing classification ([m4-luci-ssl-files.md](m4-luci-ssl-files.md))
-- remaining ubus `file.exec` without a matching luci-ssl grant + caller pair in this catalog (`/bin/ping` via `fs.exec_direct` with no cgi-io on luci-mod-network-diagnostics; crontab.js `fs.exec` of cron reload has file.exec of the cmdline but ubus `file.write` not `file.exec`; luci-mod-system flash.js sysupgrade/firstboot stay unstaffed)
+- remaining ubus `file.exec` without a matching luci-ssl grant + caller pair in this catalog (`/bin/ping` via `fs.exec_direct` with no cgi-io on luci-mod-network-diagnostics; crontab.js `fs.exec` of cron reload has file.exec of the cmdline but ubus `file.write` not `file.exec`; luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed — write ACLs exist but the flash fixture is list-read only)
 - `authorization_violation` / BrokenAccessControl `path_found`
 - Alloy `producer: step4`
