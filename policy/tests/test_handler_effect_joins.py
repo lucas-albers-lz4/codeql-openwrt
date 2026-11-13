@@ -145,6 +145,7 @@ MOUNTS_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-mounts-effect.json"
 LIST_BACKUP_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-list-backup-effect.json"
 SYSTEM_REBOOT_SNAPSHOT = "reports/m2-ubus-system-reboot-effect.json"
 RC_INIT_SNAPSHOT = "reports/m2-ubus-rc-init-effect.json"
+RC_LIST_SNAPSHOT = "reports/m2-ubus-rc-list-effect.json"
 FILE_EXEC_CATALOG = {
     "policy:effect:ubus-file-exec:iptables": {
         "ubus_object": "file",
@@ -268,6 +269,18 @@ RC_INIT_CATALOG = {
         "entrypoint_id": "ubus_http:rc.init",
     },
 }
+RC_LIST_CATALOG = {
+    "policy:effect:ubus-rc-list": {
+        "ubus_object": "rc",
+        "method": "list",
+        "sink_kind": "ubus_call",
+        "op": "invoke",
+        "snapshot": RC_LIST_SNAPSHOT,
+        "delegated_class": "luci-mod-system-init-read",
+        "entrypoint_id": "ubus_http:rc.list",
+    },
+}
+RC_CATALOG = {**RC_INIT_CATALOG, **RC_LIST_CATALOG}
 COPIED_EFFECT_SNAPSHOTS = (
     "reports/findings.json",
     "reports/m4-getfeatures-direct-exec.json",
@@ -333,23 +346,31 @@ class TestHandlerEffectJoins(unittest.TestCase):
             for row in self.effects
             if row.get("ubus_object") == "rc" and row.get("method") == "init"
         ]
+        rc_list_rows = [
+            row
+            for row in self.effects
+            if row.get("ubus_object") == "rc" and row.get("method") == "list"
+        ]
         cgi_rows = [row for row in self.effects if row.get("ingress") == "cgi_io"]
         self.assertEqual(len(luci_rows), LUCI_EFFECT_COUNT)
         self.assertEqual(len(cgi_rows), len(CGI_CATALOG))
         self.assertEqual(len(file_exec_rows), len(FILE_EXEC_CATALOG))
         self.assertEqual(len(reboot_rows), len(SYSTEM_REBOOT_CATALOG))
         self.assertEqual(len(rc_init_rows), len(RC_INIT_CATALOG))
+        self.assertEqual(len(rc_list_rows), len(RC_LIST_CATALOG))
         self.assertEqual({row["record_id"] for row in cgi_rows}, set(CGI_CATALOG))
         self.assertEqual({row["record_id"] for row in file_exec_rows}, set(FILE_EXEC_CATALOG))
         self.assertEqual({row["record_id"] for row in reboot_rows}, set(SYSTEM_REBOOT_CATALOG))
         self.assertEqual({row["record_id"] for row in rc_init_rows}, set(RC_INIT_CATALOG))
+        self.assertEqual({row["record_id"] for row in rc_list_rows}, set(RC_LIST_CATALOG))
         self.assertEqual(
             len(self.effects),
             len(luci_rows)
             + len(cgi_rows)
             + len(file_exec_rows)
             + len(reboot_rows)
-            + len(rc_init_rows),
+            + len(rc_init_rows)
+            + len(rc_list_rows),
         )
         self.assertEqual(
             {row["cgi_endpoint"] for row in cgi_rows},
@@ -426,6 +447,20 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotEqual(rc_init["evidence_status"], "path_found")
             self.assertEqual(rc_init["entrypoint_id"], spec["entrypoint_id"])
             self.assertNotIn("cgi_endpoint", rc_init)
+        for rc_list in rc_list_rows:
+            spec = RC_LIST_CATALOG[rc_list["record_id"]]
+            self.assertEqual(rc_list["ubus_object"], spec["ubus_object"])
+            self.assertEqual(rc_list["method"], spec["method"])
+            self.assertEqual(rc_list["producer"], "policy_facts")
+            self.assertEqual(rc_list["sink_kind"], spec["sink_kind"])
+            self.assertEqual(rc_list["op"], spec["op"])
+            self.assertEqual(rc_list["assessment"], "intended_access")
+            self.assertNotEqual(rc_list["assessment"], "authorization_violation")
+            self.assertEqual(rc_list["corpus_revision"], lock_hash)
+            self.assertEqual(rc_list["evidence_status"], "fact")
+            self.assertNotEqual(rc_list["evidence_status"], "path_found")
+            self.assertEqual(rc_list["entrypoint_id"], spec["entrypoint_id"])
+            self.assertNotIn("cgi_endpoint", rc_list)
 
     def test_every_grant_joins_an_effect(self) -> None:
         for grant in self.grants:
@@ -805,6 +840,62 @@ class TestHandlerEffectJoins(unittest.TestCase):
             )
             self.assertEqual(effect, snapshot)
 
+    def test_rc_list_effects_join_delegated_and_root_grants(self) -> None:
+        lock_hash = corpus_revision()
+        snapshots = {}
+        for spec in RC_LIST_CATALOG.values():
+            snapshots[spec["snapshot"]] = _load(REPO / spec["snapshot"])
+        for record_id, spec in RC_LIST_CATALOG.items():
+            effect = next(row for row in self.effects if row["record_id"] == record_id)
+            delegated = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == spec["delegated_class"]
+            )
+            init_write = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "luci-mod-system-init"
+            )
+            config = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "luci-mod-system-config"
+            )
+            root = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "root"
+            )
+            refs = effect["evidence_refs"]
+            self.assertIn(delegated["record_id"], refs)
+            self.assertIn(init_write["record_id"], refs)
+            self.assertIn(config["record_id"], refs)
+            self.assertIn(root["record_id"], refs)
+            self.assertEqual(effect["assessment"], "intended_access")
+            self.assertEqual(effect["corpus_revision"], lock_hash)
+            self.assertEqual(delegated["corpus_revision"], lock_hash)
+            self.assertEqual(root["corpus_revision"], lock_hash)
+            self.assertEqual(effect["ubus_object"], "rc")
+            self.assertEqual(effect["method"], "list")
+            self.assertEqual(effect["sink_kind"], "ubus_call")
+            self.assertEqual(effect["entrypoint_id"], spec["entrypoint_id"])
+            unauth = [
+                grant
+                for grant in self.grants
+                if grant.get("entrypoint_id") == effect["entrypoint_id"]
+                and grant["session_class"] == "unauthenticated"
+            ]
+            self.assertEqual(unauth, [])
+            snapshot = next(
+                row for row in snapshots[spec["snapshot"]] if row["record_id"] == record_id
+            )
+            self.assertEqual(effect, snapshot)
+
     def test_catalog_does_not_invent_forbidden_claims(self) -> None:
         for row in self.effects:
             self.assertNotEqual(row.get("assessment"), "authorization_violation")
@@ -823,9 +914,9 @@ class TestHandlerEffectJoins(unittest.TestCase):
                 self.assertEqual(row.get("method"), "reboot")
                 self.assertNotIn("cgi_endpoint", row)
             elif row.get("ubus_object") == "rc":
-                spec = RC_INIT_CATALOG[row["record_id"]]
+                spec = RC_CATALOG[row["record_id"]]
                 self.assertEqual(row.get("sink_kind"), spec["sink_kind"])
-                self.assertEqual(row.get("method"), "init")
+                self.assertEqual(row.get("method"), spec["method"])
                 self.assertNotIn("cgi_endpoint", row)
             else:
                 self.assertNotIn("cgi_endpoint", row)

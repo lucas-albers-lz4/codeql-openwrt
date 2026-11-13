@@ -2216,5 +2216,126 @@
       "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
     ],
     "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-init-read:ubus_http:rc.list",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-rc-list-v1",
+    "session_class": "luci-mod-system-init-read",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:rc.list",
+    "ubus_object": "rc",
+    "method": "list",
+    "target_id": "ubus:rc.list",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-init",
+    "expectation_id": "luci-mod-system-init-list",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=rc function=list (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+      "luci@b2e0be4b startup.js rpc.declare object=rc method=list",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access rc/list",
+      "fixture rpcd.config login luci-mod-system-init-read list read luci-mod-system-init"
+    ],
+    "note": "Fixture login luci-mod-system-init-read is not a stock device login. startup.js uses rpc.declare object=rc method=list. Intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-init:ubus_http:rc.list",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-rc-list-v1",
+    "session_class": "luci-mod-system-init",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:rc.list",
+    "ubus_object": "rc",
+    "method": "list",
+    "target_id": "ubus:rc.list",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-init",
+    "expectation_id": "luci-mod-system-init-write-list",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=rc function=list (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list] write.ubus.rc=[init]",
+      "rpcd session.c login_test_permission: write implies read",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access rc/list",
+      "fixture rpcd.config login luci-mod-system-init list write luci-mod-system-init"
+    ],
+    "note": "rpcd write implies read, so the existing write luci-mod-system-init fixture also matches read ubus rc.list. Intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-config:ubus_http:rc.list",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-rc-list-v1",
+    "session_class": "luci-mod-system-config",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:rc.list",
+    "ubus_object": "rc",
+    "method": "list",
+    "target_id": "ubus:rc.list",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-config",
+    "expectation_id": "luci-mod-system-config-rc-list",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=rc function=list (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.rc=[list]",
+      "luci@b2e0be4b system.js rpc.declare object=rc method=list",
+      "rpcd session.c login_test_permission: write implies read",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access rc/list",
+      "fixture rpcd.config login luci-mod-system-config list write luci-mod-system-config"
+    ],
+    "note": "Existing luci-mod-system-config write fixture grants rc.list via write-implies-read. system.js uses rpc.declare object=rc method=list. Intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:rc.list",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-rc-list-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:rc.list",
+    "ubus_object": "rc",
+    "method": "list",
+    "target_id": "ubus:rc.list",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=rc function=list (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]
