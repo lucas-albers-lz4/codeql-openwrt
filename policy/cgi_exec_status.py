@@ -248,13 +248,13 @@ def evaluate_status_exec(
     )
 
 
-def _identity(record_type: str, record_id: str) -> dict[str, str]:
+def _identity(record_type: str, record_id: str, revision: str) -> dict[str, str]:
     return {
         "record_type": record_type,
         "evidence_status": "fact",
         "producer": PRODUCER,
         "record_id": record_id,
-        "corpus_revision": corpus_revision(),
+        "corpus_revision": revision,
         "profile": PROFILE,
         "analysis_revision": ANALYSIS_REVISION,
     }
@@ -288,7 +288,7 @@ def evaluate_expected_case(
     )
 
 
-def grant_record(case: dict[str, Any], result) -> dict[str, Any]:
+def grant_record(case: dict[str, Any], result, revision: str) -> dict[str, Any]:
     if result.session_class is None or case["session_class"] != result.session_class:
         raise ValueError("grant case session_class does not match evaluated SID session")
     if case.get("cgi_endpoint") != CGI_ENDPOINT:
@@ -296,7 +296,7 @@ def grant_record(case: dict[str, Any], result) -> dict[str, Any]:
     helper = result.helper
     if helper not in COMMANDS:
         raise ValueError(f"refusing to emit grant for command {helper!r}")
-    record = _identity("policy_grant", grant_id(case["session_class"], helper))
+    record = _identity("policy_grant", grant_id(case["session_class"], helper), revision)
     record.update(
         {
             "session_class": case["session_class"],
@@ -327,9 +327,9 @@ def grant_record(case: dict[str, Any], result) -> dict[str, Any]:
     return record
 
 
-def decision_record(case: dict[str, Any], result) -> dict[str, Any]:
+def decision_record(case: dict[str, Any], result, revision: str) -> dict[str, Any]:
     helper = result.helper if result.helper in COMMANDS else None
-    record = _identity("policy_decision", f"policy:decision:{case['id']}")
+    record = _identity("policy_decision", f"policy:decision:{case['id']}", revision)
     record.update(
         {
             "session_class": case.get("session_class"),
@@ -408,12 +408,12 @@ def decision_record(case: dict[str, Any], result) -> dict[str, Any]:
     return {key: value for key, value in record.items() if value is not None}
 
 
-def effect_record(fs_path: str, grants: list[dict[str, Any]]) -> dict[str, Any]:
+def effect_record(fs_path: str, grants: list[dict[str, Any]], revision: str) -> dict[str, Any]:
     spec = COMMANDS[fs_path]
     command_grants = [row for row in grants if row.get("fs_path") == fs_path]
     grant_ids = [row["record_id"] for row in command_grants]
     assessment = "intended_access" if grant_ids else "unassessed"
-    record = _identity("handler_effect", effect_id(fs_path))
+    record = _identity("handler_effect", effect_id(fs_path), revision)
     record.update(
         {
             "ingress": CGI_INGRESS,
@@ -467,24 +467,25 @@ def effect_record(fs_path: str, grants: list[dict[str, Any]]) -> dict[str, Any]:
 def build_artifacts(
     fixtures: Path = FIXTURES, repo_root: Path = REPO_ROOT
 ) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
+    revision = corpus_revision(repo_root)
     sessions = load_status_world(fixtures)
     cases = load_expected_cases(fixtures / "cgi_exec_status_cases.json")
     grants_by_id: dict[str, dict[str, Any]] = {}
     decisions: list[dict[str, Any]] = []
     for case in cases:
         result = evaluate_expected_case(case, sessions)
-        decisions.append(decision_record(case, result))
+        decisions.append(decision_record(case, result, revision))
         if case.get("expect_grant") and result.outcome == "allow":
             if case.get("cgi_endpoint") != CGI_ENDPOINT:
                 raise ValueError(f"refusing to emit grant for {case.get('cgi_endpoint')}")
-            record = grant_record(case, result)
+            record = grant_record(case, result, revision)
             grants_by_id.setdefault(record["record_id"], record)
     grants = list(grants_by_id.values())
     bundle = {
         "producer": PRODUCER,
         "profile": PROFILE,
         "analysis_revision": ANALYSIS_REVISION,
-        "corpus_revision": corpus_revision(repo_root),
+        "corpus_revision": revision,
         "pins": _pins(),
         "scope": "cgi-io cgi-exec file.exec of luci-mod-status dmesg/nft/iptables/firewall-init",
         "harness": {
@@ -513,7 +514,7 @@ def build_artifacts(
         ],
         "decisions": decisions,
     }
-    effects = [effect_record(path, grants) for path in COMMANDS]
+    effects = [effect_record(path, grants, revision) for path in COMMANDS]
     return grants, bundle, effects
 
 

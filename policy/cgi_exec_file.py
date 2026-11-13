@@ -66,6 +66,8 @@ CGI_FUNCTION = "read"
 FILE_SCOPE = "file"
 FILE_FUNCTION = "exec"
 CONTENT_TYPE_PREFIX = "application/x-www-form-urlencoded"
+# cgi-io does not change locale: C isspace(), not Python's Unicode whitespace.
+C_WHITESPACE = " \t\n\r\v\f"
 
 LOGS_SESSION_CLASS = "luci-mod-status-logs"
 LOGS_FIXTURE_SID = "33333333333333333333333333333333"
@@ -164,7 +166,7 @@ def parse_command(cmdline: Optional[str]) -> Optional[list[str]]:
         return None
     index = 0
     length = len(cmdline)
-    while index < length and cmdline[index].isspace():
+    while index < length and cmdline[index] in C_WHITESPACE:
         index += 1
     text = cmdline[index:]
     if not text:
@@ -182,7 +184,7 @@ def parse_command(cmdline: Optional[str]) -> Optional[list[str]]:
                 buf.append(char)
         elif char == "\\" and position + 1 < size:
             esc = True
-        elif char == "\0" or char.isspace():
+        elif char == "\0" or char in C_WHITESPACE:
             if buf:
                 args.append("".join(buf))
                 buf = []
@@ -465,13 +467,13 @@ def evaluate_file_exec(
     )
 
 
-def _identity(record_type: str, record_id: str) -> dict[str, str]:
+def _identity(record_type: str, record_id: str, revision: str) -> dict[str, str]:
     return {
         "record_type": record_type,
         "evidence_status": "fact",
         "producer": PRODUCER,
         "record_id": record_id,
-        "corpus_revision": corpus_revision(),
+        "corpus_revision": revision,
         "profile": PROFILE,
         "analysis_revision": ANALYSIS_REVISION,
     }
@@ -505,7 +507,7 @@ def evaluate_expected_case(
     )
 
 
-def grant_record(case: dict[str, Any], result: FileExecResult) -> dict[str, Any]:
+def grant_record(case: dict[str, Any], result: FileExecResult, revision: str) -> dict[str, Any]:
     if result.session_class is None or case["session_class"] != result.session_class:
         raise ValueError("grant case session_class does not match evaluated SID session")
     if case.get("cgi_endpoint") != CGI_ENDPOINT:
@@ -513,7 +515,7 @@ def grant_record(case: dict[str, Any], result: FileExecResult) -> dict[str, Any]
     helper = result.helper
     if helper not in HELPERS:
         raise ValueError(f"refusing to emit grant for helper {helper!r}")
-    record = _identity("policy_grant", grant_id(case["session_class"], helper))
+    record = _identity("policy_grant", grant_id(case["session_class"], helper), revision)
     record.update(
         {
             "session_class": case["session_class"],
@@ -544,9 +546,9 @@ def grant_record(case: dict[str, Any], result: FileExecResult) -> dict[str, Any]
     return record
 
 
-def decision_record(case: dict[str, Any], result: FileExecResult) -> dict[str, Any]:
+def decision_record(case: dict[str, Any], result: FileExecResult, revision: str) -> dict[str, Any]:
     helper = result.helper if result.helper in HELPERS else None
-    record = _identity("policy_decision", f"policy:decision:{case['id']}")
+    record = _identity("policy_decision", f"policy:decision:{case['id']}", revision)
     record.update(
         {
             "session_class": case.get("session_class"),
@@ -625,12 +627,12 @@ def decision_record(case: dict[str, Any], result: FileExecResult) -> dict[str, A
     return {key: value for key, value in record.items() if value is not None}
 
 
-def effect_record(fs_path: str, grants: list[dict[str, Any]]) -> dict[str, Any]:
+def effect_record(fs_path: str, grants: list[dict[str, Any]], revision: str) -> dict[str, Any]:
     spec = HELPERS[fs_path]
     helper_grants = [row for row in grants if row.get("fs_path") == fs_path]
     grant_ids = [row["record_id"] for row in helper_grants]
     assessment = "intended_access" if grant_ids else "unassessed"
-    record = _identity("handler_effect", effect_id(fs_path))
+    record = _identity("handler_effect", effect_id(fs_path), revision)
     record.update(
         {
             "ingress": CGI_INGRESS,
@@ -683,24 +685,25 @@ def effect_record(fs_path: str, grants: list[dict[str, Any]]) -> dict[str, Any]:
 def build_artifacts(
     fixtures: Path = FIXTURES, repo_root: Path = REPO_ROOT
 ) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
+    revision = corpus_revision(repo_root)
     sessions = load_helper_world(fixtures)
     cases = load_expected_cases(fixtures / "cgi_exec_file_cases.json")
     grants_by_id: dict[str, dict[str, Any]] = {}
     decisions: list[dict[str, Any]] = []
     for case in cases:
         result = evaluate_expected_case(case, sessions)
-        decisions.append(decision_record(case, result))
+        decisions.append(decision_record(case, result, revision))
         if case.get("expect_grant") and result.outcome == "allow":
             if case.get("cgi_endpoint") != CGI_ENDPOINT:
                 raise ValueError(f"refusing to emit grant for {case.get('cgi_endpoint')}")
-            record = grant_record(case, result)
+            record = grant_record(case, result, revision)
             grants_by_id.setdefault(record["record_id"], record)
     grants = list(grants_by_id.values())
     bundle = {
         "producer": PRODUCER,
         "profile": PROFILE,
         "analysis_revision": ANALYSIS_REVISION,
-        "corpus_revision": corpus_revision(repo_root),
+        "corpus_revision": revision,
         "pins": _pins(),
         "scope": "cgi-io cgi-exec file.exec of three luci-ssl libexec helpers",
         "harness": {
@@ -729,7 +732,7 @@ def build_artifacts(
         ],
         "decisions": decisions,
     }
-    effects = [effect_record(path, grants) for path in HELPERS]
+    effects = [effect_record(path, grants, revision) for path in HELPERS]
     return grants, bundle, effects
 
 

@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from urllib.parse import unquote
 
 import sys
 
@@ -47,6 +48,7 @@ from policy.oracle import (  # noqa: E402
     NETWORK_FIXTURE_SID,
     PRODUCER,
     build_artifacts as luci_build_artifacts,
+    corpus_revision,
 )
 
 SCHEMA = json.loads((REPO / "schemas" / "finding.schema.json").read_text(encoding="utf-8"))
@@ -290,6 +292,34 @@ class TestCDouble(unittest.TestCase):
         )
         self.assertEqual(parse_command(f"{PACKAGE_MANAGER_CALL} list-installed"), proc.stdout.splitlines())
 
+    def test_only_c_whitespace_splits_argv(self) -> None:
+        for whitespace in " \t\n\r\v\f":
+            with self.subTest(whitespace=repr(whitespace)):
+                command = f"{whitespace}{PACKAGE_MANAGER_CALL}{whitespace}list-installed{whitespace}"
+                expected = [PACKAGE_MANAGER_CALL, "list-installed"]
+                self.assertEqual(parse_command(command), expected)
+                self.assertEqual(
+                    self._run("parse_command", command).stdout.rstrip("\n").split("\n"),
+                    expected,
+                )
+        for preserved in "\x1c\x1d\x1e\x1f\u00a0":
+            with self.subTest(preserved=repr(preserved)):
+                command = f"{SYSLOG_WRAPPER}{preserved}ignored"
+                self.assertEqual(parse_command(command), [command])
+                self.assertEqual(self._run("parse_command", command).stdout, command + "\n")
+
+    def test_decoded_percent_1c_is_not_a_helper_argument_separator(self) -> None:
+        command = unquote(f"{SYSLOG_WRAPPER}%1cignored")
+        result = evaluate_file_exec(sid=LOGS_FIXTURE_SID, command=command)
+        double = self._run(
+            "decide", CONTENT_TYPE_PREFIX, LOGS_FIXTURE_SID, command,
+            CGI_SCOPE, CGI_OBJECT, CGI_FUNCTION,
+            SYSLOG_WRAPPER, FILE_FUNCTION, SYSLOG_WRAPPER, FILE_FUNCTION,
+        )
+        self.assertEqual(result.args, [command])
+        self.assertEqual((result.outcome, result.http_status), ("not_found", 404))
+        self.assertEqual(double.stdout.strip(), "HTTP_404")
+
     def test_decide_conjunctive_file_acl(self) -> None:
         allow = self._run(
             "decide",
@@ -371,6 +401,21 @@ class TestCDouble(unittest.TestCase):
 
 
 class TestCommittedArtifacts(unittest.TestCase):
+    def test_custom_root_revision_is_shared_by_all_records(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "corpus").mkdir()
+            (root / "corpus" / "lock.json").write_bytes(
+                (REPO / "corpus" / "lock.json").read_bytes() + b"\n"
+            )
+            revision = corpus_revision(root)
+            self.assertNotEqual(revision, corpus_revision(REPO))
+            grants, bundle, effects = build_artifacts(repo_root=root)
+            self.assertEqual(bundle["corpus_revision"], revision)
+            for record in grants + bundle["decisions"] + effects:
+                with self.subTest(record=record["record_id"]):
+                    self.assertEqual(record["corpus_revision"], revision)
+
     def test_write_artifacts_roundtrip(self) -> None:
         grants, bundle, effects = build_artifacts()
         committed = json.loads((REPO / "policy" / "cgi_exec_file_decisions.json").read_text(encoding="utf-8"))
