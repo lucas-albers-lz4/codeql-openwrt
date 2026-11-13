@@ -138,6 +138,45 @@ CGI_CATALOG = {
         "delegated_class": "luci-mod-status-firewall",
     },
 }
+FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-effect.json"
+FILE_EXEC_CATALOG = {
+    "policy:effect:ubus-file-exec:iptables": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-status-firewall",
+        "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+    },
+    "policy:effect:ubus-file-exec:ip6tables": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-status-firewall",
+        "entrypoint_id": "ubus_http:file.exec:/usr/sbin/ip6tables",
+    },
+    "policy:effect:ubus-file-exec:ip": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-status-routes",
+        "entrypoint_id": "ubus_http:file.exec:/sbin/ip",
+    },
+    "policy:effect:ubus-file-exec:ip-json": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-status-routes-json",
+        "entrypoint_id": "ubus_http:file.exec:/sbin/ip:-j",
+    },
+}
 COPIED_EFFECT_SNAPSHOTS = (
     "reports/findings.json",
     "reports/m4-getfeatures-direct-exec.json",
@@ -183,11 +222,26 @@ class TestHandlerEffectJoins(unittest.TestCase):
         effect_ids = [row["effect_id"] for row in self.effects]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertEqual(len(effect_ids), len(set(effect_ids)))
-        luci_rows = [row for row in self.effects if row.get("ingress") == "ubus_http"]
+        luci_rows = [
+            row
+            for row in self.effects
+            if row.get("ingress") == "ubus_http" and row.get("ubus_object") == "luci"
+        ]
+        file_exec_rows = [
+            row
+            for row in self.effects
+            if row.get("ubus_object") == "file" and row.get("method") == "exec"
+        ]
         cgi_rows = [row for row in self.effects if row.get("ingress") == "cgi_io"]
         self.assertEqual(len(luci_rows), LUCI_EFFECT_COUNT)
         self.assertEqual(len(cgi_rows), len(CGI_CATALOG))
+        self.assertEqual(len(file_exec_rows), len(FILE_EXEC_CATALOG))
         self.assertEqual({row["record_id"] for row in cgi_rows}, set(CGI_CATALOG))
+        self.assertEqual({row["record_id"] for row in file_exec_rows}, set(FILE_EXEC_CATALOG))
+        self.assertEqual(
+            len(self.effects),
+            len(luci_rows) + len(cgi_rows) + len(file_exec_rows),
+        )
         self.assertEqual(
             {row["cgi_endpoint"] for row in cgi_rows},
             {spec["cgi_endpoint"] for spec in CGI_CATALOG.values()},
@@ -221,6 +275,20 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertEqual(cgi["corpus_revision"], lock_hash)
             self.assertEqual(cgi["evidence_status"], "fact")
             self.assertNotEqual(cgi["evidence_status"], "path_found")
+        for file_exec in file_exec_rows:
+            spec = FILE_EXEC_CATALOG[file_exec["record_id"]]
+            self.assertEqual(file_exec["ubus_object"], spec["ubus_object"])
+            self.assertEqual(file_exec["method"], spec["method"])
+            self.assertEqual(file_exec["producer"], "policy_facts")
+            self.assertEqual(file_exec["sink_kind"], spec["sink_kind"])
+            self.assertEqual(file_exec["op"], spec["op"])
+            self.assertEqual(file_exec["assessment"], "intended_access")
+            self.assertNotEqual(file_exec["assessment"], "authorization_violation")
+            self.assertEqual(file_exec["corpus_revision"], lock_hash)
+            self.assertEqual(file_exec["evidence_status"], "fact")
+            self.assertNotEqual(file_exec["evidence_status"], "path_found")
+            self.assertEqual(file_exec["entrypoint_id"], spec["entrypoint_id"])
+            self.assertNotIn("cgi_endpoint", file_exec)
 
     def test_every_grant_joins_an_effect(self) -> None:
         for grant in self.grants:
@@ -323,7 +391,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual(len(copied_sources), COPIED_EFFECT_COUNT)
         self.assertEqual(len(path_sources), len(REQUEST_ARGS_EXEC_METHODS))
 
-        luci_effects = [row for row in self.effects if row.get("ingress") == "ubus_http"]
+        luci_effects = [
+            row
+            for row in self.effects
+            if row.get("ingress") == "ubus_http" and row.get("ubus_object") == "luci"
+        ]
         resolved_source_keys = []
         for effect in luci_effects:
             copied = [
@@ -409,6 +481,8 @@ class TestHandlerEffectJoins(unittest.TestCase):
             "policy:effect:cgi-exec-status:nft",
             "policy:effect:cgi-exec-status:iptables",
             "policy:effect:cgi-exec-status:firewall-init",
+            "policy:effect:ubus-file-exec:iptables",
+            "policy:effect:ubus-file-exec:ip",
         ):
             cgi_text = " ".join(by_id[record_id]["assumptions"]).lower()
             self.assertIn("shellquote", cgi_text)
@@ -455,6 +529,43 @@ class TestHandlerEffectJoins(unittest.TestCase):
                 snapshot = next(row for row in snapshot_rows if row["record_id"] == record_id)
                 self.assertEqual(effect, snapshot)
 
+    def test_ubus_file_exec_effects_join_delegated_and_root_grants(self) -> None:
+        lock_hash = corpus_revision()
+        snapshot_rows = _load(REPO / FILE_EXEC_SNAPSHOT)
+        for record_id, spec in FILE_EXEC_CATALOG.items():
+            effect = next(row for row in self.effects if row["record_id"] == record_id)
+            delegated = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == spec["delegated_class"]
+            )
+            root = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "root"
+            )
+            refs = effect["evidence_refs"]
+            self.assertIn(delegated["record_id"], refs)
+            self.assertIn(root["record_id"], refs)
+            self.assertEqual(effect["assessment"], "intended_access")
+            self.assertEqual(effect["corpus_revision"], lock_hash)
+            self.assertEqual(delegated["corpus_revision"], lock_hash)
+            self.assertEqual(root["corpus_revision"], lock_hash)
+            self.assertEqual(effect["ubus_object"], "file")
+            self.assertEqual(effect["method"], "exec")
+            self.assertEqual(effect["entrypoint_id"], spec["entrypoint_id"])
+            unauth = [
+                grant
+                for grant in self.grants
+                if grant.get("entrypoint_id") == effect["entrypoint_id"]
+                and grant["session_class"] == "unauthenticated"
+            ]
+            self.assertEqual(unauth, [])
+            snapshot = next(row for row in snapshot_rows if row["record_id"] == record_id)
+            self.assertEqual(effect, snapshot)
+
     def test_catalog_does_not_invent_forbidden_claims(self) -> None:
         for row in self.effects:
             self.assertNotEqual(row.get("assessment"), "authorization_violation")
@@ -462,6 +573,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
             if row.get("ingress") == "cgi_io":
                 spec = CGI_CATALOG[row["record_id"]]
                 self.assertEqual(row.get("sink_kind"), spec["sink_kind"])
+            elif row.get("ubus_object") == "file":
+                spec = FILE_EXEC_CATALOG[row["record_id"]]
+                self.assertEqual(row.get("sink_kind"), spec["sink_kind"])
+                self.assertEqual(row.get("method"), "exec")
+                self.assertNotIn("cgi_endpoint", row)
             else:
                 self.assertNotIn("cgi_endpoint", row)
         exec_effect = next(row for row in self.effects if row["record_id"] == CGI_EXEC_EFFECT_ID)

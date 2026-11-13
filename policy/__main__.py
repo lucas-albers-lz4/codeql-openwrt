@@ -13,6 +13,7 @@ from . import (
     cgi_upload,
     no_ubusauth,
     oracle,
+    ubus_file_exec,
 )
 
 
@@ -32,6 +33,9 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     status_grants, status_bundle, status_effects = cgi_exec_status.build_artifacts(
         fixtures, repo_root
     )
+    file_exec_grants, file_exec_bundle, file_exec_effects = ubus_file_exec.build_artifacts(
+        fixtures, repo_root
+    )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
     grants_path = repo_root / "policy" / "grants.json"
     luci_decisions_path = repo_root / "policy" / "policy_decisions.json"
@@ -41,12 +45,14 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     exec_decisions_path = repo_root / "policy" / "cgi_exec_decisions.json"
     helper_decisions_path = repo_root / "policy" / "cgi_exec_file_decisions.json"
     status_decisions_path = repo_root / "policy" / "cgi_exec_status_decisions.json"
+    file_exec_decisions_path = repo_root / "policy" / "ubus_file_exec_decisions.json"
     noauth_decisions_path = repo_root / "policy" / "no_ubusauth_decisions.json"
     upload_effect_path = repo_root / "reports" / "m2-cgi-upload-effect.json"
     download_effect_path = repo_root / "reports" / "m2-cgi-download-effect.json"
     exec_effect_path = repo_root / "reports" / "m2-cgi-exec-effect.json"
     helper_effect_path = repo_root / "reports" / "m2-cgi-exec-file-effect.json"
     status_effect_path = repo_root / "reports" / "m2-cgi-exec-status-effect.json"
+    file_exec_effect_path = repo_root / "reports" / "m2-ubus-file-exec-effect.json"
     oracle.dump_json(
         grants_path,
         luci_grants
@@ -55,7 +61,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         + download_grants
         + exec_grants
         + helper_grants
-        + status_grants,
+        + status_grants
+        + file_exec_grants,
     )
     oracle.dump_json(luci_decisions_path, luci_bundle)
     oracle.dump_json(backup_decisions_path, backup_bundle)
@@ -64,12 +71,14 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(exec_decisions_path, {"grants": exec_grants, **exec_bundle})
     oracle.dump_json(helper_decisions_path, {"grants": helper_grants, **helper_bundle})
     oracle.dump_json(status_decisions_path, {"grants": status_grants, **status_bundle})
+    oracle.dump_json(file_exec_decisions_path, {"grants": file_exec_grants, **file_exec_bundle})
     oracle.dump_json(noauth_decisions_path, noauth_bundle)
     oracle.dump_json(upload_effect_path, upload_effect)
     oracle.dump_json(download_effect_path, download_effect)
     oracle.dump_json(exec_effect_path, exec_effect)
     oracle.dump_json(helper_effect_path, helper_effects)
     oracle.dump_json(status_effect_path, status_effects)
+    oracle.dump_json(file_exec_effect_path, file_exec_effects)
     cgi_backup.upsert_handler_effect(backup_effect, repo_root)
     cgi_backup.upsert_handler_effect(upload_effect, repo_root)
     cgi_backup.upsert_handler_effect(download_effect, repo_root)
@@ -79,6 +88,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         effect_path = cgi_backup.upsert_handler_effect(helper_effect, repo_root)
     for status_effect in status_effects:
         effect_path = cgi_backup.upsert_handler_effect(status_effect, repo_root)
+    for file_exec_effect in file_exec_effects:
+        effect_path = cgi_backup.upsert_handler_effect(file_exec_effect, repo_root)
     return (
         grants_path,
         luci_decisions_path,
@@ -88,6 +99,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         exec_decisions_path,
         helper_decisions_path,
         status_decisions_path,
+        file_exec_decisions_path,
         noauth_decisions_path,
         effect_path,
     )

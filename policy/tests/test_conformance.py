@@ -673,8 +673,14 @@ class TestCommittedArtifacts(unittest.TestCase):
         )
         self.assertEqual(committed_grants[: len(grants)], grants)
         self.assertEqual(committed_decisions, bundle)
-        cgi_endpoints = {row["cgi_endpoint"] for row in committed_grants[len(grants) :]}
-        for row in committed_grants[len(grants) :]:
+        tail = committed_grants[len(grants) :]
+        cgi_rows = [row for row in tail if row.get("ingress") == "cgi_io"]
+        file_exec_rows = [
+            row for row in tail if row.get("ubus_object") == "file" and row.get("method") == "exec"
+        ]
+        self.assertEqual(len(cgi_rows) + len(file_exec_rows), len(tail))
+        cgi_endpoints = {row["cgi_endpoint"] for row in cgi_rows}
+        for row in cgi_rows:
             self.assertEqual(row["ingress"], "cgi_io")
             self.assertIn(
                 row["cgi_endpoint"],
@@ -684,6 +690,11 @@ class TestCommittedArtifacts(unittest.TestCase):
             cgi_endpoints,
             {"cgi-backup", "cgi-upload", "cgi-download", "cgi-exec"},
         )
+        self.assertTrue(file_exec_rows)
+        for row in file_exec_rows:
+            self.assertEqual(row["ingress"], "ubus_http")
+            self.assertEqual(row["analysis_revision"], "policy:ubus-file-exec-v1")
+            self.assertNotIn("cgi_endpoint", row)
 
     def test_emit_helper_roundtrip(self) -> None:
         committed_grants = (REPO / "policy" / "grants.json").read_text(encoding="utf-8")

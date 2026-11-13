@@ -19,6 +19,7 @@
     "theme bootstrap-dark/light extensionless symlinks as uncertain",
     "libexec helpers are #!/bin/sh; cgi-exec file.exec is policy:cgi-exec-file-v1",
     "luci-mod-status dmesg/nft/iptables/firewall-init fs.exec_direct commands join policy:cgi-exec-status-v1",
+    "luci-mod-status iptables/ip6tables -Z and routes ip fs.exec commands join policy:ubus-file-exec-v1",
     "luci-mod-network -> luci-lib-uqr -> /www/luci-static/resources/uqr.js through luci.mk htdocs/"
   ],
   "routing_counts": {
