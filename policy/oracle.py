@@ -25,6 +25,8 @@ import ctypes
 import ctypes.util
 import hashlib
 import json
+import locale
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Optional
@@ -126,9 +128,20 @@ def corpus_revision(repo_root: Path = REPO_ROOT) -> str:
 
 def _libc():
     name = ctypes.util.find_library("c") or "libc.so.6"
-    lib = ctypes.CDLL(name)
+    if sys.platform != "linux":
+        raise RuntimeError("C-locale fnmatch requires Linux glibc or musl")
+    lib = ctypes.CDLL(name, use_errno=True)
     lib.fnmatch.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int]
     lib.fnmatch.restype = ctypes.c_int
+    try:
+        lib.newlocale.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_void_p]
+        lib.newlocale.restype = ctypes.c_void_p
+        lib.uselocale.argtypes = [ctypes.c_void_p]
+        lib.uselocale.restype = ctypes.c_void_p
+        lib.freelocale.argtypes = [ctypes.c_void_p]
+        lib.freelocale.restype = None
+    except AttributeError as exc:
+        raise RuntimeError("C-locale fnmatch requires POSIX locale APIs") from exc
     return lib
 
 
@@ -136,11 +149,31 @@ _LIBC = None
 
 
 def libc_fnmatch(pattern: str, string: str, flags: int) -> bool:
-    """libc fnmatch; flags 0 for login groups, FNM_NOESCAPE for ubus ACL."""
+    """Match UTF-8 bytes in the C locale without changing the caller's locale."""
+    pat_bytes, str_bytes = pattern.encode("utf-8"), string.encode("utf-8")
+    if b"\0" in pat_bytes or b"\0" in str_bytes:
+        raise ValueError("fnmatch inputs must not contain NUL")
     global _LIBC
     if _LIBC is None:
         _LIBC = _libc()
-    return _LIBC.fnmatch(pattern.encode("utf-8"), string.encode("utf-8"), flags) == 0
+    lib = _LIBC
+    # Linux glibc/musl define LC_CTYPE_MASK as (1 << LC_CTYPE).  A NULL
+    # base initializes all other categories to C as well.
+    c_locale = lib.newlocale(1 << locale.LC_CTYPE, b"C", None)
+    if not c_locale:
+        raise OSError(ctypes.get_errno(), "newlocale failed")
+    previous = lib.uselocale(c_locale)
+    if not previous:
+        error = ctypes.get_errno()
+        lib.freelocale(c_locale)
+        raise OSError(error, "uselocale failed")
+    try:
+        return lib.fnmatch(pat_bytes, str_bytes, flags) == 0
+    finally:
+        if not lib.uselocale(previous):
+            # The locale may still be active, so freeing it would be unsafe.
+            raise OSError(ctypes.get_errno(), "uselocale restore failed")
+        lib.freelocale(c_locale)
 
 
 def uh_id_len(pattern: str) -> int:
