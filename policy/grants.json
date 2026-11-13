@@ -1637,5 +1637,187 @@
       "expectation_id root-administration"
     ],
     "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:ifup",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "session_class": "luci-mod-network-config-write",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/ifup",
+    "target_id": "command:ifup",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "luci-mod-network-config-ifup",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.ubus.file=[exec]",
+      "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.file./sbin/ifup=[exec]",
+      "luci@b2e0be4b interfaces.js fs.exec('/sbin/ifup', [sid])",
+      "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first"
+    ],
+    "note": "Fixture login luci-mod-network-config-write is not a stock device login. interfaces.js uses fs.exec('/sbin/ifup', [sid]). Bare executable ACL; intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:ifdown",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "session_class": "luci-mod-network-config-write",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/ifdown",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/ifdown",
+    "target_id": "command:ifdown",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "luci-mod-network-config-ifdown",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.file./sbin/ifdown=[exec]",
+      "luci@b2e0be4b interfaces.js fs.exec('/sbin/ifdown', [sid])"
+    ],
+    "note": "Fixture login luci-mod-network-config-write is not a stock device login. interfaces.js uses fs.exec('/sbin/ifdown', [sid]). Bare executable ACL; intended_access, not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:wifi",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "session_class": "luci-mod-network-config-write",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/wifi",
+    "target_id": "command:wifi",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "luci-mod-network-config-wifi",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.file./sbin/wifi=[exec]",
+      "luci@b2e0be4b wireless.js fs.exec('/sbin/wifi', ['up', s])"
+    ],
+    "note": "Fixture login luci-mod-network-config-write is not a stock device login. wireless.js uses fs.exec('/sbin/wifi', ['up', s]). Bare executable ACL; intended_access, not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:file.exec:ifup",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/ifup",
+    "target_id": "command:ifup",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:file.exec:ifdown",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/ifdown",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/ifdown",
+    "target_id": "command:ifdown",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:file.exec:wifi",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/wifi",
+    "target_id": "command:wifi",
+    "op": "exec",
+    "acl_group": "luci-mod-network-config",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]

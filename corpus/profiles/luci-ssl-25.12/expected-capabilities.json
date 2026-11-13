@@ -369,9 +369,10 @@
       "denied_authority": [
         "unauthenticated cgi-exec",
         "file.exec of an arbitrary command",
+        "ubus file.exec of ifup/ifdown/wifi without write login",
         "execv"
       ],
-      "rationale": "luci-mod-network-config read grants cgi-io exec read at luci b2e0be4b. Unauthenticated ACLs do not. cgi-io main_exec still requires file.exec of the command after this gate; the three luci-ssl libexec helpers are policy:cgi-exec-file-v1.",
+      "rationale": "luci-mod-network-config read grants cgi-io exec read at luci b2e0be4b. Unauthenticated ACLs do not. cgi-io main_exec still requires file.exec of the command after this gate; the three luci-ssl libexec helpers are policy:cgi-exec-file-v1. Write file.exec of /sbin/ifup, /sbin/ifdown, and /sbin/wifi is policy:ubus-file-exec-ifup-v1 and is not this read fixture.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.read.cgi-io=[exec]",
         "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec session_access(sid, cgi-io, exec, read)"
@@ -602,6 +603,75 @@
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-firewall.write.file./etc/init.d/firewall restart=[exec]",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/iptables.js handleRestart"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-network-config-ifup",
+      "session_class": "luci-mod-network-config-write",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "intended_access": [
+        {
+          "target_id": "command:ifup",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus file.exec",
+        "read-only network-config fixture ifup",
+        "execv"
+      ],
+      "rationale": "interfaces.js uses fs.exec('/sbin/ifup', [sid]). luci-mod-network-config write grants ubus file.exec and file.exec of the bare /sbin/ifup executable. Extra tokens match at the executable stage as intended_access for this fixture, not a violation and not a PoC. The read luci-mod-network-config fixture has ubus file.exec but not this write command.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.write.file./sbin/ifup=[exec]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-network-config-ifdown",
+      "session_class": "luci-mod-network-config-write",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifdown",
+      "intended_access": [
+        {
+          "target_id": "command:ifdown",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus file.exec",
+        "read-only network-config fixture ifdown",
+        "execv"
+      ],
+      "rationale": "interfaces.js uses fs.exec('/sbin/ifdown', [sid]). Bare executable ACL. Extra tokens are intended_access for this fixture, not a PoC.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.write.file./sbin/ifdown=[exec]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-network-config-wifi",
+      "session_class": "luci-mod-network-config-write",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
+      "intended_access": [
+        {
+          "target_id": "command:wifi",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus file.exec",
+        "read-only network-config fixture wifi",
+        "execv"
+      ],
+      "rationale": "wireless.js uses fs.exec('/sbin/wifi', ['up', s]). Bare executable ACL. Extra tokens are intended_access for this fixture, not a PoC.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json luci-mod-network-config.write.file./sbin/wifi=[exec]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js"
       ]
     }
   ]
