@@ -390,6 +390,76 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-system-init-list",
+      "session_class": "luci-mod-system-init-read",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.list",
+      "intended_access": [
+        {
+          "target_id": "ubus:rc.list",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus rc.list",
+        "rc.c directory scan of /etc/init.d",
+        "luci.setInitAction",
+        "ubus rc.init"
+      ],
+      "rationale": "startup.js uses rpc.declare object=rc method=list. luci-mod-system-init read grants ubus rc.list. That is rpcd rc.c, not luci.setInitAction. An allow is the HTTP gate, not a directory scan. The read fixture cannot pass rc.init. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/startup.js rpc.declare object=rc method=list"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-init-write-list",
+      "session_class": "luci-mod-system-init",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.list",
+      "intended_access": [
+        {
+          "target_id": "ubus:rc.list",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus rc.list",
+        "rc.c directory scan of /etc/init.d",
+        "luci.setInitAction"
+      ],
+      "rationale": "rpcd write implies read, so the existing write luci-mod-system-init fixture also matches read ubus rc.list. Intended_access, not a new luci object grant.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list] write.ubus.rc=[init]",
+        "openwrt/rpcd@d99f703e4035d03fbcfbada3cb697db346c2b984 session.c login_test_permission write implies read"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-config-rc-list",
+      "session_class": "luci-mod-system-config",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.list",
+      "intended_access": [
+        {
+          "target_id": "ubus:rc.list",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus rc.list",
+        "rc.c directory scan of /etc/init.d",
+        "luci.setInitAction"
+      ],
+      "rationale": "system.js uses rpc.declare object=rc method=list. The existing luci-mod-system-config write fixture matches rc.list because write implies read. Intended_access, not a new luci object grant.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config.read.ubus.rc=[list]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js rpc.declare object=rc method=list"
+      ]
+    },
+    {
       "expectation_id": "synthetic-backup-read",
       "session_class": "synthetic-backup",
       "synthetic": true,

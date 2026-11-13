@@ -19,6 +19,7 @@ from . import (
     ubus_file_exec_list_backup,
     ubus_file_exec_mounts,
     ubus_rc_init,
+    ubus_rc_list,
     ubus_system_reboot,
 )
 
@@ -60,6 +61,9 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     rc_init_grants, rc_init_bundle, rc_init_effects = ubus_rc_init.build_artifacts(
         fixtures, repo_root
     )
+    rc_list_grants, rc_list_bundle, rc_list_effects = ubus_rc_list.build_artifacts(
+        fixtures, repo_root
+    )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
     grants_path = repo_root / "policy" / "grants.json"
     luci_decisions_path = repo_root / "policy" / "policy_decisions.json"
@@ -76,6 +80,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     list_backup_decisions_path = repo_root / "policy" / "ubus_file_exec_list_backup_decisions.json"
     reboot_decisions_path = repo_root / "policy" / "ubus_system_reboot_decisions.json"
     rc_init_decisions_path = repo_root / "policy" / "ubus_rc_init_decisions.json"
+    rc_list_decisions_path = repo_root / "policy" / "ubus_rc_list_decisions.json"
     noauth_decisions_path = repo_root / "policy" / "no_ubusauth_decisions.json"
     upload_effect_path = repo_root / "reports" / "m2-cgi-upload-effect.json"
     download_effect_path = repo_root / "reports" / "m2-cgi-download-effect.json"
@@ -89,6 +94,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     list_backup_effect_path = repo_root / "reports" / "m2-ubus-file-exec-list-backup-effect.json"
     reboot_effect_path = repo_root / "reports" / "m2-ubus-system-reboot-effect.json"
     rc_init_effect_path = repo_root / "reports" / "m2-ubus-rc-init-effect.json"
+    rc_list_effect_path = repo_root / "reports" / "m2-ubus-rc-list-effect.json"
     oracle.dump_json(
         grants_path,
         luci_grants
@@ -104,7 +110,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         + mounts_grants
         + list_backup_grants
         + reboot_grants
-        + rc_init_grants,
+        + rc_init_grants
+        + rc_list_grants,
     )
     oracle.dump_json(luci_decisions_path, luci_bundle)
     oracle.dump_json(backup_decisions_path, backup_bundle)
@@ -120,6 +127,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(list_backup_decisions_path, {"grants": list_backup_grants, **list_backup_bundle})
     oracle.dump_json(reboot_decisions_path, {"grants": reboot_grants, **reboot_bundle})
     oracle.dump_json(rc_init_decisions_path, {"grants": rc_init_grants, **rc_init_bundle})
+    oracle.dump_json(rc_list_decisions_path, {"grants": rc_list_grants, **rc_list_bundle})
     oracle.dump_json(noauth_decisions_path, noauth_bundle)
     oracle.dump_json(upload_effect_path, upload_effect)
     oracle.dump_json(download_effect_path, download_effect)
@@ -133,6 +141,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(list_backup_effect_path, list_backup_effects)
     oracle.dump_json(reboot_effect_path, reboot_effects)
     oracle.dump_json(rc_init_effect_path, rc_init_effects)
+    oracle.dump_json(rc_list_effect_path, rc_list_effects)
     cgi_backup.upsert_handler_effect(backup_effect, repo_root)
     cgi_backup.upsert_handler_effect(upload_effect, repo_root)
     cgi_backup.upsert_handler_effect(download_effect, repo_root)
@@ -156,6 +165,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         effect_path = cgi_backup.upsert_handler_effect(reboot_effect, repo_root)
     for rc_init_effect in rc_init_effects:
         effect_path = cgi_backup.upsert_handler_effect(rc_init_effect, repo_root)
+    for rc_list_effect in rc_list_effects:
+        effect_path = cgi_backup.upsert_handler_effect(rc_list_effect, repo_root)
     return (
         grants_path,
         luci_decisions_path,
@@ -172,6 +183,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         list_backup_decisions_path,
         reboot_decisions_path,
         rc_init_decisions_path,
+        rc_list_decisions_path,
         noauth_decisions_path,
         effect_path,
     )
