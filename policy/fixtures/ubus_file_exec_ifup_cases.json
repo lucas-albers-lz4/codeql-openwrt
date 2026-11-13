@@ -1,0 +1,355 @@
+{
+  "comment": "Hand-transcribed expected ubus file.exec decisions for luci-mod-network-config ifup/ifdown/wifi from pinned rpcd-mod-file C, network JS callers, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then checks file.exec of the canonicalized executable first, then the cmdline.",
+    "Bounded to fs.exec callers at luci b2e0be4b: interfaces.js /sbin/ifup and /sbin/ifdown, wireless.js /sbin/wifi up.",
+    "Inventoried luci-ssl ACLs grant the bare executables. Extra tokens therefore match at the executable stage as intended_access for the write fixture, not authorization_violation and not a PoC.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed. A ubus file.exec grant without the matching file ACL is UBUS_STATUS_PERMISSION_DENIED.",
+    "The luci-mod-network-config read fixture has ubus file.exec but not write file.exec of ifup/ifdown/wifi.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or execv.",
+    "shellquote and basename are not sanitizers. rpc_canonicalize_path is not a taint sanitizer.",
+    "luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1.",
+    "luci-mod-network diagnostics ping and luci-mod-status-processes /bin/kill are not this slice."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-ifup-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "command:ifup",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus file.exec",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access file/exec false -> ERROR_ACCESS",
+        "do not invent an unauthenticated ifup grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "not": ["unauthenticated_allow", "execv", "dispatcher", "path_found", "sentinel_rewrite"],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-write-ifup-allow",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ifup",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "expectation_id": "luci-mod-network-config-ifup",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-network-config",
+      "note": "Fixture login luci-mod-network-config-write is not a stock device login. interfaces.js uses fs.exec('/sbin/ifup', [sid]). Bare executable ACL; intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.file./sbin/ifup=[exec]",
+        "luci@b2e0be4b interfaces.js fs.exec('/sbin/ifup', [sid])",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-write-ifdown-allow",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/sbin/ifdown",
+      "params": ["wan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ifdown",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifdown",
+      "expectation_id": "luci-mod-network-config-ifdown",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-network-config",
+      "note": "Fixture login luci-mod-network-config-write is not a stock device login. interfaces.js uses fs.exec('/sbin/ifdown', [sid]). Bare executable ACL; intended_access, not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.file./sbin/ifdown=[exec]",
+        "luci@b2e0be4b interfaces.js fs.exec('/sbin/ifdown', [sid])"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-write-wifi-allow",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/sbin/wifi",
+      "params": ["up", "radio0"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:wifi",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
+      "expectation_id": "luci-mod-network-config-wifi",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-network-config",
+      "note": "Fixture login luci-mod-network-config-write is not a stock device login. wireless.js uses fs.exec('/sbin/wifi', ['up', s]). Bare executable ACL; intended_access, not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.file./sbin/wifi=[exec]",
+        "luci@b2e0be4b wireless.js fs.exec('/sbin/wifi', ['up', s])"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-write-ifup-extra-argv-allow",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/sbin/ifup",
+      "params": ["lan", "extra"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "target_id": "command:ifup",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "expectation_id": "luci-mod-network-config-ifup",
+      "assessment": "intended_access",
+      "note": "Bare-exe file.exec means extra tokens to /sbin/ifup are intended_access for this fixture, not authorization_violation and not a PoC. Grant is emitted from the inventoried caller case.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.file./sbin/ifup=[exec]",
+        "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first; extra argv still matches the executable object"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-ifup-command-denied",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "note": "The luci-mod-network-config read fixture has ubus file.exec but file.exec of /sbin/ifup is write-only.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read.ubus.file=[exec]",
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.file./sbin/ifup=[exec]",
+        "fixture rpcd.config luci-mod-network-config is list read only"
+      ]
+    },
+    {
+      "id": "luci-mod-status-firewall-ifup-command-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "rule_refs": [
+        "luci-mod-status-firewall grants ubus file.exec but file.exec of ifup is luci-mod-network-config write"
+      ]
+    },
+    {
+      "id": "luci-mod-status-logs-ifup-deny",
+      "session_class": "luci-mod-status-logs",
+      "sid": "33333333333333333333333333333333",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "rule_refs": [
+        "luci-mod-status-logs read ubus.file=[stat] and cgi-io exec of dmesg; no ubus file.exec"
+      ]
+    },
+    {
+      "id": "ping-not-found",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/bin/ping",
+      "params": ["-c", "5", "openwrt.org"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "note": "diagnostics.js uses fs.exec_direct; luci-mod-network-diagnostics is not this slice and lookup is not a live PATH search.",
+      "rule_refs": [
+        "this oracle treats only inventoried /sbin/ifup /sbin/ifdown /sbin/wifi as found"
+      ]
+    },
+    {
+      "id": "kill-not-found",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/bin/kill",
+      "params": ["-15", "1"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "rule_refs": [
+        "luci-mod-status-processes write file.exec /bin/kill is not this slice"
+      ]
+    },
+    {
+      "id": "iptables-not-found",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/usr/sbin/iptables",
+      "params": ["-Z"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "not_found",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "rule_refs": [
+        "iptables -Z stays on policy:ubus-file-exec-v1; not inventoried in this oracle"
+      ]
+    },
+    {
+      "id": "env-with-sid-permission-denied",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "env": {"FOO": "bar"},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: SID plus env is PERMISSION_DENIED",
+        "inventoried callers do not pass env"
+      ]
+    },
+    {
+      "id": "empty-env-with-sid-permission-denied",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "env": {},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: a present env TABLE with SID is PERMISSION_DENIED even when empty"
+      ]
+    },
+    {
+      "id": "root-star-ifup-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/sbin/ifup",
+      "params": ["lan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ifup",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    },
+    {
+      "id": "root-star-ifdown-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/sbin/ifdown",
+      "params": ["wan"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:ifdown",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifdown",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    },
+    {
+      "id": "root-star-wifi-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "command": "/sbin/wifi",
+      "params": ["up", "radio0"],
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "command:wifi",
+      "op": "exec",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}

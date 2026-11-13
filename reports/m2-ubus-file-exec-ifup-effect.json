@@ -1,0 +1,164 @@
+[
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:effect:ubus-file-exec-ifup:ifup",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/ifup",
+    "effect_id": "file.exec.ifup",
+    "target_id": "command:ifup",
+    "op": "exec",
+    "sink_kind": "file_exec",
+    "asset_id": "command:ifup",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-network-config-ifup",
+    "conditions": [
+      "JSON-RPC /ubus call object=file method=exec",
+      "data parameter is a BLOBMSG_TYPE_TABLE",
+      "command canonicalizes to /sbin/ifup",
+      "interfaces.js fs.exec('/sbin/ifup', [sid])"
+    ],
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "assumptions": [
+      "Synthetic handler_effect transcribed from rpcd-mod-file rpc_file_exec; C, not ucode",
+      "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+      "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /sbin/ifup, /sbin/ifdown, and /sbin/wifi executables, so extra tokens match at the executable stage as intended_access for the write fixture, not authorization_violation and not a PoC.",
+      "This oracle does not fork execv or run the command body.",
+      "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+      "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec.",
+      "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env."
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:ifup",
+      "policy:grant:root:ubus_http:file.exec:ifup",
+      "rpcd@d99f703e file.c rpc_file_exec_run executable then cmdline file ACL",
+      "luci@b2e0be4b interfaces.js fs.exec('/sbin/ifup', [sid])"
+    ],
+    "unknowns": [
+      "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+      "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+      "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /sbin/ifup, /sbin/ifdown, and /sbin/wifi are not modeled.",
+      "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. luci-mod-status-processes /bin/kill is not this slice. Track A is unstaffed. dispatcher is not this slice.",
+      "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:effect:ubus-file-exec-ifup:ifdown",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/ifdown",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/ifdown",
+    "effect_id": "file.exec.ifdown",
+    "target_id": "command:ifdown",
+    "op": "exec",
+    "sink_kind": "file_exec",
+    "asset_id": "command:ifdown",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-network-config-ifdown",
+    "conditions": [
+      "JSON-RPC /ubus call object=file method=exec",
+      "data parameter is a BLOBMSG_TYPE_TABLE",
+      "command canonicalizes to /sbin/ifdown",
+      "interfaces.js fs.exec('/sbin/ifdown', [sid])"
+    ],
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "assumptions": [
+      "Synthetic handler_effect transcribed from rpcd-mod-file rpc_file_exec; C, not ucode",
+      "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+      "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /sbin/ifup, /sbin/ifdown, and /sbin/wifi executables, so extra tokens match at the executable stage as intended_access for the write fixture, not authorization_violation and not a PoC.",
+      "This oracle does not fork execv or run the command body.",
+      "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+      "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec.",
+      "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env."
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:ifdown",
+      "policy:grant:root:ubus_http:file.exec:ifdown",
+      "rpcd@d99f703e file.c rpc_file_exec_run executable then cmdline file ACL",
+      "luci@b2e0be4b interfaces.js fs.exec('/sbin/ifdown', [sid])"
+    ],
+    "unknowns": [
+      "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+      "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+      "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /sbin/ifup, /sbin/ifdown, and /sbin/wifi are not modeled.",
+      "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. luci-mod-status-processes /bin/kill is not this slice. Track A is unstaffed. dispatcher is not this slice.",
+      "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+    ]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:effect:ubus-file-exec-ifup:wifi",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-ifup-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/wifi",
+    "effect_id": "file.exec.wifi",
+    "target_id": "command:wifi",
+    "op": "exec",
+    "sink_kind": "file_exec",
+    "asset_id": "command:wifi",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-network-config-wifi",
+    "conditions": [
+      "JSON-RPC /ubus call object=file method=exec",
+      "data parameter is a BLOBMSG_TYPE_TABLE",
+      "command canonicalizes to /sbin/wifi",
+      "wireless.js fs.exec('/sbin/wifi', ['up', s])"
+    ],
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "assumptions": [
+      "Synthetic handler_effect transcribed from rpcd-mod-file rpc_file_exec; C, not ucode",
+      "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+      "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the bare /sbin/ifup, /sbin/ifdown, and /sbin/wifi executables, so extra tokens match at the executable stage as intended_access for the write fixture, not authorization_violation and not a PoC.",
+      "This oracle does not fork execv or run the command body.",
+      "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+      "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec.",
+      "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env."
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:wifi",
+      "policy:grant:root:ubus_http:file.exec:wifi",
+      "rpcd@d99f703e file.c rpc_file_exec_run executable then cmdline file ACL",
+      "luci@b2e0be4b wireless.js fs.exec('/sbin/wifi', ['up', s])"
+    ],
+    "unknowns": [
+      "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+      "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+      "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried /sbin/ifup, /sbin/ifdown, and /sbin/wifi are not modeled.",
+      "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant on luci-mod-network-diagnostics, so they are not this slice. luci-mod-status-processes /bin/kill is not this slice. Track A is unstaffed. dispatcher is not this slice.",
+      "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+    ]
+  }
+]

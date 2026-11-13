@@ -693,7 +693,10 @@ class TestCommittedArtifacts(unittest.TestCase):
         self.assertTrue(file_exec_rows)
         for row in file_exec_rows:
             self.assertEqual(row["ingress"], "ubus_http")
-            self.assertEqual(row["analysis_revision"], "policy:ubus-file-exec-v1")
+            self.assertIn(
+                row["analysis_revision"],
+                {"policy:ubus-file-exec-v1", "policy:ubus-file-exec-ifup-v1"},
+            )
             self.assertNotIn("cgi_endpoint", row)
 
     def test_emit_helper_roundtrip(self) -> None:

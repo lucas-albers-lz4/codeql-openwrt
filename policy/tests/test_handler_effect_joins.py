@@ -139,6 +139,7 @@ CGI_CATALOG = {
     },
 }
 FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-effect.json"
+IFUP_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-ifup-effect.json"
 FILE_EXEC_CATALOG = {
     "policy:effect:ubus-file-exec:iptables": {
         "ubus_object": "file",
@@ -175,6 +176,33 @@ FILE_EXEC_CATALOG = {
         "snapshot": FILE_EXEC_SNAPSHOT,
         "delegated_class": "luci-mod-status-routes-json",
         "entrypoint_id": "ubus_http:file.exec:/sbin/ip:-j",
+    },
+    "policy:effect:ubus-file-exec-ifup:ifup": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": IFUP_FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-network-config-write",
+        "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+    },
+    "policy:effect:ubus-file-exec-ifup:ifdown": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": IFUP_FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-network-config-write",
+        "entrypoint_id": "ubus_http:file.exec:/sbin/ifdown",
+    },
+    "policy:effect:ubus-file-exec-ifup:wifi": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": IFUP_FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-network-config-write",
+        "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
     },
 }
 COPIED_EFFECT_SNAPSHOTS = (
@@ -483,6 +511,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             "policy:effect:cgi-exec-status:firewall-init",
             "policy:effect:ubus-file-exec:iptables",
             "policy:effect:ubus-file-exec:ip",
+            "policy:effect:ubus-file-exec-ifup:ifup",
         ):
             cgi_text = " ".join(by_id[record_id]["assumptions"]).lower()
             self.assertIn("shellquote", cgi_text)
@@ -531,7 +560,9 @@ class TestHandlerEffectJoins(unittest.TestCase):
 
     def test_ubus_file_exec_effects_join_delegated_and_root_grants(self) -> None:
         lock_hash = corpus_revision()
-        snapshot_rows = _load(REPO / FILE_EXEC_SNAPSHOT)
+        snapshots = {}
+        for spec in FILE_EXEC_CATALOG.values():
+            snapshots[spec["snapshot"]] = _load(REPO / spec["snapshot"])
         for record_id, spec in FILE_EXEC_CATALOG.items():
             effect = next(row for row in self.effects if row["record_id"] == record_id)
             delegated = next(
@@ -563,7 +594,9 @@ class TestHandlerEffectJoins(unittest.TestCase):
                 and grant["session_class"] == "unauthenticated"
             ]
             self.assertEqual(unauth, [])
-            snapshot = next(row for row in snapshot_rows if row["record_id"] == record_id)
+            snapshot = next(
+                row for row in snapshots[spec["snapshot"]] if row["record_id"] == record_id
+            )
             self.assertEqual(effect, snapshot)
 
     def test_catalog_does_not_invent_forbidden_claims(self) -> None:
