@@ -723,6 +723,37 @@
       ]
     },
     {
+    {
+      "expectation_id": "luci-mod-status-index-ports-getbuiltinethernetports",
+      "session_class": "luci-mod-status-index-ports",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getBuiltinEthernetPorts",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getBuiltinEthernetPorts",
+        "luci-base getBuiltinEthernetPorts handler",
+        "luci.getMountPoints grant",
+        "luci.getVersion grant",
+        "luci.getUnixtime grant",
+        "luci.getOdhcp6cStats grant",
+        "ubus system.board grant",
+        "ubus system.info grant",
+        "ubus system.reboot",
+        "luci.getUSBDevices grant",
+        "luci.getConntrackHelpers grant"
+      ],
+      "rationale": "29_ports.js uses rpc.declare object=luci method=getBuiltinEthernetPorts. luci-mod-status-index-ports read grants ubus luci.getBuiltinEthernetPorts. An allow is the HTTP gate, not the luci-base getBuiltinEthernetPorts handler (/etc/board.json / /sys/class/net). Does not rewrite the luci exec-methods emitter. luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. luci-mod-status-index grants getVersion / getUnixtime / getOdhcp6cStats, not getBuiltinEthernetPorts. getUSBDevices stays unstaffed. luci.getConntrackHelpers stays unstaffed. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index-ports.read.ubus.luci=[getBuiltinEthernetPorts]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js rpc.declare object=luci method=getBuiltinEthernetPorts"
+      ]
+    },
       "expectation_id": "luci-mod-network-config-hostapd-del-client",
       "session_class": "luci-mod-network-config-write",
       "synthetic": true,

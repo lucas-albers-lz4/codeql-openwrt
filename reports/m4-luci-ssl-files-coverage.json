@@ -35,6 +35,7 @@
     "luci-mod-system-config luci.getTimezones joins policy:ubus-luci-gettimezones-v1",
     "luci-mod-system-config luci.getLEDs joins policy:ubus-luci-getleds-v1",
     "luci-mod-status-index-storage luci.getMountPoints joins policy:ubus-luci-getmountpoints-v1",
+    "luci-mod-status-index-ports luci.getBuiltinEthernetPorts joins policy:ubus-luci-getbuiltinethernetports-v1",
     "luci-mod-network-config-write / luci-mod-status-index-wifi hostapd.del_client joins policy:ubus-hostapd-del-client-v1",
     "luci-mod-status-index-wifi hostapd.wps_start joins policy:ubus-hostapd-wps-start-v1",
     "luci-mod-status-index-wifi hostapd.wps_cancel joins policy:ubus-hostapd-wps-cancel-v1",
