@@ -1,0 +1,396 @@
+{
+  "comment": "Hand-transcribed expected ubus luci.getMountPoints decisions for luci-mod-status-index-storage from pinned uhttpd uh_ubus_allowed, 25_storage.js rpc.declare, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=luci function=getMountPoints (uhttpd omits scope).",
+    "Bounded to 25_storage.js rpc.declare object=luci method=getMountPoints at luci b2e0be4b. mounts.js and package-manager.js declare the same method. That is the luci-base plugin, not procd system.",
+    "Fixture login luci-mod-status-index-storage is read of the existing ACL group in luci-mod-status-index.json.",
+    "Existing luci-mod-system-mounts and luci-app-package-manager fixtures also grant luci.getMountPoints.",
+    "luci-mod-status-index grants getVersion / getUnixtime / getOdhcp6cStats, not getMountPoints.",
+    "system.board stays on policy:ubus-system-board-v1; this slice does not emit that grant.",
+    "system.info stays on policy:ubus-system-info-v1; this slice does not emit that grant.",
+    "system.reboot stays on policy:ubus-system-reboot-v1.",
+    "luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1.",
+    "Do not rewrite the luci exec-methods emitter.",
+    "Do not invent a setInitAction luci-ssl grant.",
+    "Do not invent luci-mod-status-index-ports / dhcp / dsl logins.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed (unauthenticated grants only luci.getFeatures).",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, or path_found.",
+    "shellquote and basename are not sanitizers.",
+    "luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec).",
+    "hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-luci-getMountPoints-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getMountPoints",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus luci.getMountPoints",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access luci/getMountPoints false -> ERROR_ACCESS",
+        "do not invent an unauthenticated luci.getMountPoints grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "not": [
+        "unauthenticated_allow",
+        "luci_plugin_getMountPoints",
+        "dispatcher",
+        "path_found",
+        "sentinel_rewrite",
+        "setInitAction"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-storage-allow",
+      "session_class": "luci-mod-status-index-storage",
+      "sid": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getMountPoints",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "expectation_id": "luci-mod-status-index-storage-getmountpoints",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-index-storage",
+      "note": "Fixture login luci-mod-status-index-storage is not a stock device login. 25_storage.js uses rpc.declare object=luci method=getMountPoints. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.luci=[getMountPoints]",
+        "luci@b2e0be4b 25_storage.js rpc.declare object=luci method=getMountPoints",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getMountPoints",
+        "fixture rpcd.config login luci-mod-status-index-storage list read luci-mod-status-index-storage"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-allow",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getMountPoints",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "expectation_id": "luci-mod-system-mounts-getmountpoints",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-mounts",
+      "note": "Existing luci-mod-system-mounts fixture. mounts.js uses rpc.declare object=luci method=getMountPoints. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.read.ubus.luci=[getBlockDevices, getMountPoints]",
+        "luci@b2e0be4b mounts.js rpc.declare object=luci method=getMountPoints",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getMountPoints"
+      ]
+    },
+    {
+      "id": "luci-app-package-manager-allow",
+      "session_class": "luci-app-package-manager",
+      "sid": "44444444444444444444444444444444",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getMountPoints",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "expectation_id": "luci-app-package-manager-getmountpoints",
+      "assessment": "intended_access",
+      "acl_group": "luci-app-package-manager",
+      "note": "Existing luci-app-package-manager fixture. package-manager.js uses rpc.declare object=luci method=getMountPoints. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-app-package-manager.json luci-app-package-manager.read.ubus.luci=[getMountPoints]",
+        "luci@b2e0be4b package-manager.js rpc.declare object=luci method=getMountPoints",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getMountPoints"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-luci-getMountPoints-deny",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "not": [
+        "luci.getMountPoints grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci-mod-status-index read grants luci.getVersion / getUnixtime / getOdhcp6cStats, not luci.getMountPoints. ERROR_ACCESS at uh_ubus_allowed. getMountPoints is luci-mod-status-index-storage.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci-mod-status-index has no ubus luci.getMountPoints"
+      ]
+    },
+    {
+      "id": "luci-mod-status-realtime-luci-getMountPoints-deny",
+      "session_class": "luci-mod-status-realtime",
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-realtime.read.ubus.luci=[getConntrackList, getRealtimeStats]",
+        "luci-mod-status-realtime has no ubus luci.getMountPoints"
+      ]
+    },
+    {
+      "id": "luci-mod-system-reboot-luci-getMountPoints-deny",
+      "session_class": "luci-mod-system-reboot",
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci-mod-system-reboot has ubus system.reboot, not luci.getMountPoints"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-luci-getMountPoints-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getMountPoints",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "note": "The list-read flash fixture has ubus file.exec, not luci.getMountPoints. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus luci.getMountPoints"
+      ]
+    },
+    {
+      "id": "luci-mod-system-init-read-luci-getMountPoints-deny",
+      "session_class": "luci-mod-system-init-read",
+      "sid": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+        "luci-mod-system-init has no ubus luci.getMountPoints"
+      ]
+    },
+    {
+      "id": "system-board-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "system",
+      "method": "board",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.board",
+      "not": [
+        "luci.getMountPoints grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-status-index fixture matches system.board at uh_ubus_allowed. That method stays on policy:ubus-system-board-v1. This slice does not emit a system.board grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=system method=board",
+        "system.board stays on policy:ubus-system-board-v1"
+      ]
+    },
+    {
+      "id": "system-info-not-this-slice",
+      "session_class": "luci-mod-status-index-storage",
+      "sid": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "not": [
+        "luci.getMountPoints grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-status-index-storage fixture matches system.info at uh_ubus_allowed. That method stays on policy:ubus-system-info-v1. This slice does not emit a system.info grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.system=[info]",
+        "luci@b2e0be4b 25_storage.js rpc.declare object=system method=info",
+        "system.info stays on policy:ubus-system-info-v1"
+      ]
+    },
+    {
+      "id": "system-reboot-not-this-slice",
+      "session_class": "luci-mod-status-index-storage",
+      "sid": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "not": [
+        "luci.getMountPoints grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-status-index-storage fixture grants luci.getMountPoints, not system.reboot. system.reboot stays on policy:ubus-system-reboot-v1.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.luci=[getMountPoints]",
+        "system.reboot stays on policy:ubus-system-reboot-v1"
+      ]
+    },
+    {
+      "id": "luci-getVersion-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getVersion",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getVersion",
+      "not": [
+        "luci.getMountPoints grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. This slice does not emit a getVersion grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=luci method=getVersion",
+        "luci.getVersion stays on policy:ubus-luci-getversion-v1"
+      ]
+    },
+    {
+      "id": "luci-getUnixtime-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getUnixtime",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getUnixtime",
+      "not": [
+        "luci.getMountPoints grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. This slice does not emit a getUnixtime grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=luci method=getUnixtime",
+        "luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1"
+      ]
+    },
+    {
+      "id": "luci-getOdhcp6cStats-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getOdhcp6cStats",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getOdhcp6cStats",
+      "not": [
+        "luci.getMountPoints grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1. This slice does not emit a getOdhcp6cStats grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 30_network.js rpc.declare object=luci method=getOdhcp6cStats",
+        "luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1"
+      ]
+    },
+    {
+      "id": "luci-mod-system-config-not-this-slice",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "not": [
+        "luci.getMountPoints grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci-mod-system-config read grants luci.getLEDs / getTimezones / getUSBDevices / getUnixtime, not luci.getMountPoints. ERROR_ACCESS at uh_ubus_allowed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "luci-mod-system-config has no ubus luci.getMountPoints"
+      ]
+    },
+    {
+      "id": "root-star-luci-getMountPoints-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getMountPoints",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}

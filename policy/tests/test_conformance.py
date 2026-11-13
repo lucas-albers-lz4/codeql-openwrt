@@ -728,6 +728,11 @@ class TestCommittedArtifacts(unittest.TestCase):
             for row in tail
             if row.get("ubus_object") == "luci" and row.get("method") == "getLEDs"
         ]
+        getmountpoints_rows = [
+            row
+            for row in tail
+            if row.get("ubus_object") == "luci" and row.get("method") == "getMountPoints"
+        ]
         hostapd_rows = [
             row
             for row in tail
@@ -761,6 +766,7 @@ class TestCommittedArtifacts(unittest.TestCase):
             + len(getodhcp6cstats_rows)
             + len(gettimezones_rows)
             + len(getleds_rows)
+            + len(getmountpoints_rows)
             + len(hostapd_rows)
             + len(hostapd_wps_rows)
             + len(hostapd_wps_cancel_rows)
@@ -841,6 +847,11 @@ class TestCommittedArtifacts(unittest.TestCase):
         for row in getleds_rows:
             self.assertEqual(row["ingress"], "ubus_http")
             self.assertEqual(row["analysis_revision"], "policy:ubus-luci-getleds-v1")
+            self.assertNotIn("cgi_endpoint", row)
+        self.assertTrue(getmountpoints_rows)
+        for row in getmountpoints_rows:
+            self.assertEqual(row["ingress"], "ubus_http")
+            self.assertEqual(row["analysis_revision"], "policy:ubus-luci-getmountpoints-v1")
             self.assertNotIn("cgi_endpoint", row)
         self.assertTrue(hostapd_rows)
         for row in hostapd_rows:

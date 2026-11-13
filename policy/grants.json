@@ -3010,5 +3010,123 @@
       "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
     ],
     "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-status-index-storage:ubus_http:luci.getMountPoints",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-getmountpoints-v1",
+    "session_class": "luci-mod-status-index-storage",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getMountPoints",
+    "ubus_object": "luci",
+    "method": "getMountPoints",
+    "target_id": "ubus:luci.getMountPoints",
+    "op": "invoke",
+    "acl_group": "luci-mod-status-index-storage",
+    "expectation_id": "luci-mod-status-index-storage-getmountpoints",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=luci function=getMountPoints (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.luci=[getMountPoints]",
+      "luci@b2e0be4b 25_storage.js rpc.declare object=luci method=getMountPoints",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getMountPoints",
+      "fixture rpcd.config login luci-mod-status-index-storage list read luci-mod-status-index-storage"
+    ],
+    "note": "Fixture login luci-mod-status-index-storage is not a stock device login. 25_storage.js uses rpc.declare object=luci method=getMountPoints. Intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-mounts:ubus_http:luci.getMountPoints",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-getmountpoints-v1",
+    "session_class": "luci-mod-system-mounts",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getMountPoints",
+    "ubus_object": "luci",
+    "method": "getMountPoints",
+    "target_id": "ubus:luci.getMountPoints",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-mounts",
+    "expectation_id": "luci-mod-system-mounts-getmountpoints",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=luci function=getMountPoints (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.read.ubus.luci=[getBlockDevices, getMountPoints]",
+      "luci@b2e0be4b mounts.js rpc.declare object=luci method=getMountPoints",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getMountPoints"
+    ],
+    "note": "Existing luci-mod-system-mounts fixture. mounts.js uses rpc.declare object=luci method=getMountPoints. Intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-app-package-manager:ubus_http:luci.getMountPoints",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-getmountpoints-v1",
+    "session_class": "luci-app-package-manager",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getMountPoints",
+    "ubus_object": "luci",
+    "method": "getMountPoints",
+    "target_id": "ubus:luci.getMountPoints",
+    "op": "invoke",
+    "acl_group": "luci-app-package-manager",
+    "expectation_id": "luci-app-package-manager-getmountpoints",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=luci function=getMountPoints (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-app-package-manager.json luci-app-package-manager.read.ubus.luci=[getMountPoints]",
+      "luci@b2e0be4b package-manager.js rpc.declare object=luci method=getMountPoints",
+      "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getMountPoints"
+    ],
+    "note": "Existing luci-app-package-manager fixture. package-manager.js uses rpc.declare object=luci method=getMountPoints. Intended_access, not a violation and not a PoC.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:luci.getMountPoints",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-luci-getmountpoints-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getMountPoints",
+    "ubus_object": "luci",
+    "method": "getMountPoints",
+    "target_id": "ubus:luci.getMountPoints",
+    "op": "invoke",
+    "acl_group": "luci-mod-system-mounts",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=luci function=getMountPoints (uhttpd omits scope)"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]
