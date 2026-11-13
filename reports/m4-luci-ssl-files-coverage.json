@@ -31,6 +31,7 @@
     "luci-mod-status-index system.info joins policy:ubus-system-info-v1",
     "luci-mod-status-index luci.getVersion joins policy:ubus-luci-getversion-v1",
     "luci-mod-status-index luci.getUnixtime joins policy:ubus-luci-getunixtime-v1",
+    "luci-mod-network-config-write / luci-mod-status-index-wifi hostapd.del_client joins policy:ubus-hostapd-del-client-v1",
     "luci-mod-network -> luci-lib-uqr -> /www/luci-static/resources/uqr.js through luci.mk htdocs/"
   ],
   "routing_counts": {
