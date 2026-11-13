@@ -197,8 +197,8 @@ static int cmd_decide(int argc, char **argv)
 	const char *file_cmd_pat, *file_cmd_fun;
 	char *canon, cmdstr[RPC_CMDLINE_MAX_SIZE];
 
-	if (argc != 9) {
-		fprintf(stderr, "decide: expected 9 args\n");
+	if (argc != 9 && argc != 10) {
+		fprintf(stderr, "decide: expected 9 or 10 args\n");
 		return 2;
 	}
 
@@ -225,6 +225,12 @@ static int cmd_decide(int argc, char **argv)
 
 	if (command == NULL) {
 		puts("UBUS_INVALID_ARGUMENT");
+		return 1;
+	}
+
+	/* A present env TABLE is rejected with a present SID, even if empty. */
+	if (sid && argc == 10 && atoi(argv[9])) {
+		puts("UBUS_PERMISSION_DENIED");
 		return 1;
 	}
 
@@ -288,7 +294,7 @@ static void usage(FILE *fp)
 		"usage: ubus_file_exec parse <sid|-> <object|-> <function|-> <data|->\n"
 		"       ubus_file_exec canon <path>\n"
 		"       ubus_file_exec match <obj_pat> <fun_pat> <object> <function>\n"
-		"       ubus_file_exec decide <sid|-> <command|-> <params|-> <ubus_obj_pat|-> <ubus_fun_pat|-> <file_exe_pat|-> <file_exe_fun|-> <file_cmd_pat|-> <file_cmd_fun|->\n"
+		"       ubus_file_exec decide <sid|-> <command|-> <params|-> <ubus_obj_pat|-> <ubus_fun_pat|-> <file_exe_pat|-> <file_exe_fun|-> <file_cmd_pat|-> <file_cmd_fun|-> [env_present:0|1]\n"
 		"       ubus_file_exec flags\n");
 }
 

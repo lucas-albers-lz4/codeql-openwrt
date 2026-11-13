@@ -27,6 +27,7 @@ from policy.oracle import (  # noqa: E402
     NETWORK_FIXTURE_SID,
     PRODUCER,
     build_artifacts as luci_build_artifacts,
+    corpus_revision,
 )
 from policy.ubus_file_exec import (  # noqa: E402
     ANALYSIS_REVISION,
@@ -39,11 +40,13 @@ from policy.ubus_file_exec import (  # noqa: E402
     ROUTES_SESSION_CLASS,
     UBUS_METHOD,
     UBUS_OBJECT,
+    UBUS_STATUS_INVALID_ARGUMENT,
     UBUS_STATUS_NOT_FOUND,
     UBUS_STATUS_OK,
     UBUS_STATUS_PERMISSION_DENIED,
     build_artifacts,
     evaluate_expected_case,
+    evaluate_file_exec,
     grant_id,
     load_expected_cases,
     load_file_exec_world,
@@ -169,6 +172,32 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertEqual(result.outcome, "command_denied")
         self.assertEqual(result.ubus_status, UBUS_STATUS_PERMISSION_DENIED)
 
+    def test_empty_env_is_present_and_denied_before_lookup(self) -> None:
+        result = self._result("empty-env-with-sid-permission-denied")
+        self.assertEqual(result.outcome, "command_denied")
+        self.assertEqual(result.ubus_status, UBUS_STATUS_PERMISSION_DENIED)
+        self.assertEqual(result.steps[-1]["reason"], "sid_and_env")
+        self.assertFalse(any(step["step"] == "rpc_file_exec_lookup" for step in result.steps))
+        sid = self.cases["env-with-sid-permission-denied"]["sid"]
+        not_a_table = evaluate_file_exec(sid=sid, command=IPTABLES, params=["-Z"], env=[])
+        self.assertEqual(not_a_table.outcome, "allow")
+
+    def test_rpc_exec_policy_and_string_argument_filtering(self) -> None:
+        sid = self.cases["luci-mod-status-firewall-iptables-z-allow"]["sid"]
+        for command in (None, 123, [IPTABLES], {"command": IPTABLES}):
+            result = evaluate_file_exec(sid=sid, command=command, params=["-Z"])
+            self.assertEqual(result.outcome, "invalid_argument")
+            self.assertEqual(result.ubus_status, UBUS_STATUS_INVALID_ARGUMENT)
+        empty = evaluate_file_exec(sid=sid, command="", params=["-Z"])
+        self.assertEqual(empty.outcome, "not_found")
+        self.assertEqual(empty.ubus_status, UBUS_STATUS_NOT_FOUND)
+        filtered = evaluate_file_exec(
+            sid=sid, command=IPTABLES, params=[None, "-Z", 42, {}, [], False]
+        )
+        self.assertEqual(filtered.outcome, "allow")
+        self.assertEqual(filtered.params, ["-Z"])
+        self.assertEqual(filtered.cmdline, "/usr/sbin/iptables -Z")
+
     def test_root_iptables_z_allow_not_violation(self) -> None:
         case = self.cases["root-star-iptables-z-allow"]
         result = self._result(case["id"])
@@ -194,6 +223,20 @@ class TestGrantsAndEffects(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.grants, cls.bundle, cls.effects = build_artifacts()
         cls.luci_grants, cls.luci_bundle = luci_build_artifacts()
+
+    def test_custom_root_revision_is_shared_by_all_records(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "corpus").mkdir()
+            (root / "corpus" / "lock.json").write_bytes(
+                (REPO / "corpus" / "lock.json").read_bytes() + b"\n"
+            )
+            grants, bundle, effects = build_artifacts(REPO / "policy" / "fixtures", root)
+            revision = corpus_revision(root)
+            self.assertNotEqual(revision, corpus_revision(REPO))
+            self.assertEqual(bundle["corpus_revision"], revision)
+            for row in [*grants, *bundle["decisions"], *effects]:
+                self.assertEqual(row["corpus_revision"], revision, row["record_id"])
 
     def test_luci_emitter_is_unchanged(self) -> None:
         methods = {row["method"] for row in self.luci_grants}
@@ -384,6 +427,17 @@ class TestCDouble(unittest.TestCase):
         self.assertEqual(denied.stdout.strip(), "UBUS_PERMISSION_DENIED")
         self.assertEqual(missing.stdout.strip(), "UBUS_NOT_FOUND")
         self.assertEqual(extra.stdout.strip(), "UBUS_PERMISSION_DENIED")
+
+    def test_empty_env_presence_is_denied(self) -> None:
+        args = (
+            "decide", "55555555555555555555555555555555", IPTABLES, "-Z",
+            UBUS_OBJECT, UBUS_METHOD, "-", "-", "/usr/sbin/iptables -Z", FILE_FUNCTION,
+        )
+        self.assertEqual(self._run(*args, "1").stdout.strip(), "UBUS_PERMISSION_DENIED")
+        self.assertEqual(self._run(*args, "0").stdout.strip(), "ALLOW")
+        # The HTTP ingress rejects a missing SID before the rpcd env guard.
+        no_sid_args = (args[0], "-", *args[2:])
+        self.assertEqual(self._run(*no_sid_args, "1").stdout.strip(), "ERROR_PARSE")
 
     def test_flags_record_pin(self) -> None:
         proc = self._run("flags")

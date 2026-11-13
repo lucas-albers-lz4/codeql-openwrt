@@ -41,7 +41,10 @@ iptables `-Z` cmdline miss. Stock root `*` is `intended_access`
 (`root-administration`). Bare executable fallback is not granted for these
 commands. `/usr/sbin/iptables-legacy` is `UBUS_STATUS_NOT_FOUND` here (not
 inventoried, not a live PATH search). SID plus `env` is
-`UBUS_STATUS_PERMISSION_DENIED`; inventoried callers do not pass `env`.
+`UBUS_STATUS_PERMISSION_DENIED`, including a present empty table; inventoried
+callers do not pass `env`. Non-string `command` values are ignored by the RPC
+policy and yield `INVALID_ARGUMENT`. Non-string `params` array elements are
+skipped before constructing the command line, matching rpcd.
 
 `luci-mod-network-config` has ubus `file.exec` but not the iptables `-Z` file
 ACL. `luci-mod-status-routes` and `luci-mod-status-routes-json` do not cover

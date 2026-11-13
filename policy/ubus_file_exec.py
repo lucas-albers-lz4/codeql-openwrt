@@ -363,14 +363,20 @@ def evaluate_file_exec(
         )
 
     body = parsed_data if isinstance(parsed_data, dict) else {}
+    # rpc_exec_policy only populates command for a STRING attribute.
     cmd = body.get("command")
+    if not isinstance(cmd, str):
+        cmd = None
     argv = body.get("params")
     env_table = body.get("env")
-    if argv is not None and not isinstance(argv, list):
+    if isinstance(argv, list):
+        # rpc_file_exec_run skips non-STRING attributes in the params array.
+        argv = [value for value in argv if isinstance(value, str)]
+    else:
         argv = None
     if env_table is not None and not isinstance(env_table, dict):
         env_table = None
-    if not cmd:
+    if cmd is None:
         steps.append({"step": "rpc_file_exec", "result": "UBUS_STATUS_INVALID_ARGUMENT"})
         return FileExecResult(
             **{
@@ -385,7 +391,8 @@ def evaluate_file_exec(
             }
         )
 
-    if parsed_sid and env_table:
+    # Presence of the typed env table matters even when it has no entries.
+    if parsed_sid is not None and env_table is not None:
         steps.append(
             {
                 "step": "rpc_file_exec_run",
@@ -554,13 +561,13 @@ def evaluate_file_exec(
     )
 
 
-def _identity(record_type: str, record_id: str) -> dict[str, str]:
+def _identity(record_type: str, record_id: str, revision: str) -> dict[str, str]:
     return {
         "record_type": record_type,
         "evidence_status": "fact",
         "producer": PRODUCER,
         "record_id": record_id,
-        "corpus_revision": corpus_revision(),
+        "corpus_revision": revision,
         "profile": PROFILE,
         "analysis_revision": ANALYSIS_REVISION,
     }
@@ -595,7 +602,7 @@ def evaluate_expected_case(
     )
 
 
-def grant_record(case: dict[str, Any], result: FileExecResult) -> dict[str, Any]:
+def grant_record(case: dict[str, Any], result: FileExecResult, revision: str) -> dict[str, Any]:
     if result.session_class is None or case["session_class"] != result.session_class:
         raise ValueError("grant case session_class does not match evaluated SID session")
     command_id = result.command_id
@@ -604,7 +611,7 @@ def grant_record(case: dict[str, Any], result: FileExecResult) -> dict[str, Any]
     if case.get("ubus_object") != UBUS_OBJECT or case.get("method") != UBUS_METHOD:
         raise ValueError("refusing to emit grant for non-file.exec ubus method")
     spec = COMMANDS[command_id]
-    record = _identity("policy_grant", grant_id(case["session_class"], command_id))
+    record = _identity("policy_grant", grant_id(case["session_class"], command_id), revision)
     record.update(
         {
             "session_class": case["session_class"],
@@ -637,10 +644,10 @@ def grant_record(case: dict[str, Any], result: FileExecResult) -> dict[str, Any]
     return record
 
 
-def decision_record(case: dict[str, Any], result: FileExecResult) -> dict[str, Any]:
+def decision_record(case: dict[str, Any], result: FileExecResult, revision: str) -> dict[str, Any]:
     command_id = result.command_id if result.command_id in COMMANDS else None
     spec = COMMANDS.get(command_id) if command_id else None
-    record = _identity("policy_decision", f"policy:decision:{case['id']}")
+    record = _identity("policy_decision", f"policy:decision:{case['id']}", revision)
     record.update(
         {
             "session_class": case.get("session_class"),
@@ -722,12 +729,12 @@ def decision_record(case: dict[str, Any], result: FileExecResult) -> dict[str, A
     return {key: value for key, value in record.items() if value is not None}
 
 
-def effect_record(command_id: str, grants: list[dict[str, Any]]) -> dict[str, Any]:
+def effect_record(command_id: str, grants: list[dict[str, Any]], revision: str) -> dict[str, Any]:
     spec = COMMANDS[command_id]
     command_grants = [row for row in grants if row.get("entrypoint_id") == spec["entrypoint_id"]]
     grant_ids = [row["record_id"] for row in command_grants]
     assessment = "intended_access" if grant_ids else "unassessed"
-    record = _identity("handler_effect", effect_record_id(command_id))
+    record = _identity("handler_effect", effect_record_id(command_id), revision)
     record.update(
         {
             "ingress": UBUS_INGRESS,
@@ -784,22 +791,23 @@ def build_artifacts(
 ) -> tuple[list[dict[str, Any]], dict[str, Any], list[dict[str, Any]]]:
     sessions = load_file_exec_world(fixtures)
     cases = load_expected_cases(fixtures / "ubus_file_exec_cases.json")
+    revision = corpus_revision(repo_root)
     grants_by_id: dict[str, dict[str, Any]] = {}
     decisions: list[dict[str, Any]] = []
     for case in cases:
         result = evaluate_expected_case(case, sessions)
-        decisions.append(decision_record(case, result))
+        decisions.append(decision_record(case, result, revision))
         if case.get("expect_grant") and result.outcome == "allow":
             if case.get("ubus_object") != UBUS_OBJECT or case.get("method") != UBUS_METHOD:
                 raise ValueError("refusing to emit grant for non-file.exec ubus method")
-            record = grant_record(case, result)
+            record = grant_record(case, result, revision)
             grants_by_id.setdefault(record["record_id"], record)
     grants = list(grants_by_id.values())
     bundle = {
         "producer": PRODUCER,
         "profile": PROFILE,
         "analysis_revision": ANALYSIS_REVISION,
-        "corpus_revision": corpus_revision(repo_root),
+        "corpus_revision": revision,
         "pins": _pins(),
         "scope": "ubus file.exec of luci-mod-status iptables -Z and routes ip",
         "harness": {
@@ -829,7 +837,7 @@ def build_artifacts(
         ],
         "decisions": decisions,
     }
-    effects = [effect_record(command_id, grants) for command_id in COMMANDS]
+    effects = [effect_record(command_id, grants, revision) for command_id in COMMANDS]
     return grants, bundle, effects
 
 

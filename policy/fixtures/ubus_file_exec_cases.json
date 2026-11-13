@@ -485,6 +485,29 @@
         "rpcd@d99f703 file.c rpc_file_exec_run: sid && env -> UBUS_STATUS_PERMISSION_DENIED",
         "inventoried callers do not pass env"
       ]
+    },
+    {
+      "id": "empty-env-with-sid-permission-denied",
+      "session_class": "luci-mod-status-firewall",
+      "sid": "55555555555555555555555555555555",
+      "command": "/usr/sbin/iptables",
+      "params": [
+        "-Z"
+      ],
+      "env": {},
+      "ubus_object": "file",
+      "method": "exec",
+      "expected_outcome": "command_denied",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "not": [
+        "execv"
+      ],
+      "rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: sid && env checks attribute presence, including an empty table"
+      ],
+      "note": "An empty env table is still a present BLOBMSG_TYPE_TABLE and is rejected with SID before executable lookup."
     }
   ]
 }

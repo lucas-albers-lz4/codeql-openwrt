@@ -2628,6 +2628,87 @@
         "function": "exec",
         "source": "luci-mod-status.json"
       }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:empty-env-with-sid-permission-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-file-exec-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "ubus_object": "file",
+      "method": "exec",
+      "outcome": "command_denied",
+      "command": "/usr/sbin/iptables",
+      "params": [
+        "-Z"
+      ],
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "ubus_status": 6,
+      "input_rule_refs": [
+        "rpcd@d99f703 file.c rpc_file_exec_run: sid && env checks attribute presence, including an empty table"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "sid_present": true,
+          "object": "file",
+          "function": "exec",
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "scope": "ubus",
+          "object": "file",
+          "function": "exec",
+          "result": true
+        },
+        {
+          "step": "rpc_file_exec_run",
+          "result": "UBUS_STATUS_PERMISSION_DENIED",
+          "reason": "sid_and_env"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_file_exec_cases.json#empty-env-with-sid-permission-denied",
+        "c_double": "policy/c_double/ubus_file_exec.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=file function=exec (uhttpd omits scope). rpcd-mod-file then requires session.access scope=file of the canonicalized executable or, on miss, of the cmdline. A ubus file.exec grant is not authorization to run an arbitrary command.",
+        "rpc_file_exec_run checks the executable file ACL first, then the cmdline. That is the reverse of cgi-io main_exec. Inventoried luci-ssl ACLs grant the cmdline objects, not the bare executables.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. rpc_canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci object grant. Callers at luci b2e0be4b use fs.exec \u2192 ubus file.exec.",
+        "rpc_file_exec_run returns PERMISSION_DENIED when both SID and env are present. Inventoried callers do not pass env."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and rpcd-mod-file were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "rpc_file_exec_lookup PATH search and live stat(2) are not modeled. This oracle treats only the inventoried absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than inventoried iptables -Z / ip6tables -Z / routes ip are not modeled.",
+        "cgi-io cgi-exec stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-network diagnostics ping/traceroute, ifup/ifdown/wifi, and luci-mod-status-processes /bin/kill are not this slice. Track A is unstaffed. dispatcher is not this slice.",
+        "rpc_file_access returns true when ubus_rpc_session is absent (local ubus callers). HTTP /ubus injects the parsed SID after uh_ubus_allowed; this oracle does not model the plugin skip as an allow."
+      ],
+      "not": [
+        "execv"
+      ],
+      "note": "An empty env table is still a present BLOBMSG_TYPE_TABLE and is rejected with SID before executable lookup.",
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "ubus",
+        "object": "file",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
     }
   ]
 }
