@@ -344,6 +344,52 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-system-init",
+      "session_class": "luci-mod-system-init",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "intended_access": [
+        {
+          "target_id": "ubus:rc.init",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus rc.init",
+        "execl of /etc/init.d",
+        "luci.setInitAction"
+      ],
+      "rationale": "startup.js uses rpc.declare object=rc method=init. luci-mod-system-init write grants ubus rc.init. That is rpcd rc.c, not luci.setInitAction. An allow is the HTTP gate, not execl. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-init.write.ubus.rc=[init]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/startup.js rpc.declare object=rc method=init"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-config-rc-init",
+      "session_class": "luci-mod-system-config",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "intended_access": [
+        {
+          "target_id": "ubus:rc.init",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus rc.init",
+        "execl of /etc/init.d",
+        "luci.setInitAction"
+      ],
+      "rationale": "system.js uses rpc.declare object=rc method=init for sysntpd restart. The existing luci-mod-system-config write fixture already grants ubus rc.init. Intended_access, not a new luci object grant.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config.write.ubus.rc=[init]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js rpc.declare object=rc method=init"
+      ]
+    },
+    {
       "expectation_id": "synthetic-backup-read",
       "session_class": "synthetic-backup",
       "synthetic": true,

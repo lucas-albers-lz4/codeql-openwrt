@@ -25,6 +25,7 @@
     "luci-mod-system-mounts umount/block mount fs.exec commands join policy:ubus-file-exec-mounts-v1",
     "luci-mod-system-flash sysupgrade --list-backup fs.exec commands join policy:ubus-file-exec-list-backup-v1",
     "luci-mod-system-reboot system.reboot joins policy:ubus-system-reboot-v1",
+    "luci-mod-system-init rc.init joins policy:ubus-rc-init-v1",
     "luci-mod-network -> luci-lib-uqr -> /www/luci-static/resources/uqr.js through luci.mk htdocs/"
   ],
   "routing_counts": {

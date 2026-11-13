@@ -1,0 +1,209 @@
+{
+  "comment": "Hand-transcribed expected ubus rc.init decisions for luci-mod-system-init and luci-mod-system-config from pinned uhttpd uh_ubus_allowed, startup.js / system.js rpc.declare, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=rc function=init (uhttpd omits scope).",
+    "Bounded to startup.js and system.js rpc.declare object=rc method=init at luci b2e0be4b. That is rpcd rc.c, not luci.setInitAction.",
+    "Fixture login luci-mod-system-init is write of the existing ACL group. luci-mod-system-config already exists and also grants rc.init.",
+    "Do not invent a setInitAction luci-ssl grant. rc.list is not this slice.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or execl of /etc/init.d.",
+    "shellquote and basename are not sanitizers.",
+    "luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec)."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-rc-init-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:rc.init",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus rc.init",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access rc/init false -> ERROR_ACCESS",
+        "do not invent an unauthenticated rc.init grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "not": ["unauthenticated_allow", "execl", "dispatcher", "path_found", "sentinel_rewrite", "setInitAction"],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-system-init-allow",
+      "session_class": "luci-mod-system-init",
+      "sid": "adadadadadadadadadadadadadadadad",
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:rc.init",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "expectation_id": "luci-mod-system-init",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-init",
+      "note": "Fixture login luci-mod-system-init is not a stock device login. startup.js uses rpc.declare object=rc method=init. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.write.ubus.rc=[init]",
+        "luci@b2e0be4b startup.js rpc.declare object=rc method=init",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access rc/init",
+        "fixture rpcd.config login luci-mod-system-init list write luci-mod-system-init"
+      ]
+    },
+    {
+      "id": "luci-mod-system-config-allow",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:rc.init",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "expectation_id": "luci-mod-system-config-rc-init",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-config",
+      "note": "Existing luci-mod-system-config write fixture already grants rc.init. system.js uses rpc.declare object=rc method=init for sysntpd restart. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.write.ubus.rc=[init]",
+        "luci@b2e0be4b system.js rpc.declare object=rc method=init",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access rc/init",
+        "fixture rpcd.config login luci-mod-system-config list write luci-mod-system-config"
+      ]
+    },
+    {
+      "id": "luci-mod-system-reboot-rc-init-deny",
+      "session_class": "luci-mod-system-reboot",
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci-mod-system-reboot has no ubus rc.init"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-rc-init-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:rc.init",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "note": "The list-read flash fixture has ubus file.exec, not rc.init. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus rc.init"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-rc-init-deny",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci-mod-system-mounts has no ubus rc.init"
+      ]
+    },
+    {
+      "id": "setInitAction-not-this-slice",
+      "session_class": "luci-mod-system-init",
+      "sid": "adadadadadadadadadadadadadadadad",
+      "ubus_object": "luci",
+      "method": "setInitAction",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setInitAction",
+      "not": ["rc.init grant", "path_found", "invented luci-ssl grant"],
+      "note": "luci.setInitAction has no luci-ssl delegated grant at luci b2e0be4b. This slice is rpcd rc.init, not the luci object method.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json has no luci.setInitAction",
+        "do not invent a setInitAction luci-ssl grant"
+      ]
+    },
+    {
+      "id": "rc-list-not-this-slice",
+      "session_class": "luci-mod-system-init",
+      "sid": "adadadadadadadadadadadadadadadad",
+      "ubus_object": "rc",
+      "method": "list",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.list",
+      "not": ["rc.init grant", "path_found"],
+      "note": "rpcd write implies read, so the write luci-mod-system-init fixture also matches read ubus rc.list at uh_ubus_allowed. This slice does not emit a rc.list grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list] write.ubus.rc=[init]",
+        "rpcd session.c login_test_permission: write implies read",
+        "do not staff rc.list"
+      ]
+    },
+    {
+      "id": "root-star-rc-init-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:rc.init",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}
