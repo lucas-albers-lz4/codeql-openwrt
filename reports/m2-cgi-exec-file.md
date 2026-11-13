@@ -44,6 +44,7 @@ Snapshot: `reports/m2-cgi-exec-file-effect.json`; decisions:
 `policy/cgi_exec_file_decisions.json`.
 
 Does not emit dispatcher, `authorization_violation`, or `path_found`. Does not
-staff `luci-mod-status-firewall`, ubus `file.exec` (rpcd-mod-file), or `execv`.
-The luci `/ubus` emitter is unchanged. cgi-exec-v1 remains the first-gate
-oracle.
+staff ubus `file.exec` (rpcd-mod-file) or `execv`. luci-mod-status
+dmesg/nft/iptables/firewall-init `fs.exec_direct` commands are
+`policy:cgi-exec-status-v1`. The luci `/ubus` emitter is unchanged.
+cgi-exec-v1 remains the first-gate oracle.

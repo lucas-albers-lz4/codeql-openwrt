@@ -123,11 +123,13 @@ UNKNOWN_EXECV = (
     "are not modeled."
 )
 UNKNOWN_UNSTAFFED = (
-    "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and "
-    "ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed."
+    "luci-mod-status dmesg/nft/iptables/firewall-init cgi-io file.exec is "
+    "policy:cgi-exec-status-v1. ubus file.exec (rpcd-mod-file) is not this "
+    "slice, including iptables.js handleCounterReset. Track A is unstaffed."
 )
 UNKNOWN_OTHER_CGI = (
-    "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, "
+    "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-status-v1 "
+    "remains luci-mod-status fs.exec_direct commands. cgi-backup, "
     "cgi-upload, and cgi-download stay on their own analysis_revisions. "
     "dispatcher is not this slice."
 )
@@ -271,6 +273,7 @@ def evaluate_file_exec(
     content_type: Optional[str] = CONTENT_TYPE_PREFIX,
     command: Optional[str] = SYSLOG_WRAPPER,
     sessions: Optional[dict[str, Session]] = None,
+    found_paths: Optional[set[str]] = None,
 ) -> FileExecResult:
     """Evaluate cgi-exec file.exec for an already-decoded command string.
 
@@ -279,6 +282,7 @@ def evaluate_file_exec(
     """
     if sessions is None:
         sessions = load_helper_world()
+    allowed = found_paths if found_paths is not None else set(HELPERS)
     steps: list[dict[str, Any]] = [
         {
             "step": "postdecode",
@@ -378,7 +382,7 @@ def evaluate_file_exec(
 
     cmdline = helper_cmdline(args, canon)
     steps.append({"step": "cmdline", "cmdline": cmdline})
-    if canon not in HELPERS:
+    if canon not in allowed:
         steps.append({"step": "lookup_executable", "result": "HTTP_404", "exe": canon})
         return FileExecResult(
             **{

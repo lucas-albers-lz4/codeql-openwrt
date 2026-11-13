@@ -445,6 +445,164 @@
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json",
         "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_exec file.exec of cmdline or executable"
       ]
+    },
+    {
+      "expectation_id": "luci-mod-status-logs-dmesg",
+      "session_class": "luci-mod-status-logs",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "intended_access": [
+        {
+          "target_id": "command:dmesg",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "file.exec of nft or iptables",
+        "bare /bin/dmesg extra argv",
+        "execv"
+      ],
+      "rationale": "luci-mod-status-logs read grants cgi-io exec and file.exec of /bin/dmesg -r. dmesg.js uses fs.exec_direct. The ACL is the exact cmdline, not the bare executable. Unauthenticated ACLs do not grant this command.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-logs.read.file./bin/dmesg -r=[exec]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-firewall-nft",
+      "session_class": "luci-mod-status-firewall",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "intended_access": [
+        {
+          "target_id": "command:nft",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "write file.exec /etc/init.d/firewall restart without write login",
+        "ubus file.exec iptables -Z",
+        "execv"
+      ],
+      "rationale": "luci-mod-status-firewall read grants cgi-io exec and file.exec of nft list ruleset, iptables/ip6tables -t * listing, and *-save. Write grants /etc/init.d/firewall restart. Extra tokens on the -t * glob are intended_access for this fixture, not a violation. iptables.js handleCounterReset uses fs.exec (ubus file.exec) and is not this expectation.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-firewall",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/iptables.js"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-firewall-iptables",
+      "session_class": "luci-mod-status-firewall",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "intended_access": [
+        {
+          "target_id": "command:iptables",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "bare /usr/sbin/iptables exec",
+        "execv"
+      ],
+      "rationale": "iptables.js pollFirewallLists uses fs.exec_direct with --line-numbers -w -nvxL -t <table>. The ACL glob -t * matches those tables. Bare executable fallback is not granted.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables --line-numbers -w -nvxL -t *=[exec]"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-firewall-ip6tables",
+      "session_class": "luci-mod-status-firewall",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+      "intended_access": [
+        {
+          "target_id": "command:ip6tables",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "file list of /usr/sbin/ip6tables as exec",
+        "execv"
+      ],
+      "rationale": "The ip6tables listing glob is file.exec. /usr/sbin/ip6tables list is fs.stat, not exec.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables --line-numbers -w -nvxL -t *=[exec]"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-firewall-iptables-save",
+      "session_class": "luci-mod-status-firewall",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+      "intended_access": [
+        {
+          "target_id": "command:iptables-save",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "execv"
+      ],
+      "rationale": "nftables.js falls back to fs.exec_direct('/usr/sbin/iptables-save'). Exact cmdline ACL.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-firewall-ip6tables-save",
+      "session_class": "luci-mod-status-firewall",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+      "intended_access": [
+        {
+          "target_id": "command:ip6tables-save",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "execv"
+      ],
+      "rationale": "nftables.js falls back to fs.exec_direct('/usr/sbin/ip6tables-save'). Exact cmdline ACL.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-status-firewall-restart",
+      "session_class": "luci-mod-status-firewall",
+      "synthetic": true,
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "intended_access": [
+        {
+          "target_id": "command:firewall-init",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated cgi-exec",
+        "read-only firewall fixture restart",
+        "execv"
+      ],
+      "rationale": "iptables.js handleRestart uses fs.exec_direct('/etc/init.d/firewall', ['restart']). Write file.exec. A read-only luci-mod-status-firewall-read fixture has cgi-io exec from the read ACL but not this write command.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json luci-mod-status-firewall.write.file./etc/init.d/firewall restart=[exec]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/iptables.js handleRestart"
+      ]
     }
   ]
 }

@@ -1,0 +1,3150 @@
+{
+  "grants": [
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-logs:cgi_io:cgi-exec:dmesg",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/bin/dmesg",
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "acl_group": "luci-mod-status-logs",
+      "expectation_id": "luci-mod-status-logs-dmesg",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-logs.read.file./bin/dmesg -r=[exec]",
+        "luci@b2e0be4b modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js retrieveLog fs.exec_direct",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline then executable"
+      ],
+      "note": "Fixture login luci-mod-status-logs is not a stock device login. dmesg.js uses fs.exec_direct('/bin/dmesg', ['-r']). Exact cmdline ACL; not a PoC.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:nft",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/nft",
+      "target_id": "command:nft",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "luci-mod-status-firewall-nft",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/nft --terse --json list ruleset=[exec]",
+        "luci@b2e0be4b modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js fs.exec_direct nft",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline"
+      ],
+      "note": "Fixture login luci-mod-status-firewall is not a stock device login. nftables.js uses fs.exec_direct. Exact cmdline ACL; intended_access, not a violation.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:iptables",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables",
+      "target_id": "command:iptables",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "luci-mod-status-firewall-iptables",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables --line-numbers -w -nvxL -t *=[exec]",
+        "luci@b2e0be4b iptables.js table_names Filter NAT Mangle Raw fs.exec_direct",
+        "rpcd@d99f703 session.c rpc_session_acl_allowed fnmatch FNM_NOESCAPE"
+      ],
+      "note": "iptables.js pollFirewallLists lists Filter/NAT/Mangle/Raw via -t <table>. The ACL glob -t * matches. Intended_access for this fixture, not a violation and not a PoC.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:ip6tables",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/ip6tables",
+      "target_id": "command:ip6tables",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "luci-mod-status-firewall-ip6tables",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables --line-numbers -w -nvxL -t *=[exec]",
+        "luci@b2e0be4b /usr/sbin/ip6tables list is fs.stat, not file.exec"
+      ],
+      "note": "ip6tables.js path uses the same -t * glob. /usr/sbin/ip6tables list is not exec.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:iptables-save",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables-save",
+      "target_id": "command:iptables-save",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "luci-mod-status-firewall-iptables-save",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables-save=[exec]",
+        "luci@b2e0be4b nftables.js fs.exec_direct iptables-save"
+      ],
+      "note": "nftables.js falls back to fs.exec_direct('/usr/sbin/iptables-save'). Exact cmdline.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:ip6tables-save",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/ip6tables-save",
+      "target_id": "command:ip6tables-save",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "luci-mod-status-firewall-ip6tables-save",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables-save=[exec]",
+        "luci@b2e0be4b nftables.js fs.exec_direct ip6tables-save"
+      ],
+      "note": "nftables.js falls back to fs.exec_direct('/usr/sbin/ip6tables-save'). Exact cmdline.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:firewall-init",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/etc/init.d/firewall",
+      "target_id": "command:firewall-init",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "luci-mod-status-firewall-restart",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.write.file./etc/init.d/firewall restart=[exec]",
+        "luci@b2e0be4b iptables.js handleRestart fs.exec_direct"
+      ],
+      "note": "iptables.js handleRestart uses fs.exec_direct('/etc/init.d/firewall', ['restart']). Write file.exec. Intended_access for this fixture, not a violation.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:nft",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/nft",
+      "target_id": "command:nft",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:dmesg",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/bin/dmesg",
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "acl_group": "luci-mod-status-logs",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:firewall-init",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/etc/init.d/firewall",
+      "target_id": "command:firewall-init",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:iptables",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables",
+      "target_id": "command:iptables",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:ip6tables",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/ip6tables",
+      "target_id": "command:ip6tables",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:iptables-save",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables-save",
+      "target_id": "command:iptables-save",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:cgi_io:cgi-exec:ip6tables-save",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/ip6tables-save",
+      "target_id": "command:ip6tables-save",
+      "op": "exec",
+      "acl_group": "luci-mod-status-firewall",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "session.access scope=cgi-io object=exec function=read",
+        "session.access scope=file object=canonicalized cmdline or executable function=exec"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation."
+    }
+  ],
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:cgi-exec-status-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "cgi-io": "31cb3c89f02d918d7f17bf62a80c852fc38a1ca1",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "lockfile": "corpus/lock.json",
+    "endpoint": "cgi_io:cgi-exec",
+    "commands": [
+      "/bin/dmesg",
+      "/usr/sbin/nft",
+      "/usr/sbin/iptables",
+      "/usr/sbin/ip6tables",
+      "/usr/sbin/iptables-save",
+      "/usr/sbin/ip6tables-save",
+      "/etc/init.d/firewall"
+    ]
+  },
+  "scope": "cgi-io cgi-exec file.exec of luci-mod-status dmesg/nft/iptables/firewall-init",
+  "harness": {
+    "canonical": "python3 -m policy emit",
+    "c_double": "policy/c_double/cgi_exec_status.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_cgi_io": false,
+    "live_execv": false,
+    "live_lookup_executable": false
+  },
+  "assumptions": [
+    "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+    "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+    "This oracle does not fork execv or run the command body.",
+    "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+    "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+  ],
+  "unknowns": [
+    "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+    "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+    "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+    "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+    "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-dmesg-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "unauthenticated",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "command": "/bin/dmesg -r",
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no cgi-io exec",
+        "cgi-io@31cb3c89 main.c main_exec: session_access cgi-io exec read false -> 403 Exec permission denied",
+        "do not invent an unauthenticated dmesg grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#unauthenticated-dmesg-deny",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sessionid-nft-forbidden",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "command": "/usr/sbin/nft --terse --json list ruleset",
+      "sid_present": false,
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 main.c main_exec: !fields[1] -> 403 Exec permission denied",
+        "valid content-type with absent sessionid is not HTTP 400"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": false,
+          "command_present": true
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#missing-sessionid-nft-forbidden",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "execv",
+        "dispatcher",
+        "path_found"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:invalid-content-type-dmesg-bad-request",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "bad_request",
+      "http_status": 400,
+      "command": "/bin/dmesg -r",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "cgi-io@31cb3c89 util.c postdecode: CONTENT_TYPE must start with application/x-www-form-urlencoded",
+        "cgi-io@31cb3c89 main.c main_exec: !post -> 400 Invalid form data"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": false,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_400",
+          "message": "Invalid form data"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#invalid-content-type-dmesg-bad-request",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "acl_bypass",
+        "execv"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-logs-dmesg-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/bin/dmesg",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/bin/dmesg -r",
+      "canon": "/bin/dmesg",
+      "cmdline": "/bin/dmesg -r",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-logs.read.file./bin/dmesg -r=[exec]",
+        "luci@b2e0be4b modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js retrieveLog fs.exec_direct",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline then executable"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/bin/dmesg -r",
+          "args": [
+            "/bin/dmesg",
+            "-r"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/bin/dmesg",
+          "canon": "/bin/dmesg"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/bin/dmesg -r"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/bin/dmesg -r",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-logs-dmesg-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-logs-dmesg",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-status-logs is not a stock device login. dmesg.js uses fs.exec_direct('/bin/dmesg', ['-r']). Exact cmdline ACL; not a PoC.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "file",
+        "object": "/bin/dmesg -r",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-logs-dmesg-extra-argv-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/bin/dmesg",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/bin/dmesg -r extra",
+      "canon": "/bin/dmesg",
+      "cmdline": "/bin/dmesg -r extra",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "luci@b2e0be4b file ACL object is the exact cmdline /bin/dmesg -r, not the bare /bin/dmesg path",
+        "cgi-io@31cb3c89 main.c main_exec: cmdline miss then executable miss -> 403 Access to command denied by ACL"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/bin/dmesg -r extra",
+          "args": [
+            "/bin/dmesg",
+            "-r",
+            "extra"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/bin/dmesg",
+          "canon": "/bin/dmesg"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/bin/dmesg -r extra"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/bin/dmesg -r extra",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/bin/dmesg",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-logs-dmesg-extra-argv-denied",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "not": [
+        "bare_exe_fallback",
+        "path_found"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-logs-nft-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-logs",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/nft",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/usr/sbin/nft --terse --json list ruleset",
+      "canon": "/usr/sbin/nft",
+      "cmdline": "/usr/sbin/nft --terse --json list ruleset",
+      "sid_present": true,
+      "sid": "33333333333333333333333333333333",
+      "input_rule_refs": [
+        "luci-mod-status-logs has cgi-io exec read but file.exec of nft is luci-mod-status-firewall",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/nft --terse --json list ruleset",
+          "args": [
+            "/usr/sbin/nft",
+            "--terse",
+            "--json",
+            "list",
+            "ruleset"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/nft",
+          "canon": "/usr/sbin/nft"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/nft --terse --json list ruleset"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/nft --terse --json list ruleset",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/nft",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-logs-nft-command-denied",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:nft",
+      "op": "exec",
+      "not": [
+        "cgi_io_exec_is_enough",
+        "path_found"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-nft-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/nft",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/nft --terse --json list ruleset",
+      "canon": "/usr/sbin/nft",
+      "cmdline": "/usr/sbin/nft --terse --json list ruleset",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/nft --terse --json list ruleset=[exec]",
+        "luci@b2e0be4b modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js fs.exec_direct nft",
+        "cgi-io@31cb3c89 main.c main_exec session_access file cmdline"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/nft --terse --json list ruleset",
+          "args": [
+            "/usr/sbin/nft",
+            "--terse",
+            "--json",
+            "list",
+            "ruleset"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/nft",
+          "canon": "/usr/sbin/nft"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/nft --terse --json list ruleset"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/nft --terse --json list ruleset",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-nft-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:nft",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-firewall-nft",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-mod-status-firewall is not a stock device login. nftables.js uses fs.exec_direct. Exact cmdline ACL; intended_access, not a violation.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/nft --terse --json list ruleset",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-iptables-glob-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+      "canon": "/usr/sbin/iptables",
+      "cmdline": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables --line-numbers -w -nvxL -t *=[exec]",
+        "luci@b2e0be4b iptables.js table_names Filter NAT Mangle Raw fs.exec_direct",
+        "rpcd@d99f703 session.c rpc_session_acl_allowed fnmatch FNM_NOESCAPE"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+          "args": [
+            "/usr/sbin/iptables",
+            "--line-numbers",
+            "-w",
+            "-nvxL",
+            "-t",
+            "filter"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/iptables",
+          "canon": "/usr/sbin/iptables"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-iptables-glob-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:iptables",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-firewall-iptables",
+      "assessment": "intended_access",
+      "note": "iptables.js pollFirewallLists lists Filter/NAT/Mangle/Raw via -t <table>. The ACL glob -t * matches. Intended_access for this fixture, not a violation and not a PoC.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/iptables --line-numbers -w -nvxL -t *",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-iptables-glob-extra-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter extra",
+      "canon": "/usr/sbin/iptables",
+      "cmdline": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter extra",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "luci@b2e0be4b file ACL /usr/sbin/iptables --line-numbers -w -nvxL -t *",
+        "rpcd@d99f703 fnmatch FNM_NOESCAPE: * matches extra argv",
+        "not a PoC"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter extra",
+          "args": [
+            "/usr/sbin/iptables",
+            "--line-numbers",
+            "-w",
+            "-nvxL",
+            "-t",
+            "filter",
+            "extra"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/iptables",
+          "canon": "/usr/sbin/iptables"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter extra"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter extra",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-iptables-glob-extra-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:iptables",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-firewall-iptables",
+      "assessment": "intended_access",
+      "note": "Trailing * on the joined cmdline matches extra tokens. Intended_access for this fixture, not a violation and not a PoC.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/iptables --line-numbers -w -nvxL -t *",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-iptables-bare-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/usr/sbin/iptables",
+      "canon": "/usr/sbin/iptables",
+      "cmdline": "/usr/sbin/iptables",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "luci@b2e0be4b has no bare /usr/sbin/iptables exec object; list of /usr/sbin/ip6tables is not exec",
+        "cgi-io@31cb3c89 main.c main_exec: cmdline and executable file ACL miss -> 403"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/iptables",
+          "args": [
+            "/usr/sbin/iptables"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/iptables",
+          "canon": "/usr/sbin/iptables"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/iptables"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/iptables",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/iptables",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-iptables-bare-denied",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:iptables",
+      "op": "exec",
+      "not": [
+        "bare_exe_fallback",
+        "path_found"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-ip6tables-glob-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/ip6tables",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+      "canon": "/usr/sbin/ip6tables",
+      "cmdline": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables --line-numbers -w -nvxL -t *=[exec]",
+        "luci@b2e0be4b /usr/sbin/ip6tables list is fs.stat, not file.exec"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+          "args": [
+            "/usr/sbin/ip6tables",
+            "--line-numbers",
+            "-w",
+            "-nvxL",
+            "-t",
+            "filter"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/ip6tables",
+          "canon": "/usr/sbin/ip6tables"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-ip6tables-glob-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:ip6tables",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-firewall-ip6tables",
+      "assessment": "intended_access",
+      "note": "ip6tables.js path uses the same -t * glob. /usr/sbin/ip6tables list is not exec.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t *",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-iptables-save-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables-save",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/iptables-save",
+      "canon": "/usr/sbin/iptables-save",
+      "cmdline": "/usr/sbin/iptables-save",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/iptables-save=[exec]",
+        "luci@b2e0be4b nftables.js fs.exec_direct iptables-save"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/iptables-save",
+          "args": [
+            "/usr/sbin/iptables-save"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/iptables-save",
+          "canon": "/usr/sbin/iptables-save"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/iptables-save"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/iptables-save",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-iptables-save-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:iptables-save",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-firewall-iptables-save",
+      "assessment": "intended_access",
+      "note": "nftables.js falls back to fs.exec_direct('/usr/sbin/iptables-save'). Exact cmdline.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/iptables-save",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-ip6tables-save-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/ip6tables-save",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/ip6tables-save",
+      "canon": "/usr/sbin/ip6tables-save",
+      "cmdline": "/usr/sbin/ip6tables-save",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.read.file./usr/sbin/ip6tables-save=[exec]",
+        "luci@b2e0be4b nftables.js fs.exec_direct ip6tables-save"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/ip6tables-save",
+          "args": [
+            "/usr/sbin/ip6tables-save"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/ip6tables-save",
+          "canon": "/usr/sbin/ip6tables-save"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/ip6tables-save"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/ip6tables-save",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-ip6tables-save-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:ip6tables-save",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-firewall-ip6tables-save",
+      "assessment": "intended_access",
+      "note": "nftables.js falls back to fs.exec_direct('/usr/sbin/ip6tables-save'). Exact cmdline.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/ip6tables-save",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-read-restart-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall-read",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/etc/init.d/firewall",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/etc/init.d/firewall restart",
+      "canon": "/etc/init.d/firewall",
+      "cmdline": "/etc/init.d/firewall restart",
+      "sid_present": true,
+      "sid": "66666666666666666666666666666666",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-firewall.write.file./etc/init.d/firewall restart=[exec]",
+        "fixture luci-mod-status-firewall-read is list read only; write file.exec is not in session",
+        "read still has cgi-io exec, so the miss is the file ACL"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/etc/init.d/firewall restart",
+          "args": [
+            "/etc/init.d/firewall",
+            "restart"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/etc/init.d/firewall",
+          "canon": "/etc/init.d/firewall"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/etc/init.d/firewall restart"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/init.d/firewall restart",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/init.d/firewall",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-read-restart-command-denied",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:firewall-init",
+      "op": "exec",
+      "not": [
+        "read_implies_write_exec",
+        "path_found"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-firewall-restart-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/etc/init.d/firewall",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/etc/init.d/firewall restart",
+      "canon": "/etc/init.d/firewall",
+      "cmdline": "/etc/init.d/firewall restart",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-firewall.write.file./etc/init.d/firewall restart=[exec]",
+        "luci@b2e0be4b iptables.js handleRestart fs.exec_direct"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/etc/init.d/firewall restart",
+          "args": [
+            "/etc/init.d/firewall",
+            "restart"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/etc/init.d/firewall",
+          "canon": "/etc/init.d/firewall"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/etc/init.d/firewall restart"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/init.d/firewall restart",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-firewall-restart-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:firewall-init",
+      "op": "exec",
+      "expectation_id": "luci-mod-status-firewall-restart",
+      "assessment": "intended_access",
+      "note": "iptables.js handleRestart uses fs.exec_direct('/etc/init.d/firewall', ['restart']). Write file.exec. Intended_access for this fixture, not a violation.",
+      "synthetic_session": true,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/etc/init.d/firewall restart",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:iptables-legacy-save-not-found",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-firewall",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "not_found",
+      "http_status": 404,
+      "command": "/usr/sbin/iptables-legacy-save",
+      "canon": "/usr/sbin/iptables-legacy-save",
+      "cmdline": "/usr/sbin/iptables-legacy-save",
+      "sid_present": true,
+      "sid": "55555555555555555555555555555555",
+      "input_rule_refs": [
+        "nftables.js also tries iptables-legacy-save; that path is not in the luci-ssl file ACL and is not inventoried as found",
+        "this slice does not live-stat lookup_executable; HTTP 404 Executable not found"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/iptables-legacy-save",
+          "args": [
+            "/usr/sbin/iptables-legacy-save"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/iptables-legacy-save",
+          "canon": "/usr/sbin/iptables-legacy-save"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/iptables-legacy-save"
+        },
+        {
+          "step": "lookup_executable",
+          "result": "HTTP_404",
+          "exe": "/usr/sbin/iptables-legacy-save"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#iptables-legacy-save-not-found",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "path_found",
+        "execv"
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-network-config-dmesg-command-denied",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-network-config",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/bin/dmesg",
+      "outcome": "command_denied",
+      "http_status": 403,
+      "command": "/bin/dmesg -r",
+      "canon": "/bin/dmesg",
+      "cmdline": "/bin/dmesg -r",
+      "sid_present": true,
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "input_rule_refs": [
+        "luci-mod-network-config has cgi-io exec read (cgi-exec-v1) but file.exec of dmesg is luci-mod-status-logs",
+        "cgi-io@31cb3c89 main.c main_exec: file ACL miss -> 403 Access to command denied by ACL"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/bin/dmesg -r",
+          "args": [
+            "/bin/dmesg",
+            "-r"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/bin/dmesg",
+          "canon": "/bin/dmesg"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/bin/dmesg -r"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/bin/dmesg -r",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": false
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/bin/dmesg",
+          "function": "exec",
+          "stage": "executable",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Access to command denied by ACL"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-network-config-dmesg-command-denied",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "not": [
+        "cgi_io_exec_is_enough",
+        "path_found"
+      ],
+      "grant_emitted": false,
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-nft-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/nft",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/nft --terse --json list ruleset",
+      "canon": "/usr/sbin/nft",
+      "cmdline": "/usr/sbin/nft --terse --json list ruleset",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/nft --terse --json list ruleset",
+          "args": [
+            "/usr/sbin/nft",
+            "--terse",
+            "--json",
+            "list",
+            "ruleset"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/nft",
+          "canon": "/usr/sbin/nft"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/nft --terse --json list ruleset"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/nft --terse --json list ruleset",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#root-star-nft-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:nft",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/nft --terse --json list ruleset",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-dmesg-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/bin/dmesg",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/bin/dmesg -r",
+      "canon": "/bin/dmesg",
+      "cmdline": "/bin/dmesg -r",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/bin/dmesg -r",
+          "args": [
+            "/bin/dmesg",
+            "-r"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/bin/dmesg",
+          "canon": "/bin/dmesg"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/bin/dmesg -r"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/bin/dmesg -r",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#root-star-dmesg-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:dmesg",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-logs",
+        "scope": "file",
+        "object": "/bin/dmesg -r",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-firewall-restart-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/etc/init.d/firewall",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/etc/init.d/firewall restart",
+      "canon": "/etc/init.d/firewall",
+      "cmdline": "/etc/init.d/firewall restart",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/etc/init.d/firewall restart",
+          "args": [
+            "/etc/init.d/firewall",
+            "restart"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/etc/init.d/firewall",
+          "canon": "/etc/init.d/firewall"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/etc/init.d/firewall restart"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/etc/init.d/firewall restart",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#root-star-firewall-restart-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:firewall-init",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/etc/init.d/firewall restart",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-iptables-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+      "canon": "/usr/sbin/iptables",
+      "cmdline": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+          "args": [
+            "/usr/sbin/iptables",
+            "--line-numbers",
+            "-w",
+            "-nvxL",
+            "-t",
+            "filter"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/iptables",
+          "canon": "/usr/sbin/iptables"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/iptables --line-numbers -w -nvxL -t filter",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#root-star-iptables-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:iptables",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/iptables --line-numbers -w -nvxL -t *",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-ip6tables-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/ip6tables",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+      "canon": "/usr/sbin/ip6tables",
+      "cmdline": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+          "args": [
+            "/usr/sbin/ip6tables",
+            "--line-numbers",
+            "-w",
+            "-nvxL",
+            "-t",
+            "filter"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/ip6tables",
+          "canon": "/usr/sbin/ip6tables"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t filter",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#root-star-ip6tables-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:ip6tables",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/ip6tables --line-numbers -w -nvxL -t *",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-iptables-save-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/iptables-save",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/iptables-save",
+      "canon": "/usr/sbin/iptables-save",
+      "cmdline": "/usr/sbin/iptables-save",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/iptables-save",
+          "args": [
+            "/usr/sbin/iptables-save"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/iptables-save",
+          "canon": "/usr/sbin/iptables-save"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/iptables-save"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/iptables-save",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#root-star-iptables-save-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:iptables-save",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/iptables-save",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-ip6tables-save-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "root",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+      "cgi_endpoint": "cgi-exec",
+      "fs_path": "/usr/sbin/ip6tables-save",
+      "outcome": "allow",
+      "http_status": 200,
+      "command": "/usr/sbin/ip6tables-save",
+      "canon": "/usr/sbin/ip6tables-save",
+      "cmdline": "/usr/sbin/ip6tables-save",
+      "match_stage": "cmdline",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package/system/rpcd/files/rpcd.config root read/write *",
+        "expectation_id root-administration"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": true
+        },
+        {
+          "step": "parse_command",
+          "command": "/usr/sbin/ip6tables-save",
+          "args": [
+            "/usr/sbin/ip6tables-save"
+          ]
+        },
+        {
+          "step": "canonicalize_path",
+          "argv0": "/usr/sbin/ip6tables-save",
+          "canon": "/usr/sbin/ip6tables-save"
+        },
+        {
+          "step": "cmdline",
+          "cmdline": "/usr/sbin/ip6tables-save"
+        },
+        {
+          "step": "session_access",
+          "scope": "file",
+          "object": "/usr/sbin/ip6tables-save",
+          "function": "exec",
+          "stage": "cmdline",
+          "result": true
+        },
+        {
+          "step": "main_exec",
+          "result": "allow",
+          "execv": false,
+          "match_stage": "cmdline"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#root-star-ip6tables-save-allow",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "target_id": "command:ip6tables-save",
+      "op": "exec",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock rpcd.config root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_cgi_acl": {
+        "group": "luci-mod-network-config",
+        "scope": "cgi-io",
+        "object": "exec",
+        "function": "read",
+        "source": "luci-mod-network.json"
+      },
+      "matched_file_acl": {
+        "group": "luci-mod-status-firewall",
+        "scope": "file",
+        "object": "/usr/sbin/ip6tables-save",
+        "function": "exec",
+        "source": "luci-mod-status.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-realtime-dmesg-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:cgi-exec-status-v1",
+      "session_class": "luci-mod-status-realtime",
+      "ingress": "cgi_io",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "cgi_endpoint": "cgi-exec",
+      "outcome": "deny",
+      "http_status": 403,
+      "command": "/bin/dmesg -r",
+      "sid_present": true,
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "input_rule_refs": [
+        "luci-mod-status-realtime has no cgi-io exec; gate fails before file.exec",
+        "cgi-io@31cb3c89 main.c main_exec: session_access cgi-io exec read false -> 403 Exec permission denied"
+      ],
+      "matching_steps": [
+        {
+          "step": "postdecode",
+          "body_validation_assumed": true,
+          "content_type_prefix": "application/x-www-form-urlencoded",
+          "content_type_ok": true,
+          "sessionid_present": true,
+          "command_present": true
+        },
+        {
+          "step": "session_access",
+          "scope": "cgi-io",
+          "object": "exec",
+          "function": "read",
+          "result": false
+        },
+        {
+          "step": "main_exec",
+          "result": "HTTP_403",
+          "message": "Exec permission denied"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/cgi_exec_status_cases.json#luci-mod-status-realtime-dmesg-deny",
+        "c_double": "policy/c_double/cgi_exec_status.c"
+      },
+      "assumptions": [
+        "cgi-io main_exec requires session.access scope=cgi-io object=exec function=read AND session.access scope=file of the canonicalized cmdline or of the executable path. A cgi-io exec read grant is not authorization to run an arbitrary command.",
+        "Successful form-body framing and URL decoding are preconditions. parse_command and canonicalize_path of argv0 are transcribed from cgi-io util.c; the leading token is canonicalized before the file ACL.",
+        "This oracle does not fork execv or run the command body.",
+        "shellquote and basename are not sanitizers. canonicalize_path is a textual path normalizer, not a taint sanitizer.",
+        "These commands are not luci object methods. Do not invent a luci-ssl ubus grant. Callers at luci b2e0be4b use fs.exec_direct \u2192 cgi-exec."
+      ],
+      "unknowns": [
+        "Live cgi-io, uhttpd, and rpcd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
+        "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the inventoried luci-mod-status absolute command paths as found.",
+        "execv of the command, helper-internal argv after the file ACL, and file.exec of commands other than the inventoried luci-mod-status dmesg/nft/iptables/firewall-init paths are not modeled.",
+        "ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset fs.exec('/usr/sbin/iptables', ['-Z']). Track A is unstaffed. luci-mod-status-routes ip exec is ubus file.exec, not cgi-io. The three luci-ssl libexec helpers stay on policy:cgi-exec-file-v1.",
+        "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-file-v1 remains the three libexec helpers. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "path_found"
+      ],
+      "grant_emitted": false
+    }
+  ]
+}

@@ -47,8 +47,8 @@
       "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
       "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
       "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
-      "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
-      "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      "luci-mod-status dmesg/nft/iptables/firewall-init cgi-io file.exec is policy:cgi-exec-status-v1. ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset. Track A is unstaffed.",
+      "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-status-v1 remains luci-mod-status fs.exec_direct commands. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
     ]
   },
   {
@@ -99,8 +99,8 @@
       "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
       "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
       "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
-      "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
-      "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      "luci-mod-status dmesg/nft/iptables/firewall-init cgi-io file.exec is policy:cgi-exec-status-v1. ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset. Track A is unstaffed.",
+      "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-status-v1 remains luci-mod-status fs.exec_direct commands. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
     ]
   },
   {
@@ -151,8 +151,8 @@
       "CONTENT_LENGTH/body framing and URL-decoding failures in postdecode are not modeled; this slice assumes successful form-body decoding.",
       "lookup_executable PATH search and live stat(2) are not modeled. This oracle treats only the three inventoried absolute helper paths as found.",
       "execv of the helper, helper-internal argv after the file ACL, and file.exec of commands other than the three luci-ssl libexec helpers are not modeled.",
-      "luci-mod-status-firewall cgi-io exec, dmesg/ip/nft file.exec rows, and ubus file.exec (rpcd-mod-file) are not this slice. Track A is unstaffed.",
-      "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
+      "luci-mod-status dmesg/nft/iptables/firewall-init cgi-io file.exec is policy:cgi-exec-status-v1. ubus file.exec (rpcd-mod-file) is not this slice, including iptables.js handleCounterReset. Track A is unstaffed.",
+      "cgi-exec-v1 remains the cgi-io exec read gate only. cgi-exec-status-v1 remains luci-mod-status fs.exec_direct commands. cgi-backup, cgi-upload, and cgi-download stay on their own analysis_revisions. dispatcher is not this slice."
     ]
   }
 ]

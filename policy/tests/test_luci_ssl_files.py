@@ -177,6 +177,7 @@ class TestLuciSslFiles(unittest.TestCase):
             self.assertEqual(row["evidence_status"], "fact")
             self.assertNotIn("shell_not_analyzed", " ".join(row["assumptions"]))
             self.assertIn("policy:cgi-exec-file-v1", row["evidence_refs"])
+            self.assertIn("policy:cgi-exec-status-v1", " ".join(row["unknowns"]))
             self.assertIn("not sanitizers", " ".join(row["assumptions"]).lower())
         cgi = by_path["/www/cgi-bin/luci"]
         self.assertEqual(cgi["shebang"], "#!/usr/bin/env ucode")

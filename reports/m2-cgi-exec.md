@@ -12,7 +12,8 @@ Missing SID is HTTP 403, not 400. Invalid content-type is HTTP 400.
 
 This slice does **not** model `parse_command`, `canonicalize_path` of argv0,
 `lookup_executable`, or `execv`. File.exec of the three luci-ssl libexec
-helpers is `policy:cgi-exec-file-v1`. A cgi-io exec read grant is not a
+helpers is `policy:cgi-exec-file-v1`. luci-mod-status dmesg/firewall
+commands are `policy:cgi-exec-status-v1`. A cgi-io exec read grant is not a
 claim that an arbitrary command is authorized.
 
 Canonical `python3 -m policy emit` appends grants to `policy/grants.json` and
@@ -26,6 +27,7 @@ not sanitizers. Does not invent luci-ssl grants.
 
 Unauthenticated is deny (403). Fixture `luci-mod-network-config` and stock root
 `*` allow the cgi-io exec read gate as `intended_access`.
-`luci-mod-status-firewall` also grants cgi-io exec at luci `b2e0be4b`; that
-login is not staffed here. `luci-mod-status-logs` and
+`luci-mod-status-firewall` cgi-io exec is a fixture login for
+`policy:cgi-exec-status-v1` file.exec; this oracle still does not emit a
+firewall cgi-exec-v1 grant. `luci-mod-status-logs` and
 `luci-app-package-manager` file.exec helpers are `policy:cgi-exec-file-v1`.

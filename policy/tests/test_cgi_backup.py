@@ -38,6 +38,7 @@ from policy.cgi_backup import (  # noqa: E402
 from policy.cgi_download import build_artifacts as download_build_artifacts  # noqa: E402
 from policy.cgi_exec import build_artifacts as exec_build_artifacts  # noqa: E402
 from policy.cgi_exec_file import build_artifacts as helper_build_artifacts  # noqa: E402
+from policy.cgi_exec_status import build_artifacts as status_build_artifacts  # noqa: E402
 from policy.cgi_upload import build_artifacts as upload_build_artifacts  # noqa: E402
 from policy.oracle import (  # noqa: E402
     C_DOUBLE_FLAGS,
@@ -352,6 +353,7 @@ class TestCommittedArtifacts(unittest.TestCase):
         download_grants, _, _ = download_build_artifacts()
         exec_grants, _, _ = exec_build_artifacts()
         helper_grants, _, _ = helper_build_artifacts()
+        status_grants, _, _ = status_build_artifacts()
         self.assertEqual(
             committed_grants,
             luci_grants
@@ -359,7 +361,8 @@ class TestCommittedArtifacts(unittest.TestCase):
             + upload_grants
             + download_grants
             + exec_grants
-            + helper_grants,
+            + helper_grants
+            + status_grants,
         )
         self.assertEqual(committed_luci, luci_bundle)
         self.assertEqual(committed_cgi, cgi_bundle)
