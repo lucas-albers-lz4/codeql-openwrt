@@ -593,6 +593,33 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-system-config-gettimezones",
+      "session_class": "luci-mod-system-config",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getTimezones",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getTimezones",
+        "luci-base getTimezones handler",
+        "luci.getLEDs grant",
+        "luci.getUSBDevices grant",
+        "luci-mod-system-config getUnixtime grant",
+        "ubus rc.init grant",
+        "ubus rc.list grant"
+      ],
+      "rationale": "system.js uses rpc.declare object=luci method=getTimezones. luci-mod-system-config read grants ubus luci.getTimezones. The existing write fixture matches because rpcd write implies read. An allow is the HTTP gate, not the luci-base getTimezones handler (/etc/TZ, UCI zonename, timezones table). Does not rewrite the luci exec-methods emitter. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. getLEDs / getUSBDevices stay unstaffed. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js rpc.declare object=luci method=getTimezones"
+      ]
+    },
+    {
       "expectation_id": "luci-mod-network-config-hostapd-del-client",
       "session_class": "luci-mod-network-config-write",
       "synthetic": true,

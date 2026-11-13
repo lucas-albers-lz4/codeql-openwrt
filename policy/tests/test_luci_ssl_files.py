@@ -329,6 +329,15 @@ class TestLuciSslFiles(unittest.TestCase):
         self.assertTrue(
             all(row["analysis_revision"] == "policy:ubus-luci-getodhcp6cstats-v1" for row in getodhcp6cstats)
         )
+        gettimezones = [
+            row
+            for row in self.grants
+            if row.get("ubus_object") == "luci" and row.get("method") == "getTimezones"
+        ]
+        self.assertTrue(gettimezones)
+        self.assertTrue(
+            all(row["analysis_revision"] == "policy:ubus-luci-gettimezones-v1" for row in gettimezones)
+        )
         blob = json.dumps(self.grants)
         self.assertNotIn(ANALYSIS_REVISION, blob)
         self.assertNotIn("authorization_violation", blob)

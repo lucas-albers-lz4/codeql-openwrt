@@ -1,0 +1,303 @@
+{
+  "comment": "Hand-transcribed expected ubus luci.getTimezones decisions for luci-mod-system-config from pinned uhttpd uh_ubus_allowed, system.js rpc.declare, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=luci function=getTimezones (uhttpd omits scope).",
+    "Bounded to system.js rpc.declare object=luci method=getTimezones at luci b2e0be4b. That is the luci-base plugin, not procd system.",
+    "Fixture login luci-mod-system-config is write of the existing ACL group in luci-mod-system.json. Write implies read.",
+    "getLEDs / getUSBDevices stay unstaffed; this slice does not emit those grants.",
+    "luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a luci-mod-system-config getUnixtime grant.",
+    "luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1.",
+    "rc.init stays on policy:ubus-rc-init-v1. rc.list stays on policy:ubus-rc-list-v1.",
+    "Do not rewrite the luci exec-methods emitter.",
+    "Do not invent a setInitAction luci-ssl grant.",
+    "Do not invent a luci-mod-status-index-storage login.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed (unauthenticated grants only luci.getFeatures).",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, or path_found.",
+    "shellquote and basename are not sanitizers.",
+    "luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec).",
+    "hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-luci-getTimezones-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getTimezones",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus luci.getTimezones",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access luci/getTimezones false -> ERROR_ACCESS",
+        "do not invent an unauthenticated luci.getTimezones grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "not": [
+        "unauthenticated_allow",
+        "luci_plugin_getTimezones",
+        "dispatcher",
+        "path_found",
+        "sentinel_rewrite",
+        "setInitAction"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-system-config-allow",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getTimezones",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "expectation_id": "luci-mod-system-config-gettimezones",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-config",
+      "note": "Fixture login luci-mod-system-config is not a stock device login. Existing write fixture grants getTimezones via write-implies-read. system.js uses rpc.declare object=luci method=getTimezones. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "luci@b2e0be4b system.js rpc.declare object=luci method=getTimezones",
+        "rpcd session.c login_test_permission: write implies read",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getTimezones",
+        "fixture rpcd.config login luci-mod-system-config list write luci-mod-system-config"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-luci-getTimezones-deny",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci-mod-status-index has no ubus luci.getTimezones"
+      ]
+    },
+    {
+      "id": "luci-mod-status-realtime-luci-getTimezones-deny",
+      "session_class": "luci-mod-status-realtime",
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-realtime.read.ubus.luci=[getConntrackList, getRealtimeStats]",
+        "luci-mod-status-realtime has no ubus luci.getTimezones"
+      ]
+    },
+    {
+      "id": "luci-mod-system-reboot-luci-getTimezones-deny",
+      "session_class": "luci-mod-system-reboot",
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci-mod-system-reboot has ubus system.reboot, not luci.getTimezones"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-luci-getTimezones-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getTimezones",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "note": "The list-read flash fixture has ubus file.exec, not luci.getTimezones. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus luci.getTimezones"
+      ]
+    },
+    {
+      "id": "luci-mod-system-init-read-luci-getTimezones-deny",
+      "session_class": "luci-mod-system-init-read",
+      "sid": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+        "luci-mod-system-init has no ubus luci.getTimezones"
+      ]
+    },
+    {
+      "id": "luci-getLEDs-not-this-slice",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "luci",
+      "method": "getLEDs",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getLEDs",
+      "not": [
+        "luci.getTimezones grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "leds.js declares luci.getLEDs. The config fixture matches getLEDs at uh_ubus_allowed. That method stays unstaffed. This slice does not emit a getLEDs grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "luci@b2e0be4b leds.js rpc.declare object=luci method=getLEDs",
+        "getLEDs stays unstaffed"
+      ]
+    },
+    {
+      "id": "luci-getUSBDevices-not-this-slice",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "luci",
+      "method": "getUSBDevices",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getUSBDevices",
+      "not": [
+        "luci.getTimezones grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci-mod-system-config read grants luci.getUSBDevices. The config fixture matches getUSBDevices at uh_ubus_allowed. luci-ssl JS at b2e0be4b has no rpc.declare for getUSBDevices. This slice does not emit a getUSBDevices grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "getUSBDevices stays unstaffed (no luci-ssl JS call site at b2e0be4b)"
+      ]
+    },
+    {
+      "id": "luci-getUnixtime-not-this-slice",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "luci",
+      "method": "getUnixtime",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getUnixtime",
+      "not": [
+        "luci.getTimezones grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. This slice does not emit a luci-mod-system-config getUnixtime grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "luci@b2e0be4b system.js rpc.declare object=luci method=getUnixtime",
+        "luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1"
+      ]
+    },
+    {
+      "id": "rc-init-not-this-slice",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "rc",
+      "method": "init",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.init",
+      "not": [
+        "luci.getTimezones grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-system-config fixture matches rc.init at uh_ubus_allowed. That method stays on policy:ubus-rc-init-v1. This slice does not emit a rc.init grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.write.ubus.rc=[init]",
+        "luci@b2e0be4b system.js rpc.declare object=rc method=init",
+        "rc.init stays on policy:ubus-rc-init-v1"
+      ]
+    },
+    {
+      "id": "rc-list-not-this-slice",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "rc",
+      "method": "list",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rc.list",
+      "not": [
+        "luci.getTimezones grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-system-config fixture matches rc.list at uh_ubus_allowed via write-implies-read. That method stays on policy:ubus-rc-list-v1. This slice does not emit a rc.list grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.rc=[list]",
+        "luci@b2e0be4b system.js rpc.declare object=rc method=list",
+        "rc.list stays on policy:ubus-rc-list-v1"
+      ]
+    },
+    {
+      "id": "root-star-luci-getTimezones-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_object": "luci",
+      "method": "getTimezones",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getTimezones",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}
