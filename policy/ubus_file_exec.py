@@ -86,6 +86,7 @@ UBUS_STATUS_OK = 0
 UBUS_STATUS_INVALID_ARGUMENT = 2
 UBUS_STATUS_NOT_FOUND = 4
 UBUS_STATUS_PERMISSION_DENIED = 6
+RPC_CMDLINE_MAX_SIZE = 1024
 
 COMMANDS: dict[str, dict[str, Any]] = {
     "iptables": {
@@ -191,8 +192,9 @@ ASSUMPTION_ENV = (
 
 
 def _cmdline(canon: str, params: Optional[list[str]]) -> str:
-    if not params:
+    if params is None:
         return canon
+    # A present params array contributes a separator even when empty.
     return canon + " " + " ".join(params)
 
 
@@ -484,12 +486,14 @@ def evaluate_file_exec(
             steps=steps,
         )
 
-    if argv is None:
+    # The pinned C doubles enforce this buffer limit only after the
+    # executable ACL misses. Count UTF-8 bytes, including all separators.
+    if argv is None or len(cmdline.encode("utf-8")) >= RPC_CMDLINE_MAX_SIZE:
         steps.append(
             {
                 "step": "rpc_file_exec_run",
                 "result": "UBUS_STATUS_PERMISSION_DENIED",
-                "reason": "executable_miss_and_null_params",
+                "reason": "executable_miss_and_null_params" if argv is None else "cmdline_too_long",
             }
         )
         return FileExecResult(

@@ -1,0 +1,24 @@
+{
+  "comment": "Test-only cmdline fallback cases for every inventoried file.exec command. Synthetic cmdline-only ACLs make the length and empty-params branches reachable without changing emitted grants or the staffed session worlds.",
+  "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+  "notes": [
+    "Boundary params fill the requested UTF-8 cmdline byte length, including the executable and every separating space.",
+    "The C doubles check the executable ACL first. Only a miss reaches the 1024-byte cmdline cap.",
+    "A present empty params array produces a trailing space; absent params denies the fallback."
+  ],
+  "boundary_cases": [
+    {"id": "ascii-1023-allow", "cmdline_bytes": 1023, "fill": "a", "prefix_params": [], "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
+    {"id": "ascii-1024-deny", "cmdline_bytes": 1024, "fill": "a", "prefix_params": [], "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"},
+    {"id": "ascii-1025-deny", "cmdline_bytes": 1025, "fill": "a", "prefix_params": [], "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"},
+    {"id": "utf8-1023-allow", "cmdline_bytes": 1023, "fill": "é", "prefix_params": [], "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
+    {"id": "utf8-1024-deny", "cmdline_bytes": 1024, "fill": "é", "prefix_params": [], "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"},
+    {"id": "split-utf8-1023-allow", "cmdline_bytes": 1023, "fill": "é", "prefix_params": ["first", ""], "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
+    {"id": "split-utf8-1024-deny", "cmdline_bytes": 1024, "fill": "é", "prefix_params": ["first", ""], "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"}
+  ],
+  "empty_params_cases": [
+    {"id": "empty-array", "params": [], "expected_params": [], "cmdline_suffix": " ", "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
+    {"id": "empty-string-argument", "params": [""], "expected_params": [""], "cmdline_suffix": " ", "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
+    {"id": "filtered-empty-array", "params": [null, 42, {}, [], false], "expected_params": [], "cmdline_suffix": " ", "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
+    {"id": "absent-params", "params": null, "expected_params": null, "cmdline_suffix": "", "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"}
+  ]
+}
