@@ -23,6 +23,7 @@ from . import (
     ubus_hostapd_del_client,
     ubus_hostapd_wps_cancel,
     ubus_hostapd_wps_start,
+    ubus_hostapd_wps_status,
     ubus_luci_getunixtime,
     ubus_luci_getversion,
     ubus_system_board,
@@ -92,6 +93,9 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     wps_cancel_grants, wps_cancel_bundle, wps_cancel_effects = (
         ubus_hostapd_wps_cancel.build_artifacts(fixtures, repo_root)
     )
+    wps_status_grants, wps_status_bundle, wps_status_effects = (
+        ubus_hostapd_wps_status.build_artifacts(fixtures, repo_root)
+    )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
     grants_path = repo_root / "policy" / "grants.json"
     luci_decisions_path = repo_root / "policy" / "policy_decisions.json"
@@ -116,6 +120,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     hostapd_decisions_path = repo_root / "policy" / "ubus_hostapd_del_client_decisions.json"
     wps_decisions_path = repo_root / "policy" / "ubus_hostapd_wps_start_decisions.json"
     wps_cancel_decisions_path = repo_root / "policy" / "ubus_hostapd_wps_cancel_decisions.json"
+    wps_status_decisions_path = repo_root / "policy" / "ubus_hostapd_wps_status_decisions.json"
     noauth_decisions_path = repo_root / "policy" / "no_ubusauth_decisions.json"
     upload_effect_path = repo_root / "reports" / "m2-cgi-upload-effect.json"
     download_effect_path = repo_root / "reports" / "m2-cgi-download-effect.json"
@@ -137,6 +142,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     hostapd_effect_path = repo_root / "reports" / "m2-ubus-hostapd-del-client-effect.json"
     wps_effect_path = repo_root / "reports" / "m2-ubus-hostapd-wps-start-effect.json"
     wps_cancel_effect_path = repo_root / "reports" / "m2-ubus-hostapd-wps-cancel-effect.json"
+    wps_status_effect_path = repo_root / "reports" / "m2-ubus-hostapd-wps-status-effect.json"
     oracle.dump_json(
         grants_path,
         luci_grants
@@ -160,7 +166,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         + getunixtime_grants
         + hostapd_grants
         + wps_grants
-        + wps_cancel_grants,
+        + wps_cancel_grants
+        + wps_status_grants,
     )
     oracle.dump_json(luci_decisions_path, luci_bundle)
     oracle.dump_json(backup_decisions_path, backup_bundle)
@@ -184,6 +191,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(hostapd_decisions_path, {"grants": hostapd_grants, **hostapd_bundle})
     oracle.dump_json(wps_decisions_path, {"grants": wps_grants, **wps_bundle})
     oracle.dump_json(wps_cancel_decisions_path, {"grants": wps_cancel_grants, **wps_cancel_bundle})
+    oracle.dump_json(wps_status_decisions_path, {"grants": wps_status_grants, **wps_status_bundle})
     oracle.dump_json(noauth_decisions_path, noauth_bundle)
     oracle.dump_json(upload_effect_path, upload_effect)
     oracle.dump_json(download_effect_path, download_effect)
@@ -205,6 +213,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(hostapd_effect_path, hostapd_effects)
     oracle.dump_json(wps_effect_path, wps_effects)
     oracle.dump_json(wps_cancel_effect_path, wps_cancel_effects)
+    oracle.dump_json(wps_status_effect_path, wps_status_effects)
     cgi_backup.upsert_handler_effect(backup_effect, repo_root)
     cgi_backup.upsert_handler_effect(upload_effect, repo_root)
     cgi_backup.upsert_handler_effect(download_effect, repo_root)
@@ -244,6 +253,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         effect_path = cgi_backup.upsert_handler_effect(wps_effect, repo_root)
     for wps_cancel_effect in wps_cancel_effects:
         effect_path = cgi_backup.upsert_handler_effect(wps_cancel_effect, repo_root)
+    for wps_status_effect in wps_status_effects:
+        effect_path = cgi_backup.upsert_handler_effect(wps_status_effect, repo_root)
     return (
         grants_path,
         luci_decisions_path,
@@ -268,6 +279,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         hostapd_decisions_path,
         wps_decisions_path,
         wps_cancel_decisions_path,
+        wps_status_decisions_path,
         noauth_decisions_path,
         effect_path,
     )

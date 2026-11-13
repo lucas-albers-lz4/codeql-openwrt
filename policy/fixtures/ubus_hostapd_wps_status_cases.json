@@ -1,0 +1,315 @@
+{
+  "comment": "Hand-transcribed expected ubus hostapd.<ifname>.wps_status decisions for luci-mod-status-index-wifi from pinned uhttpd uh_ubus_allowed, 60_wifi.js handleGetWPSStatus, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=hostapd.* function=wps_status (uhttpd omits scope; FNM_NOESCAPE).",
+    "Bounded to 60_wifi.js handleGetWPSStatus rpc.declare object=hostapd.<ifname> method=wps_status at luci b2e0be4b.",
+    "Fixture login luci-mod-status-index-wifi is write of luci-mod-status-index-wifi from luci-mod-status-index.json.",
+    "luci-mod-network-config write grants hostapd.* del_client, not wps_status. That fixture is ERROR_ACCESS here.",
+    "Do not invent a setInitAction luci-ssl grant. hostapd.del_client stays on policy:ubus-hostapd-del-client-v1. hostapd.wps_start stays on policy:ubus-hostapd-wps-start-v1. hostapd.wps_cancel stays on policy:ubus-hostapd-wps-cancel-v1.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or hostapd WPS.",
+    "shellquote and basename are not sanitizers.",
+    "luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec)."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-hostapd-wps-status-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:hostapd.wps_status",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus hostapd.wps_status",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access hostapd.*/wps_status false -> ERROR_ACCESS",
+        "do not invent an unauthenticated hostapd.wps_status grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "not": [
+        "unauthenticated_allow",
+        "hostapd_wps",
+        "dispatcher",
+        "path_found",
+        "sentinel_rewrite",
+        "setInitAction"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-wifi-allow",
+      "session_class": "luci-mod-status-index-wifi",
+      "sid": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:hostapd.wps_status",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "expectation_id": "luci-mod-status-index-wifi-hostapd-wps-status",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-index-wifi",
+      "note": "Fixture login luci-mod-status-index-wifi is not a stock device login. 60_wifi.js handleGetWPSStatus uses rpc.declare object=hostapd.<ifname> method=wps_status. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-wifi.write.ubus.hostapd.*=[del_client, wps_start, wps_cancel, wps_status]",
+        "luci@b2e0be4b 60_wifi.js handleGetWPSStatus rpc.declare method=wps_status",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access hostapd.*/wps_status",
+        "fixture rpcd.config login luci-mod-status-index-wifi list write luci-mod-status-index-wifi"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-write-deny",
+      "session_class": "luci-mod-network-config-write",
+      "sid": "99999999999999999999999999999999",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "note": "luci-mod-network-config write grants hostapd.* del_client, not wps_status. ERROR_ACCESS at uh_ubus_allowed. hostapd.del_client stays on policy:ubus-hostapd-del-client-v1.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.write.ubus.hostapd.*=[del_client]",
+        "luci-mod-network-config write has no hostapd.* wps_status",
+        "hostapd.del_client stays on policy:ubus-hostapd-del-client-v1"
+      ]
+    },
+    {
+      "id": "luci-mod-network-config-read-deny",
+      "session_class": "luci-mod-network-config",
+      "sid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "note": "The read luci-mod-network-config fixture has ubus file.exec and luci swconfig methods, not hostapd.wps_status. ERROR_ACCESS at uh_ubus_allowed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-network.json luci-mod-network-config.read has no hostapd.*",
+        "hostapd.* wps_status is write-only on luci-mod-status-index-wifi"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-hostapd-wps-status-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:hostapd.wps_status",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "note": "The list-read flash fixture has ubus file.exec, not hostapd.wps_status. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus hostapd.wps_status"
+      ]
+    },
+    {
+      "id": "luci-mod-system-reboot-hostapd-wps-status-deny",
+      "session_class": "luci-mod-system-reboot",
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci-mod-system-reboot has no ubus hostapd.wps_status"
+      ]
+    },
+    {
+      "id": "luci-mod-system-init-read-hostapd-wps-status-deny",
+      "session_class": "luci-mod-system-init-read",
+      "sid": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "note": "The read luci-mod-system-init-read fixture grants rc.list, not hostapd.wps_status. ERROR_ACCESS at uh_ubus_allowed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+        "luci-mod-system-init-read has no ubus hostapd.wps_status",
+        "rc.list stays on policy:ubus-rc-list-v1"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-hostapd-wps-status-deny",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "note": "The read luci-mod-status-index fixture grants system.board, not hostapd.wps_status. ERROR_ACCESS at uh_ubus_allowed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci-mod-status-index has no ubus hostapd.wps_status",
+        "system.board stays on policy:ubus-system-board-v1",
+        "system.info stays on policy:ubus-system-info-v1"
+      ]
+    },
+    {
+      "id": "setInitAction-not-this-slice",
+      "session_class": "luci-mod-status-index-wifi",
+      "sid": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+      "ubus_object": "luci",
+      "method": "setInitAction",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.setInitAction",
+      "not": [
+        "hostapd.wps_status grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci.setInitAction has no luci-ssl delegated grant at luci b2e0be4b. This slice is hostapd.wps_status, not the luci object method.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json has no luci.setInitAction",
+        "do not invent a setInitAction luci-ssl grant"
+      ]
+    },
+    {
+      "id": "hostapd-bare-not-this-slice",
+      "session_class": "luci-mod-status-index-wifi",
+      "sid": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+      "ubus_object": "hostapd",
+      "method": "wps_status",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "not": [
+        "hostapd.* match",
+        "path_found"
+      ],
+      "note": "ACL pattern hostapd.* does not match object hostapd (no BSS suffix). 60_wifi.js uses hostapd.<ifname>.",
+      "rule_refs": [
+        "policy/tests/test_conformance.py test_ubus_wildcard_object_hostapd_dot_star",
+        "luci@b2e0be4b 60_wifi.js handleGetWPSStatus object=hostapd.%s.format(wifinet)"
+      ]
+    },
+    {
+      "id": "del-client-not-this-slice",
+      "session_class": "luci-mod-status-index-wifi",
+      "sid": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+      "ubus_object": "hostapd.wlan0",
+      "method": "del_client",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "not": [
+        "hostapd.wps_status grant",
+        "path_found"
+      ],
+      "note": "luci-mod-status-index-wifi write grants hostapd.* del_client. That method stays on policy:ubus-hostapd-del-client-v1. This slice does not emit a del_client grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-wifi.write.ubus.hostapd.*=[del_client, wps_start, wps_status, wps_status]",
+        "hostapd.del_client stays on policy:ubus-hostapd-del-client-v1"
+      ]
+    },
+    {
+      "id": "wps-start-not-this-slice",
+      "session_class": "luci-mod-status-index-wifi",
+      "sid": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_start",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_start",
+      "not": [
+        "hostapd.wps_status grant",
+        "path_found"
+      ],
+      "note": "luci-mod-status-index-wifi write grants hostapd.* wps_start. 60_wifi.js handleCallWPS uses that method. That method stays on policy:ubus-hostapd-wps-start-v1. This slice does not emit a wps_start grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-wifi.write.ubus.hostapd.*=[del_client, wps_start, wps_status, wps_status]",
+        "luci@b2e0be4b 60_wifi.js handleCallWPS rpc.declare method=wps_start",
+        "hostapd.wps_start stays on policy:ubus-hostapd-wps-start-v1"
+      ]
+    },
+    {
+      "id": "wps-cancel-not-this-slice",
+      "session_class": "luci-mod-status-index-wifi",
+      "sid": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_cancel",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_cancel",
+      "not": [
+        "hostapd.wps_status grant",
+        "path_found"
+      ],
+      "note": "luci-mod-status-index-wifi write grants hostapd.* wps_cancel. 60_wifi.js handleCancelWPS uses that method. That method stays on policy:ubus-hostapd-wps-cancel-v1. This slice does not emit a wps_cancel grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-wifi.write.ubus.hostapd.*=[del_client, wps_start, wps_cancel, wps_status]",
+        "luci@b2e0be4b 60_wifi.js handleCancelWPS rpc.declare method=wps_cancel",
+        "hostapd.wps_cancel stays on policy:ubus-hostapd-wps-cancel-v1"
+      ]
+    },
+    {
+      "id": "root-star-hostapd-wps-status-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_status",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:hostapd.wps_status",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}
