@@ -1,0 +1,169 @@
+{
+  "comment": "Hand-transcribed expected ubus system.reboot decisions for luci-mod-system-reboot from pinned uhttpd uh_ubus_allowed, reboot.js rpc.declare, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=system function=reboot (uhttpd omits scope).",
+    "Bounded to reboot.js rpc.declare object=system method=reboot at luci b2e0be4b. That is procd system, not rpcd rpc-sys.",
+    "Fixture login luci-mod-system-reboot is write of the existing ACL group. Do not invent a write flash login.",
+    "file.exec of /sbin/reboot on the same ACL is unused by reboot.js. flash.js /sbin/reboot stays unstaffed.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed.",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, path_found, luci object grants, or reboot().",
+    "shellquote and basename are not sanitizers.",
+    "luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec)."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-system-reboot-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:system.reboot",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus system.reboot",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access system/reboot false -> ERROR_ACCESS",
+        "do not invent an unauthenticated system.reboot grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "not": ["unauthenticated_allow", "reboot()", "dispatcher", "path_found", "sentinel_rewrite", "rpc-sys.reboot"],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-system-reboot-allow",
+      "session_class": "luci-mod-system-reboot",
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:system.reboot",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "expectation_id": "luci-mod-system-reboot",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-system-reboot",
+      "note": "Fixture login luci-mod-system-reboot is not a stock device login. reboot.js uses rpc.declare object=system method=reboot. Intended_access, not a violation and not a PoC. Does not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci@b2e0be4b reboot.js rpc.declare object=system method=reboot",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access system/reboot",
+        "fixture rpcd.config login luci-mod-system-reboot list write luci-mod-system-reboot"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-system-reboot-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:system.reboot",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "note": "The list-read flash fixture has ubus file.exec, not system.reboot. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus system.reboot"
+      ]
+    },
+    {
+      "id": "luci-mod-system-config-system-reboot-deny",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.write.ubus.luci=[setLocaltime, setPassword] rc=[init]",
+        "luci-mod-system-config has no ubus system.reboot"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-system-reboot-deny",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.write.ubus.file=[exec, write]",
+        "luci-mod-system-mounts has no ubus system.reboot"
+      ]
+    },
+    {
+      "id": "rpc-sys-reboot-not-this-slice",
+      "session_class": "luci-mod-system-reboot",
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "ubus_object": "rpc-sys",
+      "method": "reboot",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:rpc-sys.reboot",
+      "not": ["system.reboot grant", "path_found"],
+      "note": "rpcd sys.c registers object rpc-sys. reboot.js calls system.reboot. No luci-ssl grant for rpc-sys.reboot.",
+      "rule_refs": [
+        "rpcd@d99f703 sys.c ubus_object.name=rpc-sys method=reboot",
+        "luci@b2e0be4b reboot.js object=system, not rpc-sys",
+        "do not staff rpc-sys.reboot"
+      ]
+    },
+    {
+      "id": "root-star-system-reboot-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:system.reboot",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}
