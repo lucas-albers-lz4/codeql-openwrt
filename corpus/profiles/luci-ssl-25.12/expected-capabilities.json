@@ -510,6 +510,33 @@
       ]
     },
     {
+      "expectation_id": "luci-mod-status-index-getversion",
+      "session_class": "luci-mod-status-index",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getVersion",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getVersion",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getVersion",
+        "luci-base getVersion handler",
+        "luci.getUnixtime grant",
+        "luci.getOdhcp6cStats grant",
+        "ubus system.board grant",
+        "ubus system.info grant",
+        "ubus system.reboot"
+      ],
+      "rationale": "10_system.js uses rpc.declare object=luci method=getVersion. luci-mod-status-index read grants ubus luci.getVersion. An allow is the HTTP gate, not the luci-base getVersion handler. Does not rewrite the luci exec-methods emitter. system.board / system.info stay on their own revisions. luci.getUnixtime is a different method on the same view. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js rpc.declare object=luci method=getVersion"
+      ]
+    },
+    {
       "expectation_id": "synthetic-backup-read",
       "session_class": "synthetic-backup",
       "synthetic": true,

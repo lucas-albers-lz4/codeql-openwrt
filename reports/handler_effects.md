@@ -1,6 +1,6 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects and synthetic ubus `file.exec` effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`); ubus `file.exec` rows are policy-facts (`policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1`); ubus `system.reboot` / `rc.init` / `rc.list` / `system.board` / `system.info` rows are policy-facts (`policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-system-board-v1` / `policy:ubus-system-info-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects and synthetic ubus `file.exec` effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`); ubus `file.exec` rows are policy-facts (`policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1`); ubus `system.reboot` / `rc.init` / `rc.list` / `system.board` / `system.info` / `luci.getVersion` rows are policy-facts (`policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-system-board-v1` / `policy:ubus-system-info-v1` / `policy:ubus-luci-getversion-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
 
 Findings are evidence, not proof. This catalog does not emit `authorization_violation` or dispatcher effects. `shellquote` and `basename` are not sanitizers. `canonicalize_path` is not a taint sanitizer.
 
@@ -30,12 +30,13 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m2-ubus-rc-list-effect.json](m2-ubus-rc-list-effect.json) | synthetic ubus `rc.list` of luci-mod-system-init / luci-mod-system-config (C, not ucode) |
 | [m2-ubus-system-board-effect.json](m2-ubus-system-board-effect.json) | synthetic ubus `system.board` of luci-mod-status-index (C, not ucode) |
 | [m2-ubus-system-info-effect.json](m2-ubus-system-info-effect.json) | synthetic ubus `system.info` of luci-mod-status-index (C, not ucode) |
+| [m2-ubus-luci-getversion-effect.json](m2-ubus-luci-getversion-effect.json) | synthetic ubus `luci.getVersion` of luci-mod-status-index (C, not ucode) |
 
 Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing classification ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher. Helper `exec_helper_inventory` rows stay in the files inventory; this catalog holds the cgi-exec file.exec effects those helpers join.
 
 ## Grant ↔ effect joins
 
-Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1` / `policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-system-board-v1` / `policy:ubus-system-info-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
+Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1` / `policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-system-board-v1` / `policy:ubus-system-info-v1` / `policy:ubus-luci-getversion-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
 
 Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
 
@@ -229,6 +230,14 @@ HTTP `/ubus` gate only. Bounded to `10_system.js` `rpc.declare` of `system.info`
 | `effect_id` | Delegated grant | Root grant | Unauthenticated |
 | --- | --- | --- | --- |
 | `system.info` | `policy:grant:luci-mod-status-index:ubus_http:system.info` | `policy:grant:root:ubus_http:system.info` | no-join |
+
+### ubus luci.getVersion luci-mod-status-index (policy-facts synthetic)
+
+HTTP `/ubus` gate only. Bounded to `10_system.js` `rpc.declare` of `luci.getVersion` at luci `b2e0be4b`. Inventoried luci-ssl ACLs grant ubus `luci` / `getVersion` to `luci-mod-status-index` read. Unauthenticated is a **non-join** (`ERROR_ACCESS`; unauthenticated grants only `luci.getFeatures`). Missing SID is `ERROR_PARSE`. The reboot fixture and other system fixtures without `luci.getVersion` are **non-joins**. Catalog copy: [m2-ubus-luci-getversion-effect.json](m2-ubus-luci-getversion-effect.json). Join keys use `entrypoint_id` `ubus_http:luci.getVersion` plus `ubus_object=luci` / `method=getVersion`. An allow is the HTTP gate, not the luci-base `getVersion` handler. Does not rewrite the luci exec-methods emitter. `system.board` stays on `policy:ubus-system-board-v1`. `system.info` stays on `policy:ubus-system-info-v1`. `luci.getUnixtime` / `getOdhcp6cStats` are other luci object methods and are not this slice. Do not invent extra ACL. Do not invent a `luci-mod-status-index-storage` login.
+
+| `effect_id` | Delegated grant | Root grant | Unauthenticated |
+| --- | --- | --- | --- |
+| `luci.getVersion` | `policy:grant:luci-mod-status-index:ubus_http:luci.getVersion` | `policy:grant:root:ubus_http:luci.getVersion` | no-join |
 
 ## Out of this file
 
