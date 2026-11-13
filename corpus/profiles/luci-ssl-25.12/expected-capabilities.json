@@ -290,10 +290,33 @@
         "unauthenticated cgi-backup",
         "cgi-exec"
       ],
-      "rationale": "luci-mod-system-flash read grants cgi-io backup. Unauthenticated ACLs do not. A backup read by this fixture role is intended_access, not a violation because the role lacks write. cgi-io upload/download/exec are separate oracles.",
+      "rationale": "luci-mod-system-flash read grants cgi-io backup. Unauthenticated ACLs do not. A backup read by this fixture role is intended_access, not a violation because the role lacks write. cgi-io upload/download/exec are separate oracles. ubus file.exec of /sbin/sysupgrade --list-backup is the separate M2 slice policy:ubus-file-exec-list-backup-v1 on this same fixture.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-flash.read.cgi-io=[backup, download]",
         "openwrt/cgi-io@31cb3c89f02d918d7f17bf62a80c852fc38a1ca1 main.c main_backup session_access(sid, cgi-io, backup, read)"
+      ]
+    },
+    {
+      "expectation_id": "luci-mod-system-flash-list-backup",
+      "session_class": "luci-mod-system-flash",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "intended_access": [
+        {
+          "target_id": "command:sysupgrade-list-backup",
+          "op": "exec"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated file.exec",
+        "bare /sbin/sysupgrade",
+        "write sysupgrade/firstboot on this list-read fixture"
+      ],
+      "rationale": "luci-mod-system-flash read grants ubus file.exec and file.exec of the cmdline /sbin/sysupgrade --list-backup. flash.js handleBackupList uses fs.exec of that argv. Extra tokens miss the cmdline object. Write sysupgrade/firstboot ACLs exist but the fixture is list-read only. Unauthenticated ACLs do not grant this command.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json luci-mod-system-flash.read.file./sbin/sysupgrade --list-backup=[exec] ubus.file=[exec, read, stat]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-system/htdocs/luci-static/resources/view/system/flash.js handleBackupList fs.exec('/sbin/sysupgrade', ['--list-backup'])"
       ]
     },
     {

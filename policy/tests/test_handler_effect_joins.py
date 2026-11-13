@@ -142,6 +142,7 @@ FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-effect.json"
 IFUP_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-ifup-effect.json"
 KILL_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-kill-effect.json"
 MOUNTS_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-mounts-effect.json"
+LIST_BACKUP_FILE_EXEC_SNAPSHOT = "reports/m2-ubus-file-exec-list-backup-effect.json"
 FILE_EXEC_CATALOG = {
     "policy:effect:ubus-file-exec:iptables": {
         "ubus_object": "file",
@@ -232,6 +233,15 @@ FILE_EXEC_CATALOG = {
         "snapshot": MOUNTS_FILE_EXEC_SNAPSHOT,
         "delegated_class": "luci-mod-system-mounts",
         "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+    },
+    "policy:effect:ubus-file-exec-list-backup:list-backup": {
+        "ubus_object": "file",
+        "method": "exec",
+        "sink_kind": "file_exec",
+        "op": "exec",
+        "snapshot": LIST_BACKUP_FILE_EXEC_SNAPSHOT,
+        "delegated_class": "luci-mod-system-flash",
+        "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
     },
 }
 COPIED_EFFECT_SNAPSHOTS = (
@@ -544,6 +554,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             "policy:effect:ubus-file-exec-kill:kill",
             "policy:effect:ubus-file-exec-mounts:umount",
             "policy:effect:ubus-file-exec-mounts:block",
+            "policy:effect:ubus-file-exec-list-backup:list-backup",
         ):
             cgi_text = " ".join(by_id[record_id]["assumptions"]).lower()
             self.assertIn("shellquote", cgi_text)

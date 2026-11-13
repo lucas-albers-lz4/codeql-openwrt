@@ -700,6 +700,7 @@ class TestCommittedArtifacts(unittest.TestCase):
                     "policy:ubus-file-exec-ifup-v1",
                     "policy:ubus-file-exec-kill-v1",
                     "policy:ubus-file-exec-mounts-v1",
+                    "policy:ubus-file-exec-list-backup-v1",
                 },
             )
             self.assertNotIn("cgi_endpoint", row)

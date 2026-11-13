@@ -2006,5 +2006,68 @@
       "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
     ],
     "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:luci-mod-system-flash:ubus_http:file.exec:list-backup",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-list-backup-v1",
+    "session_class": "luci-mod-system-flash",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/sysupgrade",
+    "target_id": "command:sysupgrade-list-backup",
+    "op": "exec",
+    "acl_group": "luci-mod-system-flash",
+    "expectation_id": "luci-mod-system-flash-list-backup",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+      "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.file./sbin/sysupgrade --list-backup=[exec]",
+      "luci@b2e0be4b flash.js handleBackupList fs.exec('/sbin/sysupgrade', ['--list-backup'])",
+      "rpcd@d99f703 file.c rpc_file_exec_run executable ACL first then cmdline",
+      "fixture rpcd.config login luci-mod-system-flash list read luci-mod-system-flash"
+    ],
+    "note": "Fixture login luci-mod-system-flash is not a stock device login. flash.js handleBackupList uses fs.exec('/sbin/sysupgrade', ['--list-backup']). Cmdline ACL; intended_access, not a violation and not a PoC. Reuses the existing list-read flash fixture.",
+    "synthetic_session": true
+  },
+  {
+    "record_type": "policy_grant",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "record_id": "policy:grant:root:ubus_http:file.exec:list-backup",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:ubus-file-exec-list-backup-v1",
+    "session_class": "root",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+    "ubus_object": "file",
+    "method": "exec",
+    "fs_path": "/sbin/sysupgrade",
+    "target_id": "command:sysupgrade-list-backup",
+    "op": "exec",
+    "acl_group": "luci-mod-system-flash",
+    "expectation_id": "root-administration",
+    "assessment": "intended_access",
+    "requirements": [
+      "uh_ubus_allowed",
+      "session.access scope=ubus object=file function=exec (uhttpd omits scope)",
+      "session.access scope=file object=canonicalized executable or cmdline function=exec"
+    ],
+    "evidence_refs": [
+      "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+    ],
+    "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
   }
 ]
