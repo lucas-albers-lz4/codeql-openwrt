@@ -46,10 +46,20 @@ class TestFileExecData(unittest.TestCase):
                 result = evaluate(**kwargs, data={})
                 self.assertEqual(result.outcome, "invalid_argument")
                 self.assertEqual(result.ubus_status, UBUS_STATUS_INVALID_ARGUMENT)
+                # The case adapter must preserve an explicit empty table too, not
+                # fall back to the omitted-payload convenience construction.
+                adapter_result = module.evaluate_expected_case({**case, "data": {}})
+                self.assertEqual(adapter_result.outcome, "invalid_argument")
+                self.assertEqual(adapter_result.ubus_status, UBUS_STATUS_INVALID_ARGUMENT)
             with self.subTest(wrapper=suffix, data="explicit command table"):
-                result = evaluate(**{**kwargs, "command": None},
-                                  data={"command": case["command"], "params": case["params"]})
+                table = {"command": case["command"], "params": case["params"]}
+                result = evaluate(**{**kwargs, "command": None}, data=table)
                 self.assertEqual(result.outcome, "allow")
+                # Precedence: a table-valued case payload wins over the case's own
+                # command/params convenience fields, through the adapter as well.
+                adapter_result = module.evaluate_expected_case(
+                    {**case, "command": None, "data": table})
+                self.assertEqual(adapter_result.outcome, "allow")
 
 
 if __name__ == "__main__":
