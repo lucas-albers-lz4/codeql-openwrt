@@ -38,6 +38,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from .oracle import (
+    DEFAULT_UBUS_DATA,
     C_DOUBLE_FLAGS,
     FIXTURES,
     PRODUCER,
@@ -177,12 +178,12 @@ def evaluate_hostapd_wps_start(
     sid: Optional[str] = None,
     object: Optional[str] = CALL_OBJECT,
     function: Optional[str] = UBUS_METHOD,
-    data: Any = None,
+    data: Any = DEFAULT_UBUS_DATA,
     sessions: Optional[dict] = None,
 ):
     if sessions is None:
         sessions = load_hostapd_world()
-    if data is None:
+    if data is DEFAULT_UBUS_DATA:
         data = {}
     return evaluate_call(
         session_class=session_class,
