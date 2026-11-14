@@ -12,6 +12,14 @@ These are **call-body inventory** records (`handler_effect` / `fact`), not taint
 
 Unauthenticated `/ubus` still only grants `luci.getFeatures` (M2). These methods are **not** unauthenticated (no-grant deny). The `luci-mod-system-mounts` fixture is a synthetic role, not a stock login. Stock root `*` remains `intended_access` (`root-administration`), not a violation. Canonical catalog: [handler_effects.md](handler_effects.md).
 
+The `setBlockDetect` source location is imported from the bounded
+`SetBlockDetectEffectTable.ql` source-observation table after checking the pinned
+source, the existing mounts expectation, delegated/root grants, and the retained
+unauthenticated deny. This strengthens source provenance for the fixed call; it
+does not add reachability or data-flow evidence. `getBlockDevices` uses the
+separate getBlockDevices table import; `setLocaltime` remains a pinned-source
+transcription.
+
 `setLocaltime`'s `date` sink stays on the request.args inventory ([m4-request-args.md](m4-request-args.md)); this report only adds the second, fixed sysfixtime exec.
 
 See `reports/m4-block-device-exec-coverage.json`.

@@ -174,11 +174,28 @@ Then, from this repository, run the adapter with `--csv /tmp/getblock.csv`
 and `--source-root` pointing to the producer's `ql/test/extractor-smoke`
 directory. `policy/fixtures/getblock-observation.csv` is a decoded producer
 result; the accompanying `getblock-source` is the byte-identical pinned test
-source. The producer query is under independent review; the named-column
-interface is an explicit assumption until that query lands. The adapter checks
+source. The named-column producer query is codeql-ucode #62. The adapter checks
 content, but cannot authenticate that a supplied CSV was actually produced by
 CodeQL. A validated row is source-body inventory, not evidence of callback
 registration, execution, a taint path, or an authorization violation. The
 `intended_access` assessment comes from the separately maintained mounts
 expectation and does not follow from the table. Unresolved source shapes remain
 unknown and are never converted into a negative path conclusion.
+
+`python3 -m policy.setblock_table --csv <table.csv> --source-root <root>`
+imports the single pinned `setBlockDetect` literal-system source observation
+from the ucode #54 `SetBlockDetectEffectTable.ql` named-column CSV contract.
+The root must contain `usr/share/rpcd/ucode/luci`. Before writing, the adapter
+requires the exact header and row, pinned LuCI lock SHA and source bytes, both
+matching grant records, the independent mounts expectation, and the existing
+unauthenticated deny decision with no corresponding grant. It replaces the
+existing effect by the same record ID in both `reports/m4-block-device-exec.json`
+and `reports/handler_effects.json`, retaining its intended-access assessment,
+policy identity and unrelated rows. It never writes grants or policy decisions.
+Missing or invalid inputs leave all artifacts unchanged. The two-row replacement
+uses staged files and restores the first artifact if replacing the second fails.
+
+The table is a source-body observation, not proof of registration, execution,
+taint, or authorization. The adapter validates CSV content and source bytes but
+cannot authenticate that CodeQL produced the CSV. It does not emit `path_found`,
+`no_path`, or `authorization_violation`.
