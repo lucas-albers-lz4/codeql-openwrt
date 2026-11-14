@@ -1,0 +1,94 @@
+[
+  {
+    "record_type": "uci_consumer",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:uci-consumers-v1",
+    "record_id": "policy:uci-consumer:dropbear:openwrt:dropbear-init",
+    "uci_config": "dropbear",
+    "consumer_id": "openwrt:dropbear-init",
+    "asset_id": "uci:dropbear",
+    "evidence_refs": [
+      "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/package/network/services/dropbear/files/dropbear.init#L162-L164",
+      "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/package/network/services/dropbear/files/dropbear.init#L390-L397"
+    ]
+  },
+  {
+    "record_type": "uci_consumer",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:uci-consumers-v1",
+    "record_id": "policy:uci-consumer:rpcd:rpcd:session-login",
+    "uci_config": "rpcd",
+    "consumer_id": "rpcd:session-login",
+    "asset_id": "uci:rpcd",
+    "evidence_refs": [
+      "https://github.com/openwrt/rpcd/blob/d99f703e4035d03fbcfbada3cb697db346c2b984/session.c#L863-L892"
+    ]
+  },
+  {
+    "record_type": "uci_consumer",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:uci-consumers-v1",
+    "record_id": "policy:uci-consumer:uhttpd:openwrt:uhttpd-init",
+    "uci_config": "uhttpd",
+    "consumer_id": "openwrt:uhttpd-init",
+    "asset_id": "uci:uhttpd",
+    "evidence_refs": [
+      "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/package/network/services/uhttpd/files/uhttpd.init#L299-L301"
+    ]
+  },
+  {
+    "record_type": "uci_consumer",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:uci-consumers-v1",
+    "record_id": "policy:uci-consumer:system:openwrt:system-init",
+    "uci_config": "system",
+    "consumer_id": "openwrt:system-init",
+    "asset_id": "uci:system",
+    "evidence_refs": [
+      "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/package/base-files/files/etc/init.d/system#L33-L35"
+    ]
+  },
+  {
+    "record_type": "uci_consumer",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:uci-consumers-v1",
+    "record_id": "policy:uci-consumer:firewall:firewall4:fw4",
+    "uci_config": "firewall",
+    "consumer_id": "firewall4:fw4",
+    "asset_id": "uci:firewall",
+    "evidence_refs": [
+      "https://github.com/openwrt/firewall4/blob/b6e5157527d361f99ad52eaa6da273cb0f2dfd59/root/usr/share/ucode/fw4.uc#L730-L751"
+    ]
+  },
+  {
+    "record_type": "uci_consumer",
+    "evidence_status": "fact",
+    "producer": "policy_facts",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "policy:uci-consumers-v1",
+    "record_id": "policy:uci-consumer:network:netifd:config",
+    "uci_config": "network",
+    "consumer_id": "netifd:config",
+    "asset_id": "uci:network",
+    "evidence_refs": [
+      "https://github.com/openwrt/netifd/blob/cbb83a1857407a28a63dc09412a1f209195914ef/config.c#L553-L576",
+      "https://github.com/openwrt/netifd/blob/cbb83a1857407a28a63dc09412a1f209195914ef/config.c#L789-L812"
+    ]
+  }
+]

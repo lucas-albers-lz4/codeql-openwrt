@@ -90,3 +90,22 @@ Policy-facts `policy:ubus-hostapd-wps-status-v1` evaluates the HTTP `/ubus` `uh_
 ## uhttpd `no_ubusauth` (profile variant)
 
 Profile `luci-ssl-25.12` has `no_ubusauth=0`. Profile `luci-ssl-25.12-no-ubusauth` shares `corpus/lock.json` (same `corpus_revision`) and sets `option no_ubusauth 1` (`uhttpd -a`). For a valid call array, pinned uhttpd `ubus.c` rewrites an empty SID string to `UH_UBUS_DEFAULT_SID` and skips `uh_ubus_allowed` / `session.access`. Null or omitted SID slots cause later strings to shift in the typed libubox array parser and the ordinary call fails parse. Object lookup occurs before the gate and can return `ERROR_OBJECT`; an allow only describes the gate, not the plugin result. The same flag also skips uhttpd authorization for `/call/<object>` and GET subscriptions; those paths are outside this JSON-RPC slice. Unauthenticated deny on `luci-ssl-25.12` stays deny; skip-allows on the variant are HTTP-gate facts (`unassessed`), not invented luci-ssl grants, not `path_found`, and not `authorization_violation`. Parse still requires object, function, and a `BLOBMSG_TYPE_TABLE` data parameter. C double: `policy/c_double/uh_ubus_policy.c`.
+
+### UCI consumers
+
+`python3 -m policy emit` writes `policy/uci_consumers.json`: a non-exhaustive,
+source-backed catalog of known consumers for the six UCI assets in the base
+profile. Each `uci_consumer` fact identifies a configuration with `uci_config`
+and a source-level consumer with `consumer_id`; `evidence_refs` point to pinned
+source reads. A row does not establish that a consumer is running or describe
+all its behavior. `asset_id` links the separate profile `assets.json` inventory,
+where the default backing-file relationship is recorded. Neither relationship
+is a grant, nor does it equate a bounded option update with replacing a file.
+
+A future consumer of the ucode `uci_set` output may attach all matching catalog
+rows on exact `(corpus_revision, profile, uci_config)` equality when the config
+name is known. This join is a contract, not an implemented ucode query. An
+unknown or dynamic config and unlisted consumers remain unknown; an absent
+match does not prove there is no consumer. Aliases, custom config directories,
+and other profiles are not resolved by this catalog. UCI and direct file ACL
+checks remain distinct, including for a configuration and its backing file.
