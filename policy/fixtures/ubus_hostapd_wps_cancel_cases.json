@@ -287,6 +287,29 @@
       "rule_refs": [
         "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
       ]
+    },
+    {
+      "id": "null-data-parse-error",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_object": "hostapd.wlan0",
+      "method": "wps_cancel",
+      "data": null,
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "target_id": "ubus:hostapd.wps_cancel",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:hostapd.wps_cancel",
+      "not": [
+        "allow",
+        "authorization_violation",
+        "path_found"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: explicit data:null is not a table and returns ERROR_PARSE",
+        "omitted data defaults to an empty table in the policy wrapper; explicit JSON null remains null"
+      ]
     }
   ]
 }

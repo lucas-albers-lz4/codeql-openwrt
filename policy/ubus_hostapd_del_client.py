@@ -43,6 +43,7 @@ from typing import Any, Optional
 
 from .cgi_backup import FLASH_SESSION_CLASS
 from .oracle import (
+    DEFAULT_UBUS_DATA,
     C_DOUBLE_FLAGS,
     FIXTURES,
     PRODUCER,
@@ -226,12 +227,12 @@ def evaluate_hostapd_del_client(
     sid: Optional[str] = None,
     object: Optional[str] = CALL_OBJECT,
     function: Optional[str] = UBUS_METHOD,
-    data: Any = None,
+    data: Any = DEFAULT_UBUS_DATA,
     sessions: Optional[dict[str, Session]] = None,
 ):
     if sessions is None:
         sessions = load_hostapd_world()
-    if data is None:
+    if data is DEFAULT_UBUS_DATA:
         data = {}
     return evaluate_call(
         session_class=session_class,
