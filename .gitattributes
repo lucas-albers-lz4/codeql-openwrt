@@ -1,0 +1,2 @@
+# Preserve the pinned upstream source byte-for-byte, including its whitespace.
+policy/fixtures/getblock-source/usr/share/rpcd/ucode/luci -whitespace
