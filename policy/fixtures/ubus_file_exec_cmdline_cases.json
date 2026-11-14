@@ -4,7 +4,7 @@
   "notes": [
     "Boundary params fill the requested UTF-8 cmdline byte length, including the executable and every separating space.",
     "The C doubles check the executable ACL first. Only a miss reaches the 1024-byte cmdline cap.",
-    "A present empty params array produces a trailing space; absent params denies the fallback."
+    "A present empty or non-string-only params array builds the executable without a separator; absent params denies the fallback."
   ],
   "boundary_cases": [
     {"id": "ascii-1023-allow", "cmdline_bytes": 1023, "fill": "a", "prefix_params": [], "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
@@ -16,9 +16,9 @@
     {"id": "split-utf8-1024-deny", "cmdline_bytes": 1024, "fill": "é", "prefix_params": ["first", ""], "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"}
   ],
   "empty_params_cases": [
-    {"id": "empty-array", "params": [], "expected_params": [], "cmdline_suffix": " ", "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
+    {"id": "empty-array", "params": [], "expected_params": [], "cmdline_suffix": "", "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"},
     {"id": "empty-string-argument", "params": [""], "expected_params": [""], "cmdline_suffix": " ", "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
-    {"id": "filtered-empty-array", "params": [null, 42, {}, [], false], "expected_params": [], "cmdline_suffix": " ", "expected_outcome": "allow", "expected_c_decision": "ALLOW"},
+    {"id": "filtered-empty-array", "params": [null, 42, {}, [], false], "expected_params": [], "cmdline_suffix": "", "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"},
     {"id": "absent-params", "params": null, "expected_params": null, "cmdline_suffix": "", "expected_outcome": "command_denied", "expected_c_decision": "UBUS_PERMISSION_DENIED"}
   ]
 }
