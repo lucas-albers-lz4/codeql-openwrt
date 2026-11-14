@@ -63,6 +63,17 @@
     "corpus_revision": { "type": "string" },
     "profile": { "type": "string" },
     "analysis_revision": { "type": "string" },
+    "source_location": {
+      "type": "object",
+      "required": ["path", "start_line", "start_column", "end_line", "end_column"],
+      "properties": {
+        "path": { "type": "string" },
+        "start_line": { "type": "integer", "minimum": 1 },
+        "start_column": { "type": "integer", "minimum": 1 },
+        "end_line": { "type": "integer", "minimum": 1 },
+        "end_column": { "type": "integer", "minimum": 1 }
+      }
+    },
     "ingress": {
       "enum": ["ubus_http", "dispatcher", "cgi_io"]
     },

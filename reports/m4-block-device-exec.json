@@ -6,11 +6,11 @@
     "record_id": "m4:effect:luci-getBlockDevices-popen",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",
-    "analysis_revision": "step3:luci-fixed-exec-v1",
     "ingress": "ubus_http",
     "entrypoint_id": "ubus_http:luci.getBlockDevices",
     "ubus_object": "luci",
     "method": "getBlockDevices",
+    "analysis_revision": "step3:getblock-table-v1",
     "effect_id": "getBlockDevices.block-info.popen",
     "target_id": "command:block-info",
     "op": "exec",
@@ -18,21 +18,33 @@
     "assessment": "intended_access",
     "expectation_id": "luci-mod-system-mounts",
     "conditions": [
-      "getBlockDevices.call body",
-      "named popen of literal /sbin/block info",
-      "call takes no request.args"
+      "pinned getBlockDevices.call callback contains literal popen call"
     ],
+    "requirements": [
+      "matching profile and corpus revision",
+      "HTTP ubus grant for the caller"
+    ],
+    "source_location": {
+      "path": "usr/share/rpcd/ucode/luci",
+      "start_line": 481,
+      "start_column": 18,
+      "end_line": 481,
+      "end_column": 54
+    },
     "assumptions": [
-      "Transcribed from pinned luci rpcd plugin at b2e0be4b; not a taint path",
-      "Fixed argv; this is not luci.sys and not request.args interpolation",
-      "shellquote and basename are not sanitizers; they are not present on this sink"
+      "Source observation in the pinned callback body; not a taint path",
+      "The supplied CSV is not authenticated as CodeQL output",
+      "Assessment uses the independent synthetic mounts expectation, not the source table"
     ],
     "evidence_refs": [
       "policy:grant:luci-mod-system-mounts:ubus_http:luci.getBlockDevices",
-      "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/ucode/luci getBlockDevices.call popen('/sbin/block info 2>/dev/null')"
+      "policy:grant:root:ubus_http:luci.getBlockDevices",
+      "ql/src/m4/GetBlockDevicesEffectTable.ql",
+      "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci:481"
     ],
     "unknowns": [
-      "live uhttpd/rpcd not executed"
+      "Callback registration, actual execution and live uhttpd/rpcd are not established by the table",
+      "Lexical shadowing and unmodeled call shapes are not resolved by the table"
     ]
   },
   {
