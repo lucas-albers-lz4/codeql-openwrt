@@ -148,11 +148,16 @@ def _libc():
 _LIBC = None
 
 
+def _c_string(value: str) -> str:
+    """Return the prefix visible through a C char pointer."""
+    return value.split("\0", 1)[0]
+
+
 def libc_fnmatch(pattern: str, string: str, flags: int) -> bool:
-    """Match UTF-8 bytes in the C locale without changing the caller's locale."""
+    """Match C-string UTF-8 bytes in the C locale without changing the caller's locale."""
+    pattern = _c_string(pattern)
+    string = _c_string(string)
     pat_bytes, str_bytes = pattern.encode("utf-8"), string.encode("utf-8")
-    if b"\0" in pat_bytes or b"\0" in str_bytes:
-        raise ValueError("fnmatch inputs must not contain NUL")
     global _LIBC
     if _LIBC is None:
         _LIBC = _libc()
@@ -185,6 +190,7 @@ def uh_id_len(pattern: str) -> int:
 
 def acl_match(pat_obj: str, pat_fun: str, obj: str, fun: str) -> bool:
     """rpc_session_acl_allowed for one ACL entry (literal names in M2)."""
+    pat_obj, pat_fun, obj, fun = map(_c_string, (pat_obj, pat_fun, obj, fun))
     sort_len = uh_id_len(pat_obj)
     if pat_obj[:sort_len] != obj[:sort_len]:
         return False
@@ -276,16 +282,19 @@ def parse_rpcd_logins(text: str) -> list[Login]:
 
 def login_test_permission(login: Optional[Login], perm: str, group: str) -> bool:
     """rpc_login_test_permission. Default session (login is None) gets unauthenticated only."""
+    group = _c_string(group)
     if login is None:
         return group == "unauthenticated"
     values = getattr(login, perm)
     for pattern in values:
+        pattern = _c_string(pattern)
         if not pattern or pattern[0] != "!":
             continue
         negated = pattern[1:].lstrip()
         if negated and libc_fnmatch(negated, group, 0):
             return False
     for pattern in values:
+        pattern = _c_string(pattern)
         if not pattern or pattern[0] == "!":
             continue
         if libc_fnmatch(pattern, group, 0):

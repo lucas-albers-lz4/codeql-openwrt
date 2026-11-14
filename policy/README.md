@@ -123,9 +123,13 @@ Python process locale. Wildcards operate on bytes in this locale: for example,
 `?` and `[!x]` each consume one byte, so neither fully matches `é` (two UTF-8
 bytes) or `😀` (four). Login groups use flags 0 and ACLs use `FNM_NOESCAPE`;
 no pathname or leading-dot flags are set. Inputs to `libc_fnmatch` must be
-UTF-8 encodable and contain no NUL. This implementation targets Linux glibc or
-musl with POSIX per-thread locale APIs; libc-specific pattern extensions and
-behavior are not a proof of parity with a live OpenWrt system.
+UTF-8 encodable. Each pattern and value is truncated at its first NUL, matching
+C char * / fnmatch behavior. ACL object and function patterns and values use
+the same rule before literal or wildcard matching. This specifies oracle
+parity only; it does not claim NUL-bearing identifiers can reach uhttpd/rpcd
+over the wire. This implementation targets Linux glibc or musl with POSIX
+per-thread locale APIs; libc-specific pattern extensions and behavior are
+not a proof of parity with a live OpenWrt system.
 
 Handwritten rows in `policy/tests/test_conformance.py` tie Python `acl_match` / `login_test_permission` to `uh_ubus_policy match` and `group`. Wildcard ubus object `hostapd.*` with `del_client` is transcribed from luci `b2e0be4b` `luci-mod-network.json` (`luci-mod-network-config` write grant), not from a generator. Inventoried exec methods use literal `match` / `decide` against their own names (ALLOW) and against the unauthenticated `getFeatures` grant (DENY).
 
