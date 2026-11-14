@@ -31,6 +31,8 @@
 #define RPCD_SHA "d99f703e4035d03fbcfbada3cb697db346c2b984"
 #define RPC_CMDLINE_MAX_SIZE 1024
 
+#include "ubus_file_exec_cmdline.h"
+
 static const char *HELPERS[] = {
 	"/bin/kill",
 	NULL
@@ -256,12 +258,12 @@ static int cmd_decide(int argc, char **argv)
 		return 1;
 	}
 
-	if (strlen(canon) + 1 + strlen(params) >= sizeof(cmdstr)) {
+	if (strlen(canon) + (*params ? 1 + strlen(params) : 0) >= sizeof(cmdstr)) {
 		puts("UBUS_PERMISSION_DENIED");
 		free(canon);
 		return 1;
 	}
-	snprintf(cmdstr, sizeof(cmdstr), "%s %s", canon, params);
+	snprintf(cmdstr, sizeof(cmdstr), "%s%s%s", canon, *params ? " " : "", params);
 
 	if (file_cmd_pat && file_cmd_fun &&
 	    acl_match(file_cmd_pat, file_cmd_fun, cmdstr, FILE_FUNCTION)) {
@@ -293,6 +295,7 @@ static void usage(FILE *fp)
 		"       ubus_file_exec_kill canon <path>\n"
 		"       ubus_file_exec_kill match <obj_pat> <fun_pat> <object> <function>\n"
 		"       ubus_file_exec_kill decide <sid|-> <command|-> <params|-> <ubus_obj_pat|-> <ubus_fun_pat|-> <file_exe_pat|-> <file_exe_fun|-> <file_cmd_pat|-> <file_cmd_fun|-> [env_present:0|1]\n"
+		"       ubus_file_exec_kill cmdline <executable> [s:<value>|n:<value> ...]\n"
 		"       ubus_file_exec_kill flags\n");
 }
 
@@ -312,6 +315,8 @@ int main(int argc, char **argv)
 		return cmd_canon(argc - 2, argv + 2);
 	if (strcmp(cmd, "match") == 0)
 		return cmd_match(argc - 2, argv + 2);
+	if (strcmp(cmd, "cmdline") == 0)
+		return cmd_cmdline(argc - 2, argv + 2);
 	if (strcmp(cmd, "decide") == 0)
 		return cmd_decide(argc - 2, argv + 2);
 	if (strcmp(cmd, "flags") == 0)

@@ -193,10 +193,7 @@ ASSUMPTION_ENV = (
 
 
 def _cmdline(canon: str, params: Optional[list[str]]) -> str:
-    if params is None:
-        return canon
-    # A present params array contributes a separator even when empty.
-    return canon + " " + " ".join(params)
+    return canon + "".join(" " + param for param in (params or []))
 
 
 def identify_command(canon: Optional[str], params: Optional[list[str]]) -> Optional[str]:
@@ -456,6 +453,8 @@ def evaluate_file_exec(
             }
         )
 
+    # Diagnostic rendering even when the executable ACL matches or the
+    # fallback aborts; rpcd only constructs cmdstr in the fallback branch.
     cmdline = _cmdline(canon, argv)
     command_id = identify_command(canon, argv)
     file_exe = session_access(hit, FILE_SCOPE, canon, FILE_FUNCTION) if hit else None
@@ -489,14 +488,30 @@ def evaluate_file_exec(
             steps=steps,
         )
 
-    # The pinned C doubles enforce this buffer limit only after the
-    # executable ACL misses. Count UTF-8 bytes, including all separators.
-    if argv is None or len(cmdline.encode("utf-8")) >= RPC_CMDLINE_MAX_SIZE:
+    # rpcd checks these only after an executable ACL miss, before the
+    # cmdline ACL. blobmsg_data_len(string) includes its terminating NUL.
+    reason = None
+    size = len(canon.encode("utf-8"))
+    if argv is None:
+        reason = "executable_miss_and_null_params"
+    elif size >= RPC_CMDLINE_MAX_SIZE:
+        reason = "cmdline_too_long"
+    else:
+        for index, arg in enumerate(argv):
+            if index == 253:
+                reason = "too_many_args"
+                break
+            arg_size = len(arg.encode("utf-8")) + 1
+            if size + arg_size >= RPC_CMDLINE_MAX_SIZE:
+                reason = "cmdline_too_long"
+                break
+            size += arg_size
+    if reason:
         steps.append(
             {
                 "step": "rpc_file_exec_run",
                 "result": "UBUS_STATUS_PERMISSION_DENIED",
-                "reason": "executable_miss_and_null_params" if argv is None else "cmdline_too_long",
+                "reason": reason,
             }
         )
         return FileExecResult(

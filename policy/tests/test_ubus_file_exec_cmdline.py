@@ -63,9 +63,24 @@ class TestCmdlineParity(unittest.TestCase):
             )
         }
         result = evaluate(sid=SID, command=command, params=params, sessions=sessions)
-        # The doubles take the filtered params as one space-joined CLI argument.
-        c_params = "-" if result.params is None else " ".join(result.params)
+        # The pre-joined decide interface cannot distinguish [] from [""].
+        # For the latter, test the typed builder and ACL matcher separately.
         name = module.__name__.rsplit(".", 1)[-1]
+        if result.params == [""] and not executable_acl:
+            built = subprocess.run(
+                [str(self.executables[name]), "cmdline", command, "s:"],
+                check=True, text=True, capture_output=True,
+            )
+            self.assertEqual(built.stdout, command + " \n")
+            proc = subprocess.run(
+                [str(self.executables[name]), "match", command + " *", "exec",
+                 built.stdout.removesuffix("\n"), "exec"],
+                check=False, text=True, capture_output=True,
+            )
+            self.assertEqual(proc.stderr, "")
+            return result, "ALLOW" if proc.stdout.strip() == "ALLOW" else "UBUS_PERMISSION_DENIED"
+        # Other cases are representable by the legacy pre-joined interface.
+        c_params = "-" if result.params is None else " ".join(result.params)
         proc = subprocess.run(
             [str(self.executables[name]), "decide", SID, command, c_params,
              "file", "exec", command if executable_acl else "-",
@@ -144,8 +159,11 @@ class TestCmdlineParity(unittest.TestCase):
                     self.assertEqual(result.cmdline, command + case["cmdline_suffix"])
                     if case["expected_outcome"] == "allow":
                         self.assertEqual(result.match_stage, "cmdline")
-                    else:
+                    elif case["params"] is None:
                         self.assertEqual(result.steps[-1]["reason"], "executable_miss_and_null_params")
+                    else:
+                        self.assertEqual(result.steps[-2]["stage"], "cmdline")
+                        self.assertFalse(result.steps[-2]["result"])
 
 
 if __name__ == "__main__":
