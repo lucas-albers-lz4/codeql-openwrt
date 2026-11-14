@@ -74,6 +74,7 @@
     "cgi_endpoint": { "type": "string" },
     "fs_path": { "type": "string" },
     "uci_config": { "type": "string" },
+    "consumer_id": { "type": "string" },
     "acl_group": { "type": "string" },
     "entrypoint_id": { "type": "string" },
     "target_id": { "type": "string" },
