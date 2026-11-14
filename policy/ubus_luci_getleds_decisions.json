@@ -1558,6 +1558,87 @@
         "function": "getLEDs",
         "source": "luci-mod-system.json"
       }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:null-data-parse-error",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getleds-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getLEDs",
+      "ubus_object": "luci",
+      "method": "getLEDs",
+      "outcome": "jsonrpc_parse_error",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "jsonrpc_error": {
+        "code": -32700,
+        "name": "ERROR_PARSE",
+        "message": "Parse error"
+      },
+      "input_rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: explicit data:null is not a table and returns ERROR_PARSE",
+        "omitted data defaults to an empty table in the policy wrapper; explicit JSON null remains null"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": false,
+          "data_is_table": false,
+          "result": "ERROR_PARSE"
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_PARSE",
+          "not": [
+            "unauthenticated_allow",
+            "sentinel_rewrite",
+            "file_uci_absent_sid_skip"
+          ]
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getleds_cases.json#null-data-parse-error",
+        "c_double": "policy/c_double/ubus_luci_getleds.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getLEDs (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getLEDs handler ran.",
+        "This oracle does not invoke the luci-base getLEDs handler or read /sys/class/leds trigger, brightness, or max_brightness.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getLEDs is a luci object method. leds.js at luci b2e0be4b uses rpc.declare object=luci method=getLEDs. admin/system/leds depends on luci-mod-system-config. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getTimezones stays on policy:ubus-luci-gettimezones-v1.",
+        "system.js declares luci.getTimezones. That method stays on policy:ubus-luci-gettimezones-v1; this slice does not emit a getTimezones grant. The config fixture can pass that HTTP gate without this slice emitting a getTimezones grant.",
+        "luci-mod-system-config read also grants luci.getUSBDevices. That method stays unstaffed (no luci-ssl JS rpc.declare at b2e0be4b); this slice does not emit a getUSBDevices grant. The config fixture can pass that HTTP gate without this slice emitting a getUSBDevices grant.",
+        "system.js also declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant for luci-mod-system-config.",
+        "luci-mod-status-index grants luci.getVersion / getUnixtime / getOdhcp6cStats, not getLEDs. The index fixture cannot pass luci.getLEDs.",
+        "rc.init stays on policy:ubus-rc-init-v1. rc.list stays on policy:ubus-rc-list-v1. The config fixture can pass those HTTP gates without this slice emitting those grants.",
+        "Fixture login luci-mod-system-config is not a stock device login. The ACL group exists at luci b2e0be4b luci-mod-system.json. This slice does not invent a write flash login or a luci-mod-status-index-storage login.",
+        "rpcd login_test_permission write implies read, so the existing write luci-mod-system-config fixture matches read ubus luci.getLEDs at uh_ubus_allowed.",
+        "Extra keys in the data table still pass uh_ubus_allowed for this method. That is intended_access, not a violation and not a PoC."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getLEDs handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getTimezones stays on policy:ubus-luci-gettimezones-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. getUSBDevices stays unstaffed. luci-mod-status-index-storage also grants system.info and is not this slice (no invented storage login). Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice. leds.js fs.list of led-trigger plugins is not this slice."
+      ],
+      "target_id": "ubus:luci.getLEDs",
+      "op": "invoke",
+      "not": [
+        "allow",
+        "authorization_violation",
+        "path_found"
+      ],
+      "grant_emitted": false
     }
   ]
 }

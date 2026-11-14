@@ -825,6 +825,82 @@
         "function": "reboot",
         "source": "luci-mod-system.json"
       }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:null-data-parse-error",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-system-reboot-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "ubus_object": "system",
+      "method": "reboot",
+      "outcome": "jsonrpc_parse_error",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "jsonrpc_error": {
+        "code": -32700,
+        "name": "ERROR_PARSE",
+        "message": "Parse error"
+      },
+      "input_rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: explicit data:null is not a table and returns ERROR_PARSE",
+        "omitted data defaults to an empty table in the policy wrapper; explicit JSON null remains null"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": false,
+          "data_is_table": false,
+          "result": "ERROR_PARSE"
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_PARSE",
+          "not": [
+            "unauthenticated_allow",
+            "sentinel_rewrite",
+            "file_uci_absent_sid_skip"
+          ]
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_system_reboot_cases.json#null-data-parse-error",
+        "c_double": "policy/c_double/ubus_system_reboot.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=system function=reboot (uhttpd omits scope). An allow means this HTTP gate was passed, not that procd reboot() ran.",
+        "This oracle does not invoke reboot() or fork the procd handler.",
+        "shellquote and basename are not sanitizers.",
+        "system.reboot is not a luci object method. Do not invent a luci object grant. reboot.js at luci b2e0be4b uses rpc.declare object=system method=reboot, not fs.exec.",
+        "rpcd sys.c registers object rpc-sys, not system. This slice does not staff rpc-sys.reboot.",
+        "luci-mod-system-reboot also grants ubus file.exec and file.exec of /sbin/reboot. reboot.js does not call fs.exec. flash.js fs.exec('/sbin/reboot') is write flash and stays unstaffed.",
+        "Fixture login luci-mod-system-reboot is not a stock device login. The ACL group exists at luci b2e0be4b. This slice does not invent a write flash login."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and procd were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The procd system.reboot handler (reboot(RB_AUTOBOOT) after fork/sleep) is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. rpcd rpc-sys.reboot is a different object and is not this slice. file.exec of /sbin/reboot on luci-mod-system-reboot is unused by reboot.js. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "target_id": "ubus:system.reboot",
+      "op": "invoke",
+      "not": [
+        "allow",
+        "authorization_violation",
+        "path_found"
+      ],
+      "grant_emitted": false
     }
   ]
 }
