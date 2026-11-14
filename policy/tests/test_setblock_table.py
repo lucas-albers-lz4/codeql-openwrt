@@ -14,6 +14,7 @@ from policy.setblock_table import (CATALOG, COLUMNS, DECISIONS, EFFECT_ID, EFFEC
 ROOT = Path(__file__).resolve().parents[2]
 CSV = ROOT / "policy/fixtures/setblock-observation.csv"
 SOURCE = ROOT / "policy/fixtures/getblock-source"
+LEGACY_ROWS = ROOT / "policy/fixtures/setblock-legacy-effects.json"
 
 
 class ImportTests(unittest.TestCase):
@@ -96,6 +97,42 @@ class ImportTests(unittest.TestCase):
         once = self.artifacts()
         import_table(self.csv, self.source, self.repo)
         self.assertEqual(self.artifacts(), once)
+
+    def test_actual_dda79ec_legacy_rows_import_and_reimport(self):
+        legacy = json.loads(LEGACY_ROWS.read_text())
+        self.assertEqual(legacy["source_commit"], "dda79ec6e303b85f57489c2bcd2508e71bd4b3b1")
+        self.assertNotEqual(legacy["snapshot_effect"]["assumptions"],
+                            legacy["catalog_effect"]["assumptions"])
+        self.assertNotEqual(legacy["snapshot_effect"]["evidence_refs"],
+                            legacy["catalog_effect"]["evidence_refs"])
+        original_unrelated = {}
+        for path, key in ((SNAPSHOT, "snapshot_effect"), (CATALOG, "catalog_effect")):
+            target = self.repo / path
+            rows = json.loads(target.read_text())
+            original_unrelated[path] = [row for row in rows if row.get("record_id") != EFFECT_ID]
+            rows = [legacy[key] if row.get("record_id") == EFFECT_ID else row for row in rows]
+            target.write_text(json.dumps(rows))
+        grants_before = (self.repo / "policy/grants.json").read_bytes()
+        decisions_before = (self.repo / DECISIONS).read_bytes()
+
+        import_table(self.csv, self.source, self.repo)
+        imported = {}
+        for path in (SNAPSHOT, CATALOG):
+            rows = json.loads((self.repo / path).read_text())
+            self.assertEqual([row for row in rows if row.get("record_id") != EFFECT_ID],
+                             original_unrelated[path])
+            matches = [row for row in rows if row.get("record_id") == EFFECT_ID]
+            self.assertEqual(len(matches), 1)
+            self.assertEqual(matches[0]["analysis_revision"], "step3:setblock-table-v1")
+            self.assertEqual(matches[0]["source_location"]["start_line"], 532)
+            imported[path] = matches[0]
+        self.assertEqual(imported[SNAPSHOT], imported[CATALOG])
+        self.assertEqual((self.repo / "policy/grants.json").read_bytes(), grants_before)
+        self.assertEqual((self.repo / DECISIONS).read_bytes(), decisions_before)
+        first_import = self.artifacts()
+
+        import_table(self.csv, self.source, self.repo)
+        self.assertEqual(self.artifacts(), first_import)
 
     def test_malformed_and_wrong_rows_fail_without_artifact_mutation(self):
         self.csv.unlink()

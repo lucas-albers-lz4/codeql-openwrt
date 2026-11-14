@@ -57,10 +57,13 @@ LEGACY_KEYS = {
     "evidence_refs", "unknowns",
 }
 IMPORTED_KEYS = LEGACY_KEYS | {"source_location"}
-LEGACY_ASSUMPTIONS = [
+LEGACY_SNAPSHOT_ASSUMPTIONS = [
     "Transcribed from pinned luci rpcd plugin at b2e0be4b; not a taint path",
     "Fixed argv; this is not luci.sys and not request.args interpolation",
     "shellquote and basename are not sanitizers; they are not present on this sink",
+]
+LEGACY_CATALOG_ASSUMPTIONS = [
+    *LEGACY_SNAPSHOT_ASSUMPTIONS,
     "Collected from reports/m4-block-device-exec.json; not a new query run",
 ]
 IMPORTED_ASSUMPTIONS = [
@@ -70,7 +73,10 @@ IMPORTED_ASSUMPTIONS = [
     "Assessment uses the independent synthetic mounts expectation, not the source table",
     "shellquote and basename are not sanitizers; they are not present on this sink",
 ]
-LEGACY_EVIDENCE_REFS = [GRANT_IDS["luci-mod-system-mounts"], SOURCE_EVIDENCE_REF]
+LEGACY_SNAPSHOT_EVIDENCE_REFS = [GRANT_IDS["luci-mod-system-mounts"], SOURCE_EVIDENCE_REF]
+LEGACY_CATALOG_EVIDENCE_REFS = [
+    GRANT_IDS["luci-mod-system-mounts"], GRANT_IDS["root"], SOURCE_EVIDENCE_REF,
+]
 IMPORTED_EVIDENCE_REFS = [
     GRANT_IDS["luci-mod-system-mounts"], GRANT_IDS["root"], SOURCE_EVIDENCE_REF,
     QUERY_REF,
@@ -140,7 +146,7 @@ def _validate_unauthenticated_deny(repo_root: Path, keys: dict[str, str]) -> Non
         raise ValueError("missing or mismatched unauthenticated deny decision")
 
 
-def validate_existing_effect(effect: object, repo_root: Path) -> dict:
+def validate_existing_effect(effect: object, repo_root: Path, artifact: Path) -> dict:
     if not isinstance(effect, dict):
         raise ValueError("existing setBlockDetect effect must be an object")
     revision = corpus_revision(repo_root)
@@ -159,8 +165,14 @@ def validate_existing_effect(effect: object, repo_root: Path) -> dict:
     analysis_revision = effect.get("analysis_revision")
     if analysis_revision == LEGACY_ANALYSIS_REVISION:
         expected_keys = LEGACY_KEYS
-        expected_assumptions = LEGACY_ASSUMPTIONS
-        expected_refs = LEGACY_EVIDENCE_REFS
+        if artifact == SNAPSHOT:
+            expected_assumptions = LEGACY_SNAPSHOT_ASSUMPTIONS
+            expected_refs = LEGACY_SNAPSHOT_EVIDENCE_REFS
+        elif artifact == CATALOG:
+            expected_assumptions = LEGACY_CATALOG_ASSUMPTIONS
+            expected_refs = LEGACY_CATALOG_EVIDENCE_REFS
+        else:
+            raise ValueError("unsupported setBlockDetect effect artifact")
         expected_unknowns = LEGACY_UNKNOWNS
     elif analysis_revision == ANALYSIS_REVISION:
         expected_keys = IMPORTED_KEYS
@@ -186,7 +198,7 @@ def _existing_effect(rows: object, repo_root: Path, artifact: Path) -> dict:
     matches = [row for row in rows if row.get("record_id") == EFFECT_ID]
     if len(matches) != 1:
         raise ValueError(f"{artifact} must contain exactly one setBlockDetect effect")
-    return validate_existing_effect(matches[0], repo_root)
+    return validate_existing_effect(matches[0], repo_root, artifact)
 
 
 def build_effect(row: dict[str, str], repo_root: Path, existing: dict) -> dict:
@@ -249,7 +261,10 @@ def import_table(csv_path: Path, source_root: Path, repo_root: Path = REPO_ROOT)
     catalog_rows = read_json(catalog_path)
     snapshot_effect = _existing_effect(snapshot_rows, repo_root, SNAPSHOT)
     catalog_effect = _existing_effect(catalog_rows, repo_root, CATALOG)
-    if snapshot_effect != catalog_effect:
+    provenance_fields = {"assumptions", "evidence_refs"}
+    snapshot_shared = {k: v for k, v in snapshot_effect.items() if k not in provenance_fields}
+    catalog_shared = {k: v for k, v in catalog_effect.items() if k not in provenance_fields}
+    if snapshot_shared != catalog_shared:
         raise ValueError("setBlockDetect snapshot and catalog rows are not in lockstep")
     effect = build_effect(row, repo_root, catalog_effect)
     updates = [(snapshot_path, replace_effect(snapshot_rows, effect)),

@@ -1,0 +1,77 @@
+{
+  "source_commit": "dda79ec6e303b85f57489c2bcd2508e71bd4b3b1",
+  "snapshot_effect": {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:effect:luci-setBlockDetect-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:luci-fixed-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setBlockDetect",
+    "ubus_object": "luci",
+    "method": "setBlockDetect",
+    "effect_id": "setBlockDetect.block-detect.system",
+    "target_id": "command:block-detect",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-system-mounts",
+    "conditions": [
+      "setBlockDetect.call body",
+      "builtin system of literal /sbin/block detect",
+      "call takes no request.args"
+    ],
+    "assumptions": [
+      "Transcribed from pinned luci rpcd plugin at b2e0be4b; not a taint path",
+      "Fixed argv; this is not luci.sys and not request.args interpolation",
+      "shellquote and basename are not sanitizers; they are not present on this sink"
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect",
+      "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/ucode/luci setBlockDetect.call system('/sbin/block detect > /etc/config/fstab')"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
+  },
+  "catalog_effect": {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:effect:luci-setBlockDetect-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:luci-fixed-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setBlockDetect",
+    "ubus_object": "luci",
+    "method": "setBlockDetect",
+    "effect_id": "setBlockDetect.block-detect.system",
+    "target_id": "command:block-detect",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "intended_access",
+    "expectation_id": "luci-mod-system-mounts",
+    "conditions": [
+      "setBlockDetect.call body",
+      "builtin system of literal /sbin/block detect",
+      "call takes no request.args"
+    ],
+    "assumptions": [
+      "Transcribed from pinned luci rpcd plugin at b2e0be4b; not a taint path",
+      "Fixed argv; this is not luci.sys and not request.args interpolation",
+      "shellquote and basename are not sanitizers; they are not present on this sink",
+      "Collected from reports/m4-block-device-exec.json; not a new query run"
+    ],
+    "evidence_refs": [
+      "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect",
+      "policy:grant:root:ubus_http:luci.setBlockDetect",
+      "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/ucode/luci setBlockDetect.call system('/sbin/block detect > /etc/config/fstab')"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed"
+    ]
+  }
+}
