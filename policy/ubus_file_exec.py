@@ -45,6 +45,7 @@ from .cgi_exec_status import (
 from .cgi_upload import canonicalize_path
 from .oracle import (
     C_DOUBLE_FLAGS,
+    DEFAULT_UBUS_DATA,
     ERROR_ACCESS,
     FIXTURES,
     PRODUCER,
@@ -272,18 +273,20 @@ def evaluate_file_exec(
     command: Optional[str] = IPTABLES,
     params: Optional[list[str]] = None,
     env: Optional[dict[str, str]] = None,
-    data: Any = None,
+    data: Any = DEFAULT_UBUS_DATA,
     sessions: Optional[dict[str, Session]] = None,
     found_paths: Optional[set[str]] = None,
 ) -> FileExecResult:
     """Evaluate HTTP /ubus file.exec after a typed JSON-RPC call array.
 
+    Omitted data builds a payload from command, params, and env; explicit
+    None is JSON null and must pass the ingress parser unchanged.
     lookup is not a live PATH/stat search. execv is not forked.
     """
     if sessions is None:
         sessions = load_file_exec_world()
     allowed = found_paths if found_paths is not None else FOUND_PATHS
-    if data is None:
+    if data is DEFAULT_UBUS_DATA:
         payload: dict[str, Any] = {}
         if command is not None:
             payload["command"] = command
@@ -602,6 +605,7 @@ def evaluate_expected_case(
         command=case.get("command"),
         params=case.get("params"),
         env=case.get("env"),
+        data=case.get("data", DEFAULT_UBUS_DATA),
         sessions=sessions,
     )
 

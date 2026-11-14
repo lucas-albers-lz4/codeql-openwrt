@@ -49,6 +49,7 @@ from .cgi_backup import FLASH_SESSION_CLASS
 from .cgi_exec_status import FIREWALL_SESSION_CLASS
 from .oracle import (
     C_DOUBLE_FLAGS,
+    DEFAULT_UBUS_DATA,
     FIXTURES,
     PRODUCER,
     PROFILE,
@@ -202,7 +203,7 @@ def evaluate_list_backup_exec(
     command: Optional[str] = SYSUPGRADE,
     params: Optional[list[str]] = None,
     env: Optional[dict[str, str]] = None,
-    data: Any = None,
+    data: Any = DEFAULT_UBUS_DATA,
     sessions: Optional[dict] = None,
     found_paths: Optional[set[str]] = None,
 ) -> FileExecResult:
@@ -258,6 +259,7 @@ def evaluate_expected_case(
         command=case.get("command"),
         params=case.get("params"),
         env=case.get("env"),
+        data=case.get("data", DEFAULT_UBUS_DATA),
         sessions=sessions,
     )
 
