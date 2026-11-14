@@ -21,6 +21,13 @@ python3 -m policy emit
 python3 -m unittest discover -s policy/tests -t .
 ```
 
+Use `python3 -m policy emit` as the only supported command for writing the
+shared union artifacts. The standalone `python3 -m policy.oracle emit` and
+bare `python3 -m policy.oracle` commands are disabled; direct
+`oracle.emit_artifacts()` calls also refuse the repository's shared output
+paths. `policy.oracle emit_artifacts()` remains available for isolated roots
+such as temporary test directories.
+
 `emit` rewrites `policy/grants.json` (luci grants, then cgi-backup, cgi-upload, cgi-download, cgi-exec, cgi-exec file.exec helpers, cgi-exec status file.exec, ubus file.exec, ubus file.exec ifup, ubus file.exec kill, ubus file.exec mounts, ubus file.exec list-backup, ubus system.reboot, ubus rc.init, ubus rc.list, ubus system.board, ubus system.info, ubus luci.getVersion, ubus luci.getUnixtime, ubus hostapd.del_client, ubus hostapd.wps_start, ubus hostapd.wps_cancel, ubus hostapd.wps_status, ubus luci.getOdhcp6cStats, ubus luci.getTimezones, ubus luci.getLEDs, ubus luci.getMountPoints, ubus luci.getBuiltinEthernetPorts, ubus luci.getConntrackHelpers), `policy/policy_decisions.json` (luci), the per-endpoint cgi decision files, `policy/ubus_file_exec_decisions.json`, `policy/ubus_file_exec_ifup_decisions.json`, `policy/ubus_file_exec_kill_decisions.json`, `policy/ubus_file_exec_mounts_decisions.json`, `policy/ubus_file_exec_list_backup_decisions.json`, `policy/ubus_system_reboot_decisions.json`, `policy/ubus_rc_init_decisions.json`, `policy/ubus_rc_list_decisions.json`, `policy/ubus_system_board_decisions.json`, `policy/ubus_system_info_decisions.json`, `policy/ubus_luci_getversion_decisions.json`, `policy/ubus_luci_getunixtime_decisions.json`, `policy/ubus_luci_getodhcp6cstats_decisions.json`, `policy/ubus_luci_gettimezones_decisions.json`, `policy/ubus_luci_getleds_decisions.json`, `policy/ubus_luci_getmountpoints_decisions.json`, `policy/ubus_luci_getbuiltinethernetports_decisions.json`, `policy/ubus_hostapd_del_client_decisions.json`, `policy/ubus_hostapd_wps_start_decisions.json`, `policy/ubus_hostapd_wps_cancel_decisions.json`, `policy/ubus_hostapd_wps_status_decisions.json`, and `policy/no_ubusauth_decisions.json` (no grants). The luci grant emitter refuses anything except `luci.getFeatures`, the inventoried request.args exec methods, `getBlockDevices` / `setBlockDetect`, and luci.sys `getConntrackList` / `getProcessList`. It also refuses grants for `no_ubusauth=1`. Synthetic cgi, ubus `file.exec`, ubus `system.reboot`, ubus `rc.init`, ubus `rc.list`, ubus `system.board`, ubus `system.info`, ubus `luci.getVersion`, ubus `luci.getUnixtime`, ubus `luci.getOdhcp6cStats`, ubus `luci.getTimezones`, ubus `luci.getLEDs`, ubus `luci.getMountPoints`, ubus `luci.getBuiltinEthernetPorts`, ubus `hostapd.del_client`, ubus `hostapd.wps_start`, ubus `hostapd.wps_cancel`, and ubus `hostapd.wps_status` `handler_effect` rows are upserted into `reports/handler_effects.json` and checked against the oracles. All rows share the `corpus/lock.json` hash. Profile `luci-ssl-25.12-no-ubusauth` does not join luci-ssl grants (`profile` differs).
 
 Tests compare the luci evaluator to handwritten cases in `policy/fixtures/expected_cases.json` and the cgi/ubus evaluators to `policy/fixtures/cgi_backup_cases.json`, `cgi_upload_cases.json`, `cgi_download_cases.json`, `cgi_exec_cases.json`, `cgi_exec_file_cases.json`, `cgi_exec_status_cases.json`, `ubus_file_exec_cases.json`, `ubus_file_exec_ifup_cases.json`, `ubus_file_exec_kill_cases.json`, `ubus_file_exec_mounts_cases.json`, `ubus_file_exec_list_backup_cases.json`, `ubus_system_reboot_cases.json`, `ubus_rc_init_cases.json`, `ubus_rc_list_cases.json`, `ubus_system_board_cases.json`, `ubus_system_info_cases.json`, `ubus_luci_getversion_cases.json`, `ubus_luci_getunixtime_cases.json`, `ubus_luci_getodhcp6cstats_cases.json`, `ubus_luci_gettimezones_cases.json`, `ubus_luci_getleds_cases.json`, `ubus_luci_getmountpoints_cases.json`, `ubus_luci_getbuiltinethernetports_cases.json`, `ubus_luci_getconntrackhelpers_cases.json`, `ubus_hostapd_del_client_cases.json`, `ubus_hostapd_wps_start_cases.json`, `ubus_hostapd_wps_cancel_cases.json`, and `ubus_hostapd_wps_status_cases.json` (transcribed from pinned C and ACL JSON, not from the evaluator). They compile the C doubles with:
@@ -116,9 +123,13 @@ Python process locale. Wildcards operate on bytes in this locale: for example,
 `?` and `[!x]` each consume one byte, so neither fully matches `é` (two UTF-8
 bytes) or `😀` (four). Login groups use flags 0 and ACLs use `FNM_NOESCAPE`;
 no pathname or leading-dot flags are set. Inputs to `libc_fnmatch` must be
-UTF-8 encodable and contain no NUL. This implementation targets Linux glibc or
-musl with POSIX per-thread locale APIs; libc-specific pattern extensions and
-behavior are not a proof of parity with a live OpenWrt system.
+UTF-8 encodable. Each pattern and value is truncated at its first NUL, matching
+C char * / fnmatch behavior. ACL object and function patterns and values use
+the same rule before literal or wildcard matching. This specifies oracle
+parity only; it does not claim NUL-bearing identifiers can reach uhttpd/rpcd
+over the wire. This implementation targets Linux glibc or musl with POSIX
+per-thread locale APIs; libc-specific pattern extensions and behavior are
+not a proof of parity with a live OpenWrt system.
 
 Handwritten rows in `policy/tests/test_conformance.py` tie Python `acl_match` / `login_test_permission` to `uh_ubus_policy match` and `group`. Wildcard ubus object `hostapd.*` with `del_client` is transcribed from luci `b2e0be4b` `luci-mod-network.json` (`luci-mod-network-config` write grant), not from a generator. Inventoried exec methods use literal `match` / `decide` against their own names (ALLOW) and against the unauthenticated `getFeatures` grant (DENY).
 
