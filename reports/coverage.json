@@ -1,31 +1,675 @@
 {
-  "analysis_revision": "step3:getfeatures-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
   "profile": "luci-ssl-25.12",
-  "entrypoint_id": "ubus_http:luci.getFeatures",
-  "status": "partial",
-  "extracted_files": ["luci", "taint_pos", "taint_neg"],
-  "analyzed": [
-    "same-file callPackageVersionCheck",
-    "named popen from fs",
-    "builtin system inventory",
-    "syntactic local request.args taint (taint_pos path_found; getFeatures netifd helper no_path)"
+  "join_rule": [
+    "corpus_revision",
+    "profile",
+    "entrypoint_id"
   ],
-  "resolved_calls": [
-    "callPackageVersionCheck",
-    "popen",
-    "system"
+  "analysis_revision_scope": "producer_local; do not join or require equality across producers",
+  "status_values": [
+    "analyzed",
+    "partial",
+    "excluded",
+    "unresolved"
   ],
-  "unmodeled_branches": [
-    "getFeatures hostapd/wpa_supplicant/dnsmasq/odhcpd/ipset moved to reports/m4-getfeatures-direct-exec-coverage.json",
-    "non-getFeatures request.args exec in reports/m4-coverage.json"
+  "absence_rule": "Missing SARIF is unresolved and never implies no_path.",
+  "entries": [
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-backup",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-download",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/bin/dmesg",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/etc/init.d/firewall",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/luci-peeraddr",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/package-manager-call",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/libexec/syslog-wrapper",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/ip6tables-save",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/iptables-save",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-exec:/usr/sbin/nft",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "cgi_io:cgi-upload",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/bin/kill",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/bin/umount",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/block",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifdown",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ifup",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/ip:-j",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/sysupgrade:--list-backup",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/sbin/wifi",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/ip6tables",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:file.exec:/usr/sbin/iptables",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:hostapd.del_client",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 3,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:hostapd.wps_cancel",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:hostapd.wps_start",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:hostapd.wps_status",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getBlockDevices",
+      "status": "partial",
+      "analysis_revision": "step3:luci-fixed-exec-v1",
+      "coverage_ref": "reports/m4-block-device-exec-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "Grant/effect inventory is present; QL sink model is unassessed. Coverage is partial, not a path conclusion.",
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getConntrackList",
+      "status": "partial",
+      "analysis_revision": "step3:luci-sys-fixed-exec-v1",
+      "coverage_ref": "reports/m4-luci-sys-status-exec-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "Grant/effect inventory is present; QL sink model is unassessed. Coverage is partial, not a path conclusion.",
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "status": "partial",
+      "analysis_revision": "step3:getfeatures-direct-exec-v1",
+      "coverage_ref": "reports/m4-getfeatures-direct-exec-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 6,
+      "note": "Entry point has a focused M4 coverage report; unsupported constructs and unmodeled branches remain.",
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getLEDs",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 4,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getOdhcp6cStats",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getProcessList",
+      "status": "partial",
+      "analysis_revision": "step3:luci-sys-fixed-exec-v1",
+      "coverage_ref": "reports/m4-luci-sys-status-exec-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "Grant/effect inventory is present; QL sink model is unassessed. Coverage is partial, not a path conclusion.",
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getRealtimeStats",
+      "status": "partial",
+      "analysis_revision": "step3:request-args-exec-v1",
+      "coverage_ref": "reports/m4-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "Focused M4 report covers this entry point; unmodeled branches/unsupported constructs remain and no path conclusion is made.",
+      "additional_coverage_refs": [
+        {
+          "coverage_ref": "reports/m4-realtime-password-quoted-locals-coverage.json",
+          "analysis_revision": "inventory:realtime-password-quoted-locals-v1",
+          "coverage_producer": "inventory"
+        }
+      ],
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
+      "status": "partial",
+      "analysis_revision": "step3:request-args-exec-v1",
+      "coverage_ref": "reports/m4-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "Focused M4 report covers this entry point; unmodeled branches/unsupported constructs remain and no path conclusion is made.",
+      "additional_coverage_refs": [],
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
+      "status": "partial",
+      "analysis_revision": "step3:request-args-exec-v1",
+      "coverage_ref": "reports/m4-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "Focused M4 report covers this entry point; unmodeled branches/unsupported constructs remain and no path conclusion is made.",
+      "additional_coverage_refs": [],
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getTimezones",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getUnixtime",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.getVersion",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.setBlockDetect",
+      "status": "partial",
+      "analysis_revision": "step3:luci-fixed-exec-v1",
+      "coverage_ref": "reports/m4-block-device-exec-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "Grant/effect inventory is present; QL sink model is unassessed. Coverage is partial, not a path conclusion.",
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.setInitAction",
+      "status": "partial",
+      "analysis_revision": "step3:luci-sys-init-action-v1",
+      "coverage_ref": "reports/m4-luci-sys-init-action-coverage.json",
+      "grant_record_count": 0,
+      "handler_effect_record_count": 1,
+      "note": "Entry point has a focused M4 coverage report; unsupported constructs and unmodeled branches remain.",
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.setLocaltime",
+      "status": "partial",
+      "analysis_revision": "step3:request-args-exec-v1",
+      "coverage_ref": "reports/m4-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 2,
+      "note": "Focused M4 report covers this entry point; unmodeled branches/unsupported constructs remain and no path conclusion is made.",
+      "additional_coverage_refs": [],
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:luci.setPassword",
+      "status": "partial",
+      "analysis_revision": "step3:request-args-exec-v1",
+      "coverage_ref": "reports/m4-coverage.json",
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "Focused M4 report covers this entry point; unmodeled branches/unsupported constructs remain and no path conclusion is made.",
+      "additional_coverage_refs": [
+        {
+          "coverage_ref": "reports/m4-realtime-password-quoted-locals-coverage.json",
+          "analysis_revision": "inventory:realtime-password-quoted-locals-v1",
+          "coverage_producer": "inventory"
+        }
+      ],
+      "coverage_producer": "step3"
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:rc.init",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 3,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:rc.list",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 4,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:system.board",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:system.info",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    },
+    {
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "status": "unresolved",
+      "analysis_revision": null,
+      "coverage_ref": null,
+      "grant_record_count": 2,
+      "handler_effect_record_count": 1,
+      "note": "No entrypoint-specific QL coverage evidence is recorded; absence of SARIF is not a no_path result."
+    }
   ],
-  "unsupported_constructs": [
-    "generated AST.qll/CFG.qll (not imported)",
-    "global dataflow/SSA"
+  "analysis_summaries": [
+    {
+      "report_ref": "reports/coverage.json@before-ledger",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "producer": "step3",
+      "details": {
+        "analysis_revision": "step3:getfeatures-v1",
+        "profile": "luci-ssl-25.12",
+        "entrypoint_id": "ubus_http:luci.getFeatures",
+        "status": "partial",
+        "extracted_files": [
+          "luci",
+          "taint_pos",
+          "taint_neg"
+        ],
+        "analyzed": [
+          "same-file callPackageVersionCheck",
+          "named popen from fs",
+          "builtin system inventory",
+          "syntactic local request.args taint (taint_pos path_found; getFeatures netifd helper no_path)"
+        ],
+        "resolved_calls": [
+          "callPackageVersionCheck",
+          "popen",
+          "system"
+        ],
+        "unmodeled_branches": [
+          "getFeatures hostapd/wpa_supplicant/dnsmasq/odhcpd/ipset moved to reports/m4-getfeatures-direct-exec-coverage.json",
+          "non-getFeatures request.args exec in reports/m4-coverage.json"
+        ],
+        "unsupported_constructs": [
+          "generated AST.qll/CFG.qll (not imported)",
+          "global dataflow/SSA"
+        ],
+        "trusted_summaries": [],
+        "unknowns": [
+          "live uhttpd/rpcd not executed; M2 uses a C double of parse + session.access matching",
+          "generated AST.qll/CFG.qll are not imported"
+        ]
+      }
+    }
   ],
-  "trusted_summaries": [],
-  "unknowns": [
-    "live uhttpd/rpcd not executed; M2 uses a C double of parse + session.access matching",
-    "generated AST.qll/CFG.qll are not imported"
-  ]
+  "artifact_format": "entrypoint_coverage_ledger_report",
+  "format_note": "Report-only format; this is not a finding.schema.json interchange record."
 }
