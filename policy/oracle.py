@@ -789,9 +789,19 @@ def dump_json(path: Path, obj: Any) -> None:
 
 
 def emit_artifacts(repo_root: Path = REPO_ROOT) -> tuple[Path, Path]:
-    grants, bundle = build_artifacts(repo_root / "policy" / "fixtures", repo_root)
     grants_path = repo_root / "policy" / "grants.json"
     decisions_path = repo_root / "policy" / "policy_decisions.json"
+    shared_paths = {
+        (REPO_ROOT / "policy" / "grants.json").resolve(),
+        (REPO_ROOT / "policy" / "policy_decisions.json").resolve(),
+    }
+    if grants_path.resolve() in shared_paths or decisions_path.resolve() in shared_paths:
+        raise RuntimeError(
+            "the standalone luci oracle cannot write the shared policy union; "
+            "use `python3 -m policy emit`"
+        )
+
+    grants, bundle = build_artifacts(repo_root / "policy" / "fixtures", repo_root)
     dump_json(grants_path, grants)
     dump_json(decisions_path, bundle)
     return grants_path, decisions_path
@@ -800,7 +810,7 @@ def emit_artifacts(repo_root: Path = REPO_ROOT) -> tuple[Path, Path]:
 def main(argv: Optional[list[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="M2 /ubus luci policy oracle")
     sub = parser.add_subparsers(dest="cmd")
-    sub.add_parser("emit", help="write policy/grants.json and policy/policy_decisions.json")
+    sub.add_parser("emit", help="disabled; use `python3 -m policy emit` for shared artifacts")
     decide = sub.add_parser("decide", help="evaluate one /ubus call")
     decide.add_argument("--session-class", choices=sorted(SESSION_SIDS))
     decide.add_argument("--sid")
@@ -810,10 +820,12 @@ def main(argv: Optional[list[str]] = None) -> int:
     decide.add_argument("--no-ubusauth", type=int, default=0)
     args = parser.parse_args(argv)
     if args.cmd == "emit" or args.cmd is None:
-        grants_path, decisions_path = emit_artifacts()
-        print(grants_path)
-        print(decisions_path)
-        return 0
+        print(
+            "The standalone oracle emitter is disabled; use `python3 -m policy emit` "
+            "to write the shared union artifacts.",
+            file=sys.stderr,
+        )
+        return 2
     if args.cmd == "decide":
         sid = None if args.missing_sid else args.sid
         if sid is None and not args.missing_sid and args.session_class:
