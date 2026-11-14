@@ -747,10 +747,43 @@
         "luci.getUSBDevices grant",
         "luci.getConntrackHelpers grant"
       ],
-      "rationale": "29_ports.js uses rpc.declare object=luci method=getBuiltinEthernetPorts. luci-mod-status-index-ports read grants ubus luci.getBuiltinEthernetPorts. An allow is the HTTP gate, not the luci-base getBuiltinEthernetPorts handler (/etc/board.json / /sys/class/net). Does not rewrite the luci exec-methods emitter. luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. luci-mod-status-index grants getVersion / getUnixtime / getOdhcp6cStats, not getBuiltinEthernetPorts. getUSBDevices stays unstaffed. luci.getConntrackHelpers stays unstaffed. Unauthenticated ACLs do not grant this method.",
+      "rationale": "29_ports.js uses rpc.declare object=luci method=getBuiltinEthernetPorts. luci-mod-status-index-ports read grants ubus luci.getBuiltinEthernetPorts. An allow is the HTTP gate, not the luci-base getBuiltinEthernetPorts handler (/etc/board.json / /sys/class/net). Does not rewrite the luci exec-methods emitter. luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. luci-mod-status-index grants getVersion / getUnixtime / getOdhcp6cStats, not getBuiltinEthernetPorts. getUSBDevices stays unstaffed. luci.getConntrackHelpers stays on policy:ubus-luci-getconntrackhelpers-v1. Unauthenticated ACLs do not grant this method.",
       "review_provenance": [
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status-index.json luci-mod-status-index-ports.read.ubus.luci=[getBuiltinEthernetPorts]",
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js rpc.declare object=luci method=getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "expectation_id": "luci-app-firewall-getconntrackhelpers",
+      "session_class": "luci-app-firewall",
+      "synthetic": true,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "intended_access": [
+        {
+          "target_id": "ubus:luci.getConntrackHelpers",
+          "op": "invoke"
+        }
+      ],
+      "denied_authority": [
+        "unauthenticated ubus luci.getConntrackHelpers",
+        "luci-base getConntrackHelpers handler",
+        "luci.getMountPoints grant",
+        "luci.getBuiltinEthernetPorts grant",
+        "luci.getVersion grant",
+        "luci.getUnixtime grant",
+        "luci.getOdhcp6cStats grant",
+        "ubus system.board grant",
+        "ubus system.info grant",
+        "ubus system.reboot",
+        "luci.getUSBDevices grant"
+      ],
+      "rationale": "zones.js, rules.js, and forwards.js use rpc.declare object=luci method=getConntrackHelpers. luci-app-firewall read grants ubus luci.getConntrackHelpers. An allow is the HTTP gate, not the luci-base getConntrackHelpers handler. Does not rewrite the luci exec-methods emitter. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. getUSBDevices stays unstaffed. Unauthenticated ACLs do not grant this method.",
+      "review_provenance": [
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-firewall/root/usr/share/rpcd/acl.d/luci-app-firewall.json luci-app-firewall.read.ubus.luci=[getConntrackHelpers]",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js rpc.declare object=luci method=getConntrackHelpers",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/rules.js rpc.declare object=luci method=getConntrackHelpers",
+        "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/forwards.js rpc.declare object=luci method=getConntrackHelpers"
       ]
     },
     {

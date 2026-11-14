@@ -139,7 +139,7 @@ UNKNOWN_UNSTAFFED = (
     "policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on "
     "policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / "
     "wps_cancel / wps_status stay on their hostapd revisions. "
-    "luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getConntrackHelpers stays unstaffed. "
+    "luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getConntrackHelpers stays on policy:ubus-luci-getconntrackhelpers-v1. "
     "Track A is unstaffed. dispatcher is not this slice. "
     "setInitAction is not this slice."
 )
@@ -205,7 +205,8 @@ ASSUMPTION_NOT_USB = (
     "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin)."
 )
 ASSUMPTION_NOT_CONNTRACK = (
-    "luci.getConntrackHelpers stays unstaffed (luci-app-firewall views; next leftover)."
+    "luci.getConntrackHelpers stays on policy:ubus-luci-getconntrackhelpers-v1. "
+    "The ports fixture cannot pass getConntrackHelpers."
 )
 ASSUMPTION_NOT_MOUNTPOINTS = (
     "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. "

@@ -219,6 +219,20 @@ class TestLuciSslFiles(unittest.TestCase):
         self.assertNotIn("not in wave 1", unknowns)
         self.assertIn("c_plugin_not_analyzed", unknowns)
 
+    def test_expected_capabilities_tracks_conntrack_helpers(self) -> None:
+        expectations = self.expected_capabilities["expectations"]
+        rows = [
+            row
+            for row in expectations
+            if row.get("expectation_id") == "luci-app-firewall-getconntrackhelpers"
+        ]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["session_class"], "luci-app-firewall")
+        self.assertEqual(
+            rows[0]["entrypoint_id"],
+            "ubus_http:luci.getConntrackHelpers",
+        )
+
     def test_expected_capabilities_tracks_builtin_ethernet_ports(self) -> None:
         expectations = self.expected_capabilities["expectations"]
         rows = [
@@ -383,6 +397,15 @@ class TestLuciSslFiles(unittest.TestCase):
         self.assertTrue(getbuiltinethernetports)
         self.assertTrue(
             all(row["analysis_revision"] == "policy:ubus-luci-getbuiltinethernetports-v1" for row in getbuiltinethernetports)
+        )
+        getconntrackhelpers = [
+            row
+            for row in self.grants
+            if row.get("ubus_object") == "luci" and row.get("method") == "getConntrackHelpers"
+        ]
+        self.assertTrue(getconntrackhelpers)
+        self.assertTrue(
+            all(row["analysis_revision"] == "policy:ubus-luci-getconntrackhelpers-v1" for row in getconntrackhelpers)
         )
         blob = json.dumps(self.grants)
         self.assertNotIn(ANALYSIS_REVISION, blob)

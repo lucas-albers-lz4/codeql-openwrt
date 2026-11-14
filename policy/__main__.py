@@ -28,6 +28,7 @@ from . import (
     ubus_luci_getleds,
     ubus_luci_getmountpoints,
     ubus_luci_getbuiltinethernetports,
+    ubus_luci_getconntrackhelpers,
     ubus_luci_gettimezones,
     ubus_luci_getunixtime,
     ubus_luci_getversion,
@@ -116,6 +117,9 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     getbuiltinethernetports_grants, getbuiltinethernetports_bundle, getbuiltinethernetports_effects = (
         ubus_luci_getbuiltinethernetports.build_artifacts(fixtures, repo_root)
     )
+    getconntrackhelpers_grants, getconntrackhelpers_bundle, getconntrackhelpers_effects = (
+        ubus_luci_getconntrackhelpers.build_artifacts(fixtures, repo_root)
+    )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
     grants_path = repo_root / "policy" / "grants.json"
     luci_decisions_path = repo_root / "policy" / "policy_decisions.json"
@@ -146,6 +150,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     getleds_decisions_path = repo_root / "policy" / "ubus_luci_getleds_decisions.json"
     getmountpoints_decisions_path = repo_root / "policy" / "ubus_luci_getmountpoints_decisions.json"
     getbuiltinethernetports_decisions_path = repo_root / "policy" / "ubus_luci_getbuiltinethernetports_decisions.json"
+    getconntrackhelpers_decisions_path = repo_root / "policy" / "ubus_luci_getconntrackhelpers_decisions.json"
     noauth_decisions_path = repo_root / "policy" / "no_ubusauth_decisions.json"
     upload_effect_path = repo_root / "reports" / "m2-cgi-upload-effect.json"
     download_effect_path = repo_root / "reports" / "m2-cgi-download-effect.json"
@@ -173,6 +178,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     getleds_effect_path = repo_root / "reports" / "m2-ubus-luci-getleds-effect.json"
     getmountpoints_effect_path = repo_root / "reports" / "m2-ubus-luci-getmountpoints-effect.json"
     getbuiltinethernetports_effect_path = repo_root / "reports" / "m2-ubus-luci-getbuiltinethernetports-effect.json"
+    getconntrackhelpers_effect_path = repo_root / "reports" / "m2-ubus-luci-getconntrackhelpers-effect.json"
     oracle.dump_json(
         grants_path,
         luci_grants
@@ -202,7 +208,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         + gettimezones_grants
         + getleds_grants
         + getmountpoints_grants
-        + getbuiltinethernetports_grants,
+        + getbuiltinethernetports_grants
+        + getconntrackhelpers_grants,
     )
     oracle.dump_json(luci_decisions_path, luci_bundle)
     oracle.dump_json(backup_decisions_path, backup_bundle)
@@ -232,6 +239,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(getleds_decisions_path, {"grants": getleds_grants, **getleds_bundle})
     oracle.dump_json(getmountpoints_decisions_path, {"grants": getmountpoints_grants, **getmountpoints_bundle})
     oracle.dump_json(getbuiltinethernetports_decisions_path, {"grants": getbuiltinethernetports_grants, **getbuiltinethernetports_bundle})
+    oracle.dump_json(getconntrackhelpers_decisions_path, {"grants": getconntrackhelpers_grants, **getconntrackhelpers_bundle})
     oracle.dump_json(noauth_decisions_path, noauth_bundle)
     oracle.dump_json(upload_effect_path, upload_effect)
     oracle.dump_json(download_effect_path, download_effect)
@@ -259,6 +267,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(getleds_effect_path, getleds_effects)
     oracle.dump_json(getmountpoints_effect_path, getmountpoints_effects)
     oracle.dump_json(getbuiltinethernetports_effect_path, getbuiltinethernetports_effects)
+    oracle.dump_json(getconntrackhelpers_effect_path, getconntrackhelpers_effects)
     cgi_backup.upsert_handler_effect(backup_effect, repo_root)
     cgi_backup.upsert_handler_effect(upload_effect, repo_root)
     cgi_backup.upsert_handler_effect(download_effect, repo_root)
@@ -310,6 +319,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         effect_path = cgi_backup.upsert_handler_effect(getmountpoints_effect, repo_root)
     for getbuiltinethernetports_effect in getbuiltinethernetports_effects:
         effect_path = cgi_backup.upsert_handler_effect(getbuiltinethernetports_effect, repo_root)
+    for getconntrackhelpers_effect in getconntrackhelpers_effects:
+        effect_path = cgi_backup.upsert_handler_effect(getconntrackhelpers_effect, repo_root)
     return (
         grants_path,
         luci_decisions_path,
@@ -340,6 +351,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         getleds_decisions_path,
         getmountpoints_decisions_path,
         getbuiltinethernetports_decisions_path,
+        getconntrackhelpers_decisions_path,
         noauth_decisions_path,
         effect_path,
     )
