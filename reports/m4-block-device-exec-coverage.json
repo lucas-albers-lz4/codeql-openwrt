@@ -5,7 +5,7 @@
   "extracted_files": ["luci"],
   "analyzed": [
     "getBlockDevices.call named fs popen of literal /sbin/block info",
-    "setBlockDetect.call builtin system of literal /sbin/block detect",
+    "setBlockDetect.call builtin system of literal /sbin/block detect (source observation imported from ucode SetBlockDetectEffectTable.ql)",
     "setLocaltime.call extra builtin system of literal /etc/init.d/sysfixtime restart",
     "M2 policy-facts grants for luci-mod-system-mounts (analysis_revision policy:ubus-luci-exec-methods-v2); setLocaltime grants unchanged besides revision bump"
   ],

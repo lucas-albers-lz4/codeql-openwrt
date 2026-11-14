@@ -16,7 +16,7 @@
 | M3 queries, effects, reports | `step3` |
 | Alloy (only after promotion) | `step4` |
 
-Joins require identical `corpus_revision` and `profile`. `analysis_revision` is producer-local (M2 `policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1` / `policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-system-board-v1` / `policy:ubus-system-info-v1` / `policy:ubus-luci-getversion-v1` / `policy:ubus-luci-getunixtime-v1` / `policy:ubus-luci-getodhcp6cstats-v1` / `policy:ubus-luci-gettimezones-v1` / `policy:ubus-luci-getleds-v1` / `policy:ubus-luci-getmountpoints-v1` / `policy:ubus-luci-getbuiltinethernetports-v1` / `policy:ubus-luci-getconntrackhelpers-v1` / `policy:ubus-hostapd-del-client-v1` / `policy:ubus-hostapd-wps-start-v1` / `policy:ubus-hostapd-wps-cancel-v1` / `policy:ubus-hostapd-wps-status-v1` / `policy:no-ubusauth-v1`, M3 `step3:getfeatures-v1`, M4 `step3:request-args-exec-v1` / `step3:getblock-table-v1` / `step3:luci-fixed-exec-v1` / `step3:luci-sys-fixed-exec-v1` / `inventory:realtime-password-quoted-locals-v1` / `inventory:luci-ssl-files-v1`). Cross-producer joins (`policy_grant` ↔ `handler_effect` / `taint_path`) match on those two fields plus the shared join keys (`entrypoint_id`, `ingress`, and either `ubus_object`/`method` or `cgi_endpoint`) and `evidence_refs` record ids. Do not require two producers to share one `analysis_revision` string. Routing `files[]` records join on exact `corpus_revision` + inventory `profile` + `fs_path` and are not grant rows. A variant may explicitly declare routing-only base inventory ownership with `files_inventory_profile` and `files_inventory_inheritance: "routing_only"`; this resolves only routing records and never retags records or inherits authorization/effect rows. All policy grants, decisions and effect joins still require the requesting profile exactly. See [file-routing.md](file-routing.md#routing-only-inheritance).
+Joins require identical `corpus_revision` and `profile`. `analysis_revision` is producer-local (M2 `policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1` / `policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-system-board-v1` / `policy:ubus-system-info-v1` / `policy:ubus-luci-getversion-v1` / `policy:ubus-luci-getunixtime-v1` / `policy:ubus-luci-getodhcp6cstats-v1` / `policy:ubus-luci-gettimezones-v1` / `policy:ubus-luci-getleds-v1` / `policy:ubus-luci-getmountpoints-v1` / `policy:ubus-luci-getbuiltinethernetports-v1` / `policy:ubus-luci-getconntrackhelpers-v1` / `policy:ubus-hostapd-del-client-v1` / `policy:ubus-hostapd-wps-start-v1` / `policy:ubus-hostapd-wps-cancel-v1` / `policy:ubus-hostapd-wps-status-v1` / `policy:no-ubusauth-v1`, M3 `step3:getfeatures-v1`, M4 `step3:request-args-exec-v1` / `step3:getblock-table-v1` / `step3:setblock-table-v1` / `step3:luci-fixed-exec-v1` / `step3:luci-sys-fixed-exec-v1` / `inventory:realtime-password-quoted-locals-v1` / `inventory:luci-ssl-files-v1`). Cross-producer joins (`policy_grant` ↔ `handler_effect` / `taint_path`) match on those two fields plus the shared join keys (`entrypoint_id`, `ingress`, and either `ubus_object`/`method` or `cgi_endpoint`) and `evidence_refs` record ids. Do not require two producers to share one `analysis_revision` string. Routing `files[]` records join on exact `corpus_revision` + inventory `profile` + `fs_path` and are not grant rows. A variant may explicitly declare routing-only base inventory ownership with `files_inventory_profile` and `files_inventory_inheritance: "routing_only"`; this resolves only routing records and never retags records or inherits authorization/effect rows. All policy grants, decisions and effect joins still require the requesting profile exactly. See [file-routing.md](file-routing.md#routing-only-inheritance).
 
 ### Typed ucode records and report-only outputs
 
@@ -174,11 +174,28 @@ Then, from this repository, run the adapter with `--csv /tmp/getblock.csv`
 and `--source-root` pointing to the producer's `ql/test/extractor-smoke`
 directory. `policy/fixtures/getblock-observation.csv` is a decoded producer
 result; the accompanying `getblock-source` is the byte-identical pinned test
-source. The producer query is under independent review; the named-column
-interface is an explicit assumption until that query lands. The adapter checks
+source. The named-column producer query is codeql-ucode #62. The adapter checks
 content, but cannot authenticate that a supplied CSV was actually produced by
 CodeQL. A validated row is source-body inventory, not evidence of callback
 registration, execution, a taint path, or an authorization violation. The
 `intended_access` assessment comes from the separately maintained mounts
 expectation and does not follow from the table. Unresolved source shapes remain
 unknown and are never converted into a negative path conclusion.
+
+`python3 -m policy.setblock_table --csv <table.csv> --source-root <root>`
+imports the single pinned `setBlockDetect` literal-system source observation
+from the ucode #54 `SetBlockDetectEffectTable.ql` named-column CSV contract.
+The root must contain `usr/share/rpcd/ucode/luci`. Before writing, the adapter
+requires the exact header and row, pinned LuCI lock SHA and source bytes, both
+matching grant records, the independent mounts expectation, and the existing
+unauthenticated deny decision with no corresponding grant. It replaces the
+existing effect by the same record ID in both `reports/m4-block-device-exec.json`
+and `reports/handler_effects.json`, retaining its intended-access assessment,
+policy identity and unrelated rows. It never writes grants or policy decisions.
+Missing or invalid inputs leave all artifacts unchanged. The two-row replacement
+uses staged files and restores the first artifact if replacing the second fails.
+
+The table is a source-body observation, not proof of registration, execution,
+taint, or authorization. The adapter validates CSV content and source bytes but
+cannot authenticate that CodeQL produced the CSV. It does not emit `path_found`,
+`no_path`, or `authorization_violation`.
