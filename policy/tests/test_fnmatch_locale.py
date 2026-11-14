@@ -12,6 +12,8 @@ import policy.oracle as oracle
 from policy.oracle import FNM_NOESCAPE, Login, acl_match, libc_fnmatch, login_test_permission
 from policy.tests.test_conformance import _compile_c_double
 
+REPO = Path(__file__).resolve().parents[2]
+
 
 class TestFnmatchLocale(unittest.TestCase):
     @classmethod
@@ -96,6 +98,100 @@ class TestFnmatchLocale(unittest.TestCase):
             self.assertTrue(lib.uselocale(previous))
             lib.freelocale(thread_locale)
 
-    def test_reject_embedded_nul(self):
-        with self.assertRaises(ValueError):
-            libc_fnmatch("*", "a\0b", 0)
+    def test_fnmatch_truncates_embedded_nul(self):
+        self.assertTrue(libc_fnmatch("*\0ignored", "a\0b", 0))
+        self.assertFalse(libc_fnmatch("a\0*", "b\0a", 0))
+
+    def test_acl_match_truncates_nul_in_literal_and_wildcard_inputs(self):
+        cases = [
+            # NUL terminates literal object and function patterns and values.
+            ("luci\0*", "getVersion\0*", "luci\0suffix", "getVersion\0suffix", True),
+            ("luci\0*", "getVersion", "lucX\0luci", "getVersion\0suffix", False),
+            # NUL terminates wildcard patterns and values after the active prefix.
+            ("luci*\0suffix", "get*\0suffix", "luci\0object", "getVersion\0value", True),
+            ("luci*\0suffix", "get*", "other\0luci", "getVersion\0value", False),
+            # A wildcard after NUL is not active; the resulting pattern is literal.
+            ("luci\0*", "getVersion\0*", "luciX\0tail", "getVersion\0tail", False),
+        ]
+
+        for pattern_object, pattern_function, object_name, function_name, expected in cases:
+            with self.subTest(
+                pattern_object=pattern_object,
+                pattern_function=pattern_function,
+                object_name=object_name,
+                function_name=function_name,
+            ):
+                self.assertEqual(
+                    acl_match(pattern_object, pattern_function, object_name, function_name),
+                    expected,
+                )
+
+        self.assertTrue(
+            login_test_permission(
+                Login(username="nul", read=["group\0ignored"]),
+                "read",
+                "group\0value",
+            )
+        )
+        self.assertTrue(
+            login_test_permission(
+                Login(username="nul", read=["group*\0ignored"]),
+                "read",
+                "group\0value",
+            )
+        )
+
+    def test_embedded_nul_acl_match_matches_c_reference(self):
+        c_double = (REPO / "policy" / "c_double" / "uh_ubus_policy.c").as_posix()
+        cases = [
+            ("luci\0*", "getVersion\0*", "luci\0suffix", "getVersion\0suffix", True),
+            ("luci\0*", "getVersion", "lucX\0luci", "getVersion\0suffix", False),
+            ("luci*\0suffix", "get*\0suffix", "luci\0object", "getVersion\0value", True),
+            ("luci*\0suffix", "get*", "other\0luci", "getVersion\0value", False),
+            ("luci\0*", "getVersion\0*", "luciX\0tail", "getVersion\0tail", False),
+        ]
+        helper_source = r'''#define main uh_ubus_policy_cli_main
+#include "__C_DOUBLE__"
+#undef main
+
+int main(void) {
+    printf("%d\n", acl_match("luci\0*", "getVersion\0*", "luci\0suffix", "getVersion\0suffix"));
+    printf("%d\n", acl_match("luci\0*", "getVersion", "lucX\0luci", "getVersion\0suffix"));
+    printf("%d\n", acl_match("luci*\0suffix", "get*\0suffix", "luci\0object", "getVersion\0value"));
+    printf("%d\n", acl_match("luci*\0suffix", "get*", "other\0luci", "getVersion\0value"));
+    printf("%d\n", acl_match("luci\0*", "getVersion\0*", "luciX\0tail", "getVersion\0tail"));
+    return 0;
+}
+'''.replace("__C_DOUBLE__", c_double)
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "nul_acl_reference.c"
+            executable = root / "nul_acl_reference"
+            source.write_text(helper_source, encoding="utf-8")
+            subprocess.run(
+                [
+                    "gcc",
+                    "-std=c11",
+                    "-Wall",
+                    "-Wextra",
+                    "-Werror",
+                    "-O0",
+                    "-o",
+                    str(executable),
+                    str(source),
+                ],
+                cwd=REPO,
+                check=True,
+            )
+            result = subprocess.run(
+                [str(executable)], capture_output=True, text=True, check=True
+            )
+
+        c_results = [line == "1" for line in result.stdout.splitlines()]
+        self.assertEqual(c_results, [expected for *_, expected in cases])
+        for pattern_object, pattern_function, object_name, function_name, expected in cases:
+            self.assertEqual(
+                acl_match(pattern_object, pattern_function, object_name, function_name),
+                expected,
+            )
