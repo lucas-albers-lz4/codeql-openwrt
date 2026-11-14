@@ -15,8 +15,19 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-TYPED_ARRAY_NAMES = {"m4-getfeatures-direct-exec.json"}
-REPORT_ONLY_SUFFIXES = ("-coverage.json",)
+TYPED_ARRAY_NAMES = {
+    "m3-findings.json",
+    "m4-findings.json",
+    "m4-getfeatures-direct-exec.json",
+    "m4-imported-callee-findings.json",
+    "m4-shellquote-findings.json",
+}
+REPORT_ONLY_OBJECT_NAMES = {
+    "m3-coverage.json",
+    "m4-coverage.json",
+    "m4-getfeatures-direct-exec-coverage.json",
+    "m4-shellquote-coverage.json",
+}
 
 
 class ContractError(ValueError):
@@ -179,24 +190,23 @@ def _typed_arrays(ucode_root: Path) -> list[tuple[Path, list[dict[str, Any]]]]:
         raise ContractError(f"ucode root has no docs directory: {docs}")
     result: list[tuple[Path, list[dict[str, Any]]]] = []
     for path in sorted(docs.glob("*.json")):
-        if path.name.endswith(REPORT_ONLY_SUFFIXES):
-            continue
         try:
             value = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as exc:
             raise ContractError(f"{path}: cannot read JSON: {exc}") from exc
-        is_named_typed = path.name.endswith("-findings.json") or path.name in TYPED_ARRAY_NAMES
-        contains_typed_rows = isinstance(value, list) and bool(value) and all(
-            isinstance(row, dict) and "record_type" in row for row in value
-        )
-        if is_named_typed:
+        if path.name in TYPED_ARRAY_NAMES:
             if not isinstance(value, list):
                 raise ContractError(f"{path}: expected typed record array")
-            if value and not all(isinstance(row, dict) for row in value):
-                raise ContractError(f"{path}: expected object records")
+            if not value:
+                raise ContractError(f"{path}: typed record array must not be empty")
+            if not all(isinstance(row, dict) and "record_type" in row for row in value):
+                raise ContractError(f"{path}: expected only typed record objects")
             result.append((path, value))
-        elif contains_typed_rows:
-            result.append((path, value))
+        elif path.name in REPORT_ONLY_OBJECT_NAMES:
+            if not isinstance(value, dict):
+                raise ContractError(f"{path}: report-only coverage output must be an object")
+        else:
+            raise ContractError(f"{path}: unfamiliar docs JSON file; classify it as typed or report-only")
     if not result:
         raise ContractError(f"no typed record arrays found under {docs}")
     return result
@@ -227,6 +237,8 @@ def _join_error(row: dict[str, Any], grant: dict[str, Any], where: str) -> str |
         join_fields.extend(["ubus_object", "method"])
     elif row.get("ingress") == "cgi_io":
         join_fields.append("cgi_endpoint")
+    if "expectation_id" in row:
+        join_fields.append("expectation_id")
     for key in join_fields:
         if not isinstance(row.get(key), str) or not isinstance(grant.get(key), str):
             return f"{where}: cited grant is missing required join key {key}"
@@ -253,11 +265,28 @@ def validate_ucode_root(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tuple[
     files = _typed_arrays(ucode_root)
     row_count = 0
     errors: list[str] = []
+    seen_record_ids: dict[str, Path] = {}
     for path, rows in files:
         for index, row in enumerate(rows):
             where = f"{path}:{index}"
             row_count += 1
             errors.extend(_validate(row, schema, where))
+            record_id = row.get("record_id")
+            if not isinstance(record_id, str) or not record_id.strip():
+                errors.append(f"{where}: record_id must be a nonempty string")
+            elif record_id in seen_record_ids:
+                errors.append(
+                    f"{where}: duplicate record_id {record_id!r} also appears in {seen_record_ids[record_id]}"
+                )
+            else:
+                seen_record_ids[record_id] = path
+            analysis_revision = row.get("analysis_revision")
+            if (
+                not isinstance(analysis_revision, str)
+                or not analysis_revision.startswith("step3:")
+                or len(analysis_revision) <= len("step3:")
+            ):
+                errors.append(f"{where}: analysis_revision must be a nonempty producer-local 'step3:' revision")
             if row.get("corpus_revision") != expected_revision:
                 errors.append(f"{where}: corpus_revision does not match sha256(corpus/lock.json)")
             if row.get("profile") not in known_profiles:
@@ -275,15 +304,7 @@ def validate_ucode_root(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tuple[
                 if mismatch:
                     errors.append(mismatch)
             assessment = row.get("assessment")
-            needs_grant = assessment in {"risky_delegation", "authorization_violation"}
-            if assessment == "intended_access" and row.get("record_type") == "handler_effect":
-                needs_grant = True
-            if (
-                assessment == "intended_access"
-                and row.get("record_type") == "taint_path"
-                and row.get("evidence_status") == "path_found"
-            ):
-                needs_grant = True
+            needs_grant = assessment in {"intended_access", "risky_delegation", "authorization_violation"}
             if needs_grant and not _grant_ref_values(row):
                 errors.append(f"{where}: authorization assessment requires a cited policy grant")
     if errors:

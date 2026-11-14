@@ -26,13 +26,24 @@ directory against this repository's `schemas/finding.schema.json`,
 `corpus/lock.json`, profile inventory, and local policy grants. The validator
 supports the schema keywords currently used by the finding schema and fails
 closed if the schema introduces an unsupported keyword. Typed ucode records
-must use the lockfile SHA-256 as `corpus_revision` and producer `step3`;
-`analysis_revision` remains local to that producer and is never a cross-pack
-join key. Cited grant IDs must exist and match the corpus/profile/entrypoint
-join keys. `risky_delegation` and `authorization_violation` assessments, and
-assessed handler effects or `path_found` taint paths, require a matching grant
-reference. An `unassessed` taint path and a `no_path` taint record do not need
-an invented grant ID; any grant they do cite is still validated.
+must use the lockfile SHA-256 as `corpus_revision` and producer `step3`; each
+record needs a nonempty, unique `record_id` and a nonempty `analysis_revision`
+with the producer-local `step3:` prefix. `analysis_revision` is never a
+cross-pack join key. Cited grant IDs must exist and match the
+corpus/profile/entrypoint join keys. Every `intended_access`,
+`risky_delegation`, or `authorization_violation` assessment requires a
+matching grant reference, including a `no_path` taint record. When a row has `expectation_id`, the cited
+grant must have the same expectation; equal entrypoint keys alone do not
+select between distinct grant expectations. An `unassessed` taint path does
+not need an invented grant ID; any grant it does cite is still validated.
+
+The validator recognizes only the typed ucode arrays `m3-findings.json`,
+`m4-findings.json`, `m4-getfeatures-direct-exec.json`,
+`m4-imported-callee-findings.json`, and `m4-shellquote-findings.json`, plus
+the report-only coverage objects `m3-coverage.json`, `m4-coverage.json`,
+`m4-getfeatures-direct-exec-coverage.json`, and
+`m4-shellquote-coverage.json`. An empty or mixed typed array, malformed
+coverage object, or unrecognized JSON file under `docs/` fails validation.
 
 Coverage ledgers such as `docs/m4-coverage.json` are reports, not
 `finding.schema.json` records. Likewise, the #54 named-column CSV source

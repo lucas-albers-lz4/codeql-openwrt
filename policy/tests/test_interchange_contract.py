@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import json
 import hashlib
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -84,6 +84,27 @@ class InterchangeContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "producer 'step3'"):
             validate_ucode_root(self.ucode_root)
 
+    def test_record_ids_are_nonempty_unique_and_revisions_are_step3_local(self):
+        missing_id = base_row()
+        del missing_id["record_id"]
+        missing_revision = base_row()
+        del missing_revision["analysis_revision"]
+        rows = (
+            missing_id,
+            base_row(record_id=""),
+            missing_revision,
+            base_row(analysis_revision="policy:ubus-luci-exec-methods-v2"),
+        )
+        for row in rows:
+            with self.subTest(row=row):
+                self.write_array([row])
+                with self.assertRaises(ContractError):
+                    validate_ucode_root(self.ucode_root)
+        self.write_array([base_row()])
+        self.write_array([base_row()], name="m3-findings.json")
+        with self.assertRaisesRegex(ContractError, "duplicate record_id"):
+            validate_ucode_root(self.ucode_root)
+
     def test_unknown_profile_is_rejected(self):
         self.write_array([base_row(profile="luci-ssl-25.12-fictional")])
         with self.assertRaisesRegex(ContractError, "unknown profile"):
@@ -92,13 +113,7 @@ class InterchangeContractTests(unittest.TestCase):
     def test_unassessed_taint_path_needs_no_invented_grant(self):
         self.write_array([base_row(assessment="unassessed")])
         self.assertEqual(validate_ucode_root(self.ucode_root), (1, 1))
-
-        # A no_path row is not itself an authorization-path conclusion; its
-        # existing assessment/expectation may stand without a fabricated ID.
         self.write_array([base_row(evidence_status="no_path", assessment="intended_access")])
-        self.assertEqual(validate_ucode_root(self.ucode_root), (1, 1))
-
-        self.write_array([base_row(evidence_status="path_found", assessment="intended_access")])
         with self.assertRaisesRegex(ContractError, "requires a cited policy grant"):
             validate_ucode_root(self.ucode_root)
 
@@ -106,12 +121,11 @@ class InterchangeContractTests(unittest.TestCase):
         grants = json.loads((REPO_ROOT / "policy/grants.json").read_text(encoding="utf-8"))
         grant = next(
             row for row in grants
-            if row["entrypoint_id"] == "ubus_http:luci.getFeatures"
-            and row.get("ubus_object") == "luci" and row.get("method") == "getFeatures"
+            if row["record_id"] == "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
         )
         row = base_row(
             assessment="intended_access",
-            expectation_id="test-expectation",
+            expectation_id="unauthenticated-getFeatures",
             evidence_refs=[grant["record_id"]],
             analysis_revision="step3:an-independent-producer-revision",
         )
@@ -137,12 +151,17 @@ class InterchangeContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "cited grant ID does not exist"):
             validate_ucode_root(self.ucode_root)
 
+        root_grant_id = "policy:grant:root:ubus_http:luci.getFeatures"
+        self.write_array([dict(row, evidence_refs=[root_grant_id])])
+        with self.assertRaisesRegex(ContractError, "mismatched expectation_id"):
+            validate_ucode_root(self.ucode_root)
+
     def test_authorization_assessment_requires_cited_grant(self):
         self.write_array([base_row(assessment="authorization_violation")])
         with self.assertRaisesRegex(ContractError, "requires a cited policy grant"):
             validate_ucode_root(self.ucode_root)
 
-    def test_report_only_coverage_object_is_excluded(self):
+    def test_docs_json_classification_is_explicit_and_fails_closed(self):
         self.write_array([base_row()])
         (self.ucode_root / "docs" / "m4-coverage.json").write_text(
             json.dumps({"record_type": "entrypoint_coverage_ledger", "rows": []}),
@@ -152,6 +171,25 @@ class InterchangeContractTests(unittest.TestCase):
             "path,line,column,call\n", encoding="utf-8"
         )
         self.assertEqual(validate_ucode_root(self.ucode_root), (1, 1))
+
+        (self.ucode_root / "docs" / "m4-coverage.json").write_text("{", encoding="utf-8")
+        with self.assertRaisesRegex(ContractError, "cannot read JSON"):
+            validate_ucode_root(self.ucode_root)
+        (self.ucode_root / "docs" / "m4-coverage.json").write_text("[]", encoding="utf-8")
+        with self.assertRaisesRegex(ContractError, "coverage output must be an object"):
+            validate_ucode_root(self.ucode_root)
+
+        (self.ucode_root / "docs" / "m4-coverage.json").write_text("{}", encoding="utf-8")
+        self.write_array([], name="m4-findings.json")
+        with self.assertRaisesRegex(ContractError, "must not be empty"):
+            validate_ucode_root(self.ucode_root)
+        self.write_array([base_row(), "not a typed row"], name="m4-findings.json")
+        with self.assertRaisesRegex(ContractError, "only typed record objects"):
+            validate_ucode_root(self.ucode_root)
+        (self.ucode_root / "docs" / "unknown.json").write_text("{}", encoding="utf-8")
+        self.write_array([base_row()])
+        with self.assertRaisesRegex(ContractError, "unfamiliar docs JSON file"):
+            validate_ucode_root(self.ucode_root)
 
 
 if __name__ == "__main__":
