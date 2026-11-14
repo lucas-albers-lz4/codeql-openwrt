@@ -57,8 +57,6 @@ class ImportTests(unittest.TestCase):
             file = self.repo / path
             rows = json.loads(file.read_text())
             original_unrelated[path] = [r for r in rows if r.get("record_id") != EFFECT_ID]
-            rows.append(next(r for r in rows if r.get("record_id") == EFFECT_ID))
-            file.write_text(json.dumps(rows))
 
         import_table(self.csv, self.source, self.repo)
         for path in (SNAPSHOT, CATALOG):
@@ -189,6 +187,40 @@ class ImportTests(unittest.TestCase):
         rows.append({"record_id": "other", "effect_id": EFFECT_NAME})
         path.write_text(json.dumps(rows))
         self.rejected_unchanged()
+
+    def test_duplicate_same_id_fails_without_writes(self):
+        for artifact in (SNAPSHOT, CATALOG):
+            with self.subTest(artifact=str(artifact)):
+                path = self.repo / artifact
+                rows = json.loads(path.read_text())
+                rows.append(next(row for row in rows if row.get("record_id") == EFFECT_ID))
+                path.write_text(json.dumps(rows))
+                self.rejected_unchanged()
+                shutil.copyfile(ROOT / artifact, path)
+
+    def test_tampered_existing_meaning_fails_without_writes_in_both_artifacts(self):
+        mutations = {
+            "record_type": "path_found",
+            "evidence_status": "path_found",
+            "producer": "attacker",
+            "assessment": "path_found",
+            "effect_id": "other.effect",
+            "target_id": "other:target",
+            "conditions": ["different condition"],
+            "entrypoint_id": "ubus_http:luci.otherMethod",
+            "corpus_revision": "sha256:other",
+            "source_location": {"path": "other", "start_line": 1},
+        }
+        for artifact in (SNAPSHOT, CATALOG):
+            original = (self.repo / artifact).read_bytes()
+            for field, value in mutations.items():
+                with self.subTest(artifact=str(artifact), field=field):
+                    rows = json.loads(original)
+                    effect = next(row for row in rows if row.get("record_id") == EFFECT_ID)
+                    effect[field] = value
+                    (self.repo / artifact).write_text(json.dumps(rows))
+                    self.rejected_unchanged()
+                    (self.repo / artifact).write_bytes(original)
 
     def test_second_replace_failure_restores_both_artifacts(self):
         before = self.artifacts()

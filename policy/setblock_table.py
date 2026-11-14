@@ -26,8 +26,12 @@ EXPECTED = ("callback_body_call", "setBlockDetect", "system",
             "/sbin/block detect > /etc/config/fstab", SOURCE_PATH,
             "532", "21", "532", "68")
 PROFILE = "luci-ssl-25.12"
+LEGACY_ANALYSIS_REVISION = "step3:luci-fixed-exec-v1"
+ANALYSIS_REVISION = "step3:setblock-table-v1"
 EFFECT_ID = "m4:effect:luci-setBlockDetect-system"
 EFFECT_NAME = "setBlockDetect.block-detect.system"
+CONDITIONS = ["setBlockDetect.call body", "builtin system of literal /sbin/block detect",
+              "call takes no request.args"]
 GRANT_IDS = {
     "luci-mod-system-mounts": "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect",
     "root": "policy:grant:root:ubus_http:luci.setBlockDetect",
@@ -38,6 +42,46 @@ CATALOG = Path("reports/handler_effects.json")
 DECISIONS = Path("policy/policy_decisions.json")
 EXPECTATION_ID = "luci-mod-system-mounts"
 QUERY_REF = "ql/src/m4/SetBlockDetectEffectTable.ql"
+SOURCE_EVIDENCE_REF = (
+    "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/ucode/luci "
+    "setBlockDetect.call system('/sbin/block detect > /etc/config/fstab')"
+)
+SOURCE_LOCATION = {
+    "path": SOURCE_PATH, "start_line": 532, "start_column": 21,
+    "end_line": 532, "end_column": 68,
+}
+LEGACY_KEYS = {
+    "record_type", "evidence_status", "producer", "record_id", "corpus_revision", "profile",
+    "analysis_revision", "ingress", "entrypoint_id", "ubus_object", "method", "effect_id",
+    "target_id", "op", "sink_kind", "assessment", "expectation_id", "conditions", "assumptions",
+    "evidence_refs", "unknowns",
+}
+IMPORTED_KEYS = LEGACY_KEYS | {"source_location"}
+LEGACY_ASSUMPTIONS = [
+    "Transcribed from pinned luci rpcd plugin at b2e0be4b; not a taint path",
+    "Fixed argv; this is not luci.sys and not request.args interpolation",
+    "shellquote and basename are not sanitizers; they are not present on this sink",
+    "Collected from reports/m4-block-device-exec.json; not a new query run",
+]
+IMPORTED_ASSUMPTIONS = [
+    "Source observation in the pinned callback body; not a taint path",
+    "The supplied CSV is not authenticated as CodeQL output",
+    "Fixed argv; this is not luci.sys and not request.args interpolation",
+    "Assessment uses the independent synthetic mounts expectation, not the source table",
+    "shellquote and basename are not sanitizers; they are not present on this sink",
+]
+LEGACY_EVIDENCE_REFS = [GRANT_IDS["luci-mod-system-mounts"], SOURCE_EVIDENCE_REF]
+IMPORTED_EVIDENCE_REFS = [
+    GRANT_IDS["luci-mod-system-mounts"], GRANT_IDS["root"], SOURCE_EVIDENCE_REF,
+    QUERY_REF,
+    f"openwrt/luci@{LUCISHA} modules/luci-base/root/usr/share/rpcd/ucode/luci:532",
+]
+LEGACY_UNKNOWNS = ["live uhttpd/rpcd not executed"]
+IMPORTED_UNKNOWNS = [
+    "live uhttpd/rpcd not executed",
+    "Callback registration, actual execution and live uhttpd/rpcd are not established by the table",
+    "Lexical shadowing and unmodeled call shapes are not resolved by the table",
+]
 
 
 def read_json(path: Path):
@@ -96,7 +140,56 @@ def _validate_unauthenticated_deny(repo_root: Path, keys: dict[str, str]) -> Non
         raise ValueError("missing or mismatched unauthenticated deny decision")
 
 
-def build_effect(row: dict[str, str], repo_root: Path) -> dict:
+def validate_existing_effect(effect: object, repo_root: Path) -> dict:
+    if not isinstance(effect, dict):
+        raise ValueError("existing setBlockDetect effect must be an object")
+    revision = corpus_revision(repo_root)
+    expected = {
+        "record_type": "handler_effect", "evidence_status": "fact", "producer": "step3",
+        "record_id": EFFECT_ID, "corpus_revision": revision, "profile": PROFILE,
+        "ingress": "ubus_http", "entrypoint_id": "ubus_http:luci.setBlockDetect",
+        "ubus_object": "luci", "method": "setBlockDetect", "effect_id": EFFECT_NAME,
+        "target_id": "command:block-detect", "op": "exec", "sink_kind": "system",
+        "assessment": "intended_access", "expectation_id": EXPECTATION_ID,
+        "conditions": CONDITIONS,
+    }
+    for key, value in expected.items():
+        if effect.get(key) != value:
+            raise ValueError(f"existing setBlockDetect effect has mismatched {key}")
+    analysis_revision = effect.get("analysis_revision")
+    if analysis_revision == LEGACY_ANALYSIS_REVISION:
+        expected_keys = LEGACY_KEYS
+        expected_assumptions = LEGACY_ASSUMPTIONS
+        expected_refs = LEGACY_EVIDENCE_REFS
+        expected_unknowns = LEGACY_UNKNOWNS
+    elif analysis_revision == ANALYSIS_REVISION:
+        expected_keys = IMPORTED_KEYS
+        expected_assumptions = IMPORTED_ASSUMPTIONS
+        expected_refs = IMPORTED_EVIDENCE_REFS
+        expected_unknowns = IMPORTED_UNKNOWNS
+        if effect.get("source_location") != SOURCE_LOCATION:
+            raise ValueError("existing setBlockDetect effect has mismatched source location")
+    else:
+        raise ValueError("existing setBlockDetect effect has unsupported analysis revision")
+    if set(effect) != expected_keys:
+        raise ValueError("existing setBlockDetect effect has unexpected or missing fields")
+    if (effect.get("assumptions") != expected_assumptions
+            or effect.get("evidence_refs") != expected_refs
+            or effect.get("unknowns") != expected_unknowns):
+        raise ValueError("existing setBlockDetect effect has changed source or uncertainty claims")
+    return effect
+
+
+def _existing_effect(rows: object, repo_root: Path, artifact: Path) -> dict:
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        raise ValueError(f"{artifact} must be a list of objects")
+    matches = [row for row in rows if row.get("record_id") == EFFECT_ID]
+    if len(matches) != 1:
+        raise ValueError(f"{artifact} must contain exactly one setBlockDetect effect")
+    return validate_existing_effect(matches[0], repo_root)
+
+
+def build_effect(row: dict[str, str], repo_root: Path, existing: dict) -> dict:
     revision = corpus_revision(repo_root)
     keys = {"corpus_revision": revision, "profile": PROFILE, "ingress": "ubus_http",
             "entrypoint_id": "ubus_http:luci.setBlockDetect", "ubus_object": "luci",
@@ -120,44 +213,19 @@ def build_effect(row: dict[str, str], repo_root: Path) -> dict:
 
     # Preserve the manually transcribed assessment and policy context. Only replace
     # its source evidence and identify the query revision that supplied the row.
-    existing = next((e for e in read_json(repo_root / CATALOG)
-                     if e.get("record_id") == EFFECT_ID), None)
-    if (not isinstance(existing, dict)
-            or existing.get("effect_id") != EFFECT_NAME
-            or existing.get("target_id") != "command:block-detect"
-            or existing.get("sink_kind") != "system"
-            or existing.get("op") != "exec"
-            or existing.get("assessment") != "intended_access"
-            or existing.get("expectation_id") != EXPECTATION_ID
-            or any(existing.get(k) != keys[k] for k in JOIN_KEYS)):
-        raise ValueError("existing setBlockDetect effect does not match the supported policy record")
     effect = copy.deepcopy(existing)
-    effect["analysis_revision"] = "step3:setblock-table-v1"
-    effect["source_location"] = {
-        "path": SOURCE_PATH,
-        "start_line": int(row["start_line"]),
-        "start_column": int(row["start_column"]),
-        "end_line": int(row["end_line"]),
+    effect["analysis_revision"] = ANALYSIS_REVISION
+    source_location = {
+        "path": row["source_path"], "start_line": int(row["start_line"]),
+        "start_column": int(row["start_column"]), "end_line": int(row["end_line"]),
         "end_column": int(row["end_column"]),
     }
-    effect["assumptions"] = [
-        "Source observation in the pinned callback body; not a taint path",
-        "The supplied CSV is not authenticated as CodeQL output",
-        "Fixed argv; this is not luci.sys and not request.args interpolation",
-        "Assessment uses the independent synthetic mounts expectation, not the source table",
-        "shellquote and basename are not sanitizers; they are not present on this sink",
-    ]
-    effect["evidence_refs"] = list(dict.fromkeys([
-        *effect.get("evidence_refs", []),
-        GRANT_IDS["root"],
-        QUERY_REF,
-        f"openwrt/luci@{LUCISHA} modules/luci-base/root/usr/share/rpcd/ucode/luci:532",
-    ]))
-    effect["unknowns"] = list(dict.fromkeys([
-        *effect.get("unknowns", []),
-        "Callback registration, actual execution and live uhttpd/rpcd are not established by the table",
-        "Lexical shadowing and unmodeled call shapes are not resolved by the table",
-    ]))
+    if source_location != SOURCE_LOCATION:
+        raise ValueError("source location does not match the supported pinned call")
+    effect["source_location"] = source_location
+    effect["assumptions"] = IMPORTED_ASSUMPTIONS
+    effect["evidence_refs"] = IMPORTED_EVIDENCE_REFS
+    effect["unknowns"] = IMPORTED_UNKNOWNS
     return effect
 
 
@@ -168,17 +236,24 @@ def replace_effect(rows: object, effect: dict) -> list:
            for row in rows):
         raise ValueError("effect identity is already used by a different record")
     indices = [i for i, row in enumerate(rows) if row.get("record_id") == EFFECT_ID]
-    if not indices:
-        raise ValueError("existing effect is missing")
-    return [effect if i == indices[0] else row for i, row in enumerate(rows)
-            if i == indices[0] or row.get("record_id") != EFFECT_ID]
+    if len(indices) != 1:
+        raise ValueError("expected exactly one existing setBlockDetect effect")
+    return [effect if i == indices[0] else row for i, row in enumerate(rows)]
 
 
 def import_table(csv_path: Path, source_root: Path, repo_root: Path = REPO_ROOT) -> None:
     row = validate_table(csv_path, source_root, repo_root)
-    effect = build_effect(row, repo_root)
-    updates = [(repo_root / path, replace_effect(read_json(repo_root / path), effect))
-               for path in (SNAPSHOT, CATALOG)]
+    snapshot_path = repo_root / SNAPSHOT
+    catalog_path = repo_root / CATALOG
+    snapshot_rows = read_json(snapshot_path)
+    catalog_rows = read_json(catalog_path)
+    snapshot_effect = _existing_effect(snapshot_rows, repo_root, SNAPSHOT)
+    catalog_effect = _existing_effect(catalog_rows, repo_root, CATALOG)
+    if snapshot_effect != catalog_effect:
+        raise ValueError("setBlockDetect snapshot and catalog rows are not in lockstep")
+    effect = build_effect(row, repo_root, catalog_effect)
+    updates = [(snapshot_path, replace_effect(snapshot_rows, effect)),
+               (catalog_path, replace_effect(catalog_rows, effect))]
     staged = []
     backups = []
     replaced = []
