@@ -449,6 +449,10 @@ def uh_ubus_allowed(sessions: dict[str, Session], sid: str, obj: str, fun: str) 
     return session_access(session, UBUS_SCOPE, obj, fun)
 
 
+# Wrapper APIs use this marker to distinguish omitted params from JSON null.
+DEFAULT_UBUS_DATA = object()
+
+
 def evaluate_call(
     *,
     session_class: Optional[str] = None,

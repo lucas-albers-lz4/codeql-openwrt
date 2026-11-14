@@ -46,6 +46,7 @@ from typing import Any, Optional
 
 from .cgi_exec_file import PKGMGR_SESSION_CLASS
 from .oracle import (
+    DEFAULT_UBUS_DATA,
     C_DOUBLE_FLAGS,
     FIXTURES,
     PRODUCER,
@@ -233,12 +234,12 @@ def evaluate_luci_getmountpoints(
     sid: Optional[str] = None,
     object: Optional[str] = UBUS_OBJECT,
     function: Optional[str] = UBUS_METHOD,
-    data: Any = None,
+    data: Any = DEFAULT_UBUS_DATA,
     sessions: Optional[dict[str, Session]] = None,
 ):
     if sessions is None:
         sessions = load_luci_getmountpoints_world()
-    if data is None:
+    if data is DEFAULT_UBUS_DATA:
         data = {}
     return evaluate_call(
         session_class=session_class,

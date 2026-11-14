@@ -5,6 +5,11 @@ Luci `analysis_revision` is `policy:ubus-luci-exec-methods-v2`. cgi-backup is `p
 
 The HTTP gate is uhttpd `uh_ubus_allowed` → ubus `session.access` (uhttpd omits `scope`; rpcd defaults `scope` to `ubus`). Missing SID with `no_ubusauth=0` is JSON-RPC `ERROR_PARSE`, not the all-zero sentinel and not rpcd `file`/`uci` absent-SID skip.
 
+Per-slice `evaluate_*` wrappers default an omitted `data` argument to an empty
+table, matching the wrapper's existing call convenience. Passing `data=None`
+represents explicit JSON `null` and remains a non-table parse error; the two
+inputs are kept distinct with a shared sentinel defined in `policy.oracle`.
+
 cgi-backup, cgi-upload, and cgi-download are separate C ingresses (`policy/cgi_backup.py`, `policy/cgi_upload.py`, `policy/cgi_download.py`). Their oracles and C doubles accept already-decoded form fields: successful form-body framing and URL decoding are preconditions. cgi-backup and cgi-download check the content-type prefix and model authorization, but do not model `CONTENT_LENGTH` validation, truncated bodies, or percent-decoding failures in upstream `postdecode`. cgi-upload models a complete multipart request with sessionid/filename before filedata when present; it does not model arbitrary part order, truncated framing, tempfile creation, or copy/chmod. Given those decoded inputs, cgi-io supplies `scope=cgi-io`. Upload and download are conjunctive: the cgi-io ACL is not enough without the matching `file` ACL on `canonicalize_path(...)`. A missing sessionid on cgi-backup/cgi-download yields HTTP 403, not the `/ubus` parse failure. cgi-upload failures use `response()` Status 200 with a JSON body.
 
 ## Run
