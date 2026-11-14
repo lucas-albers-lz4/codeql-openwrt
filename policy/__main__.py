@@ -13,6 +13,7 @@ from . import (
     cgi_upload,
     no_ubusauth,
     oracle,
+    uci_consumers,
     ubus_file_exec,
     ubus_file_exec_ifup,
     ubus_file_exec_kill,
@@ -121,6 +122,8 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         ubus_luci_getconntrackhelpers.build_artifacts(fixtures, repo_root)
     )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
+    consumer_path = repo_root / "policy" / "uci_consumers.json"
+    oracle.dump_json(consumer_path, uci_consumers.build_artifacts(repo_root))
     grants_path = repo_root / "policy" / "grants.json"
     luci_decisions_path = repo_root / "policy" / "policy_decisions.json"
     backup_decisions_path = repo_root / "policy" / "cgi_backup_decisions.json"
@@ -322,6 +325,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     for getconntrackhelpers_effect in getconntrackhelpers_effects:
         effect_path = cgi_backup.upsert_handler_effect(getconntrackhelpers_effect, repo_root)
     return (
+        consumer_path,
         grants_path,
         luci_decisions_path,
         backup_decisions_path,
