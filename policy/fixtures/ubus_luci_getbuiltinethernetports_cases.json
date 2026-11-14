@@ -14,7 +14,7 @@
     "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1; this slice does not emit that grant.",
     "luci.getLEDs stays on policy:ubus-luci-getleds-v1.",
     "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
-    "luci.getConntrackHelpers stays unstaffed (luci-app-firewall views; next leftover).",
+    "luci.getConntrackHelpers stays on policy:ubus-luci-getconntrackhelpers-v1; this slice does not emit that grant.",
     "Do not rewrite the luci exec-methods emitter.",
     "Do not invent a setInitAction luci-ssl grant.",
     "Do not invent luci-mod-status-index-dhcp / dsl logins.",

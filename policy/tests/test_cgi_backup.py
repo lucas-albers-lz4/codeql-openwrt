@@ -55,6 +55,7 @@ from policy.ubus_luci_gettimezones import build_artifacts as gettimezones_build_
 from policy.ubus_luci_getleds import build_artifacts as getleds_build_artifacts  # noqa: E402
 from policy.ubus_luci_getmountpoints import build_artifacts as getmountpoints_build_artifacts  # noqa: E402
 from policy.ubus_luci_getbuiltinethernetports import build_artifacts as getbuiltinethernetports_build_artifacts  # noqa: E402
+from policy.ubus_luci_getconntrackhelpers import build_artifacts as getconntrackhelpers_build_artifacts  # noqa: E402
 from policy.ubus_hostapd_del_client import build_artifacts as hostapd_build_artifacts  # noqa: E402
 from policy.ubus_hostapd_wps_start import build_artifacts as hostapd_wps_build_artifacts  # noqa: E402
 from policy.ubus_hostapd_wps_cancel import build_artifacts as hostapd_wps_cancel_build_artifacts  # noqa: E402
@@ -396,6 +397,7 @@ class TestCommittedArtifacts(unittest.TestCase):
         getleds_grants, _, _ = getleds_build_artifacts()
         getmountpoints_grants, _, _ = getmountpoints_build_artifacts()
         getbuiltinethernetports_grants, _, _ = getbuiltinethernetports_build_artifacts()
+        getconntrackhelpers_grants, _, _ = getconntrackhelpers_build_artifacts()
         self.assertEqual(
             committed_grants,
             luci_grants
@@ -425,7 +427,8 @@ class TestCommittedArtifacts(unittest.TestCase):
             + gettimezones_grants
             + getleds_grants
             + getmountpoints_grants
-            + getbuiltinethernetports_grants,
+            + getbuiltinethernetports_grants
+            + getconntrackhelpers_grants,
         )
         self.assertEqual(committed_luci, luci_bundle)
         self.assertEqual(committed_cgi, cgi_bundle)

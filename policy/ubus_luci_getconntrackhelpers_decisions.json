@@ -1,0 +1,2417 @@
+{
+  "grants": [
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:luci-app-firewall:ubus_http:luci.getConntrackHelpers",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-app-firewall",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "target_id": "ubus:luci.getConntrackHelpers",
+      "op": "invoke",
+      "acl_group": "luci-app-firewall",
+      "expectation_id": "luci-app-firewall-getconntrackhelpers",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope)"
+      ],
+      "evidence_refs": [
+        "luci@b2e0be4b luci-app-firewall.json luci-app-firewall.read.ubus.luci=[getConntrackHelpers]",
+        "luci@b2e0be4b zones.js rules.js forwards.js rpc.declare object=luci method=getConntrackHelpers",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getConntrackHelpers",
+        "fixture rpcd.config login luci-app-firewall list read luci-app-firewall"
+      ],
+      "note": "Fixture login luci-app-firewall is not a stock device login. zones.js, rules.js, and forwards.js use rpc.declare object=luci method=getConntrackHelpers. Intended_access, not a violation and not a PoC.",
+      "synthetic_session": true
+    },
+    {
+      "record_type": "policy_grant",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:grant:root:ubus_http:luci.getConntrackHelpers",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "target_id": "ubus:luci.getConntrackHelpers",
+      "op": "invoke",
+      "acl_group": "luci-app-firewall",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "requirements": [
+        "uh_ubus_allowed",
+        "session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope)"
+      ],
+      "evidence_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ],
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation."
+    }
+  ],
+  "producer": "policy_facts",
+  "profile": "luci-ssl-25.12",
+  "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "lockfile": "corpus/lock.json",
+    "object": "luci",
+    "method": "getConntrackHelpers",
+    "not_method": "getVersion",
+    "not_unixtime": "getUnixtime",
+    "not_odhcp": "getOdhcp6cStats",
+    "not_board": "board",
+    "not_info": "info",
+    "not_reboot": "reboot",
+    "not_object": "system"
+  },
+  "scope": "ubus luci.getConntrackHelpers of luci-app-firewall views",
+  "harness": {
+    "canonical": "python3 -m policy emit",
+    "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c",
+    "compiler": "gcc",
+    "flags": [
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-O0"
+    ],
+    "live_uhttpd": false,
+    "live_rpcd": false,
+    "live_luci_plugin": false
+  },
+  "assumptions": [
+    "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+    "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+    "shellquote and basename are not sanitizers.",
+    "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+    "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+    "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+    "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+    "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+    "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+    "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+    "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+    "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+    "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+    "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+    "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+  ],
+  "unknowns": [
+    "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+    "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+    "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+  ],
+  "decisions": [
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:unauthenticated-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "unauthenticated",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "00000000000000000000000000000000",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus luci.getConntrackHelpers",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access luci/getConntrackHelpers false -> ERROR_ACCESS",
+        "do not invent an unauthenticated luci.getConntrackHelpers grant"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "00000000000000000000000000000000",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#unauthenticated-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "target_id": "ubus:luci.getConntrackHelpers",
+      "op": "invoke",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:missing-sid-parse-error",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "jsonrpc_parse_error",
+      "sid_present": false,
+      "sid": "luci",
+      "jsonrpc_error": {
+        "code": -32700,
+        "name": "ERROR_PARSE",
+        "message": "Parse error"
+      },
+      "input_rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": false,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ERROR_PARSE"
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_PARSE",
+          "not": [
+            "unauthenticated_allow",
+            "sentinel_rewrite",
+            "file_uci_absent_sid_skip"
+          ]
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#missing-sid-parse-error",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "unauthenticated_allow",
+        "luci_plugin_getConntrackHelpers",
+        "dispatcher",
+        "path_found",
+        "sentinel_rewrite",
+        "setInitAction"
+      ],
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-app-firewall-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-app-firewall",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-app-firewall.json luci-app-firewall.read.ubus.luci=[getConntrackHelpers]",
+        "luci@b2e0be4b zones.js rules.js forwards.js rpc.declare object=luci method=getConntrackHelpers",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getConntrackHelpers",
+        "fixture rpcd.config login luci-app-firewall list read luci-app-firewall"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": "luci-app-firewall",
+          "acl_source": "luci-app-firewall.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-app-firewall-allow",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "target_id": "ubus:luci.getConntrackHelpers",
+      "op": "invoke",
+      "expectation_id": "luci-app-firewall-getconntrackhelpers",
+      "assessment": "intended_access",
+      "note": "Fixture login luci-app-firewall is not a stock device login. zones.js, rules.js, and forwards.js use rpc.declare object=luci method=getConntrackHelpers. Intended_access, not a violation and not a PoC.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-app-firewall",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getConntrackHelpers",
+        "source": "luci-app-firewall.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-index-storage-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index-storage",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.luci=[getMountPoints]",
+        "luci-mod-status-index-storage has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-status-index-storage-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "note": "luci-mod-status-index-storage grants luci.getMountPoints, not luci.getConntrackHelpers. ERROR_ACCESS at uh_ubus_allowed.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-mounts-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-system-mounts",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "11111111111111111111111111111111",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.read.ubus.luci=[getBlockDevices, getMountPoints]",
+        "luci-mod-system-mounts has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "11111111111111111111111111111111",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-system-mounts-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-app-package-manager-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-app-package-manager",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "44444444444444444444444444444444",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-app-package-manager.json luci-app-package-manager.read.ubus.luci=[getMountPoints]",
+        "luci-app-package-manager has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "44444444444444444444444444444444",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-app-package-manager-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-index-ports-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index-ports",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-ports.read.ubus.luci=[getBuiltinEthernetPorts]",
+        "luci-mod-status-index-ports has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-status-index-ports-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "note": "luci-mod-status-index-ports grants luci.getBuiltinEthernetPorts, not luci.getConntrackHelpers. ERROR_ACCESS at uh_ubus_allowed.",
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-index-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci-mod-status-index has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "afafafafafafafafafafafafafafafaf",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-status-index-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci-mod-status-index read grants luci.getVersion / getUnixtime / getOdhcp6cStats, not luci.getConntrackHelpers. ERROR_ACCESS at uh_ubus_allowed.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-status-realtime-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-realtime",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-realtime.read.ubus.luci=[getConntrackList, getRealtimeStats]",
+        "luci-mod-status-realtime has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "cccccccccccccccccccccccccccccccc",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-status-realtime-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-reboot-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-system-reboot",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci-mod-system-reboot has ubus system.reboot, not luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "bebebebebebebebebebebebebebebebe",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-system-reboot-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-flash-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-system-flash",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-system-flash-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "target_id": "ubus:luci.getConntrackHelpers",
+      "op": "invoke",
+      "note": "The list-read flash fixture has ubus file.exec, not luci.getConntrackHelpers. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-init-read-luci-getConntrackHelpers-deny",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-system-init-read",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+        "luci-mod-system-init has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-system-init-read-luci-getConntrackHelpers-deny",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:system-board-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.board",
+      "ubus_object": "system",
+      "method": "board",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=system method=board",
+        "system.board stays on policy:ubus-system-board-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "afafafafafafafafafafafafafafafaf",
+            "object": "system",
+            "function": "board"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "system",
+          "function": "board",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#system-board-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-status-index fixture matches system.board at uh_ubus_allowed. That method stays on policy:ubus-system-board-v1. This slice does not emit a system.board grant.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index",
+        "scope": "ubus",
+        "object": "system",
+        "function": "board",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:system-info-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "ubus_object": "system",
+      "method": "info",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=system method=info",
+        "system.info stays on policy:ubus-system-info-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "afafafafafafafafafafafafafafafaf",
+            "object": "system",
+            "function": "info"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "system",
+          "function": "info",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#system-info-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-status-index fixture matches system.info at uh_ubus_allowed. That method stays on policy:ubus-system-info-v1. This slice does not emit a system.info grant.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index",
+        "scope": "ubus",
+        "object": "system",
+        "function": "info",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:system-reboot-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-app-firewall",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "ubus_object": "system",
+      "method": "reboot",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-app-firewall.json luci-app-firewall.read.ubus.luci=[getConntrackHelpers]",
+        "system.reboot stays on policy:ubus-system-reboot-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+            "object": "system",
+            "function": "reboot"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "system",
+          "function": "reboot",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#system-reboot-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found"
+      ],
+      "note": "The luci-app-firewall fixture grants luci.getConntrackHelpers, not system.reboot. system.reboot stays on policy:ubus-system-reboot-v1.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-getVersion-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getVersion",
+      "ubus_object": "luci",
+      "method": "getVersion",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=luci method=getVersion",
+        "luci.getVersion stays on policy:ubus-luci-getversion-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "afafafafafafafafafafafafafafafaf",
+            "object": "luci",
+            "function": "getVersion"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getVersion",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-getVersion-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. This slice does not emit a getVersion grant.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getVersion",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-getUnixtime-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getUnixtime",
+      "ubus_object": "luci",
+      "method": "getUnixtime",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=luci method=getUnixtime",
+        "luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "afafafafafafafafafafafafafafafaf",
+            "object": "luci",
+            "function": "getUnixtime"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getUnixtime",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-getUnixtime-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. This slice does not emit a getUnixtime grant.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getUnixtime",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-getOdhcp6cStats-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getOdhcp6cStats",
+      "ubus_object": "luci",
+      "method": "getOdhcp6cStats",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 30_network.js rpc.declare object=luci method=getOdhcp6cStats",
+        "luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "afafafafafafafafafafafafafafafaf",
+            "object": "luci",
+            "function": "getOdhcp6cStats"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getOdhcp6cStats",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-getOdhcp6cStats-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1. This slice does not emit a getOdhcp6cStats grant.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getOdhcp6cStats",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-getMountPoints-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index-storage",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.luci=[getMountPoints]",
+        "luci@b2e0be4b 25_storage.js rpc.declare object=luci method=getMountPoints",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+            "object": "luci",
+            "function": "getMountPoints"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getMountPoints",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index-storage",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-getMountPoints-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "25_storage.js declares luci.getMountPoints. That method stays on policy:ubus-luci-getmountpoints-v1. This slice does not emit a getMountPoints grant.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index-storage",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getMountPoints",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-getLEDs-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-system-config",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getLEDs",
+      "ubus_object": "luci",
+      "method": "getLEDs",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "dddddddddddddddddddddddddddddddd",
+            "object": "luci",
+            "function": "getLEDs"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getLEDs",
+          "match": "literal",
+          "acl_group": "luci-mod-system-config",
+          "acl_source": "luci-mod-system.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-getLEDs-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "leds.js declares luci.getLEDs. That method stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+      "synthetic_session": true,
+      "matched_ubus_acl": {
+        "group": "luci-mod-system-config",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getLEDs",
+        "source": "luci-mod-system.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-mod-system-config-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-system-config",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "deny",
+      "sid_present": true,
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "jsonrpc_error": {
+        "code": -32002,
+        "name": "ERROR_ACCESS",
+        "message": "Access denied"
+      },
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "luci-mod-system-config has no ubus luci.getConntrackHelpers"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "dddddddddddddddddddddddddddddddd",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": null,
+          "acl_source": null,
+          "result": false
+        },
+        {
+          "step": "uh_ubus_handle_request_object",
+          "result": "ERROR_ACCESS"
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-mod-system-config-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci-mod-system-config read grants luci.getLEDs / getTimezones / getUSBDevices / getUnixtime, not luci.getConntrackHelpers. ERROR_ACCESS at uh_ubus_allowed. getUSBDevices stays unstaffed.",
+      "synthetic_session": true,
+      "grant_emitted": false
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:luci-getBuiltinEthernetPorts-not-this-slice",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "luci-mod-status-index-ports",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3",
+      "input_rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-ports.read.ubus.luci=[getBuiltinEthernetPorts]",
+        "luci@b2e0be4b 29_ports.js rpc.declare object=luci method=getBuiltinEthernetPorts",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3",
+            "object": "luci",
+            "function": "getBuiltinEthernetPorts"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getBuiltinEthernetPorts",
+          "match": "literal",
+          "acl_group": "luci-mod-status-index-ports",
+          "acl_source": "luci-mod-status-index.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#luci-getBuiltinEthernetPorts-not-this-slice",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "not": [
+        "luci.getConntrackHelpers grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "29_ports.js declares luci.getBuiltinEthernetPorts. That method stays on policy:ubus-luci-getbuiltinethernetports-v1. This slice does not emit a getBuiltinEthernetPorts grant.",
+      "matched_ubus_acl": {
+        "group": "luci-mod-status-index-ports",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getBuiltinEthernetPorts",
+        "source": "luci-mod-status-index.json"
+      }
+    },
+    {
+      "record_type": "policy_decision",
+      "evidence_status": "fact",
+      "producer": "policy_facts",
+      "record_id": "policy:decision:root-star-luci-getConntrackHelpers-allow",
+      "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+      "profile": "luci-ssl-25.12",
+      "analysis_revision": "policy:ubus-luci-getconntrackhelpers-v1",
+      "session_class": "root",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "outcome": "allow",
+      "sid_present": true,
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "input_rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ],
+      "matching_steps": [
+        {
+          "step": "parse_call_params",
+          "no_ubusauth": 0,
+          "sid_present": true,
+          "sid_rewritten_to_default": false,
+          "object_present": true,
+          "function_present": true,
+          "data_present": true,
+          "data_is_table": true,
+          "result": "ok"
+        },
+        {
+          "step": "uh_ubus_allowed",
+          "invoke": "session.access",
+          "omits_scope": true,
+          "args": {
+            "ubus_rpc_session": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "object": "luci",
+            "function": "getConntrackHelpers"
+          }
+        },
+        {
+          "step": "rpc_handle_access",
+          "scope_default": "ubus",
+          "scope_supplied_by_uhttpd": false
+        },
+        {
+          "step": "rpc_session_acl_allowed",
+          "scope": "ubus",
+          "object": "luci",
+          "function": "getConntrackHelpers",
+          "match": "literal",
+          "acl_group": "luci-app-firewall",
+          "acl_source": "luci-app-firewall.json",
+          "result": true
+        }
+      ],
+      "upstream_conformance": {
+        "status": "source_transcribed",
+        "live_daemon": false,
+        "independent_expected": "policy/fixtures/ubus_luci_getconntrackhelpers_cases.json#root-star-luci-getConntrackHelpers-allow",
+        "c_double": "policy/c_double/ubus_luci_getconntrackhelpers.c"
+      },
+      "assumptions": [
+        "uhttpd uh_ubus_allowed requires session.access scope=ubus object=luci function=getConntrackHelpers (uhttpd omits scope). An allow means this HTTP gate was passed, not that the luci-base getConntrackHelpers handler ran.",
+        "This oracle does not invoke the luci-base getConntrackHelpers handler or read conntrack-helper metadata.",
+        "shellquote and basename are not sanitizers.",
+        "luci.getConntrackHelpers is a luci object method. zones.js, rules.js, and forwards.js at luci b2e0be4b use rpc.declare object=luci method=getConntrackHelpers. Those are the luci-ssl JS declares at this pin. This slice does not rewrite the luci exec-methods emitter (policy:ubus-luci-exec-methods-v2). luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on policy:ubus-luci-getbuiltinethernetports-v1.",
+        "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1; this slice does not emit a getVersion grant. The index fixture cannot pass getConntrackHelpers.",
+        "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1; this slice does not emit a getUnixtime grant.",
+        "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1; this slice does not emit a getOdhcp6cStats grant. The index fixture cannot pass getConntrackHelpers.",
+        "luci-mod-status-index also grants ubus system.board. 10_system.js declares system.board. That method stays on policy:ubus-system-board-v1; this slice does not emit a system.board grant.",
+        "luci-mod-status-index grants ubus system.info. 10_system.js declares system.info. That method stays on policy:ubus-system-info-v1; this slice does not emit a system.info grant. The firewall fixture cannot pass system.info.",
+        "system.reboot stays on policy:ubus-system-reboot-v1. The ports fixture cannot pass system.reboot.",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1. The firewall fixture cannot pass getMountPoints.",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+        "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+        "luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. The firewall fixture cannot pass getBuiltinEthernetPorts.",
+        "Fixture login luci-app-firewall is not a stock device login. That ACL group exists at luci b2e0be4b. This slice does not invent a write flash login or luci-mod-status-index-dhcp / dsl logins."
+      ],
+      "unknowns": [
+        "Live uhttpd, rpcd, and the luci-base plugin were not executed; decisions are transcribed from pinned C and ACL JSON.",
+        "The luci-base getConntrackHelpers handler is not invoked. This oracle models the HTTP /ubus authorization gate only.",
+        "cgi-io stays on policy:cgi-exec-v1 / cgi-exec-file-v1 / cgi-exec-status-v1. luci-mod-status iptables -Z / routes ip stay on policy:ubus-file-exec-v1. luci-mod-network-config ifup/ifdown/wifi stay on policy:ubus-file-exec-ifup-v1. luci-mod-status-processes /bin/kill stays on policy:ubus-file-exec-kill-v1. luci-mod-system-mounts umount/block stays on policy:ubus-file-exec-mounts-v1. luci-mod-system flash.js sysupgrade --list-backup stays on policy:ubus-file-exec-list-backup-v1. luci-mod-system-reboot system.reboot stays on policy:ubus-system-reboot-v1. luci-mod-system-init rc.init stays on policy:ubus-rc-init-v1. luci-mod-system-init rc.list stays on policy:ubus-rc-list-v1. luci-mod-status-index system.board stays on policy:ubus-system-board-v1. luci-mod-status-index system.info stays on policy:ubus-system-info-v1. Write sysupgrade/firstboot stay unstaffed (no invented write flash login). flash.js tar -tzf and /sbin/reboot stay unstaffed. luci-mod-network diagnostics ping/traceroute use fs.exec_direct without a cgi-io grant, so they are not this slice. crontab.js fs.exec of cron reload has file.exec of the cmdline but ubus file.write not file.exec. luci.getVersion stays on policy:ubus-luci-getversion-v1. luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1. hostapd.del_client / wps_start / wps_cancel / wps_status stay on their hostapd revisions. luci-mod-status-index-dhcp / dsl stay unstaffed. luci.getBuiltinEthernetPorts stays on policy:ubus-luci-getbuiltinethernetports-v1. Track A is unstaffed. dispatcher is not this slice. setInitAction is not this slice."
+      ],
+      "target_id": "ubus:luci.getConntrackHelpers",
+      "op": "invoke",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "matched_ubus_acl": {
+        "group": "luci-app-firewall",
+        "scope": "ubus",
+        "object": "luci",
+        "function": "getConntrackHelpers",
+        "source": "luci-app-firewall.json"
+      }
+    }
+  ]
+}
