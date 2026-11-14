@@ -723,7 +723,6 @@
       ]
     },
     {
-    {
       "expectation_id": "luci-mod-status-index-ports-getbuiltinethernetports",
       "session_class": "luci-mod-status-index-ports",
       "synthetic": true,
@@ -754,6 +753,7 @@
         "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js rpc.declare object=luci method=getBuiltinEthernetPorts"
       ]
     },
+    {
       "expectation_id": "luci-mod-network-config-hostapd-del-client",
       "session_class": "luci-mod-network-config-write",
       "synthetic": true,
