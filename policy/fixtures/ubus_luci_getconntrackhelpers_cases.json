@@ -71,6 +71,21 @@
       ]
     },
     {
+      "id": "null-data-parse-error",
+      "session_class": "luci-app-firewall",
+      "sid": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",
+      "ubus_object": "luci",
+      "method": "getConntrackHelpers",
+      "data": null,
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getConntrackHelpers",
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: fourth parameter must be a table"
+      ]
+    },
+    {
       "id": "luci-app-firewall-allow",
       "session_class": "luci-app-firewall",
       "sid": "c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4c4",

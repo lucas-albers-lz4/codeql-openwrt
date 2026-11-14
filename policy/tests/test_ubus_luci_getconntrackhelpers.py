@@ -58,6 +58,7 @@ from policy.ubus_luci_getconntrackhelpers import (  # noqa: E402
     UBUS_OBJECT,
     build_artifacts,
     evaluate_expected_case,
+    evaluate_luci_getconntrackhelpers,
     grant_id,
     load_expected_cases,
     load_luci_getconntrackhelpers_world,
@@ -102,6 +103,12 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertEqual(result.jsonrpc_error, ERROR_PARSE)
         self.assertIn("path_found", self.cases["missing-sid-parse-error"]["not"])
         self.assertIn("setInitAction", self.cases["missing-sid-parse-error"]["not"])
+
+    def test_null_data_is_parse_error_but_omitted_data_defaults_to_table(self) -> None:
+        result = self._result("null-data-parse-error")
+        self.assertEqual(result.outcome, "jsonrpc_parse_error")
+        self.assertEqual(result.jsonrpc_error, ERROR_PARSE)
+        self.assertEqual(evaluate_luci_getconntrackhelpers(sid=FIREWALL_FIXTURE_SID).outcome, "allow")
 
     def test_ports_fixture_allow(self) -> None:
         case = self.cases["luci-app-firewall-allow"]
@@ -378,6 +385,8 @@ class TestCDouble(unittest.TestCase):
             "parse", FIREWALL_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD, "string"
         )
         self.assertEqual(not_table.stdout.strip(), "ERROR_PARSE")
+        null_data = self._run("parse", FIREWALL_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD, "null")
+        self.assertEqual(null_data.stdout.strip(), "ERROR_PARSE")
 
     def test_decide_http_gate(self) -> None:
         allow = self._run(

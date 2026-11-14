@@ -169,7 +169,7 @@ ASSUMPTION_IS_LUCI = (
     "policy:ubus-luci-getversion-v1. luci.getUnixtime stays on "
     "policy:ubus-luci-getunixtime-v1. luci.getOdhcp6cStats stays on "
     "policy:ubus-luci-getodhcp6cstats-v1. luci.getMountPoints stays on "
-    "policy:ubus-luci-getbuiltinethernetports-v1."
+    "policy:ubus-luci-getmountpoints-v1."
 )
 ASSUMPTION_NOT_VERSION = (
     "10_system.js declares luci.getVersion. That method stays on "
@@ -199,7 +199,7 @@ ASSUMPTION_NOT_INFO = (
     "grant. The firewall fixture cannot pass system.info."
 )
 ASSUMPTION_NOT_REBOOT = (
-    "system.reboot stays on policy:ubus-system-reboot-v1. The ports "
+    "system.reboot stays on policy:ubus-system-reboot-v1. The firewall "
     "fixture cannot pass system.reboot."
 )
 ASSUMPTION_NOT_LEDS = (
@@ -259,18 +259,21 @@ def load_luci_getconntrackhelpers_world(fixtures: Path = FIXTURES) -> dict[str, 
     return sessions
 
 
+_DEFAULT_DATA = object()
+
+
 def evaluate_luci_getconntrackhelpers(
     *,
     session_class: Optional[str] = None,
     sid: Optional[str] = None,
     object: Optional[str] = UBUS_OBJECT,
     function: Optional[str] = UBUS_METHOD,
-    data: Any = None,
+    data: Any = _DEFAULT_DATA,
     sessions: Optional[dict[str, Session]] = None,
 ):
     if sessions is None:
         sessions = load_luci_getconntrackhelpers_world()
-    if data is None:
+    if data is _DEFAULT_DATA:
         data = {}
     return evaluate_call(
         session_class=session_class,
