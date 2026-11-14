@@ -39,6 +39,9 @@ REQUIRED = SCHEMA["required"]
 GRANTS = REPO / "policy" / "grants.json"
 HANDLER = REPO / "reports" / "handler_effects.json"
 PROFILE = REPO / "corpus" / "profiles" / "luci-ssl-25.12" / "profile.json"
+EXPECTED_CAPABILITIES = (
+    REPO / "corpus" / "profiles" / "luci-ssl-25.12" / "expected-capabilities.json"
+)
 GRANT_METHODS = {
     "getFeatures",
     "getSwconfigFeatures",
@@ -65,6 +68,7 @@ class TestLuciSslFiles(unittest.TestCase):
         cls.grants = _load(GRANTS)
         cls.effects = _load(HANDLER)
         cls.profile = _load(PROFILE)
+        cls.expected_capabilities = _load(EXPECTED_CAPABILITIES)
         cls.lock_hash = corpus_revision(REPO)
 
     def test_committed_inventory_matches_builder(self) -> None:
@@ -215,6 +219,21 @@ class TestLuciSslFiles(unittest.TestCase):
         self.assertNotIn("not in wave 1", unknowns)
         self.assertIn("c_plugin_not_analyzed", unknowns)
 
+    def test_expected_capabilities_tracks_builtin_ethernet_ports(self) -> None:
+        expectations = self.expected_capabilities["expectations"]
+        rows = [
+            row
+            for row in expectations
+            if row.get("expectation_id")
+            == "luci-mod-status-index-ports-getbuiltinethernetports"
+        ]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["session_class"], "luci-mod-status-index-ports")
+        self.assertEqual(
+            rows[0]["entrypoint_id"],
+            "ubus_http:luci.getBuiltinEthernetPorts",
+        )
+
     def test_transitive_uqr_dependency_and_javascript_evidence(self) -> None:
         self.assertIn("luci-lib-uqr", LUCI_PACKAGE_DEPENDENCIES["luci-mod-network"])
         self.assertEqual(luci_package_closure("luci-mod-network"),
@@ -355,6 +374,15 @@ class TestLuciSslFiles(unittest.TestCase):
         self.assertTrue(getmountpoints)
         self.assertTrue(
             all(row["analysis_revision"] == "policy:ubus-luci-getmountpoints-v1" for row in getmountpoints)
+        )
+        getbuiltinethernetports = [
+            row
+            for row in self.grants
+            if row.get("ubus_object") == "luci" and row.get("method") == "getBuiltinEthernetPorts"
+        ]
+        self.assertTrue(getbuiltinethernetports)
+        self.assertTrue(
+            all(row["analysis_revision"] == "policy:ubus-luci-getbuiltinethernetports-v1" for row in getbuiltinethernetports)
         )
         blob = json.dumps(self.grants)
         self.assertNotIn(ANALYSIS_REVISION, blob)

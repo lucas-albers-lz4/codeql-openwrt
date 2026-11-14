@@ -152,6 +152,7 @@ LUCI_GETODHCP6CSTATS_SNAPSHOT = "reports/m2-ubus-luci-getodhcp6cstats-effect.jso
 LUCI_GETTIMEZONES_SNAPSHOT = "reports/m2-ubus-luci-gettimezones-effect.json"
 LUCI_GETLEDS_SNAPSHOT = "reports/m2-ubus-luci-getleds-effect.json"
 LUCI_GETMOUNTPOINTS_SNAPSHOT = "reports/m2-ubus-luci-getmountpoints-effect.json"
+LUCI_GETBUILTINETHERNETPORTS_SNAPSHOT = "reports/m2-ubus-luci-getbuiltinethernetports-effect.json"
 HOSTAPD_DEL_CLIENT_SNAPSHOT = "reports/m2-ubus-hostapd-del-client-effect.json"
 HOSTAPD_WPS_START_SNAPSHOT = "reports/m2-ubus-hostapd-wps-start-effect.json"
 HOSTAPD_WPS_CANCEL_SNAPSHOT = "reports/m2-ubus-hostapd-wps-cancel-effect.json"
@@ -358,6 +359,17 @@ LUCI_GETMOUNTPOINTS_CATALOG = {
         "entrypoint_id": "ubus_http:luci.getMountPoints",
     },
 }
+LUCI_GETBUILTINETHERNETPORTS_CATALOG = {
+    "policy:effect:ubus-luci-getbuiltinethernetports": {
+        "ubus_object": "luci",
+        "method": "getBuiltinEthernetPorts",
+        "sink_kind": "ubus_call",
+        "op": "invoke",
+        "snapshot": LUCI_GETBUILTINETHERNETPORTS_SNAPSHOT,
+        "delegated_class": "luci-mod-status-index-ports",
+        "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+    },
+}
 HOSTAPD_DEL_CLIENT_CATALOG = {
     "policy:effect:ubus-hostapd-del-client": {
         "ubus_object": "hostapd.*",
@@ -508,6 +520,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
             for row in self.effects
             if row.get("ubus_object") == "luci" and row.get("method") == "getMountPoints"
         ]
+        getbuiltinethernetports_rows = [
+            row
+            for row in self.effects
+            if row.get("ubus_object") == "luci" and row.get("method") == "getBuiltinEthernetPorts"
+        ]
         hostapd_rows = [
             row
             for row in self.effects
@@ -571,6 +588,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual(len(gettimezones_rows), len(LUCI_GETTIMEZONES_CATALOG))
         self.assertEqual(len(getleds_rows), len(LUCI_GETLEDS_CATALOG))
         self.assertEqual(len(getmountpoints_rows), len(LUCI_GETMOUNTPOINTS_CATALOG))
+        self.assertEqual(len(getbuiltinethernetports_rows), len(LUCI_GETBUILTINETHERNETPORTS_CATALOG))
         self.assertEqual(len(hostapd_rows), len(HOSTAPD_DEL_CLIENT_CATALOG))
         self.assertEqual(len(hostapd_wps_rows), len(HOSTAPD_WPS_START_CATALOG))
         self.assertEqual(len(hostapd_wps_cancel_rows), len(HOSTAPD_WPS_CANCEL_CATALOG))
@@ -588,6 +606,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
         self.assertEqual({row["record_id"] for row in gettimezones_rows}, set(LUCI_GETTIMEZONES_CATALOG))
         self.assertEqual({row["record_id"] for row in getleds_rows}, set(LUCI_GETLEDS_CATALOG))
         self.assertEqual({row["record_id"] for row in getmountpoints_rows}, set(LUCI_GETMOUNTPOINTS_CATALOG))
+        self.assertEqual({row["record_id"] for row in getbuiltinethernetports_rows}, set(LUCI_GETBUILTINETHERNETPORTS_CATALOG))
         self.assertEqual({row["record_id"] for row in hostapd_rows}, set(HOSTAPD_DEL_CLIENT_CATALOG))
         self.assertEqual({row["record_id"] for row in hostapd_wps_rows}, set(HOSTAPD_WPS_START_CATALOG))
         self.assertEqual({row["record_id"] for row in hostapd_wps_cancel_rows}, set(HOSTAPD_WPS_CANCEL_CATALOG))
@@ -608,6 +627,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             + len(gettimezones_rows)
             + len(getleds_rows)
             + len(getmountpoints_rows)
+            + len(getbuiltinethernetports_rows)
             + len(hostapd_rows)
             + len(hostapd_wps_rows)
             + len(hostapd_wps_cancel_rows)
@@ -788,6 +808,20 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertNotEqual(getmountpoints["evidence_status"], "path_found")
             self.assertEqual(getmountpoints["entrypoint_id"], spec["entrypoint_id"])
             self.assertNotIn("cgi_endpoint", getmountpoints)
+        for getbuiltinethernetports in getbuiltinethernetports_rows:
+            spec = LUCI_GETBUILTINETHERNETPORTS_CATALOG[getbuiltinethernetports["record_id"]]
+            self.assertEqual(getbuiltinethernetports["ubus_object"], spec["ubus_object"])
+            self.assertEqual(getbuiltinethernetports["method"], spec["method"])
+            self.assertEqual(getbuiltinethernetports["producer"], "policy_facts")
+            self.assertEqual(getbuiltinethernetports["sink_kind"], spec["sink_kind"])
+            self.assertEqual(getbuiltinethernetports["op"], spec["op"])
+            self.assertEqual(getbuiltinethernetports["assessment"], "intended_access")
+            self.assertNotEqual(getbuiltinethernetports["assessment"], "authorization_violation")
+            self.assertEqual(getbuiltinethernetports["corpus_revision"], lock_hash)
+            self.assertEqual(getbuiltinethernetports["evidence_status"], "fact")
+            self.assertNotEqual(getbuiltinethernetports["evidence_status"], "path_found")
+            self.assertEqual(getbuiltinethernetports["entrypoint_id"], spec["entrypoint_id"])
+            self.assertNotIn("cgi_endpoint", getbuiltinethernetports)
         for hostapd in hostapd_rows:
             spec = HOSTAPD_DEL_CLIENT_CATALOG[hostapd["record_id"]]
             self.assertEqual(hostapd["ubus_object"], spec["ubus_object"])
@@ -1526,6 +1560,48 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertEqual(root["corpus_revision"], lock_hash)
             self.assertEqual(effect["ubus_object"], "luci")
             self.assertEqual(effect["method"], "getMountPoints")
+            self.assertEqual(effect["sink_kind"], "ubus_call")
+            self.assertEqual(effect["entrypoint_id"], spec["entrypoint_id"])
+            unauth = [
+                grant
+                for grant in self.grants
+                if grant.get("entrypoint_id") == effect["entrypoint_id"]
+                and grant["session_class"] == "unauthenticated"
+            ]
+            self.assertEqual(unauth, [])
+            snapshot = next(
+                row for row in snapshots[spec["snapshot"]] if row["record_id"] == record_id
+            )
+            self.assertEqual(effect, snapshot)
+
+    def test_luci_getbuiltinethernetports_effects_join_delegated_and_root_grants(self) -> None:
+        lock_hash = corpus_revision()
+        snapshots = {}
+        for spec in LUCI_GETBUILTINETHERNETPORTS_CATALOG.values():
+            snapshots[spec["snapshot"]] = _load(REPO / spec["snapshot"])
+        for record_id, spec in LUCI_GETBUILTINETHERNETPORTS_CATALOG.items():
+            effect = next(row for row in self.effects if row["record_id"] == record_id)
+            delegated = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == spec["delegated_class"]
+            )
+            root = next(
+                grant
+                for grant in self.grants
+                if grant["record_id"] in effect["evidence_refs"]
+                and grant["session_class"] == "root"
+            )
+            refs = effect["evidence_refs"]
+            self.assertIn(delegated["record_id"], refs)
+            self.assertIn(root["record_id"], refs)
+            self.assertEqual(effect["assessment"], "intended_access")
+            self.assertEqual(effect["corpus_revision"], lock_hash)
+            self.assertEqual(delegated["corpus_revision"], lock_hash)
+            self.assertEqual(root["corpus_revision"], lock_hash)
+            self.assertEqual(effect["ubus_object"], "luci")
+            self.assertEqual(effect["method"], "getBuiltinEthernetPorts")
             self.assertEqual(effect["sink_kind"], "ubus_call")
             self.assertEqual(effect["entrypoint_id"], spec["entrypoint_id"])
             unauth = [

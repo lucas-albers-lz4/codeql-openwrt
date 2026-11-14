@@ -1,0 +1,439 @@
+{
+  "comment": "Hand-transcribed expected ubus luci.getBuiltinEthernetPorts decisions for luci-mod-status-index-ports from pinned uhttpd uh_ubus_allowed, 29_ports.js rpc.declare, and ACL JSON. Not generated from the Python evaluator.",
+  "pins": {
+    "uhttpd": "93b05e0b65d91c23c5aa8fdde378df1f174ec71d",
+    "rpcd": "d99f703e4035d03fbcfbada3cb697db346c2b984",
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "profile": "luci-ssl-25.12"
+  },
+  "notes": [
+    "uh_ubus_allowed requires session.access scope=ubus object=luci function=getBuiltinEthernetPorts (uhttpd omits scope).",
+    "Bounded to 29_ports.js rpc.declare object=luci method=getBuiltinEthernetPorts at luci b2e0be4b. That is the luci-base plugin, not procd system.",
+    "Fixture login luci-mod-status-index-ports is read of the existing ACL group in luci-mod-status-index.json.",
+    "luci-mod-status-index grants getVersion / getUnixtime / getOdhcp6cStats, not getBuiltinEthernetPorts.",
+    "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1; this slice does not emit that grant.",
+    "luci.getLEDs stays on policy:ubus-luci-getleds-v1.",
+    "getUSBDevices stays unstaffed (no luci-ssl rpc.declare at this pin).",
+    "luci.getConntrackHelpers stays unstaffed (luci-app-firewall views; next leftover).",
+    "Do not rewrite the luci exec-methods emitter.",
+    "Do not invent a setInitAction luci-ssl grant.",
+    "Do not invent luci-mod-status-index-dhcp / dsl logins.",
+    "Missing SID is JSON-RPC ERROR_PARSE, not the all-zero sentinel.",
+    "Unauthenticated is ERROR_ACCESS at uh_ubus_allowed (unauthenticated grants only luci.getFeatures).",
+    "Root list read/write '*' is stock rpcd.config, not a violation (expectation_id root-administration).",
+    "Do not emit dispatcher, authorization_violation, or path_found.",
+    "shellquote and basename are not sanitizers.",
+    "luci-mod-system flash.js write sysupgrade/firstboot stay unstaffed.",
+    "luci-mod-network diagnostics ping is not this slice.",
+    "crontab.js cron reload is not this slice (ubus file.write, not file.exec)."
+  ],
+  "cases": [
+    {
+      "id": "unauthenticated-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "unauthenticated",
+      "sid": "00000000000000000000000000000000",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getBuiltinEthernetPorts",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "rule_refs": [
+        "luci@b2e0be4b luci-base.json unauthenticated grants only luci.getFeatures",
+        "rpcd@d99f703 unauthenticated.json has no ubus luci.getBuiltinEthernetPorts",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed: session.access luci/getBuiltinEthernetPorts false -> ERROR_ACCESS",
+        "do not invent an unauthenticated luci.getBuiltinEthernetPorts grant"
+      ]
+    },
+    {
+      "id": "missing-sid-parse-error",
+      "session_class": null,
+      "sid": null,
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "jsonrpc_parse_error",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "not": [
+        "unauthenticated_allow",
+        "luci_plugin_getBuiltinEthernetPorts",
+        "dispatcher",
+        "path_found",
+        "sentinel_rewrite",
+        "setInitAction"
+      ],
+      "rule_refs": [
+        "uhttpd@93b05e0 ubus.c parse_call_params: missing SID with no_ubusauth=0 is ERROR_PARSE",
+        "missing SID is not rewritten to 0000... in luci-ssl-25.12"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-ports-allow",
+      "session_class": "luci-mod-status-index-ports",
+      "sid": "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getBuiltinEthernetPorts",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "expectation_id": "luci-mod-status-index-ports-getbuiltinethernetports",
+      "assessment": "intended_access",
+      "acl_group": "luci-mod-status-index-ports",
+      "note": "Fixture login luci-mod-status-index-ports is not a stock device login. 29_ports.js uses rpc.declare object=luci method=getBuiltinEthernetPorts. Intended_access, not a violation and not a PoC.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-ports.read.ubus.luci=[getBuiltinEthernetPorts]",
+        "luci@b2e0be4b 29_ports.js rpc.declare object=luci method=getBuiltinEthernetPorts",
+        "uhttpd@93b05e0 ubus.c uh_ubus_allowed session.access luci/getBuiltinEthernetPorts",
+        "fixture rpcd.config login luci-mod-status-index-ports list read luci-mod-status-index-ports"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-storage-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "luci-mod-status-index-storage",
+      "sid": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "note": "luci-mod-status-index-storage grants luci.getMountPoints, not luci.getBuiltinEthernetPorts. ERROR_ACCESS at uh_ubus_allowed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.luci=[getMountPoints]",
+        "luci-mod-status-index-storage has no ubus luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "luci-mod-system-mounts-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "luci-mod-system-mounts",
+      "sid": "11111111111111111111111111111111",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-mounts.read.ubus.luci=[getBlockDevices, getMountPoints]",
+        "luci-mod-system-mounts has no ubus luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "luci-app-package-manager-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "luci-app-package-manager",
+      "sid": "44444444444444444444444444444444",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "rule_refs": [
+        "luci@b2e0be4b luci-app-package-manager.json luci-app-package-manager.read.ubus.luci=[getMountPoints]",
+        "luci-app-package-manager has no ubus luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "luci-mod-status-index-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci-mod-status-index read grants luci.getVersion / getUnixtime / getOdhcp6cStats, not luci.getBuiltinEthernetPorts. ERROR_ACCESS at uh_ubus_allowed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci-mod-status-index has no ubus luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "luci-mod-status-realtime-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "luci-mod-status-realtime",
+      "sid": "cccccccccccccccccccccccccccccccc",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status.json luci-mod-status-realtime.read.ubus.luci=[getConntrackList, getRealtimeStats]",
+        "luci-mod-status-realtime has no ubus luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "luci-mod-system-reboot-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "luci-mod-system-reboot",
+      "sid": "bebebebebebebebebebebebebebebebe",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-reboot.write.ubus.system=[reboot]",
+        "luci-mod-system-reboot has ubus system.reboot, not luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "luci-mod-system-flash-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "luci-mod-system-flash",
+      "sid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "target_id": "ubus:luci.getBuiltinEthernetPorts",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "note": "The list-read flash fixture has ubus file.exec, not luci.getBuiltinEthernetPorts. ERROR_ACCESS at uh_ubus_allowed. Do not invent a write flash login.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-flash.read.ubus.file=[exec, read, stat]",
+        "luci-mod-system-flash has no ubus luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "luci-mod-system-init-read-luci-getBuiltinEthernetPorts-deny",
+      "session_class": "luci-mod-system-init-read",
+      "sid": "aeaeaeaeaeaeaeaeaeaeaeaeaeaeaeae",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-init.read.ubus.rc=[list]",
+        "luci-mod-system-init has no ubus luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "system-board-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "system",
+      "method": "board",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.board",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-status-index fixture matches system.board at uh_ubus_allowed. That method stays on policy:ubus-system-board-v1. This slice does not emit a system.board grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=system method=board",
+        "system.board stays on policy:ubus-system-board-v1"
+      ]
+    },
+    {
+      "id": "system-info-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "system",
+      "method": "info",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.info",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-status-index fixture matches system.info at uh_ubus_allowed. That method stays on policy:ubus-system-info-v1. This slice does not emit a system.info grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.system=[board, info]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=system method=info",
+        "system.info stays on policy:ubus-system-info-v1"
+      ]
+    },
+    {
+      "id": "system-reboot-not-this-slice",
+      "session_class": "luci-mod-status-index-ports",
+      "sid": "b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3b3",
+      "ubus_object": "system",
+      "method": "reboot",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:system.reboot",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found"
+      ],
+      "note": "The luci-mod-status-index-ports fixture grants luci.getBuiltinEthernetPorts, not system.reboot. system.reboot stays on policy:ubus-system-reboot-v1.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-ports.read.ubus.luci=[getBuiltinEthernetPorts]",
+        "system.reboot stays on policy:ubus-system-reboot-v1"
+      ]
+    },
+    {
+      "id": "luci-getVersion-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getVersion",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getVersion",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "10_system.js declares luci.getVersion. That method stays on policy:ubus-luci-getversion-v1. This slice does not emit a getVersion grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=luci method=getVersion",
+        "luci.getVersion stays on policy:ubus-luci-getversion-v1"
+      ]
+    },
+    {
+      "id": "luci-getUnixtime-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getUnixtime",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getUnixtime",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "10_system.js declares luci.getUnixtime. That method stays on policy:ubus-luci-getunixtime-v1. This slice does not emit a getUnixtime grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 10_system.js rpc.declare object=luci method=getUnixtime",
+        "luci.getUnixtime stays on policy:ubus-luci-getunixtime-v1"
+      ]
+    },
+    {
+      "id": "luci-getOdhcp6cStats-not-this-slice",
+      "session_class": "luci-mod-status-index",
+      "sid": "afafafafafafafafafafafafafafafaf",
+      "ubus_object": "luci",
+      "method": "getOdhcp6cStats",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getOdhcp6cStats",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "30_network.js declares luci.getOdhcp6cStats. That method stays on policy:ubus-luci-getodhcp6cstats-v1. This slice does not emit a getOdhcp6cStats grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index.read.ubus.luci=[getVersion, getUnixtime, getOdhcp6cStats]",
+        "luci@b2e0be4b 30_network.js rpc.declare object=luci method=getOdhcp6cStats",
+        "luci.getOdhcp6cStats stays on policy:ubus-luci-getodhcp6cstats-v1"
+      ]
+    },
+    {
+      "id": "luci-getMountPoints-not-this-slice",
+      "session_class": "luci-mod-status-index-storage",
+      "sid": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+      "ubus_object": "luci",
+      "method": "getMountPoints",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getMountPoints",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "25_storage.js declares luci.getMountPoints. That method stays on policy:ubus-luci-getmountpoints-v1. This slice does not emit a getMountPoints grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-status-index.json luci-mod-status-index-storage.read.ubus.luci=[getMountPoints]",
+        "luci@b2e0be4b 25_storage.js rpc.declare object=luci method=getMountPoints",
+        "luci.getMountPoints stays on policy:ubus-luci-getmountpoints-v1"
+      ]
+    },
+    {
+      "id": "luci-getLEDs-not-this-slice",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "luci",
+      "method": "getLEDs",
+      "expected_outcome": "allow",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getLEDs",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "leds.js declares luci.getLEDs. That method stays on policy:ubus-luci-getleds-v1. This slice does not emit a getLEDs grant.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "luci.getLEDs stays on policy:ubus-luci-getleds-v1"
+      ]
+    },
+    {
+      "id": "luci-mod-system-config-not-this-slice",
+      "session_class": "luci-mod-system-config",
+      "sid": "dddddddddddddddddddddddddddddddd",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "deny",
+      "expect_grant": false,
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "not": [
+        "luci.getBuiltinEthernetPorts grant",
+        "path_found",
+        "invented luci-ssl grant"
+      ],
+      "note": "luci-mod-system-config read grants luci.getLEDs / getTimezones / getUSBDevices / getUnixtime, not luci.getBuiltinEthernetPorts. ERROR_ACCESS at uh_ubus_allowed. getUSBDevices stays unstaffed.",
+      "rule_refs": [
+        "luci@b2e0be4b luci-mod-system.json luci-mod-system-config.read.ubus.luci=[getLEDs, getTimezones, getUSBDevices, getUnixtime]",
+        "luci-mod-system-config has no ubus luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "id": "root-star-luci-getBuiltinEthernetPorts-allow",
+      "session_class": "root",
+      "sid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "ubus_object": "luci",
+      "method": "getBuiltinEthernetPorts",
+      "expected_outcome": "allow",
+      "expect_grant": true,
+      "target_id": "ubus:luci.getBuiltinEthernetPorts",
+      "op": "invoke",
+      "ingress": "ubus_http",
+      "entrypoint_id": "ubus_http:luci.getBuiltinEthernetPorts",
+      "expectation_id": "root-administration",
+      "assessment": "intended_access",
+      "acl_group": "*",
+      "note": "Stock root list read/write '*' is intended_access (root-administration), not a violation.",
+      "rule_refs": [
+        "openwrt@4e964251 package overlay rpcd.config root read/write '*'"
+      ]
+    }
+  ]
+}
