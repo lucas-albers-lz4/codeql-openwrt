@@ -1,0 +1,61 @@
+{
+  "argv": [
+    "/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql",
+    "bqrs",
+    "decode",
+    "--format=csv",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/effects.bqrs"
+  ],
+  "boundary_errors": [],
+  "cwd": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer",
+  "elapsed_ns": 609521992,
+  "environment": {
+    "HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/home",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/cache",
+    "XDG_CONFIG_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/config"
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-15T08:46:54.260151+00:00",
+  "inputs_after": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/effects.bqrs": {
+      ".": {
+        "mode": 420,
+        "sha256": "6308e4af243c4a60cd73b21fdbb9e768447510a319aaee39302ea99aee4811d7",
+        "size": 2926,
+        "type": "file"
+      }
+    }
+  },
+  "inputs_before": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/effects.bqrs": {
+      ".": {
+        "mode": 420,
+        "sha256": "6308e4af243c4a60cd73b21fdbb9e768447510a319aaee39302ea99aee4811d7",
+        "size": 2926,
+        "type": "file"
+      }
+    }
+  },
+  "launch_error": null,
+  "mutables_after": {},
+  "mutables_before": {},
+  "outputs": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/effects.csv": {
+      ".": {
+        "mode": 420,
+        "sha256": "9d9a1a7178e7f5fbd3cb772122fe172354004fac09ce00e91647d6b35ba9d0a0",
+        "size": 246,
+        "type": "file"
+      }
+    }
+  },
+  "stage": "effects-decode",
+  "started_utc": "2026-11-15T08:46:53.650631+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "9d9a1a7178e7f5fbd3cb772122fe172354004fac09ce00e91647d6b35ba9d0a0"
+}

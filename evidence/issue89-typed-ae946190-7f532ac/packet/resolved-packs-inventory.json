@@ -1,0 +1,558 @@
+{
+  ".": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "controlflow": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "controlflow/.packinfo": {
+    "mode": 420,
+    "sha256": "9cc66cb299b73769a30ce281c5caa4e43d473c393c47f1aa4418b65f55a4be13",
+    "size": 62,
+    "type": "file"
+  },
+  "controlflow/CHANGELOG.md": {
+    "mode": 420,
+    "sha256": "0a7125bbeb80a114de9a30df940d5b139aead63993c4e3b01de58b148fc03385",
+    "size": 1421,
+    "type": "file"
+  },
+  "controlflow/codeql": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "controlflow/codeql/controlflow": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "controlflow/codeql/controlflow/Cfg.qll": {
+    "mode": 420,
+    "sha256": "246aa3d878971d1a10a03ef88170b6194ca929f37ca4bf84d7d47b1a43698403",
+    "size": 53897,
+    "type": "file"
+  },
+  "controlflow/qlpack.yml": {
+    "mode": 420,
+    "sha256": "923d240f25e0522b20853722f87472d6457a954966d03b89f1a751cdaa71a754",
+    "size": 222,
+    "type": "file"
+  },
+  "dataflow": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "dataflow/.packinfo": {
+    "mode": 420,
+    "sha256": "9cc66cb299b73769a30ce281c5caa4e43d473c393c47f1aa4418b65f55a4be13",
+    "size": 62,
+    "type": "file"
+  },
+  "dataflow/CHANGELOG.md": {
+    "mode": 420,
+    "sha256": "575ab9536caacb894f78d6b5e2c5735d96784d6095a1d116487f949ad5c9537d",
+    "size": 5610,
+    "type": "file"
+  },
+  "dataflow/codeql": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "dataflow/codeql/dataflow": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "dataflow/codeql/dataflow/DataFlow.qll": {
+    "mode": 420,
+    "sha256": "26f07535f18aa62618abe7189da7e56de39fd6a73da164e82749d57d8df7ddd6",
+    "size": 29753,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/TaintTracking.qll": {
+    "mode": 420,
+    "sha256": "76333b787c76cf277d1a9e1b27eb9197df5f2f790e88eea4a328d5af2163b569",
+    "size": 8605,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/VariableCapture.qll": {
+    "mode": 420,
+    "sha256": "0ecfaca14b31074bdfe46c6c0a49b01537ead980b63f1436b1cd728dbd6f4655",
+    "size": 37871,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/internal": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "dataflow/codeql/dataflow/internal/AccessPathSyntax.qll": {
+    "mode": 420,
+    "sha256": "6bc092e7fc7b856c8aebd4bdc2f6d771720243c236cc25fdaae47f5f16588177",
+    "size": 7744,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/internal/ContentDataFlowImpl.qll": {
+    "mode": 420,
+    "sha256": "54bfd7c91a6a92c11a9dc6b0cca705d7c1e24f52d2406c7258260265ca3c848a",
+    "size": 18801,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/internal/DataFlowImpl.qll": {
+    "mode": 420,
+    "sha256": "dc942af8f4295f86d1c35d03deae499384bc26e4ff31185e6839d526f9a22449",
+    "size": 210041,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/internal/DataFlowImplCommon.qll": {
+    "mode": 420,
+    "sha256": "689351693f576e3d623e9e14559b80d655de33bde07b603e288815feb6622226",
+    "size": 83028,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/internal/DataFlowImplConsistency.qll": {
+    "mode": 420,
+    "sha256": "12bfcae031ea857c075f6b08a005f522efaac7fe56f14aad35ca8ee8c2c028b3",
+    "size": 16630,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/internal/FlowSummaryImpl.qll": {
+    "mode": 420,
+    "sha256": "3616d45ce003dd71fea66218e084ae13b649441f4ccccec398585bc28b662c94",
+    "size": 76474,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/test": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "dataflow/codeql/dataflow/test/InlineFlowTest.qll": {
+    "mode": 420,
+    "sha256": "e22aeee235915c4feb5fc63c3a79f0fbf147d0bed1df72c323e006485a0357b2",
+    "size": 6630,
+    "type": "file"
+  },
+  "dataflow/codeql/dataflow/test/ProvenancePathGraph.qll": {
+    "mode": 420,
+    "sha256": "a271c8ebc93fd3353437a4476e82a91e073e8757e124b2477cfd22e14ae17f10",
+    "size": 5081,
+    "type": "file"
+  },
+  "dataflow/qlpack.yml": {
+    "mode": 420,
+    "sha256": "4a1a4ce185d0878cafcbcdaa71db63e2be4bb0e69bd44831f156e097bb103cad",
+    "size": 269,
+    "type": "file"
+  },
+  "regex": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "regex/.packinfo": {
+    "mode": 420,
+    "sha256": "9cc66cb299b73769a30ce281c5caa4e43d473c393c47f1aa4418b65f55a4be13",
+    "size": 62,
+    "type": "file"
+  },
+  "regex/CHANGELOG.md": {
+    "mode": 420,
+    "sha256": "d91201ff0b056cbfb0ef559c33d1b738ba98ad450c4854592228b9354af6fffd",
+    "size": 2093,
+    "type": "file"
+  },
+  "regex/codeql": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "regex/codeql/regex": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "regex/codeql/regex/HostnameRegexp.qll": {
+    "mode": 420,
+    "sha256": "a0214ee3c4f746b452937ed9177e24a4e9a440f6d50a6b15ef3d3ac9af78a60c",
+    "size": 9460,
+    "type": "file"
+  },
+  "regex/codeql/regex/MissingRegExpAnchor.qll": {
+    "mode": 420,
+    "sha256": "67258912708e8f5a5585743ef7dc2a945083e56ace4e0da1445b5bb6ee3de183",
+    "size": 8515,
+    "type": "file"
+  },
+  "regex/codeql/regex/OverlyLargeRangeQuery.qll": {
+    "mode": 420,
+    "sha256": "aaaeb0bca4ba678de9ffb92bf9e065e496311937804d09734efec8c14807fc08",
+    "size": 10576,
+    "type": "file"
+  },
+  "regex/codeql/regex/RegexTreeView.qll": {
+    "mode": 420,
+    "sha256": "e2fc77439736804b9a98e70468366bc4ab4693db559a3fe1f3db266fcc727b4a",
+    "size": 10270,
+    "type": "file"
+  },
+  "regex/codeql/regex/nfa": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "regex/codeql/regex/nfa/BadTagFilterQuery.qll": {
+    "mode": 420,
+    "sha256": "b00d143a5da18ef762f2dc9ed306c40167ae398f35b38a4d5671c478686b2851",
+    "size": 8000,
+    "type": "file"
+  },
+  "regex/codeql/regex/nfa/ExponentialBackTracking.qll": {
+    "mode": 420,
+    "sha256": "3dd33c80fbaf4274da582d1427565299561f310284bdc699aedeb5e8f9e51760",
+    "size": 13781,
+    "type": "file"
+  },
+  "regex/codeql/regex/nfa/NfaUtils.qll": {
+    "mode": 420,
+    "sha256": "2c4940b51a54fb67df2f3e2613ae73090daf5d67e13e11809fba95d0acbcdf84",
+    "size": 46111,
+    "type": "file"
+  },
+  "regex/codeql/regex/nfa/RegexpMatching.qll": {
+    "mode": 420,
+    "sha256": "3f903586110974519e647c08bacebe9375d4a38a6cad3977ab87598355df34be",
+    "size": 7453,
+    "type": "file"
+  },
+  "regex/codeql/regex/nfa/SuperlinearBackTracking.qll": {
+    "mode": 420,
+    "sha256": "b4a53ecbbb5aa932fc7cb143e4b88cb98d1868d43e052181e5e84fc9f03819a8",
+    "size": 17735,
+    "type": "file"
+  },
+  "regex/qlpack.yml": {
+    "mode": 420,
+    "sha256": "4c339cda512c7aaa2785d15d20fb9c331cd60199756bada178f5d60d602794e0",
+    "size": 216,
+    "type": "file"
+  },
+  "ssa": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "ssa/.packinfo": {
+    "mode": 420,
+    "sha256": "9cc66cb299b73769a30ce281c5caa4e43d473c393c47f1aa4418b65f55a4be13",
+    "size": 62,
+    "type": "file"
+  },
+  "ssa/CHANGELOG.md": {
+    "mode": 420,
+    "sha256": "4a635eaf178d8912e142e8358612e24e95714535e6b3ce321df133308bc51881",
+    "size": 2302,
+    "type": "file"
+  },
+  "ssa/codeql": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "ssa/codeql/ssa": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "ssa/codeql/ssa/Ssa.qll": {
+    "mode": 420,
+    "sha256": "48fc2bdaeb91bd4a76cf675d00239a70f0094ff61b423f2dabc5f05440809262",
+    "size": 58214,
+    "type": "file"
+  },
+  "ssa/qlpack.yml": {
+    "mode": 420,
+    "sha256": "c01dbbe30f64a12218a18b6cfd67d6910c2dbfc360b3b51cb037ab74bd42cfe8",
+    "size": 214,
+    "type": "file"
+  },
+  "threat-models": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "threat-models/.packinfo": {
+    "mode": 420,
+    "sha256": "f771d8ce23eb0d4257027f18dbe5f6cbdbcef96d22e7a1a468a06b7db0ed5e90",
+    "size": 579,
+    "type": "file"
+  },
+  "threat-models/CHANGELOG.md": {
+    "mode": 420,
+    "sha256": "16d3643567aa9de418be3c94adec017490b56b12d4cba951d1b798825663c604",
+    "size": 2990,
+    "type": "file"
+  },
+  "threat-models/codeql": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "threat-models/codeql/threatmodels": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "threat-models/codeql/threatmodels/ThreatModels.qll": {
+    "mode": 420,
+    "sha256": "e00f51ad83349b787985b56ecef25656b3917afcf6852acd579207bfb2685e6d",
+    "size": 3104,
+    "type": "file"
+  },
+  "threat-models/ext": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "threat-models/ext/supported-threat-models.model.yml": {
+    "mode": 420,
+    "sha256": "60de94c1b2fecbd70ef0dd8ebf760c6d9adedbff3bca2c1ee97ca78cb1655771",
+    "size": 201,
+    "type": "file"
+  },
+  "threat-models/ext/threat-model-grouping.model.yml": {
+    "mode": 420,
+    "sha256": "eca2007dc8404bc8746f23b7e8c2b0a0ca0df4a457f92e3e3293e55c81b4ad6c",
+    "size": 1014,
+    "type": "file"
+  },
+  "threat-models/qlpack.yml": {
+    "mode": 420,
+    "sha256": "7cfd5d5bbfeecb98a8beb685c249713824ddb2f3f21c9d195d8622ebc7c8eb43",
+    "size": 239,
+    "type": "file"
+  },
+  "typetracking": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "typetracking/.packinfo": {
+    "mode": 420,
+    "sha256": "9cc66cb299b73769a30ce281c5caa4e43d473c393c47f1aa4418b65f55a4be13",
+    "size": 62,
+    "type": "file"
+  },
+  "typetracking/CHANGELOG.md": {
+    "mode": 420,
+    "sha256": "b5e83b8d19433bc820a4b5fc0a603cf12b050069518e840173c3fa1ce85be8aa",
+    "size": 1925,
+    "type": "file"
+  },
+  "typetracking/codeql": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "typetracking/codeql/typetracking": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "typetracking/codeql/typetracking/TypeTracking.qll": {
+    "mode": 420,
+    "sha256": "b8b7d7569cfac7fd0957ff85160eeb0583e5e387d4ec49fc1d8bf20ca7efb41d",
+    "size": 4748,
+    "type": "file"
+  },
+  "typetracking/codeql/typetracking/internal": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "typetracking/codeql/typetracking/internal/SummaryTypeTracker.qll": {
+    "mode": 420,
+    "sha256": "bdfc993bf354a88ac17bd08bdb92b56470c04e37e3a54df1b51574202f54de9d",
+    "size": 15093,
+    "type": "file"
+  },
+  "typetracking/codeql/typetracking/internal/TypeTrackingImpl.qll": {
+    "mode": 420,
+    "sha256": "06c588bcd74a5966527a4050fff08b549d3dc8466beb5c2f1e5be4559328ff43",
+    "size": 34295,
+    "type": "file"
+  },
+  "typetracking/qlpack.yml": {
+    "mode": 420,
+    "sha256": "205bcc319f21bfc81ea9d9a810cc08d1743b5b9b032f1d9f5bd3afa24a93e4b9",
+    "size": 223,
+    "type": "file"
+  },
+  "util": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "util/.packinfo": {
+    "mode": 420,
+    "sha256": "ffb1649d715853c057d1355a060b499dcc4befd8b26924f1ac8ef7f43f5cf554",
+    "size": 328,
+    "type": "file"
+  },
+  "util/CHANGELOG.md": {
+    "mode": 420,
+    "sha256": "111d398ee1671fb751f4778f120ed9ac01e7ababd70db49e22749c523e3ddb33",
+    "size": 2074,
+    "type": "file"
+  },
+  "util/codeql": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "util/codeql/util": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "util/codeql/util/AlertFiltering.qll": {
+    "mode": 420,
+    "sha256": "77bec067dee700464efcb4db100c1fb24668a087a72a02b7065fe911739c4c81",
+    "size": 1568,
+    "type": "file"
+  },
+  "util/codeql/util/Boolean.qll": {
+    "mode": 420,
+    "sha256": "f7a73ca1ae158a660388c6704d6fa4ea37cafd625ff437d459ba82d520653ad6",
+    "size": 438,
+    "type": "file"
+  },
+  "util/codeql/util/DenseRank.qll": {
+    "mode": 420,
+    "sha256": "f4047d062e471cbd4526d5168992ceb439eb45daf1ca71d7f657049d849d806e",
+    "size": 3168,
+    "type": "file"
+  },
+  "util/codeql/util/Either.qll": {
+    "mode": 420,
+    "sha256": "c21522727a25ee3da0485a52da019e4a5b2192fdc91d15b8e14a4c319d5073b1",
+    "size": 1141,
+    "type": "file"
+  },
+  "util/codeql/util/FilePath.qll": {
+    "mode": 420,
+    "sha256": "ab9a6a837fb8fd569fd8126d37c01e99f5c3630053647f00d41f81d59228731a",
+    "size": 2817,
+    "type": "file"
+  },
+  "util/codeql/util/FileSystem.qll": {
+    "mode": 420,
+    "sha256": "021b209bec7af7af9bd72712f53cd8d654ac6a4aabaad604921930c38fa1d33b",
+    "size": 13148,
+    "type": "file"
+  },
+  "util/codeql/util/Location.qll": {
+    "mode": 420,
+    "sha256": "ae5d74f395fc96221008249f116a0fdf21d2897d5d0760ca5d814f08459f959e",
+    "size": 1332,
+    "type": "file"
+  },
+  "util/codeql/util/Numbers.qll": {
+    "mode": 420,
+    "sha256": "9901286f07cb87c3e288806810df275710d81a37cc07611000033a3eb7ee34bc",
+    "size": 4040,
+    "type": "file"
+  },
+  "util/codeql/util/Option.qll": {
+    "mode": 420,
+    "sha256": "551a361c25a27230b12177b92cd0237ff1b56600151d7dce4e565b398918b258",
+    "size": 1176,
+    "type": "file"
+  },
+  "util/codeql/util/Strings.qll": {
+    "mode": 420,
+    "sha256": "800aee70b38a630e233d864fc0e76694e89be4eab7a682502c62b5e874b86957",
+    "size": 2566,
+    "type": "file"
+  },
+  "util/codeql/util/Unit.qll": {
+    "mode": 420,
+    "sha256": "8d30079c0ed50f90cfdbda7bb7c767506102fd448824b25198341142144994e1",
+    "size": 270,
+    "type": "file"
+  },
+  "util/codeql/util/Void.qll": {
+    "mode": 420,
+    "sha256": "17ebafa904399691f70c17c81f8be689bbe2a9d0a28ab9b39fcdf6fdc7c7bd00",
+    "size": 278,
+    "type": "file"
+  },
+  "util/codeql/util/suppression": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "util/codeql/util/suppression/AlertSuppression.qll": {
+    "mode": 420,
+    "sha256": "3d6270b7d8cf22524bf5e5205d22ba0df90d87cba7a389d31cb7edd52ee55261",
+    "size": 5289,
+    "type": "file"
+  },
+  "util/codeql/util/test": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "util/codeql/util/test/InlineExpectationsTest.qll": {
+    "mode": 420,
+    "sha256": "2c98071574683482ef2e64fd8f7b951b70b6a36c45f222be7c6c52101f3505c4",
+    "size": 33489,
+    "type": "file"
+  },
+  "util/ext": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "util/ext/default-alert-filter.yml": {
+    "mode": 420,
+    "sha256": "8ad529c7bdea1d279069340d9eabb7c9e219d11002002eb5e27aa49795a00f23",
+    "size": 160,
+    "type": "file"
+  },
+  "util/qlpack.yml": {
+    "mode": 420,
+    "sha256": "c51cc18388d41ef459fb3636724312cdf777b94fb90c41b15ba0cfee80415c8b",
+    "size": 225,
+    "type": "file"
+  },
+  "yaml": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "yaml/.packinfo": {
+    "mode": 420,
+    "sha256": "9cc66cb299b73769a30ce281c5caa4e43d473c393c47f1aa4418b65f55a4be13",
+    "size": 62,
+    "type": "file"
+  },
+  "yaml/CHANGELOG.md": {
+    "mode": 420,
+    "sha256": "ab6b6b8bc5e9031b4291159463bf50d39002aabcf97df56a76beda7c5c659aae",
+    "size": 3504,
+    "type": "file"
+  },
+  "yaml/codeql": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "yaml/codeql/serverless": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "yaml/codeql/serverless/ServerLess.qll": {
+    "mode": 420,
+    "sha256": "01cc201961528e558363c44150d6f1fa163bcd1658a1e18a4e809da3e4542391",
+    "size": 5928,
+    "type": "file"
+  },
+  "yaml/codeql/serverless/mapping.md": {
+    "mode": 420,
+    "sha256": "752ebf8f93f971291cb0da389de4ccdd742479e01b92275abece3ae9bdc088bb",
+    "size": 4125,
+    "type": "file"
+  },
+  "yaml/codeql/yaml": {
+    "mode": 493,
+    "type": "directory"
+  },
+  "yaml/codeql/yaml/Yaml.qll": {
+    "mode": 420,
+    "sha256": "99dd199475b20c7facd5b859bb6a263269a5f32d8fc64cb613ac17676224afcd",
+    "size": 16022,
+    "type": "file"
+  },
+  "yaml/qlpack.yml": {
+    "mode": 420,
+    "sha256": "d844c722b7a2440c2859b9edb3f3d4bb5e4b18c03ee512f8923b11bf4f9c68c0",
+    "size": 196,
+    "type": "file"
+  }
+}

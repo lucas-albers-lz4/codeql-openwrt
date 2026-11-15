@@ -1,0 +1,50 @@
+{
+  "/usr/bin/as": {
+    "mode": 493,
+    "realpath": "/usr/bin/x86_64-linux-gnu-as",
+    "sha256": "07dd8551ea0aa065975e4dddb8e1bb7dc308d12d54eca22c3858db79467c7cb9",
+    "size": 795184
+  },
+  "/usr/bin/cc": {
+    "mode": 493,
+    "realpath": "/usr/bin/x86_64-linux-gnu-gcc-14",
+    "sha256": "a23ecab8ff08f09ad8c80602c2c5df7f49e09c25905cb8975902e101bf72635f",
+    "size": 1162264
+  },
+  "/usr/bin/dash": {
+    "mode": 493,
+    "realpath": "/usr/bin/dash",
+    "sha256": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7",
+    "size": 129736
+  },
+  "/usr/bin/env": {
+    "mode": 493,
+    "realpath": "/usr/bin/env",
+    "sha256": "eb1c64bbc9908afcdf8cb48524f17112d8dd76a249f80dee2f01da14747b3b6e",
+    "size": 56144
+  },
+  "/usr/bin/gcc": {
+    "mode": 493,
+    "realpath": "/usr/bin/x86_64-linux-gnu-gcc-14",
+    "sha256": "a23ecab8ff08f09ad8c80602c2c5df7f49e09c25905cb8975902e101bf72635f",
+    "size": 1162264
+  },
+  "/usr/bin/ld": {
+    "mode": 493,
+    "realpath": "/usr/bin/x86_64-linux-gnu-ld.bfd",
+    "sha256": "d2766988b6a1b1d1518cdc09242e726d1f24e151e16410ada3092b11ffd9081b",
+    "size": 1861256
+  },
+  "/usr/bin/python3.13": {
+    "mode": 493,
+    "realpath": "/usr/bin/python3.13",
+    "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+    "size": 6832784
+  },
+  "/usr/bin/uname": {
+    "mode": 493,
+    "realpath": "/usr/bin/uname",
+    "sha256": "458ea035850a5802a46ceb931e2864f9649a9030f43342156c54768f7ffddb3e",
+    "size": 43464
+  }
+}

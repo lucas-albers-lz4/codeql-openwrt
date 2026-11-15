@@ -1,0 +1,107 @@
+{
+  "argv": [
+    "/usr/bin/python3.13",
+    "-E",
+    "-S",
+    "-B",
+    "-m",
+    "policy.setblock_table",
+    "--typed-json",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/typed.json",
+    "--source-root",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke"
+  ],
+  "boundary_errors": [],
+  "cwd": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/consumer",
+  "elapsed_ns": 81009299,
+  "environment": {
+    "HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/home",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/cache",
+    "XDG_CONFIG_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/config"
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-15T08:47:00.225300+00:00",
+  "inputs_after": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/typed.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "5c619d5aa3566c5296080b0a9be7072b38d6eb7a98eae647d68c5dcf09b2b59b",
+        "size": 1908,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci": {
+      ".": {
+        "mode": 420,
+        "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+        "size": 16161,
+        "type": "file"
+      }
+    }
+  },
+  "inputs_before": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/typed.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "5c619d5aa3566c5296080b0a9be7072b38d6eb7a98eae647d68c5dcf09b2b59b",
+        "size": 1908,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci": {
+      ".": {
+        "mode": 420,
+        "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+        "size": 16161,
+        "type": "file"
+      }
+    }
+  },
+  "launch_error": null,
+  "mutables_after": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/consumer/reports/handler_effects.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "d55e0a799e916f8728b9bb34a9689b81f070dbe25eceddd2db9c0cc3b4417fab",
+        "size": 203730,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/consumer/reports/m4-block-device-exec.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "660e12712928a99b22e0a8c80247bcd63b54967e465ed3fa9b28354593045a6e",
+        "size": 5572,
+        "type": "file"
+      }
+    }
+  },
+  "mutables_before": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/consumer/reports/handler_effects.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "2644d1187afaaf126afa71572cc980afbecd3f22592057809951491f90a436a0",
+        "size": 203707,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/consumer/reports/m4-block-device-exec.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "f81718031bdfe53fdde5ee0641683a7dc564329d2c655f85fc5c8eb629b95373",
+        "size": 5549,
+        "type": "file"
+      }
+    }
+  },
+  "outputs": {},
+  "stage": "import",
+  "started_utc": "2026-11-15T08:47:00.144292+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

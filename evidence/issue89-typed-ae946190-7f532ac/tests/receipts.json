@@ -1,0 +1,66 @@
+[
+  {
+    "suite": "consumer",
+    "commit": "7f532ac6ab527ee1bf07711fd7942dc4be381b48",
+    "argv": [
+      "/usr/bin/python3.13",
+      "-E",
+      "-S",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "policy/tests",
+      "-t",
+      ".",
+      "-v"
+    ],
+    "cwd": "/root/.hermes/profiles/work/cache/scratch/audit-issue89-clean-gates/consumer",
+    "start": "2026-11-15T08:53:53.466077+00:00",
+    "finish": "2026-11-15T08:54:09.862918+00:00",
+    "returncode": 0,
+    "expected_tests": 850,
+    "observed_runs": [
+      [
+        "850",
+        "16.013"
+      ]
+    ],
+    "success": true,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "922c7ee28bfc24067f84a25f26bfc8f4284ba96463f1acc7c0f0efba0f4ba774",
+    "archive_sha256": "3c11037e2daedcf115794a8843452178e9e1d19534f58a01b719b68ed6a1c7c6"
+  },
+  {
+    "suite": "producer",
+    "commit": "ae946190661eb221bc1f562fdba02088ef83de2d",
+    "argv": [
+      "/usr/bin/python3.13",
+      "-E",
+      "-S",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "cwd": "/root/.hermes/profiles/work/cache/scratch/audit-issue89-clean-gates/producer",
+    "start": "2026-11-15T08:54:10.023805+00:00",
+    "finish": "2026-11-15T08:54:12.314762+00:00",
+    "returncode": 0,
+    "expected_tests": 47,
+    "observed_runs": [
+      [
+        "47",
+        "2.197"
+      ]
+    ],
+    "success": true,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "20dc0ad5728102e3b8401d7929e4365438bd13e2e960c61d45fda3efc43c9715",
+    "archive_sha256": "02b6ba5b341ba8767cb174a175af1d504b2396d9dbceb776e5b367e2129082cb"
+  }
+]

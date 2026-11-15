@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql",
+    "resolve",
+    "library-path",
+    "--query=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+    "--format=json",
+    "--search-path=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/extractor-pack:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/lib:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs",
+    "--additional-packs=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs",
+    "--no-default-compilation-cache",
+    "--compilation-cache=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/query-cache",
+    "--common-caches=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/common-cache"
+  ],
+  "boundary_errors": [],
+  "cwd": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer",
+  "elapsed_ns": 1054251740,
+  "environment": {
+    "HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/home",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/cache",
+    "XDG_CONFIG_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/config"
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-15T08:46:23.328034+00:00",
+  "inputs_after": {},
+  "inputs_before": {},
+  "launch_error": null,
+  "mutables_after": {},
+  "mutables_before": {},
+  "outputs": {},
+  "stage": "extracted-resolve",
+  "started_utc": "2026-11-15T08:46:22.273787+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "2af50e120a9c6eb112bb6270839443b9bf726877603b58d43bd7e8903703d797"
+}

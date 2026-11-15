@@ -1,0 +1,10 @@
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1254 MB.
+Compiling query plan for /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql.
+[1/1 comp 2.6s] Compiled /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/diagnostics/SuccessfullyExtractedFiles.ql.
+[1/1 eval 107ms] Evaluation done; writing results to /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.bqrs.
+Shutting down query evaluator.

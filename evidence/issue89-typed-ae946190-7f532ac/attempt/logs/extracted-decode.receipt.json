@@ -1,0 +1,61 @@
+{
+  "argv": [
+    "/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql",
+    "bqrs",
+    "decode",
+    "--format=csv",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.bqrs"
+  ],
+  "boundary_errors": [],
+  "cwd": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer",
+  "elapsed_ns": 612771766,
+  "environment": {
+    "HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/home",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/cache",
+    "XDG_CONFIG_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/config"
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-15T08:46:54.877274+00:00",
+  "inputs_after": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.bqrs": {
+      ".": {
+        "mode": 420,
+        "sha256": "e3f66cc0131639edd36422263ad0290b378db130d02540811117fde38d70e8ad",
+        "size": 3130,
+        "type": "file"
+      }
+    }
+  },
+  "inputs_before": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.bqrs": {
+      ".": {
+        "mode": 420,
+        "sha256": "e3f66cc0131639edd36422263ad0290b378db130d02540811117fde38d70e8ad",
+        "size": 3130,
+        "type": "file"
+      }
+    }
+  },
+  "launch_error": null,
+  "mutables_after": {},
+  "mutables_before": {},
+  "outputs": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.csv": {
+      ".": {
+        "mode": 420,
+        "sha256": "ab842728312739e69fc47983c85abaa09a59a297ead156d6ceca3df333b570f4",
+        "size": 148,
+        "type": "file"
+      }
+    }
+  },
+  "stage": "extracted-decode",
+  "started_utc": "2026-11-15T08:46:54.264506+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "ab842728312739e69fc47983c85abaa09a59a297ead156d6ceca3df333b570f4"
+}
