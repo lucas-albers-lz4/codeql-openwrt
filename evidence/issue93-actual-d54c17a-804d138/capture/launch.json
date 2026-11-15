@@ -1,0 +1,23 @@
+{
+  "acceptance_audit": "not performed; independent audit required",
+  "after_ok": true,
+  "argv": [
+    "/usr/bin/bash",
+    "--noprofile",
+    "--norc"
+  ],
+  "before_ok": true,
+  "capture_audit_rc": 0,
+  "descendants_waited": true,
+  "finished": "2026-11-15T12:41:18.999955+00:00",
+  "observed_files": 66,
+  "pid": 543322,
+  "recipe_sha256": "8ad37ece137652beab1aa2e70c868fb5fa154737b9d54dd286c9b4e48dabc03d",
+  "returncode": 0,
+  "script_sha256": "4532ea68d40040e8be855e5a9e0ae0098ff9ff24722b5f060d11c68d43733f63",
+  "signals": [],
+  "started": true,
+  "supervisor_error": null,
+  "time": "2026-11-15T12:40:49.036495+00:00",
+  "tracked_pre_post_identical": true
+}

@@ -1,0 +1,24 @@
+{
+  "after": {
+    "inventory_mismatches": 0,
+    "ok": true,
+    "pathset_exact_match": true
+  },
+  "approval_context_execution_authorized_field": false,
+  "approval_context_sha256": "fb570a5976a5873665436c433d64d346e64ba42b2b136820c15575481b31330f",
+  "before": {
+    "inventory_mismatches": 0,
+    "ok": true,
+    "pathset_exact_match": true
+  },
+  "consumer_commit": "804d1386c54f4c273ca593e5dd2051636aa19245",
+  "context_inventory_sha256": "f14f039f4e65abfd634e4cc94729332b44cd27b9adb3171ded9f3738e9dcc4a1",
+  "external_parent_approval_received": true,
+  "input_path_count": 1184,
+  "input_path_set_sha256": "967ed7bd6309504ae4780047f7f6e19288a8f4cc4e00eea51cfcd86822607cca",
+  "inputs_sha256_file_sha256": "f0d08493101f181a94e1cc1f1e61e91063875638198d742ab7d77a58f24c7e40",
+  "inventory_file_count": 1194,
+  "parent_approval_sha256": "d61da7f15b6449fd9b2464eb4e87c66146f7d1ec5c7d894599f42ca1b4f562ca",
+  "recipe_block_sha256": "4532ea68d40040e8be855e5a9e0ae0098ff9ff24722b5f060d11c68d43733f63",
+  "recipe_sha256": "8ad37ece137652beab1aa2e70c868fb5fa154737b9d54dd286c9b4e48dabc03d"
+}

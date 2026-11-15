@@ -1,0 +1,8 @@
+54a3f8ff484388f7a1ba02f51a4f3b92e92ace90b66a75a733e3dfe82a800a55  ${ATTEMPT}/artifacts/routing.json
+50a4e581624a3ecce646e18bc479424a6c3cd7b2eb7557833335bcc9a2b42c18  ${ATTEMPT}/artifacts/extracted.bqrs
+aee56c686695da5b6882b5e2159bbb8f20a43cb7a35b228fe351e81845bf91f2  ${ATTEMPT}/artifacts/errors.bqrs
+9f63c81adeff89f76f8dd32b251ca24436378c1731642161aac1ecd223ba6ed3  ${ATTEMPT}/artifacts/table.bqrs
+6c007c67587518b5663dda3ce9fe023fa97f901c096bea632d9ac354a2dc6b0c  ${ATTEMPT}/artifacts/extracted.csv
+0bb9068729a2970f4b125b6893565812fdd2d1fc6510626f214f3d055b4f94f5  ${ATTEMPT}/artifacts/errors.csv
+245ad2dc1aedc9d4e0d41d83fcb0246a0990bcd70b5d0a35e1cb65100bfa8996  ${ATTEMPT}/artifacts/table.csv
+3b0020c6d87664c8be7c1544e705ab14f12f1b6c29f43c6f939db341460696a0  ${ATTEMPT}/artifacts/comparison.json

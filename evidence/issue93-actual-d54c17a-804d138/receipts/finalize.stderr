@@ -1,0 +1,9 @@
+Running pre-finalize script ${PACKET}/inputs/extractor-pack/tools/pre-finalize.sh in ${ATTEMPT}/ql/test/extractor-smoke.
+Running command in ${ATTEMPT}/ql/test/extractor-smoke: [${PACKET}/inputs/extractor-pack/tools/pre-finalize.sh]
+Pre-finalize script ${PACKET}/inputs/extractor-pack/tools/pre-finalize.sh completed in 1073 ms.
+Running TRAP import for CodeQL database at ${ATTEMPT}/db...
+Importing TRAP files
+Merging relations
+Finished writing database (relations: 79.80 KiB; string pool: 2.05 MiB).
+TRAP import complete (1.4s).
+Finished zipping source archive (4.94 KiB).

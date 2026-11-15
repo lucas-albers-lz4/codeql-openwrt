@@ -1,0 +1,90 @@
+{
+  "all_zero": true,
+  "count": 21,
+  "receipts": [
+    {
+      "exit_code": 0,
+      "phase": "consumer"
+    },
+    {
+      "exit_code": 0,
+      "phase": "decode-errors"
+    },
+    {
+      "exit_code": 0,
+      "phase": "decode-extracted"
+    },
+    {
+      "exit_code": 0,
+      "phase": "decode-table"
+    },
+    {
+      "exit_code": 0,
+      "phase": "finalize"
+    },
+    {
+      "exit_code": 0,
+      "phase": "index"
+    },
+    {
+      "exit_code": 0,
+      "phase": "init"
+    },
+    {
+      "exit_code": 0,
+      "phase": "input-check"
+    },
+    {
+      "exit_code": 0,
+      "phase": "postcheck"
+    },
+    {
+      "exit_code": 0,
+      "phase": "query-errors"
+    },
+    {
+      "exit_code": 0,
+      "phase": "query-extracted"
+    },
+    {
+      "exit_code": 0,
+      "phase": "query-table"
+    },
+    {
+      "exit_code": 0,
+      "phase": "resolution-match-errors"
+    },
+    {
+      "exit_code": 0,
+      "phase": "resolution-match-extracted"
+    },
+    {
+      "exit_code": 0,
+      "phase": "resolution-match-table"
+    },
+    {
+      "exit_code": 0,
+      "phase": "resolve-errors"
+    },
+    {
+      "exit_code": 0,
+      "phase": "resolve-extracted"
+    },
+    {
+      "exit_code": 0,
+      "phase": "resolve-table"
+    },
+    {
+      "exit_code": 0,
+      "phase": "routing-copy"
+    },
+    {
+      "exit_code": 0,
+      "phase": "stage-source"
+    },
+    {
+      "exit_code": 0,
+      "phase": "version"
+    }
+  ]
+}

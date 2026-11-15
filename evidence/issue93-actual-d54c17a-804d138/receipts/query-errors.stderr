@@ -1,0 +1,10 @@
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1254 MB.
+Compiling query plan for ${PACKET}/inputs/producer/ql/src/diagnostics/ExtractionErrors.ql.
+[1/1 comp 1.6s] Compiled ${PACKET}/inputs/producer/ql/src/diagnostics/ExtractionErrors.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/diagnostics/ExtractionErrors.ql.
+[1/1 eval 31ms] Evaluation done; writing results to ${ATTEMPT}/artifacts/errors.bqrs.
+Shutting down query evaluator.
