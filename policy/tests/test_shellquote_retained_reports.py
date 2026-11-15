@@ -21,11 +21,13 @@ class RetainedShellquoteTests(unittest.TestCase):
     def test_retained_findings_match_historical_identity_and_semantics(self):
         manifest = load(ROOT / 'policy/ucode_snapshot_manifest.json')['typed'][FINDINGS]
         rows = load(ROOT / 'reports' / FINDINGS)
+        schema = load(ROOT / 'schemas/finding.schema.json')
         self.assertEqual(Counter(row['record_id'] for row in rows),
                          Counter(manifest['rows'].keys()), 'retained record identity/multiplicity')
         for row in rows:
             rid = row['record_id']
             with self.subTest(record_id=rid):
+                self.assertEqual(contract._validate(row, schema, rid), [])
                 self.assertEqual(row['analysis_revision'], manifest['revision'])
                 self.assertEqual(row['producer'], 'step3')
                 self.assertEqual(row['corpus_revision'], corpus_revision())
