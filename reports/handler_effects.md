@@ -51,6 +51,16 @@ Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `
 
 Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
 
+These are **aggregate**, session-neutral effects, not caller-specific verdicts.
+The effect's `expectation_id` identifies primary grant(s) supporting its
+assessment; grants with other expectation IDs are supplementary relationships.
+An assessed effect must retain at least one primary grant. Do not copy the
+aggregate assessment onto supplementary sessions; a caller view needs its own
+justification or remains unassessed. This also applies to other delegated
+sessions, not only root. `policy.interchange_contract.join_policy_grants`
+returns primary and supplementary lists when explicitly called with aggregate
+scope; it does not create grants or perform policy evaluation.
+
 ### `#12` request.args exec-method grants
 
 Unauthenticated `/ubus` is a **non-join** (M2 deny). Delegated module sessions and stock root `*` join as `intended_access`.

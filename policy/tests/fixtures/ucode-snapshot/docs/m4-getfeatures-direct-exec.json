@@ -1,0 +1,138 @@
+[
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-hostapd-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.hostapd.system",
+    "target_id": "command:hostapd-vfeature",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "wifi_features literal list"],
+    "assumptions": [
+      "TreeSitter call reachability inside getFeatures.call; not a taint path",
+      "feature comes from a closed literal list, not request.args"
+    ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-wpasupplicant-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.wpasupplicant.system",
+    "target_id": "command:wpa_supplicant-vfeature",
+    "op": "exec",
+    "sink_kind": "system",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "wifi_features literal list"],
+    "assumptions": [
+      "TreeSitter call reachability inside getFeatures.call; not a taint path",
+      "feature comes from a closed literal list, not request.args"
+    ],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-dnsmasq-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.dnsmasq.popen",
+    "target_id": "command:dnsmasq-version",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "literal dnsmasq --version"],
+    "assumptions": ["TreeSitter call reachability; not a taint path"],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-odhcpd-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.odhcpd.popen",
+    "target_id": "command:odhcpd-h",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "literal odhcpd -h"],
+    "assumptions": ["TreeSitter call reachability; not a taint path"],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  },
+  {
+    "record_type": "handler_effect",
+    "evidence_status": "fact",
+    "producer": "step3",
+    "record_id": "m4:getfeatures-ipset-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:getfeatures-direct-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getFeatures",
+    "ubus_object": "luci",
+    "method": "getFeatures",
+    "effect_id": "getFeatures.ipset.popen",
+    "target_id": "command:ipset-help",
+    "op": "exec",
+    "sink_kind": "popen",
+    "assessment": "intended_access",
+    "expectation_id": "unauthenticated-getFeatures",
+    "conditions": ["getFeatures.call body", "literal ipset --help"],
+    "assumptions": ["TreeSitter call reachability; not a taint path"],
+    "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+      "ql/src/m4/GetFeaturesDirectExec.ql"
+    ],
+    "unknowns": ["live uhttpd/rpcd not executed"]
+  }
+]

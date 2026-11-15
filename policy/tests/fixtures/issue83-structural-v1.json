@@ -1,0 +1,20 @@
+{
+  "contract": "issue83-structural-v1",
+  "description": "Apply overrides to a valid unassessed taint_path row; error_field identifies the expected bounded-rule category. Structural subset only, not semantic or provenance conformance.",
+  "cases": [
+    {"name": "valid-local-revision", "overrides": {"analysis_revision": "step3:independent-v1"}, "valid": true},
+    {"name": "empty-revision-suffix", "overrides": {"analysis_revision": "step3:"}, "valid": false, "error_field": "analysis_revision"},
+    {"name": "space-in-revision", "overrides": {"analysis_revision": "step3:has space"}, "valid": false, "error_field": "analysis_revision"},
+    {"name": "colon-in-revision", "overrides": {"analysis_revision": "step3:a:b"}, "valid": false, "error_field": "analysis_revision"},
+    {"name": "newline-in-revision", "overrides": {"analysis_revision": "step3:a\n"}, "valid": false, "error_field": "analysis_revision"},
+    {"name": "foreign-revision", "overrides": {"analysis_revision": "policy:local"}, "valid": false, "error_field": "analysis_revision"},
+    {"name": "foreign-producer", "overrides": {"producer": "step4"}, "valid": false, "error_field": "producer"},
+    {"name": "unsupported-rpc-surface", "overrides": {"record_type": "rpc_surface"}, "valid": false, "error_field": "record_type"},
+    {"name": "undeclared-backend-method", "overrides": {"record_type": "backend_method"}, "valid": false, "error_field": "record_type"},
+    {"name": "report-only-coverage", "overrides": {"record_type": "coverage"}, "valid": false, "error_field": "record_type"},
+    {"name": "invalid-corpus", "overrides": {"corpus_revision": "sha256:bad"}, "valid": false, "error_field": "corpus_revision"},
+    {"name": "unknown-profile", "overrides": {"profile": "not-a-profile"}, "valid": false, "error_field": "profile"},
+    {"name": "blank-id", "overrides": {"record_id": ""}, "valid": false, "error_field": "record_id"},
+    {"name": "bad-unknowns", "overrides": {"unknowns": null}, "valid": false, "error_field": "unknowns"}
+  ]
+}

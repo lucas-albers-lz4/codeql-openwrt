@@ -225,6 +225,29 @@ class ImportTests(unittest.TestCase):
         path.write_text(json.dumps(rows))
         self.rejected_unchanged()
 
+    def test_adapter_rejects_mixed_legacy_and_imported_pair_without_writes(self):
+        legacy = json.loads(LEGACY_ROWS.read_text())["snapshot_effect"]
+        path = self.repo / SNAPSHOT
+        rows = json.loads(path.read_text())
+        rows = [legacy if row.get("record_id") == EFFECT_ID else row for row in rows]
+        path.write_text(json.dumps(rows))
+        before = self.artifacts()
+        with self.assertRaisesRegex(ValueError, "snapshot and catalog rows are not in lockstep"):
+            import_table(self.csv, self.source, self.repo)
+        self.assertEqual(self.artifacts(), before)
+
+    def test_adapter_rejects_effect_identity_alias_without_writes(self):
+        for path in (SNAPSHOT, CATALOG):
+            file = self.repo / path
+            rows = json.loads(file.read_text())
+            target = next(row for row in rows if row.get("record_id") == EFFECT_ID)
+            rows.append(dict(target, record_id="audit:alias:setblockdetect"))
+            file.write_text(json.dumps(rows))
+        before = self.artifacts()
+        with self.assertRaisesRegex(ValueError, "effect identity is already used by a different record"):
+            import_table(self.csv, self.source, self.repo)
+        self.assertEqual(self.artifacts(), before)
+
     def test_duplicate_same_id_fails_without_writes(self):
         for artifact in (SNAPSHOT, CATALOG):
             with self.subTest(artifact=str(artifact)):

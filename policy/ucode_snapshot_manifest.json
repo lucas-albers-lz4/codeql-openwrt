@@ -1,0 +1,754 @@
+{
+  "description": "Historical ucode docs snapshot at 892a4beff2334a140355ef721cf980d532a7100f; not a live completeness oracle.",
+  "typed": {
+    "m3-findings.json": {
+      "revision": "step3:getfeatures-v1",
+      "rows": {
+        "m3:getfeatures-netifd-popen": [
+          "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+          "ql/src/m3/GetFeaturesPopen.ql"
+        ],
+        "m3:getfeatures-netifd-request-args-no-path": [
+          "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+          "ql/src/m3/GetFeaturesHelperTaint.ql"
+        ],
+        "m3:synthetic-taint-pos": [],
+        "m3:synthetic-taint-neg": []
+      },
+      "semantics": {
+        "m3:getfeatures-netifd-popen": {
+          "record_type": "handler_effect",
+          "evidence_status": "fact",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getFeatures",
+          "ubus_object": "luci",
+          "method": "getFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "unauthenticated-getFeatures",
+          "session_class": null,
+          "assessment": "intended_access",
+          "sink_kind": "popen",
+          "param_name": null,
+          "effect_id": "getFeatures.callPackageVersionCheck.popen",
+          "target_id": "command:callPackageVersionCheck:netifd",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed"
+          ]
+        },
+        "m3:getfeatures-netifd-request-args-no-path": {
+          "record_type": "taint_path",
+          "evidence_status": "no_path",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getFeatures",
+          "ubus_object": "luci",
+          "method": "getFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "unauthenticated-getFeatures",
+          "session_class": null,
+          "assessment": "intended_access",
+          "sink_kind": "popen",
+          "param_name": "args",
+          "effect_id": null,
+          "target_id": null,
+          "op": null,
+          "required_unknowns": []
+        },
+        "m3:synthetic-taint-pos": {
+          "record_type": "taint_path",
+          "evidence_status": "path_found",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-v1",
+          "ingress": null,
+          "entrypoint_id": null,
+          "ubus_object": null,
+          "method": null,
+          "cgi_endpoint": null,
+          "expectation_id": null,
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": null,
+          "effect_id": null,
+          "target_id": null,
+          "op": null,
+          "required_unknowns": []
+        },
+        "m3:synthetic-taint-neg": {
+          "record_type": "taint_path",
+          "evidence_status": "no_path",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-v1",
+          "ingress": null,
+          "entrypoint_id": null,
+          "ubus_object": null,
+          "method": null,
+          "cgi_endpoint": null,
+          "expectation_id": null,
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": null,
+          "effect_id": null,
+          "target_id": null,
+          "op": null,
+          "required_unknowns": []
+        }
+      }
+    },
+    "m4-findings.json": {
+      "revision": "step3:request-args-exec-v1",
+      "rows": {
+        "m4:luci-getSwconfigFeatures-request-args-popen": [
+          "ql/src/m4/RequestArgsExec.ql",
+          "luci-mod-network.json luci-mod-network-config read ubus luci getSwconfigFeatures"
+        ],
+        "m4:luci-getSwconfigPortState-request-args-popen": [
+          "ql/src/m4/RequestArgsExec.ql",
+          "luci-mod-network.json luci-mod-network-config read ubus luci getSwconfigPortState"
+        ],
+        "m4:luci-getRealtimeStats-request-args-popen": [
+          "ql/src/m4/RequestArgsExec.ql",
+          "luci-mod-status.json luci-mod-status-realtime read ubus luci getRealtimeStats"
+        ],
+        "m4:luci-setPassword-request-args-system": [
+          "ql/src/m4/RequestArgsExec.ql",
+          "policy:decision:unauthenticated-setPassword-deny",
+          "luci-mod-system.json luci-mod-system-config write ubus luci setPassword"
+        ],
+        "m4:luci-setLocaltime-request-args-system": [
+          "ql/src/m4/RequestArgsExec.ql",
+          "luci-mod-system.json luci-mod-system-config write ubus luci setLocaltime"
+        ]
+      },
+      "semantics": {
+        "m4:luci-getSwconfigFeatures-request-args-popen": {
+          "record_type": "taint_path",
+          "evidence_status": "path_found",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:request-args-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
+          "ubus_object": "luci",
+          "method": "getSwconfigFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "luci-mod-network-swconfig",
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": "switch",
+          "effect_id": null,
+          "target_id": "command:swconfig",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed",
+            "shellquote barrier not modeled",
+            "delegated luci-mod-network-config session is not in the M2 evaluator"
+          ]
+        },
+        "m4:luci-getSwconfigPortState-request-args-popen": {
+          "record_type": "taint_path",
+          "evidence_status": "path_found",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:request-args-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
+          "ubus_object": "luci",
+          "method": "getSwconfigPortState",
+          "cgi_endpoint": null,
+          "expectation_id": "luci-mod-network-swconfig",
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": "switch",
+          "effect_id": null,
+          "target_id": "command:swconfig",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed",
+            "shellquote barrier not modeled",
+            "delegated luci-mod-network-config session is not in the M2 evaluator"
+          ]
+        },
+        "m4:luci-getRealtimeStats-request-args-popen": {
+          "record_type": "taint_path",
+          "evidence_status": "path_found",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:request-args-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getRealtimeStats",
+          "ubus_object": "luci",
+          "method": "getRealtimeStats",
+          "cgi_endpoint": null,
+          "expectation_id": "luci-mod-status-realtime",
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": "device",
+          "effect_id": null,
+          "target_id": "command:luci-bwc",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed",
+            "shellquote barrier not modeled",
+            "delegated luci-mod-status-realtime session is not in the M2 evaluator"
+          ]
+        },
+        "m4:luci-setPassword-request-args-system": {
+          "record_type": "taint_path",
+          "evidence_status": "path_found",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:request-args-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.setPassword",
+          "ubus_object": "luci",
+          "method": "setPassword",
+          "cgi_endpoint": null,
+          "expectation_id": "luci-mod-system-setPassword",
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "system",
+          "param_name": "username",
+          "effect_id": null,
+          "target_id": "command:busybox-passwd",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed",
+            "shellquote barrier not modeled",
+            "delegated luci-mod-system-config session is not in the M2 evaluator"
+          ]
+        },
+        "m4:luci-setLocaltime-request-args-system": {
+          "record_type": "taint_path",
+          "evidence_status": "path_found",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:request-args-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.setLocaltime",
+          "ubus_object": "luci",
+          "method": "setLocaltime",
+          "cgi_endpoint": null,
+          "expectation_id": "luci-mod-system-setLocaltime",
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "system",
+          "param_name": "localtime",
+          "effect_id": null,
+          "target_id": "command:date",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed",
+            "int/sprintf conversion is not modeled as a barrier",
+            "delegated luci-mod-system-config session is not in the M2 evaluator"
+          ]
+        }
+      }
+    },
+    "m4-getfeatures-direct-exec.json": {
+      "revision": "step3:getfeatures-direct-exec-v1",
+      "rows": {
+        "m4:getfeatures-hostapd-system": [
+          "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+          "ql/src/m4/GetFeaturesDirectExec.ql"
+        ],
+        "m4:getfeatures-wpasupplicant-system": [
+          "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+          "ql/src/m4/GetFeaturesDirectExec.ql"
+        ],
+        "m4:getfeatures-dnsmasq-popen": [
+          "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+          "ql/src/m4/GetFeaturesDirectExec.ql"
+        ],
+        "m4:getfeatures-odhcpd-popen": [
+          "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+          "ql/src/m4/GetFeaturesDirectExec.ql"
+        ],
+        "m4:getfeatures-ipset-popen": [
+          "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
+          "ql/src/m4/GetFeaturesDirectExec.ql"
+        ]
+      },
+      "semantics": {
+        "m4:getfeatures-hostapd-system": {
+          "record_type": "handler_effect",
+          "evidence_status": "fact",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-direct-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getFeatures",
+          "ubus_object": "luci",
+          "method": "getFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "unauthenticated-getFeatures",
+          "session_class": null,
+          "assessment": "intended_access",
+          "sink_kind": "system",
+          "param_name": null,
+          "effect_id": "getFeatures.hostapd.system",
+          "target_id": "command:hostapd-vfeature",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed"
+          ]
+        },
+        "m4:getfeatures-wpasupplicant-system": {
+          "record_type": "handler_effect",
+          "evidence_status": "fact",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-direct-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getFeatures",
+          "ubus_object": "luci",
+          "method": "getFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "unauthenticated-getFeatures",
+          "session_class": null,
+          "assessment": "intended_access",
+          "sink_kind": "system",
+          "param_name": null,
+          "effect_id": "getFeatures.wpasupplicant.system",
+          "target_id": "command:wpa_supplicant-vfeature",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed"
+          ]
+        },
+        "m4:getfeatures-dnsmasq-popen": {
+          "record_type": "handler_effect",
+          "evidence_status": "fact",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-direct-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getFeatures",
+          "ubus_object": "luci",
+          "method": "getFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "unauthenticated-getFeatures",
+          "session_class": null,
+          "assessment": "intended_access",
+          "sink_kind": "popen",
+          "param_name": null,
+          "effect_id": "getFeatures.dnsmasq.popen",
+          "target_id": "command:dnsmasq-version",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed"
+          ]
+        },
+        "m4:getfeatures-odhcpd-popen": {
+          "record_type": "handler_effect",
+          "evidence_status": "fact",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-direct-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getFeatures",
+          "ubus_object": "luci",
+          "method": "getFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "unauthenticated-getFeatures",
+          "session_class": null,
+          "assessment": "intended_access",
+          "sink_kind": "popen",
+          "param_name": null,
+          "effect_id": "getFeatures.odhcpd.popen",
+          "target_id": "command:odhcpd-h",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed"
+          ]
+        },
+        "m4:getfeatures-ipset-popen": {
+          "record_type": "handler_effect",
+          "evidence_status": "fact",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:getfeatures-direct-exec-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getFeatures",
+          "ubus_object": "luci",
+          "method": "getFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "unauthenticated-getFeatures",
+          "session_class": null,
+          "assessment": "intended_access",
+          "sink_kind": "popen",
+          "param_name": null,
+          "effect_id": "getFeatures.ipset.popen",
+          "target_id": "command:ipset-help",
+          "op": "exec",
+          "required_unknowns": [
+            "live uhttpd/rpcd not executed"
+          ]
+        }
+      }
+    },
+    "m4-imported-callee-findings.json": {
+      "revision": "step3:imported-callee-v1",
+      "evidence_status": "inconclusive",
+      "rows": {
+        "m4:setInitAction-init_action-unresolved": [
+          "ql/src/m4/ImportedCalleeTaint.ql"
+        ]
+      },
+      "semantics": {
+        "m4:setInitAction-init_action-unresolved": {
+          "record_type": "taint_path",
+          "evidence_status": "inconclusive",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:imported-callee-v1",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.setInitAction",
+          "ubus_object": "luci",
+          "method": "setInitAction",
+          "cgi_endpoint": null,
+          "expectation_id": null,
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": null,
+          "param_name": "name",
+          "effect_id": null,
+          "target_id": null,
+          "op": null,
+          "required_unknowns": [
+            "unresolved_call: luci.sys init_action body not extracted",
+            "DataFlow localFlowStep connects expressions, SSA definitions and reads, copies and returns; unique same-file identifier FunctionDeclarations may resolve, imported luci.sys stays unresolved",
+            "live uhttpd/rpcd not executed"
+          ]
+        }
+      }
+    },
+    "m4-shellquote-findings.json": {
+      "revision": "step3:shellquote-barrier-v2",
+      "rows": {
+        "m4:quote-ok-complete-arg-no-injection": [
+          "ql/src/m4/CompleteQuotedArg.ql",
+          "ql/src/m4/ShellInjection.ql"
+        ],
+        "m4:quote-exe-executable-selection": [
+          "ql/src/m4/ShellInjection.ql"
+        ],
+        "m4:getSwconfigFeatures-complete-quote-no-injection": [
+          "ql/src/m4/CompleteQuotedArg.ql",
+          "ql/src/m4/ShellInjection.ql"
+        ],
+        "m4:getSwconfigPortState-complete-quote-no-injection": [
+          "ql/src/m4/CompleteQuotedArg.ql",
+          "ql/src/m4/ShellInjection.ql"
+        ]
+      },
+      "semantics": {
+        "m4:quote-ok-complete-arg-no-injection": {
+          "record_type": "taint_path",
+          "evidence_status": "inconclusive",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:shellquote-barrier-v2",
+          "ingress": null,
+          "entrypoint_id": null,
+          "ubus_object": null,
+          "method": null,
+          "cgi_endpoint": null,
+          "expectation_id": null,
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": null,
+          "effect_id": null,
+          "target_id": null,
+          "op": null,
+          "required_unknowns": [
+            "Binding and quoting semantics of shellquote are unmodeled",
+            "Runtime execution and exploitability not established"
+          ]
+        },
+        "m4:quote-exe-executable-selection": {
+          "record_type": "taint_path",
+          "evidence_status": "path_found",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:shellquote-barrier-v2",
+          "ingress": null,
+          "entrypoint_id": null,
+          "ubus_object": null,
+          "method": null,
+          "cgi_endpoint": null,
+          "expectation_id": null,
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": null,
+          "effect_id": null,
+          "target_id": null,
+          "op": null,
+          "required_unknowns": []
+        },
+        "m4:getSwconfigFeatures-complete-quote-no-injection": {
+          "record_type": "taint_path",
+          "evidence_status": "inconclusive",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:shellquote-barrier-v2",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
+          "ubus_object": "luci",
+          "method": "getSwconfigFeatures",
+          "cgi_endpoint": null,
+          "expectation_id": "luci-mod-network-swconfig",
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": "switch",
+          "effect_id": null,
+          "target_id": null,
+          "op": null,
+          "required_unknowns": [
+            "Binding and quoting semantics of shellquote are unmodeled",
+            "Runtime execution and exploitability not established"
+          ]
+        },
+        "m4:getSwconfigPortState-complete-quote-no-injection": {
+          "record_type": "taint_path",
+          "evidence_status": "inconclusive",
+          "profile": "luci-ssl-25.12",
+          "analysis_revision": "step3:shellquote-barrier-v2",
+          "ingress": "ubus_http",
+          "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
+          "ubus_object": "luci",
+          "method": "getSwconfigPortState",
+          "cgi_endpoint": null,
+          "expectation_id": "luci-mod-network-swconfig",
+          "session_class": null,
+          "assessment": "unassessed",
+          "sink_kind": "popen",
+          "param_name": "switch",
+          "effect_id": null,
+          "target_id": null,
+          "op": null,
+          "required_unknowns": [
+            "Binding and quoting semantics of shellquote are unmodeled",
+            "Runtime execution and exploitability not established"
+          ]
+        }
+      }
+    }
+  },
+  "coverage": {
+    "m3-coverage.json": {
+      "revision": "step3:getfeatures-v1",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "keys": [
+        "analysis_revision",
+        "analyzed",
+        "entrypoint_id",
+        "extracted_files",
+        "profile",
+        "resolved_calls",
+        "status",
+        "trusted_summaries",
+        "unknowns",
+        "unmodeled_branches",
+        "unsupported_constructs"
+      ],
+      "contents": {
+        "extracted_files": [
+          "luci",
+          "taint_pos",
+          "taint_neg"
+        ],
+        "analyzed": [
+          "same-file callPackageVersionCheck",
+          "named popen from fs",
+          "builtin system inventory",
+          "syntactic local request.args taint (taint_pos path_found; getFeatures netifd helper no_path)"
+        ],
+        "resolved_calls": [
+          "callPackageVersionCheck",
+          "popen",
+          "system"
+        ],
+        "unmodeled_branches": [
+          "getFeatures hostapd/wpa_supplicant system() template probes",
+          "getFeatures dnsmasq/odhcpd/ipset popen",
+          "non-getFeatures methods in luci (including request.args switch popen)"
+        ],
+        "unsupported_constructs": [
+          "generated AST.qll/CFG.qll (not imported)",
+          "global dataflow/SSA"
+        ],
+        "trusted_summaries": [],
+        "unknowns": [
+          "live uhttpd/rpcd not executed; M2 uses a C double of parse + session.access matching"
+        ]
+      }
+    },
+    "m4-coverage.json": {
+      "revision": "step3:request-args-exec-v1",
+      "entrypoint_id": null,
+      "keys": [
+        "analysis_revision",
+        "analyzed",
+        "extracted_files",
+        "methods_with_request_args_exec",
+        "negative_controls",
+        "profile",
+        "status",
+        "unknowns",
+        "unmodeled_branches",
+        "unsupported_constructs"
+      ],
+      "contents": {
+        "extracted_files": [
+          "luci",
+          "taint_pos",
+          "taint_neg"
+        ],
+        "analyzed": [
+          "rpcd method name from methods.<name>.call",
+          "syntactic request.args field taint into named fs popen and builtin system",
+          "same-function lexical and assignment bindings (getRealtimeStats flags, setPassword u/p, setLocaltime t)"
+        ],
+        "methods_with_request_args_exec": [
+          "getSwconfigFeatures",
+          "getSwconfigPortState",
+          "getRealtimeStats",
+          "setPassword",
+          "setLocaltime"
+        ],
+        "negative_controls": [
+          "getFeatures not in RequestArgsExec",
+          "taint_pos/taint_neg excluded by luci basename"
+        ],
+        "unmodeled_branches": [
+          "setInitAction \u2192 init_action (interprocedural)",
+          "getFeatures hostapd/wpa_supplicant system() template probes",
+          "getFeatures dnsmasq/odhcpd/ipset popen",
+          "remaining luci methods without request.args in a popen/system argument"
+        ],
+        "unsupported_constructs": [
+          "generated AST.qll/CFG.qll (not imported)",
+          "global dataflow/SSA",
+          "shellquote as a sanitizer",
+          "sprintf %d / localtime conversion as a sanitizer"
+        ],
+        "unknowns": [
+          "live uhttpd/rpcd not executed",
+          "M2 evaluator still covers only luci.getFeatures grants"
+        ]
+      }
+    },
+    "m4-getfeatures-direct-exec-coverage.json": {
+      "revision": "step3:getfeatures-direct-exec-v1",
+      "entrypoint_id": "ubus_http:luci.getFeatures",
+      "keys": [
+        "analysis_revision",
+        "analyzed",
+        "call_sites",
+        "entrypoint_id",
+        "out_of_slice",
+        "profile",
+        "status",
+        "unmodeled_branches"
+      ],
+      "contents": {
+        "analyzed": [
+          "getFeatures.call direct named fs popen (dnsmasq, odhcpd, ipset)",
+          "getFeatures.call builtin system (hostapd -vfeature, wpa_supplicant -vfeature)"
+        ],
+        "call_sites": [
+          {
+            "line": 268,
+            "kind": "system",
+            "command": "hostapd -v${feature}"
+          },
+          {
+            "line": 275,
+            "kind": "system",
+            "command": "wpa_supplicant -v${feature}"
+          },
+          {
+            "line": 278,
+            "kind": "popen",
+            "command": "dnsmasq --version"
+          },
+          {
+            "line": 294,
+            "kind": "popen",
+            "command": "odhcpd -h"
+          },
+          {
+            "line": 315,
+            "kind": "popen",
+            "command": "ipset --help"
+          }
+        ],
+        "unmodeled_branches": [
+          "wifi_features loop not unrolled",
+          "ufpd is access() not system() in this plugin"
+        ],
+        "out_of_slice": [
+          "callPackageVersionCheck netifd popen (M3 GetFeaturesPopen)",
+          "non-getFeatures request.args exec (M4 RequestArgsExec)"
+        ]
+      }
+    },
+    "m4-shellquote-coverage.json": {
+      "revision": "step3:shellquote-barrier-v2",
+      "entrypoint_id": null,
+      "keys": [
+        "analysis_revision",
+        "analyzed",
+        "extracted_files",
+        "profile",
+        "status",
+        "unsupported_constructs"
+      ],
+      "contents": {
+        "extracted_files": [
+          "luci",
+          "taint_pos",
+          "taint_neg",
+          "quote_bad_ash_c.uc",
+          "quote_bad_assignment.uc",
+          "quote_bad_bash_c.uc",
+          "quote_bad_conditional.uc",
+          "quote_bad_echo",
+          "quote_bad_import.uc",
+          "quote_bad_local.uc",
+          "quote_bad_parameter.uc",
+          "quote_bad_pipe.uc",
+          "quote_bad_prefix_join.uc",
+          "quote_bad_separator.uc",
+          "quote_bad_separator_space.uc",
+          "quote_bad_sh_c",
+          "quote_bad_sh_c_suffix.uc",
+          "quote_bad_shell_flags.uc",
+          "quote_bad_shell_path.uc",
+          "quote_bad_shell_wrapper.uc",
+          "quote_bad_suffix",
+          "quote_bad_suffix_join.uc",
+          "quote_bad_trailing_substitution.uc",
+          "quote_bad_transform.uc",
+          "quote_bad_unknown_command.uc",
+          "quote_bad_variable.uc",
+          "quote_exe",
+          "quote_ok",
+          "quote_ok_echo.uc",
+          "quote_ok_printf.uc"
+        ],
+        "analyzed": [
+          "All shellquote candidates retained because trusted helper semantics are not modeled",
+          "Independent syntactic shape controls for direct calls, fixed commands and word boundaries",
+          "Interpreter, transformed output, command-position and binding-ambiguity regression controls",
+          "Untainted negative control remains absent from ShellInjection"
+        ],
+        "unsupported_constructs": [
+          "Trusted shellquote builtin or local-helper semantics",
+          "Scope-aware binding resolution",
+          "General shell grammar and commands outside the small shape allowlist",
+          "Same-function locals (getRealtimeStats flags, setPassword u/p)",
+          "Full pinned-corpus reanalysis and runtime execution"
+        ]
+      }
+    }
+  }
+}
