@@ -125,6 +125,11 @@ class ImportTests(unittest.TestCase):
             self.assertEqual(len(matches), 1)
             self.assertEqual(matches[0]["analysis_revision"], "step3:setblock-table-v1")
             self.assertEqual(matches[0]["source_location"]["start_line"], 532)
+            self.assertEqual(matches[0]["unknowns"], [
+                "live uhttpd/rpcd not executed",
+                "Callback registration, actual execution and live uhttpd/rpcd are not established by the table",
+                "Lexical shadowing and unmodeled call shapes are not resolved by the table",
+            ])
             imported[path] = matches[0]
         self.assertEqual(imported[SNAPSHOT], imported[CATALOG])
         self.assertEqual((self.repo / "policy/grants.json").read_bytes(), grants_before)

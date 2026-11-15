@@ -1,6 +1,45 @@
 # Canonical `handler_effects.json`
 
-Join catalog for modeled `/ubus` `luci` privileged sinks plus the synthetic cgi-io backup/upload/download/exec effects and synthetic ubus `file.exec` effects. Producer files under `reports/` remain the query snapshots for luci rows (block-device / sysfixtime rows are transcribed from the pinned plugin, not a new query; luci.sys status popens are transcribed from pinned `sys.uc`, not a new query); cgi-io rows are policy-facts (`policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`); ubus `file.exec` rows are policy-facts (`policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1`); ubus `system.reboot` / `rc.init` / `rc.list` / `system.board` / `system.info` / `luci.getVersion` / `luci.getUnixtime` / `luci.getOdhcp6cStats` / `luci.getTimezones` / `luci.getLEDs` / `luci.getMountPoints` / `luci.getBuiltinEthernetPorts` / `luci.getConntrackHelpers` / `hostapd.del_client` / `hostapd.wps_start` / `hostapd.wps_cancel` / `hostapd.wps_status` rows are policy-facts (`policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-system-board-v1` / `policy:ubus-system-info-v1` / `policy:ubus-luci-getversion-v1` / `policy:ubus-luci-getunixtime-v1` / `policy:ubus-luci-getodhcp6cstats-v1` / `policy:ubus-luci-gettimezones-v1` / `policy:ubus-luci-getleds-v1` / `policy:ubus-luci-getmountpoints-v1` / `policy:ubus-luci-getbuiltinethernetports-v1` / `policy:ubus-luci-getconntrackhelpers-v1` / `policy:ubus-hostapd-del-client-v1` / `policy:ubus-hostapd-wps-start-v1` / `policy:ubus-hostapd-wps-cancel-v1` / `policy:ubus-hostapd-wps-status-v1`). This file is the one `handler_effect` list consumers should join against `policy/grants.json`.
+This is the join catalog for modeled `/ubus` `luci` privileged sinks. It also includes synthetic cgi-io backup/upload/download/exec effects and synthetic ubus `file.exec` effects.
+
+Producer files under `reports/` remain the luci query snapshots, except as noted below:
+
+- `getBlockDevices` uses its source-table import.
+- `setBlockDetect` uses the bounded `SetBlockDetectEffectTable.ql` source-table import. See [m4-block-device-exec.md](m4-block-device-exec.md).
+- `setLocaltime` sysfixtime remains transcribed from the pinned plugin, not a new query.
+- luci.sys status popens are transcribed from pinned `sys.uc`, not a new query.
+
+cgi-io rows are policy-facts. Their policy revisions are:
+
+- `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1`
+- `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1`
+
+ubus `file.exec` rows are policy-facts. Their policy revisions are:
+
+- `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1`
+- `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1`
+
+These ubus rows are policy-facts. Each method uses the matching policy revision:
+
+- `system.reboot` → `policy:ubus-system-reboot-v1`
+- `rc.init` → `policy:ubus-rc-init-v1`
+- `rc.list` → `policy:ubus-rc-list-v1`
+- `system.board` → `policy:ubus-system-board-v1`
+- `system.info` → `policy:ubus-system-info-v1`
+- `luci.getVersion` → `policy:ubus-luci-getversion-v1`
+- `luci.getUnixtime` → `policy:ubus-luci-getunixtime-v1`
+- `luci.getOdhcp6cStats` → `policy:ubus-luci-getodhcp6cstats-v1`
+- `luci.getTimezones` → `policy:ubus-luci-gettimezones-v1`
+- `luci.getLEDs` → `policy:ubus-luci-getleds-v1`
+- `luci.getMountPoints` → `policy:ubus-luci-getmountpoints-v1`
+- `luci.getBuiltinEthernetPorts` → `policy:ubus-luci-getbuiltinethernetports-v1`
+- `luci.getConntrackHelpers` → `policy:ubus-luci-getconntrackhelpers-v1`
+- `hostapd.del_client` → `policy:ubus-hostapd-del-client-v1`
+- `hostapd.wps_start` → `policy:ubus-hostapd-wps-start-v1`
+- `hostapd.wps_cancel` → `policy:ubus-hostapd-wps-cancel-v1`
+- `hostapd.wps_status` → `policy:ubus-hostapd-wps-status-v1`
+
+Consumers use this file's `handler_effect` list to join against `policy/grants.json`.
 
 Findings are evidence, not proof. This catalog does not emit `authorization_violation` or dispatcher effects. `shellquote` and `basename` are not sanitizers. `canonicalize_path` is not a taint sanitizer.
 
@@ -49,7 +88,7 @@ Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, s
 
 Cross-producer joins (`policy_grant` ↔ `handler_effect`) match **identical** `corpus_revision` and `profile`, plus `ingress`, `entrypoint_id`, and either `ubus_object`/`method` or `cgi_endpoint`, and the grant `record_id` in the effect's `evidence_refs`. `analysis_revision` stays producer-local (`policy:ubus-luci-exec-methods-v2` / `policy:cgi-backup-v1` / `policy:cgi-upload-v1` / `policy:cgi-download-v1` / `policy:cgi-exec-v1` / `policy:cgi-exec-file-v1` / `policy:cgi-exec-status-v1` / `policy:ubus-file-exec-v1` / `policy:ubus-file-exec-ifup-v1` / `policy:ubus-file-exec-kill-v1` / `policy:ubus-file-exec-mounts-v1` / `policy:ubus-file-exec-list-backup-v1` / `policy:ubus-system-reboot-v1` / `policy:ubus-rc-init-v1` / `policy:ubus-rc-list-v1` / `policy:ubus-system-board-v1` / `policy:ubus-system-info-v1` / `policy:ubus-luci-getversion-v1` / `policy:ubus-luci-getunixtime-v1` / `policy:ubus-luci-getodhcp6cstats-v1` / `policy:ubus-luci-gettimezones-v1` / `policy:ubus-luci-getleds-v1` / `policy:ubus-luci-getmountpoints-v1` / `policy:ubus-luci-getbuiltinethernetports-v1` / `policy:ubus-luci-getconntrackhelpers-v1` / `policy:ubus-hostapd-del-client-v1` / `policy:ubus-hostapd-wps-start-v1` / `policy:ubus-hostapd-wps-cancel-v1` / `policy:ubus-hostapd-wps-status-v1` vs `step3:*`) and is **not** a join key. See [docs/pack-contract.md](../docs/pack-contract.md).
 
-Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots may still list only the first assessed session.
+Catalog copies add the delegated / root grant ids on `evidence_refs` so both session classes that actually hold the grant join. Producer snapshots can still list only the first assessed session.
 
 These are **aggregate**, session-neutral effects, not caller-specific verdicts.
 The effect's `expectation_id` identifies primary grant(s) supporting its
@@ -57,9 +96,7 @@ assessment; grants with other expectation IDs are supplementary relationships.
 An assessed effect must retain at least one primary grant. Do not copy the
 aggregate assessment onto supplementary sessions; a caller view needs its own
 justification or remains unassessed. This also applies to other delegated
-sessions, not only root. `policy.interchange_contract.join_policy_grants`
-returns primary and supplementary lists when explicitly called with aggregate
-scope; it does not create grants or perform policy evaluation.
+sessions, not only root. An explicit aggregate-scope call to `policy.interchange_contract.join_policy_grants` returns primary and supplementary lists. It does not create grants or perform policy evaluation.
 
 ### `#12` request.args exec-method grants
 
