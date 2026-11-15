@@ -129,15 +129,15 @@ class TestRealtimePasswordQuotedLocals(unittest.TestCase):
             self.assertEqual(unauth, [])
 
     def test_runtime_quoting_and_analyzer_coverage_are_distinct(self) -> None:
-        barrier_methods = {
-            row["method"]
-            for row in self.barrier
-            if row.get("evidence_status") == "no_path" and row.get("method")
-        }
-        self.assertIn("getSwconfigFeatures", barrier_methods)
-        self.assertIn("getSwconfigPortState", barrier_methods)
-        self.assertNotIn("getRealtimeStats", barrier_methods)
-        self.assertNotIn("setPassword", barrier_methods)
+        swconfig = [row for row in self.barrier if row.get("method") in {
+            "getSwconfigFeatures", "getSwconfigPortState"}]
+        self.assertCountEqual([row['method'] for row in swconfig],
+                              ['getSwconfigFeatures', 'getSwconfigPortState'])
+        self.assertTrue(all(row['evidence_status'] == 'inconclusive' for row in swconfig))
+        coverage = _load(REPO / 'reports/m4-realtime-password-quoted-locals-coverage.json')
+        for text in coverage['analyzed'] + coverage['negative_controls'] + coverage['unsupported_constructs']:
+            self.assertNotIn('shellquote-barrier-v1', text)
+        self.assertIn('no trusted shellquote barrier', ' '.join(coverage['analyzed']).lower())
         for row in self.rows:
             spec = ROWS[row["method"]]
             assumptions = " ".join(row["assumptions"]).lower()
@@ -150,6 +150,9 @@ class TestRealtimePasswordQuotedLocals(unittest.TestCase):
             self.assertIn("runtime command safety is unassessed", assumptions)
             self.assertIn("basename is not a sanitizer", assumptions)
             self.assertIn("same-function quoted locals", assumptions)
+            self.assertIn("no trusted shellquote barrier", assumptions)
+            self.assertNotIn("shellquote-barrier-v1", assumptions)
+            self.assertNotIn("recognized by the analyzer", conditions)
             self.assertIn("not a new query", assumptions)
             self.assertIn("not a query path result", assumptions)
             self.assertIn("does not invent a grant" if row["method"] == "getRealtimeStats" else "not a new unauthenticated grant", assumptions)

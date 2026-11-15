@@ -1,14 +1,14 @@
-# M4: shellquoted locals and the analyzer's direct-template barrier
+# M4: shellquoted locals and analyzer limits
 
 Inventory/report only, transcribed from pinned source. The luci `shellquote` helper returns single-quoted, escaped text. Its quote characters survive storage in `flags`, `u`, and `p` and remain in the command strings after template interpolation. This inventory records an analyzer coverage gap; it does not establish unquoted runtime input or prove overall command safety.
 
-The analyzer's current complete-argument barrier recognizes a direct `shellquote(...)` template substitution inside the `popen`/`system` argument. It does not follow quoted values through same-function locals. That direct-template model is inventoried for `getSwconfigFeatures` / `getSwconfigPortState` in [m4-shellquote.md](m4-shellquote.md). The analyzer does not treat `shellquote` as a global sanitizer. `basename` is not a sanitizer.
+The analyzer has no trusted `shellquote` barrier, even for direct substitutions; same-function quoted locals also remain unmodeled. The direct-template swconfig cases are inconclusive in [m4-shellquote.md](m4-shellquote.md). The analyzer does not treat `shellquote` as a global sanitizer. `basename` is not a sanitizer. This correction is not a new query or runtime execution.
 
 These methods already have M2 grants (`policy:ubus-luci-exec-methods-v2`). This slice does not invent grants, does not rewrite the luci emitter, and does not claim `path_found`.
 
 ## Methods
 
-| Method | Local | Runtime quoting | Analyzer complete-argument barrier | ACL / M2 grant |
+| Method | Local | Source-described quoting | Analyzer coverage | ACL / M2 grant |
 | --- | --- | --- | --- | --- |
 | `getRealtimeStats` | `flags` | The device value keeps its `shellquote` wrapping and escaping inside `flags`, then ``luci-bwc ${flags}`` | Unmodeled through the local | `luci-mod-status-realtime` read → `policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats` |
 | `setPassword` | `u`, `p` | The `shellquote` wrapping and escaping in `u`/`p` survive `${u}` / `${p}` interpolation into builtin `system` | Unmodeled through the locals | `luci-mod-system-config` write → `policy:grant:luci-mod-system-config:ubus_http:luci.setPassword` |
