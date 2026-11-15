@@ -9,12 +9,17 @@
       "published_sha256": "4e99c84d8ea319e21a93e61e6a2ce60b7bb9d986ade6c1aaf7b2766d54864fbc"
     },
     {
-      "byte_identical": false,
+      "omission_reason": "Path-redacted binary copy failed CodeQL BQRS decode; do not publish a text-substituted binary.",
       "original_bytes": 3156,
+      "original_decoded_csv_bytes": 142,
+      "original_decoded_csv_sha256": "6c007c67587518b5663dda3ce9fe023fa97f901c096bea632d9ac354a2dc6b0c",
       "original_sha256": "50a4e581624a3ecce646e18bc479424a6c3cd7b2eb7557833335bcc9a2b42c18",
       "path": "artifacts/extracted.bqrs",
-      "published_bytes": 2594,
-      "published_sha256": "e4040c5b2709b6f6633ef18a6d3bf6f7e6f84e0387e8a485291e9b7ca6313a0f"
+      "publication_status": "omitted",
+      "published_sanitized_csv_bytes": 77,
+      "published_sanitized_csv_path": "artifacts/extracted.csv",
+      "published_sanitized_csv_sha256": "a21068cceab1fcf35eca61f106312275e66848ffa7a53ae3dc8400268d63df8c",
+      "relation": "Original BQRS was decoded with CodeQL 2.27.4; replacing only its attempt-root token in the decoded CSV yields the published sanitized CSV byte-for-byte. Original binary is not included."
     },
     {
       "byte_identical": false,

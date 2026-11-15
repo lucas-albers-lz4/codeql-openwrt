@@ -1,0 +1,41 @@
+{
+  "codeql": {
+    "version": "2.27.4",
+    "binary_sha256": "7eb0047c90fffaeb822564a0ac56d585dc871f30"
+  },
+  "commands": [
+    "${CODEQL} bqrs decode --format=csv artifacts/errors.bqrs --common-caches=${VERIFIER_CACHE}",
+    "${CODEQL} bqrs decode --format=csv artifacts/table.bqrs --common-caches=${VERIFIER_CACHE}",
+    "${CODEQL} bqrs decode --format=csv ${ORIGINAL_ATTEMPT}/artifacts/extracted.bqrs --common-caches=${VERIFIER_CACHE}"
+  ],
+  "published_errors_bqrs": {
+    "exit_code": 0,
+    "stderr_bytes": 0,
+    "published_bqrs_sha256": "3ef86312db2bdf2184c2bc8ffa758d96729fafb879d618306ea8637955031269",
+    "decoded_csv_sha256": "0bb9068729a2970f4b125b6893565812fdd2d1fc6510626f214f3d055b4f94f5",
+    "published_csv_sha256": "0bb9068729a2970f4b125b6893565812fdd2d1fc6510626f214f3d055b4f94f5",
+    "decoded_csv_byte_identical_to_published_csv": true
+  },
+  "published_table_bqrs": {
+    "exit_code": 0,
+    "stderr_bytes": 0,
+    "published_bqrs_sha256": "ec68d993592a19ba810d8b31118bb665ca43adca3d3907c9b88f24242c812d90",
+    "decoded_csv_sha256": "245ad2dc1aedc9d4e0d41d83fcb0246a0990bcd70b5d0a35e1cb65100bfa8996",
+    "published_csv_sha256": "245ad2dc1aedc9d4e0d41d83fcb0246a0990bcd70b5d0a35e1cb65100bfa8996",
+    "decoded_csv_byte_identical_to_published_csv": true
+  },
+  "omitted_original_extracted_bqrs": {
+    "publication_status": "omitted; not redistributed",
+    "original_sha256": "50a4e581624a3ecce646e18bc479424a6c3cd7b2eb7557833335bcc9a2b42c18",
+    "original_bytes": 3156,
+    "decode_exit_code": 0,
+    "stderr_bytes": 0,
+    "decoded_original_csv_sha256": "6c007c67587518b5663dda3ce9fe023fa97f901c096bea632d9ac354a2dc6b0c",
+    "decoded_original_csv_bytes": 142,
+    "published_sanitized_csv_sha256": "a21068cceab1fcf35eca61f106312275e66848ffa7a53ae3dc8400268d63df8c",
+    "published_sanitized_csv_bytes": 77,
+    "sanitization": "Replace only the original attempt-root path token in the actual decoded CSV with ${ATTEMPT}; resulting bytes compared exactly to published artifacts/extracted.csv.",
+    "decoded_csv_after_exact_path_token_replacement_byte_identical_to_published_sanitized_csv": true
+  },
+  "scope": "Read-only verification of the published errors/table BQRS and original extracted BQRS. No producer/consumer replay; original attempt files were not modified."
+}

@@ -1,9 +1,16 @@
 {
   "actual_phase_receipts": 21,
+  "all_original_redecoded_csv_bytes_equal": true,
   "all_phase_receipts_zero": true,
-  "all_redecoded_csv_bytes_equal": true,
   "catalog_unique_id_rows": 110,
   "consumer_executed_commit": "804d1386c54f4c273ca593e5dd2051636aa19245",
+  "extracted_bqrs_publication": {
+    "original_decoded_csv_sha256": "6c007c67587518b5663dda3ce9fe023fa97f901c096bea632d9ac354a2dc6b0c",
+    "original_decoded_then_path_sanitized_csv_matches_published": true,
+    "original_sha256": "50a4e581624a3ecce646e18bc479424a6c3cd7b2eb7557833335bcc9a2b42c18",
+    "published_sanitized_csv_sha256": "a21068cceab1fcf35eca61f106312275e66848ffa7a53ae3dc8400268d63df8c",
+    "status": "original omitted; path-redacted binary derivative was undecodable"
+  },
   "extraction_error_rows": 0,
   "extraction_success_rows": 1,
   "getMountPoints_grant_ids": 4,
@@ -18,8 +25,17 @@
     "evidence-only later commit not executed"
   ],
   "merged_producer_commit": "d54c17a8cefc43ef9cde36d65558c986348aa7b2",
+  "original_actual_bqrs_redecodes": 3,
   "producer_export_commit": "95b7ec86532301f59927a26806d29575c02a5b7f",
   "producer_merge_tree": "b259eb7fb16cbfe6669a8e434d6493c90b393fdb",
+  "published_bqrs_decode_verification": {
+    "both_decode_exit_zero": true,
+    "decoded_csv_bytes_equal_published_csvs": true,
+    "published_files": [
+      "artifacts/errors.bqrs",
+      "artifacts/table.bqrs"
+    ]
+  },
   "raw_routing": {
     "input_count": 1,
     "other_counts_zero": true,
