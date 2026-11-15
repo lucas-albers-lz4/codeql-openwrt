@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -219,8 +220,11 @@ def _load_grants(repo_root: Path) -> dict[str, dict[str, Any]]:
         raise ContractError(f"{path}: expected an array")
     grants: dict[str, dict[str, Any]] = {}
     for row in rows:
-        if isinstance(row, dict) and isinstance(row.get("record_id"), str):
-            grants[row["record_id"]] = row
+        if not isinstance(row, dict) or not isinstance(row.get("record_id"), str) or not row["record_id"].strip():
+            raise ContractError(f"{path}: grant record_id must be a nonempty string")
+        if row["record_id"] in grants:
+            raise ContractError(f"{path}: duplicate grant record_id {row['record_id']!r}")
+        grants[row["record_id"]] = row
     return grants
 
 
@@ -237,14 +241,73 @@ def _join_error(row: dict[str, Any], grant: dict[str, Any], where: str) -> str |
         join_fields.extend(["ubus_object", "method"])
     elif row.get("ingress") == "cgi_io":
         join_fields.append("cgi_endpoint")
-    if "expectation_id" in row:
-        join_fields.append("expectation_id")
     for key in join_fields:
-        if not isinstance(row.get(key), str) or not isinstance(grant.get(key), str):
+        left, right = row.get(key), grant.get(key)
+        if not isinstance(left, str) or not left.strip() or not isinstance(right, str) or not right.strip():
             return f"{where}: cited grant is missing required join key {key}"
-        if row[key] != grant[key]:
-            return f"{where}: cited grant has mismatched {key}: {grant[key]!r} != {row[key]!r}"
+        if left != right:
+            return f"{where}: cited grant has mismatched {key}: {right!r} != {left!r}"
     return None
+
+
+def join_policy_grants(
+    row: dict[str, Any], grants: dict[str, dict[str, Any]], *, scope: str,
+    requested_caller: str | None = None,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Resolve cited grants; supplementary aggregate links do not assess callers."""
+    if scope not in {"aggregate", "caller"}:
+        raise ContractError("unsupported join scope")
+    if scope == "aggregate" and (row.get("record_type") != "handler_effect" or "session_class" in row or requested_caller is not None):
+        raise ContractError("aggregate handler_effect must be session-neutral")
+    if scope == "caller" and row.get("record_type") != "taint_path":
+        raise ContractError("caller-specific scope requires taint_path")
+    if "session_class" in row and (not isinstance(row["session_class"], str) or not row["session_class"].strip()):
+        raise ContractError("session_class must be nonempty")
+    if requested_caller is not None and (not isinstance(requested_caller, str) or not requested_caller.strip()):
+        raise ContractError("requested session_class must be nonempty")
+    refs = _grant_ref_values(row)
+    expectation = row.get("expectation_id")
+    assessed = row.get("assessment") in ("intended_access", "risky_delegation", "authorization_violation")
+    if assessed and not refs:
+        raise ContractError("authorization assessment requires a cited policy grant")
+    if (assessed or (scope == "caller" and refs)) and (not isinstance(expectation, str) or not expectation.strip()):
+        raise ContractError("assessment/grant requires nonempty expectation_id")
+    primary, supplementary = [], []
+    callers = set()
+    for grant_id in refs:
+        grant = grants.get(grant_id)
+        if grant is None:
+            raise ContractError(f"cited grant ID does not exist: {grant_id}")
+        if grant.get("record_id") != grant_id or (grant.get("record_type"), grant.get("evidence_status"), grant.get("producer")) != ("policy_grant", "fact", "policy_facts"):
+            raise ContractError(f"invalid cited policy grant: {grant_id}")
+        mismatch = _join_error(row, grant, "join")
+        if mismatch:
+            raise ContractError(mismatch)
+        if row.get("ingress") not in ("ubus_http", "cgi_io"):
+            raise ContractError("unsupported policy-linked ingress")
+        session = grant.get("session_class")
+        if not isinstance(session, str) or not session.strip():
+            raise ContractError("cited grant missing session_class")
+        if not isinstance(grant.get("expectation_id"), str) or not grant["expectation_id"].strip():
+            raise ContractError("cited grant missing expectation_id")
+        if grant["expectation_id"] == expectation:
+            primary.append(grant)
+        else:
+            supplementary.append(grant)
+        callers.add(session)
+    if scope == "caller":
+        if supplementary:
+            raise ContractError("cited grant has mismatched expectation_id")
+        declared = row.get("session_class")
+        if declared is not None:
+            callers.add(declared)
+        if requested_caller is not None:
+            callers.add(requested_caller)
+        if len(callers) > 1:
+            raise ContractError("conflicting session_class among row, request and grants")
+    if assessed and not primary:
+        raise ContractError("assessment requires a primary expectation-matching grant")
+    return primary, supplementary
 
 
 def validate_ucode_root(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tuple[int, int]:
@@ -263,10 +326,25 @@ def validate_ucode_root(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tuple[
             known_profiles.add(profile_name)
     grants = _load_grants(repo_root)
     files = _typed_arrays(ucode_root)
+    manifest = json.loads((repo_root / "policy/ucode_snapshot_manifest.json").read_text(encoding="utf-8"))
+    historical = {rid: (name, spec["rows"][rid], semantic)
+                  for name, spec in manifest["typed"].items()
+                  for rid, semantic in spec["semantics"].items()}
+    historical_revisions = {spec["revision"] for spec in manifest["typed"].values()}
     row_count = 0
     errors: list[str] = []
     seen_record_ids: dict[str, Path] = {}
     for path, rows in files:
+        spec = manifest["typed"][path.name]
+        ids = [row.get("record_id") for row in rows]
+        reserved = [row.get("analysis_revision") for row in rows
+                    if isinstance(row.get("analysis_revision"), str)
+                    and row["analysis_revision"] in historical_revisions]
+        if any(revision != spec["revision"] for revision in reserved):
+            errors.append(f"{path}: historical revision belongs to a different document family")
+        if reserved or any(isinstance(rid, str) and rid in historical for rid in ids):
+            if len(ids) != len(spec["rows"]) or any(rid not in ids for rid in spec["rows"]):
+                errors.append(f"{path}: snapshot record identity mismatch")
         for index, row in enumerate(rows):
             where = f"{path}:{index}"
             row_count += 1
@@ -280,49 +358,134 @@ def validate_ucode_root(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tuple[
                 )
             else:
                 seen_record_ids[record_id] = path
+            if isinstance(record_id, str) and record_id in historical:
+                expected_file, required_refs, semantic = historical[record_id]
+                if path.name != expected_file:
+                    errors.append(f"{where}: historical record identity belongs in {expected_file}")
+                for key, value in semantic.items():
+                    if key == "required_unknowns":
+                        actual = row.get("unknowns")
+                        if not isinstance(actual, list) or any(item not in actual for item in value):
+                            errors.append(f"{where}: historical unknowns missing")
+                    elif row.get(key) != value:
+                        errors.append(f"{where}: historical {key} mismatch for {record_id}")
+                refs = row.get("evidence_refs", [])
+                if not isinstance(refs, list) or any(ref not in refs for ref in required_refs):
+                    errors.append(f"{where}: historical required evidence missing")
+            refs = row.get("evidence_refs", [])
+            if not isinstance(refs, list) or any(not isinstance(ref, str) or not ref.strip() for ref in refs):
+                errors.append(f"{where}: evidence_refs must contain nonempty strings")
+            unknowns = row.get("unknowns")
+            if row.get("evidence_status") == "inconclusive" and (
+                not isinstance(unknowns, list) or not any(isinstance(item, str) and item.strip() for item in unknowns)
+            ):
+                errors.append(f"{where}: inconclusive requires a nonempty unknowns entry")
             analysis_revision = row.get("analysis_revision")
             if (
                 not isinstance(analysis_revision, str)
-                or not analysis_revision.startswith("step3:")
-                or len(analysis_revision) <= len("step3:")
+                or re.fullmatch(r"step3:[^\s:]+", analysis_revision) is None
             ):
                 errors.append(f"{where}: analysis_revision must be a nonempty producer-local 'step3:' revision")
             if row.get("corpus_revision") != expected_revision:
                 errors.append(f"{where}: corpus_revision does not match sha256(corpus/lock.json)")
-            if row.get("profile") not in known_profiles:
+            if not isinstance(row.get("profile"), str) or row["profile"] not in known_profiles:
                 errors.append(f"{where}: unknown profile {row.get('profile')!r}")
+            elif row["profile"] != "luci-ssl-25.12":
+                errors.append(f"{where}: unsupported ucode profile {row['profile']!r}")
             if row.get("producer") != "step3":
                 errors.append(f"{where}: ucode records must use producer 'step3'")
-            if row.get("record_type") == "coverage":
-                errors.append(f"{where}: coverage ledgers are report-only, not typed interchange records")
-            for grant_id in _grant_ref_values(row):
-                grant = grants.get(grant_id)
-                if grant is None:
-                    errors.append(f"{where}: cited grant ID does not exist: {grant_id}")
-                    continue
-                mismatch = _join_error(row, grant, where)
-                if mismatch:
-                    errors.append(mismatch)
-            assessment = row.get("assessment")
-            needs_grant = assessment in {"intended_access", "risky_delegation", "authorization_violation"}
-            if needs_grant and not _grant_ref_values(row):
-                errors.append(f"{where}: authorization assessment requires a cited policy grant")
+            if row.get("record_type") not in ("handler_effect", "taint_path"):
+                errors.append(f"{where}: record_type is not a supported ucode capability")
+            if row.get("record_type") in ("handler_effect", "taint_path"):
+                try:
+                    join_policy_grants(row, grants, scope="aggregate" if row["record_type"] == "handler_effect" else "caller")
+                except ContractError as exc:
+                    errors.append(f"{where}: {exc}")
+    for name, spec in manifest["coverage"].items():
+        path = ucode_root / "docs" / name
+        if path.exists():
+            _validate_coverage(name, json.loads(path.read_text(encoding="utf-8")), spec)
     if errors:
         raise ContractError("\n".join(errors))
     return len(files), row_count
 
 
+def validate_ucode_snapshot(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tuple[int, int]:
+    """Validate the classified historical snapshot, not a live completeness claim.
+
+    The manifest is consumer-owned. It pins row identities and required evidence
+    for this particular snapshot; it is not an oracle for future live output.
+    """
+    manifest = json.loads((repo_root / "policy/ucode_snapshot_manifest.json").read_text(encoding="utf-8"))
+    docs = ucode_root / "docs"
+    expected = set(manifest["typed"]) | set(manifest["coverage"])
+    actual = {p.name for p in docs.glob("*.json")}
+    if actual != expected:
+        raise ContractError(f"snapshot documents missing {sorted(expected - actual)} or unfamiliar {sorted(actual - expected)}")
+    counts = validate_ucode_root(ucode_root, repo_root)
+    for name, spec in manifest["typed"].items():
+        rows = json.loads((docs / name).read_text(encoding="utf-8"))
+        ids = {row["record_id"] for row in rows}
+        if ids != set(spec["rows"]):
+            raise ContractError(f"{name}: snapshot record identity mismatch")
+        for row in rows:
+            if row.get("profile") != "luci-ssl-25.12" or row.get("analysis_revision") != spec["revision"]:
+                raise ContractError(f"{name}: row family profile/revision mismatch")
+            if spec.get("evidence_status") is not None and row.get("evidence_status") != spec["evidence_status"]:
+                raise ContractError(f"{name}: snapshot evidence_status mismatch")
+            refs = row.get("evidence_refs", [])
+            if not isinstance(refs, list) or not set(spec["rows"][row["record_id"]]).issubset(refs):
+                raise ContractError(f"{name}: {row['record_id']} missing required evidence")
+    return counts
+
+
+
+def _validate_coverage(name: str, report: Any, spec: dict[str, Any]) -> None:
+    if (not isinstance(report, dict) or set(report) != set(spec["keys"])
+            or report.get("profile") != "luci-ssl-25.12"
+            or report.get("analysis_revision") != spec["revision"]
+            or report.get("status") != "partial"
+            or (spec["entrypoint_id"] is not None and report.get("entrypoint_id") != spec["entrypoint_id"])):
+        raise ContractError(f"{name}: coverage identity or fields mismatch")
+    for key, value in report.items():
+        if key in {"profile", "analysis_revision", "entrypoint_id", "status"}:
+            continue
+        if not isinstance(value, list):
+            raise ContractError(f"{name}: coverage {key} must be an array")
+        if key == "call_sites":
+            if not value or any(not isinstance(x, dict) or set(x) != {"line", "kind", "command"}
+                or not isinstance(x["line"], int) or isinstance(x["line"], bool) or x["line"] < 1
+                or not isinstance(x["kind"], str) or not x["kind"].strip()
+                or not isinstance(x["command"], str) or not x["command"].strip() for x in value):
+                raise ContractError(f"{name}: malformed coverage call_sites")
+        elif any(not isinstance(x, str) or not x.strip() for x in value):
+            raise ContractError(f"{name}: coverage {key} must contain nonempty strings")
+        if key in {"analyzed", "extracted_files"} and not value:
+            raise ContractError(f"{name}: coverage {key} must not be empty")
+    for key, expected in spec["contents"].items():
+        actual = report[key]
+        if (key != "unknowns" and len(actual) != len(expected)) or any(item not in actual for item in expected):
+            raise ContractError(f"{name}: coverage {key} identity mismatch")
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ucode-root", type=Path, required=True, help="ucode checkout containing docs/")
+    parser.add_argument("--snapshot", action="store_true", help="also check the pinned historical document/evidence manifest")
     args = parser.parse_args(argv)
     try:
-        file_count, row_count = validate_ucode_root(args.ucode_root.resolve())
+        validator = validate_ucode_snapshot if args.snapshot else validate_ucode_root
+        file_count, row_count = validator(args.ucode_root.resolve())
     except (ContractError, OSError, json.JSONDecodeError) as exc:
         parser.error(str(exc))
     lock = (REPO_ROOT / "corpus" / "lock.json").read_bytes()
     revision = "sha256:" + hashlib.sha256(lock).hexdigest()
-    print(f"validated {row_count} typed ucode records in {file_count} arrays against {revision}")
+    if args.snapshot:
+        mode = "historical snapshot (not live conformance)"
+    else:
+        actual = {p.name for p in (args.ucode_root.resolve() / "docs").glob("*.json")}
+        missing = sorted((TYPED_ARRAY_NAMES | REPORT_ONLY_OBJECT_NAMES) - actual)
+        mode = f"limited partial documents; not full conformance; missing documents: {', '.join(missing) if missing else 'none'}"
+    print(f"validated {row_count} typed ucode records in {file_count} arrays against {revision}; {mode}")
     return 0
 
 

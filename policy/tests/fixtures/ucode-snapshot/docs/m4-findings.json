@@ -1,0 +1,174 @@
+[
+  {
+    "record_type": "taint_path",
+    "evidence_status": "path_found",
+    "producer": "step3",
+    "record_id": "m4:luci-getSwconfigFeatures-request-args-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
+    "ubus_object": "luci",
+    "method": "getSwconfigFeatures",
+    "param_name": "switch",
+    "sink_kind": "popen",
+    "op": "exec",
+    "target_id": "command:swconfig",
+    "assessment": "unassessed",
+    "expectation_id": "luci-mod-network-swconfig",
+    "assumptions": [
+      "Syntactic local taint plus same-function name bindings; not CFG/SSA",
+      "shellquote wraps request.args.switch as a complete argument; shellquote is not modeled as a sanitizer",
+      "Executable is the literal swconfig; this is not arbitrary executable selection",
+      "M2 policy-facts do not yet emit luci-mod-network grants; unauthenticated cannot invoke this method"
+    ],
+    "evidence_refs": [
+      "ql/src/m4/RequestArgsExec.ql",
+      "luci-mod-network.json luci-mod-network-config read ubus luci getSwconfigFeatures"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "shellquote barrier not modeled",
+      "delegated luci-mod-network-config session is not in the M2 evaluator"
+    ]
+  },
+  {
+    "record_type": "taint_path",
+    "evidence_status": "path_found",
+    "producer": "step3",
+    "record_id": "m4:luci-getSwconfigPortState-request-args-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
+    "ubus_object": "luci",
+    "method": "getSwconfigPortState",
+    "param_name": "switch",
+    "sink_kind": "popen",
+    "op": "exec",
+    "target_id": "command:swconfig",
+    "assessment": "unassessed",
+    "expectation_id": "luci-mod-network-swconfig",
+    "assumptions": [
+      "Syntactic local taint plus same-function name bindings; not CFG/SSA",
+      "shellquote wraps request.args.switch as a complete argument; shellquote is not modeled as a sanitizer",
+      "Executable is the literal swconfig",
+      "M2 policy-facts do not yet emit luci-mod-network grants; unauthenticated cannot invoke this method"
+    ],
+    "evidence_refs": [
+      "ql/src/m4/RequestArgsExec.ql",
+      "luci-mod-network.json luci-mod-network-config read ubus luci getSwconfigPortState"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "shellquote barrier not modeled",
+      "delegated luci-mod-network-config session is not in the M2 evaluator"
+    ]
+  },
+  {
+    "record_type": "taint_path",
+    "evidence_status": "path_found",
+    "producer": "step3",
+    "record_id": "m4:luci-getRealtimeStats-request-args-popen",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.getRealtimeStats",
+    "ubus_object": "luci",
+    "method": "getRealtimeStats",
+    "param_name": "device",
+    "sink_kind": "popen",
+    "op": "exec",
+    "target_id": "command:luci-bwc",
+    "assessment": "unassessed",
+    "expectation_id": "luci-mod-status-realtime",
+    "assumptions": [
+      "Same-function assignment flags = shellquote(request.args.device) then popen(luci-bwc ${flags})",
+      "Not CFG/SSA: later reassignment in the same method is not distinguished",
+      "shellquote is observed, not modeled as a sanitizer",
+      "Executable is the literal luci-bwc",
+      "M2 policy-facts do not yet emit luci-mod-status grants; unauthenticated cannot invoke this method"
+    ],
+    "evidence_refs": [
+      "ql/src/m4/RequestArgsExec.ql",
+      "luci-mod-status.json luci-mod-status-realtime read ubus luci getRealtimeStats"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "shellquote barrier not modeled",
+      "delegated luci-mod-status-realtime session is not in the M2 evaluator"
+    ]
+  },
+  {
+    "record_type": "taint_path",
+    "evidence_status": "path_found",
+    "producer": "step3",
+    "record_id": "m4:luci-setPassword-request-args-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setPassword",
+    "ubus_object": "luci",
+    "method": "setPassword",
+    "param_name": "username",
+    "sink_kind": "system",
+    "op": "exec",
+    "target_id": "command:busybox-passwd",
+    "assessment": "unassessed",
+    "expectation_id": "luci-mod-system-setPassword",
+    "assumptions": [
+      "Same-function const u/p = shellquote(request.args.username/password) then builtin system",
+      "Unauthenticated setPassword is already a M2 deny; this record is handler taint, not a new grant",
+      "shellquote is observed, not modeled as a sanitizer",
+      "A tainted construction used only by an authorized password-change caller is a code-review candidate, not authorization_violation, unless an additional boundary is crossed"
+    ],
+    "evidence_refs": [
+      "ql/src/m4/RequestArgsExec.ql",
+      "policy:decision:unauthenticated-setPassword-deny",
+      "luci-mod-system.json luci-mod-system-config write ubus luci setPassword"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "shellquote barrier not modeled",
+      "delegated luci-mod-system-config session is not in the M2 evaluator"
+    ]
+  },
+  {
+    "record_type": "taint_path",
+    "evidence_status": "path_found",
+    "producer": "step3",
+    "record_id": "m4:luci-setLocaltime-request-args-system",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:request-args-exec-v1",
+    "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setLocaltime",
+    "ubus_object": "luci",
+    "method": "setLocaltime",
+    "param_name": "localtime",
+    "sink_kind": "system",
+    "op": "exec",
+    "target_id": "command:date",
+    "assessment": "unassessed",
+    "expectation_id": "luci-mod-system-setLocaltime",
+    "assumptions": [
+      "Same-function let t = localtime(request.args.localtime) then system(sprintf %d fields of t)",
+      "The model does not treat localtime or sprintf %d as sanitizers",
+      "No shellquote on this path",
+      "M2 policy-facts do not yet emit luci-mod-system grants; unauthenticated cannot invoke this method"
+    ],
+    "evidence_refs": [
+      "ql/src/m4/RequestArgsExec.ql",
+      "luci-mod-system.json luci-mod-system-config write ubus luci setLocaltime"
+    ],
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "int/sprintf conversion is not modeled as a barrier",
+      "delegated luci-mod-system-config session is not in the M2 evaluator"
+    ]
+  }
+]

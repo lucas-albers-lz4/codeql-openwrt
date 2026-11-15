@@ -26,24 +26,71 @@ directory against this repository's `schemas/finding.schema.json`,
 `corpus/lock.json`, profile inventory, and local policy grants. The validator
 supports the schema keywords currently used by the finding schema and fails
 closed if the schema introduces an unsupported keyword. Typed ucode records
-must use the lockfile SHA-256 as `corpus_revision` and producer `step3`; each
-record needs a nonempty, unique `record_id` and a nonempty `analysis_revision`
-with the producer-local `step3:` prefix. `analysis_revision` is never a
-cross-pack join key. Cited grant IDs must exist and match the
-corpus/profile/entrypoint join keys. Every `intended_access`,
-`risky_delegation`, or `authorization_violation` assessment requires a
-matching grant reference, including a `no_path` taint record. When a row has `expectation_id`, the cited
-grant must have the same expectation; equal entrypoint keys alone do not
-select between distinct grant expectations. An `unassessed` taint path does
-not need an invented grant ID; any grant it does cite is still validated.
+must use the lockfile SHA-256 as `corpus_revision`, producer `step3`, profile
+`luci-ssl-25.12` (other known OpenWrt profiles are not ucode capabilities),
+and one of `handler_effect` / `taint_path`. Each record needs a nonempty, unique
+`record_id` and an `analysis_revision` fully matching `step3:[^\s:]+`.
+`analysis_revision` is never a cross-pack join key. This bounded check does
+not apply its `step3` format to policy-facts or inventory rows.
+
+For the current aggregate `handler_effect` families (including the catalog
+and source-table effects), `session_class` must be absent. Every cited grant
+must resolve uniquely to a `policy_grant` / `fact` / `policy_facts` row and
+match nonempty exact corpus, profile, ingress, entrypoint and ubus object/method
+or CGI endpoint. Policy-linked dispatcher is unsupported. No pattern expansion,
+profile inheritance, target/op matching, or producer-revision matching occurs.
+An assessed effect requires a nonempty expectation and at least one primary
+matching-expectation grant. Other grants are supplementary relationships only;
+they do not inherit that assessment. An `unassessed` effect can lack grants.
+
+For caller-specific `taint_path`, every cited grant must match its nonempty
+expectation and effective caller. A row caller and requested caller, if supplied,
+must agree with all cited grant sessions. Legacy assessed paths without a caller
+infer it only from a unique cited grant session. Assessed paths, including
+`no_path`, require a matching grant. An unassessed path can be grant-free and
+caller-unspecified. Contradictions are errors, never a fallback to another
+session. Absent output, unsupported constructs and extraction failure remain
+unknown; they do not become `no_path`.
 
 The validator recognizes only the typed ucode arrays `m3-findings.json`,
 `m4-findings.json`, `m4-getfeatures-direct-exec.json`,
 `m4-imported-callee-findings.json`, and `m4-shellquote-findings.json`, plus
-the report-only coverage objects `m3-coverage.json`, `m4-coverage.json`,
-`m4-getfeatures-direct-exec-coverage.json`, and
-`m4-shellquote-coverage.json`. An empty or mixed typed array, malformed
-coverage object, or unrecognized JSON file under `docs/` fails validation.
+the four classified coverage objects. The compatibility command above validates
+only documents that are present, explicitly lists missing documents, and reports
+limited scope rather than full conformance. Supplied coverage reports must match
+the pinned historical identity and contents, including all five direct-exec call
+sites, controls, analyzed scope and required unknowns. Coverage identity lists
+are order-insensitive; row and coverage unknowns may add conservative entries
+but may not remove required entries. Historical IDs are bound to their
+record type, status, semantic identity, required evidence and unknowns even in
+limited mode; a document using a historical ID or family revision must retain its
+full historical identity set and the manifest-correct filename and revision.
+Historical revisions are reserved across all classified filenames, not only the
+filename of the original family. Inconclusive rows require a nonempty unknown.
+Rows with entirely new IDs and revisions receive structural and policy checks,
+not independent semantic or completeness validation. For the pinned historical
+snapshot use `python3 -m policy.interchange_contract --snapshot --ucode-root <ucode-checkout>`.
+This mode also requires all five arrays and four reports and enforces the
+consumer-owned `policy/ucode_snapshot_manifest.json`. It does not authenticate
+execution or resolve all source evidence. The synthetic M3 rows remain
+explicitly evidence-free; imported-callee has no coverage report. Snapshot
+checks are not live-run completeness or provenance evidence.
+
+The portable structural test vectors are
+`policy/tests/fixtures/issue83-structural-v2.json` (SHA-256
+`ec2b76c8db2f36c96c7f8ee3bafa35e74fd2a5ce88e716aa8c1edb2e784c3a68`).
+They cover revision, producer, type, profile, IDs, corpus shape and uncertainty;
+they do not establish full schema, semantic-join, or provenance equivalence.
+Both wrappers must explicitly pin and execute a common revision before a paired
+conformance claim; merely adding this file does not establish that alignment.
+
+
+A live paired run must independently bind both revisions and actual code/schema,
+contract, profile, grants, decisions and expectation bytes in a reviewed consumer
+context, plus source/query/output bytes and the actual CSV-to-adapter handoff.
+Delivered IDs matching an advertisement prove handoff agreement, not scoped
+analysis completeness; that stronger claim requires an independently pinned
+oracle. This validator does not yet implement that live-run context protocol.
 
 Coverage ledgers such as `docs/m4-coverage.json` are reports, not
 `finding.schema.json` records. Likewise, the #54 named-column CSV source

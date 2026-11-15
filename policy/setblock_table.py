@@ -241,16 +241,41 @@ def build_effect(row: dict[str, str], repo_root: Path, existing: dict) -> dict:
     return effect
 
 
+class EffectIdentityCollision(ValueError):
+    """The replacement effect identity already belongs to another record."""
+
+
+class PrestateMismatch(ValueError):
+    """The paired retained targets do not agree."""
+
+
 def replace_effect(rows: object, effect: dict) -> list:
     if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
         raise ValueError("effect artifact must be a list of objects")
     if any(row.get("effect_id") == effect["effect_id"] and row.get("record_id") != EFFECT_ID
            for row in rows):
-        raise ValueError("effect identity is already used by a different record")
+        raise EffectIdentityCollision("effect identity is already used by a different record")
     indices = [i for i, row in enumerate(rows) if row.get("record_id") == EFFECT_ID]
     if len(indices) != 1:
         raise ValueError("expected exactly one existing setBlockDetect effect")
     return [effect if i == indices[0] else row for i, row in enumerate(rows)]
+
+
+def prepare_updates(snapshot_rows: object, catalog_rows: object, row: dict[str, str],
+                    repo_root: Path) -> tuple[list, list]:
+    """Validate paired pre-state and compute adapter updates without writing."""
+    snapshot_effect = _existing_effect(snapshot_rows, repo_root, SNAPSHOT)
+    catalog_effect = _existing_effect(catalog_rows, repo_root, CATALOG)
+    provenance_fields = {"assumptions", "evidence_refs"}
+    snapshot_shared = {k: v for k, v in snapshot_effect.items() if k not in provenance_fields}
+    catalog_shared = {k: v for k, v in catalog_effect.items() if k not in provenance_fields}
+    if snapshot_shared != catalog_shared:
+        raise PrestateMismatch("setBlockDetect snapshot and catalog rows are not in lockstep")
+    # Reject aliases before deriving a post-state or consulting policy joins.
+    replace_effect(snapshot_rows, catalog_effect)
+    replace_effect(catalog_rows, catalog_effect)
+    effect = build_effect(row, repo_root, catalog_effect)
+    return replace_effect(snapshot_rows, effect), replace_effect(catalog_rows, effect)
 
 
 def import_table(csv_path: Path, source_root: Path, repo_root: Path = REPO_ROOT) -> None:
@@ -259,16 +284,8 @@ def import_table(csv_path: Path, source_root: Path, repo_root: Path = REPO_ROOT)
     catalog_path = repo_root / CATALOG
     snapshot_rows = read_json(snapshot_path)
     catalog_rows = read_json(catalog_path)
-    snapshot_effect = _existing_effect(snapshot_rows, repo_root, SNAPSHOT)
-    catalog_effect = _existing_effect(catalog_rows, repo_root, CATALOG)
-    provenance_fields = {"assumptions", "evidence_refs"}
-    snapshot_shared = {k: v for k, v in snapshot_effect.items() if k not in provenance_fields}
-    catalog_shared = {k: v for k, v in catalog_effect.items() if k not in provenance_fields}
-    if snapshot_shared != catalog_shared:
-        raise ValueError("setBlockDetect snapshot and catalog rows are not in lockstep")
-    effect = build_effect(row, repo_root, catalog_effect)
-    updates = [(snapshot_path, replace_effect(snapshot_rows, effect)),
-               (catalog_path, replace_effect(catalog_rows, effect))]
+    snapshot_update, catalog_update = prepare_updates(snapshot_rows, catalog_rows, row, repo_root)
+    updates = [(snapshot_path, snapshot_update), (catalog_path, catalog_update)]
     staged = []
     backups = []
     replaced = []

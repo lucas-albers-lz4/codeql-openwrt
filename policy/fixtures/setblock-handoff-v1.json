@@ -1,0 +1,30 @@
+{
+  "version": "setblock-handoff-oracle-v1",
+  "family": "setblockdetect-installed-source-v1",
+  "profile": "luci-ssl-25.12",
+  "source_revision": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+  "source_sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+  "source_path": "usr/share/rpcd/ucode/luci",
+  "query_path": "ql/src/m4/SetBlockDetectEffectTable.ql",
+  "header": ["observation_kind", "method", "sink_kind", "command", "source_path", "start_line", "start_column", "end_line", "end_column"],
+  "rows": [["callback_body_call", "setBlockDetect", "system", "/sbin/block detect > /etc/config/fstab", "usr/share/rpcd/ucode/luci", "532", "21", "532", "68"]],
+  "artifacts": ["reports/m4-block-device-exec.json", "reports/handler_effects.json"],
+  "effect": {
+    "record_type": "handler_effect", "evidence_status": "fact", "producer": "step3",
+    "record_id": "m4:effect:luci-setBlockDetect-system", "profile": "luci-ssl-25.12",
+    "analysis_revision": "step3:setblock-table-v1", "ingress": "ubus_http",
+    "entrypoint_id": "ubus_http:luci.setBlockDetect", "ubus_object": "luci", "method": "setBlockDetect",
+    "effect_id": "setBlockDetect.block-detect.system", "target_id": "command:block-detect",
+    "op": "exec", "sink_kind": "system", "assessment": "intended_access", "expectation_id": "luci-mod-system-mounts",
+    "source_location": {"path": "usr/share/rpcd/ucode/luci", "start_line": 532, "start_column": 21, "end_line": 532, "end_column": 68},
+    "conditions": ["setBlockDetect.call body", "builtin system of literal /sbin/block detect", "call takes no request.args"],
+    "assumptions": ["Source observation in the pinned callback body; not a taint path", "The supplied CSV is not authenticated as CodeQL output", "Fixed argv; this is not luci.sys and not request.args interpolation", "Assessment uses the independent synthetic mounts expectation, not the source table", "shellquote and basename are not sanitizers; they are not present on this sink"],
+    "evidence_refs": ["policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect", "policy:grant:root:ubus_http:luci.setBlockDetect", "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/ucode/luci setBlockDetect.call system('/sbin/block detect > /etc/config/fstab')", "ql/src/m4/SetBlockDetectEffectTable.ql", "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci:532"],
+    "unknowns": ["live uhttpd/rpcd not executed", "Callback registration, actual execution and live uhttpd/rpcd are not established by the table", "Lexical shadowing and unmodeled call shapes are not resolved by the table"]
+  },
+  "grants": [
+    {"record_id": "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect", "session_class": "luci-mod-system-mounts", "expectation_id": "luci-mod-system-mounts"},
+    {"record_id": "policy:grant:root:ubus_http:luci.setBlockDetect", "session_class": "root", "expectation_id": "root-administration"}
+  ],
+  "deny_id": "policy:decision:unauthenticated-setBlockDetect-deny"
+}

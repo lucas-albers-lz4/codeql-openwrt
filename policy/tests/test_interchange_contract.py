@@ -110,6 +110,14 @@ class InterchangeContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "unknown profile"):
             validate_ucode_root(self.ucode_root)
 
+    def test_partial_mode_rejects_known_but_unsupported_ucode_profile(self):
+        # Same unassessed, grant-free row, changing only its known profile.
+        self.write_array([base_row()])
+        self.assertEqual(validate_ucode_root(self.ucode_root), (1, 1))
+        self.write_array([base_row(profile="luci-ssl-25.12-no-ubusauth")])
+        with self.assertRaisesRegex(ContractError, "unsupported.*profile"):
+            validate_ucode_root(self.ucode_root)
+
     def test_unassessed_taint_path_needs_no_invented_grant(self):
         self.write_array([base_row(assessment="unassessed")])
         self.assertEqual(validate_ucode_root(self.ucode_root), (1, 1))
@@ -163,10 +171,12 @@ class InterchangeContractTests(unittest.TestCase):
 
     def test_docs_json_classification_is_explicit_and_fails_closed(self):
         self.write_array([base_row()])
-        (self.ucode_root / "docs" / "m4-coverage.json").write_text(
-            json.dumps({"record_type": "entrypoint_coverage_ledger", "rows": []}),
-            encoding="utf-8",
-        )
+        coverage = self.ucode_root / "docs" / "m4-coverage.json"
+        coverage.write_text(json.dumps({"record_type": "entrypoint_coverage_ledger", "rows": []}), encoding="utf-8")
+        with self.assertRaisesRegex(ContractError, "coverage identity"):
+            validate_ucode_root(self.ucode_root)
+        valid_coverage = (Path(__file__).parent / "fixtures/ucode-snapshot/docs/m4-coverage.json").read_text()
+        coverage.write_text(valid_coverage, encoding="utf-8")
         (self.ucode_root / "docs" / "getblock-observation.csv").write_text(
             "path,line,column,call\n", encoding="utf-8"
         )
@@ -179,7 +189,7 @@ class InterchangeContractTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "coverage output must be an object"):
             validate_ucode_root(self.ucode_root)
 
-        (self.ucode_root / "docs" / "m4-coverage.json").write_text("{}", encoding="utf-8")
+        coverage.write_text(valid_coverage, encoding="utf-8")
         self.write_array([], name="m4-findings.json")
         with self.assertRaisesRegex(ContractError, "must not be empty"):
             validate_ucode_root(self.ucode_root)
