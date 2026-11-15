@@ -1,0 +1,282 @@
+{
+  "artifact_format": "luci_backend_declaration_grant_comparison_report",
+  "format_version": 1,
+  "source": {
+    "repository": "https://github.com/openwrt/luci",
+    "revision": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "path": "usr/share/rpcd/ucode/luci",
+    "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e"
+  },
+  "context": {
+    "profile": "luci-ssl-25.12",
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "producer_revision_reference": "d54c17a8cefc43ef9cde36d65558c986348aa7b2",
+    "query_sha256": "58d11ee8bf4f27db2dec4e34292d5155874f035bac8b98121c9ee8d85225a298",
+    "consumer_baseline_reference": "fc084f564660c8366022787aaf09e38f8ee32139"
+  },
+  "scope": [
+    "Syntactic source declarations only; no runtime registration, reachability or execution is established.",
+    "Unmatched means no current materialized grant row, not denial or an ACL defect.",
+    "Offline validation does not attest fresh extraction or execution."
+  ],
+  "declarations": [
+    {
+      "method": "getVersion",
+      "start_line": 51,
+      "start_column": 9,
+      "end_line": 53,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-status-index:ubus_http:luci.getVersion",
+        "policy:grant:root:ubus_http:luci.getVersion"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getInitList",
+      "start_line": 58,
+      "start_column": 9,
+      "end_line": 72,
+      "end_column": 3,
+      "grant_ids": [],
+      "relation": "no_current_grant_row"
+    },
+    {
+      "method": "setInitAction",
+      "start_line": 77,
+      "start_column": 9,
+      "end_line": 95,
+      "end_column": 3,
+      "grant_ids": [],
+      "relation": "no_current_grant_row"
+    },
+    {
+      "method": "getUnixtime",
+      "start_line": 99,
+      "start_column": 9,
+      "end_line": 102,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-status-index:ubus_http:luci.getUnixtime",
+        "policy:grant:root:ubus_http:luci.getUnixtime"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "setLocaltime",
+      "start_line": 107,
+      "start_column": 9,
+      "end_line": 116,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime",
+        "policy:grant:root:ubus_http:luci.setLocaltime"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getTimezones",
+      "start_line": 120,
+      "start_column": 9,
+      "end_line": 133,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.getTimezones",
+        "policy:grant:root:ubus_http:luci.getTimezones"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getLEDs",
+      "start_line": 137,
+      "start_column": 9,
+      "end_line": 161,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.getLEDs",
+        "policy:grant:root:ubus_http:luci.getLEDs"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getUSBDevices",
+      "start_line": 165,
+      "start_column": 9,
+      "end_line": 192,
+      "end_column": 3,
+      "grant_ids": [],
+      "relation": "no_current_grant_row"
+    },
+    {
+      "method": "getConntrackHelpers",
+      "start_line": 196,
+      "start_column": 9,
+      "end_line": 220,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-app-firewall:ubus_http:luci.getConntrackHelpers",
+        "policy:grant:root:ubus_http:luci.getConntrackHelpers"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getFeatures",
+      "start_line": 224,
+      "start_column": 9,
+      "end_line": 336,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:root:ubus_http:luci.getFeatures",
+        "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getSwconfigFeatures",
+      "start_line": 341,
+      "start_column": 9,
+      "end_line": 394,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigFeatures",
+        "policy:grant:root:ubus_http:luci.getSwconfigFeatures"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getSwconfigPortState",
+      "start_line": 399,
+      "start_column": 9,
+      "end_line": 464,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigPortState",
+        "policy:grant:root:ubus_http:luci.getSwconfigPortState"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "setPassword",
+      "start_line": 469,
+      "start_column": 9,
+      "end_line": 476,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.setPassword",
+        "policy:grant:root:ubus_http:luci.setPassword"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getBlockDevices",
+      "start_line": 480,
+      "start_column": 9,
+      "end_line": 527,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:luci.getBlockDevices",
+        "policy:grant:root:ubus_http:luci.getBlockDevices"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "setBlockDetect",
+      "start_line": 531,
+      "start_column": 9,
+      "end_line": 533,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect",
+        "policy:grant:root:ubus_http:luci.setBlockDetect"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getMountPoints",
+      "start_line": 537,
+      "start_column": 9,
+      "end_line": 566,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-app-package-manager:ubus_http:luci.getMountPoints",
+        "policy:grant:luci-mod-status-index-storage:ubus_http:luci.getMountPoints",
+        "policy:grant:luci-mod-system-mounts:ubus_http:luci.getMountPoints",
+        "policy:grant:root:ubus_http:luci.getMountPoints"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getRealtimeStats",
+      "start_line": 571,
+      "start_column": 9,
+      "end_line": 602,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats",
+        "policy:grant:root:ubus_http:luci.getRealtimeStats"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getConntrackList",
+      "start_line": 606,
+      "start_column": 9,
+      "end_line": 608,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-status-realtime:ubus_http:luci.getConntrackList",
+        "policy:grant:root:ubus_http:luci.getConntrackList"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getProcessList",
+      "start_line": 612,
+      "start_column": 9,
+      "end_line": 614,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-status-processes:ubus_http:luci.getProcessList",
+        "policy:grant:root:ubus_http:luci.getProcessList"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getBuiltinEthernetPorts",
+      "start_line": 618,
+      "start_column": 9,
+      "end_line": 657,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-status-index-ports:ubus_http:luci.getBuiltinEthernetPorts",
+        "policy:grant:root:ubus_http:luci.getBuiltinEthernetPorts"
+      ],
+      "relation": "current_grant_rows"
+    },
+    {
+      "method": "getOdhcp6cStats",
+      "start_line": 661,
+      "start_column": 9,
+      "end_line": 682,
+      "end_column": 3,
+      "grant_ids": [
+        "policy:grant:luci-mod-status-index:ubus_http:luci.getOdhcp6cStats",
+        "policy:grant:root:ubus_http:luci.getOdhcp6cStats"
+      ],
+      "relation": "current_grant_rows"
+    }
+  ],
+  "source_only": [
+    "getInitList",
+    "getUSBDevices",
+    "setInitAction"
+  ],
+  "grant_only": [],
+  "summary": {
+    "declarations": 21,
+    "represented_methods": 18,
+    "grant_rows": 38,
+    "source_only": 3,
+    "grant_only": 0
+  }
+}
