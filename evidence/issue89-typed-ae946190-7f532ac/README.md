@@ -21,7 +21,7 @@ The exact approval extract and its minimal provenance are in `attempt/approval-c
 
 ## Execution record
 
-The attempt has 15 stage receipts and 45 separate raw stdout and stderr files. Each receipt preserves the actual argv, working directory, environment, exit status, timing, and stream hashes. The stages were three library resolutions, database init, index, finalize, three queries, three decodes, export, import, and reimport.
+The attempt has 45 log files: 15 stage receipts and 30 separate stdout and stderr streams. Each receipt preserves the actual argv, working directory, environment, exit status, timing, and stream hashes. The stages were three library resolutions, database init, index, finalize, three queries, three decodes, export, import, and reimport.
 
 All 15 commands returned exit code 0. The attempt retained the three BQRS files and decoded CSV files. It also retained typed exporter stdout, before/after/reimport report bytes, routing, the source archive, and a finalized database inventory. The live database itself is not included.
 
