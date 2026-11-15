@@ -1,0 +1,9 @@
+Running pre-finalize script /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/extractor-pack/tools/pre-finalize.sh in /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke.
+Running command in /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke: [/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/extractor-pack/tools/pre-finalize.sh]
+Pre-finalize script /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/extractor-pack/tools/pre-finalize.sh completed in 1035 ms.
+Running TRAP import for CodeQL database at /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/database...
+Importing TRAP files
+Merging relations
+Finished writing database (relations: 79.79 KiB; string pool: 2.05 MiB).
+TRAP import complete (1.1s).
+Finished zipping source archive (4.95 KiB).

@@ -1,0 +1,6 @@
+Source: work-profile state database, messages table.
+Message id: 122367.
+Role: assistant.
+Extract: content field, lines 1-20 only, preserved byte-for-byte as UTF-8.
+Scope: approval of the reviewed a3 packet for one bounded observed run only.
+This file records provenance; it is not part of the approval content.

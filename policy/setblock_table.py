@@ -1,7 +1,7 @@
 """Import one pinned setBlockDetect source-observation table.
 
-This adapter does not run CodeQL or authenticate the origin of a supplied CSV.
-It validates the row and pinned source bytes before replacing the retained effect.
+This adapter does not run CodeQL or authenticate the origin of supplied input.
+It validates the observation and pinned source bytes before replacing the retained effect.
 """
 from __future__ import annotations
 
@@ -28,6 +28,8 @@ EXPECTED = ("callback_body_call", "setBlockDetect", "system",
 PROFILE = "luci-ssl-25.12"
 LEGACY_ANALYSIS_REVISION = "step3:luci-fixed-exec-v1"
 ANALYSIS_REVISION = "step3:setblock-table-v1"
+TYPED_REVISION = "step3:setblock-typed-v1"
+TYPED_IMPORT_REVISION = "step3:setblock-typed-import-v1"
 EFFECT_ID = "m4:effect:luci-setBlockDetect-system"
 EFFECT_NAME = "setBlockDetect.block-detect.system"
 CONDITIONS = ["setBlockDetect.call body", "builtin system of literal /sbin/block detect",
@@ -88,6 +90,69 @@ IMPORTED_UNKNOWNS = [
     "Callback registration, actual execution and live uhttpd/rpcd are not established by the table",
     "Lexical shadowing and unmodeled call shapes are not resolved by the table",
 ]
+TYPED_ASSUMPTIONS = [
+    "Source observation in the pinned callback body; not a taint path",
+    "The supplied CSV and typed JSON are not authenticated as CodeQL output",
+    "Fixed argv; this is not luci.sys and not request.args interpolation",
+    "shellquote and basename are not sanitizers; they are not present on this sink",
+]
+TYPED_RETAINED_ASSUMPTIONS = [*TYPED_ASSUMPTIONS,
+    "Assessment uses the independent synthetic mounts expectation, not the source table"]
+
+
+def same_json(a, b):
+    """JSON comparison that does not equate bool, int, and float."""
+    if type(a) is not type(b):
+        return False
+    if isinstance(a, dict):
+        return a.keys() == b.keys() and all(same_json(a[k], b[k]) for k in a)
+    if isinstance(a, list):
+        return len(a) == len(b) and all(same_json(x, y) for x, y in zip(a, b))
+    return a == b
+
+
+def valid_unknowns(value, required):
+    return (type(value) is list and all(type(x) is str and x.strip() for x in value)
+            and len(value) == len(set(value)) and all(x in value for x in required))
+
+
+def unique_pairs(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON key: {key}")
+        result[key] = value
+    return result
+
+
+def validate_typed(path: Path, source_root: Path, repo_root: Path) -> dict:
+    def invalid_constant(value):
+        raise ValueError(f"invalid JSON constant: {value}")
+    records = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique_pairs,
+                         parse_constant=invalid_constant)
+    lock = read_json(repo_root / "corpus/lock.json")
+    if lock["repos"]["luci"]["sha"] != LUCISHA:
+        raise ValueError("luci lock revision is not the supported source pin")
+    if hashlib.sha256((source_root / SOURCE_PATH).read_bytes()).hexdigest() != SOURCE_SHA256:
+        raise ValueError("source bytes do not match pinned luci")
+    expected = {
+        "record_type": "handler_effect", "evidence_status": "fact", "producer": "step3",
+        "record_id": EFFECT_ID, "corpus_revision": corpus_revision(repo_root), "profile": PROFILE,
+        "analysis_revision": TYPED_REVISION, "ingress": "ubus_http",
+        "entrypoint_id": "ubus_http:luci.setBlockDetect", "ubus_object": "luci",
+        "method": "setBlockDetect", "effect_id": EFFECT_NAME, "target_id": "command:block-detect",
+        "op": "exec", "sink_kind": "system", "assessment": "unassessed",
+        "source_location": SOURCE_LOCATION, "conditions": CONDITIONS,
+        "assumptions": TYPED_ASSUMPTIONS, "evidence_refs": IMPORTED_EVIDENCE_REFS[2:],
+    }
+    if type(records) is not list or len(records) != 1 or type(records[0]) is not dict:
+        raise ValueError("expected exactly one typed setBlockDetect record")
+    record = records[0]
+    if (set(record) != set(expected) | {"unknowns"}
+            or not same_json({k: record[k] for k in expected if k in record}, expected)
+            or not valid_unknowns(record.get("unknowns"), IMPORTED_UNKNOWNS)):
+        raise ValueError("typed setBlockDetect record does not match the supported family")
+    return record
 
 
 def read_json(path: Path):
@@ -146,7 +211,7 @@ def _validate_unauthenticated_deny(repo_root: Path, keys: dict[str, str]) -> Non
         raise ValueError("missing or mismatched unauthenticated deny decision")
 
 
-def validate_existing_effect(effect: object, repo_root: Path, artifact: Path) -> dict:
+def validate_existing_effect(effect: object, repo_root: Path, artifact: Path, *, typed_mode=False) -> dict:
     if not isinstance(effect, dict):
         raise ValueError("existing setBlockDetect effect must be an object")
     revision = corpus_revision(repo_root)
@@ -160,7 +225,7 @@ def validate_existing_effect(effect: object, repo_root: Path, artifact: Path) ->
         "conditions": CONDITIONS,
     }
     for key, value in expected.items():
-        if effect.get(key) != value:
+        if not same_json(effect.get(key), value):
             raise ValueError(f"existing setBlockDetect effect has mismatched {key}")
     analysis_revision = effect.get("analysis_revision")
     if analysis_revision == LEGACY_ANALYSIS_REVISION:
@@ -174,12 +239,13 @@ def validate_existing_effect(effect: object, repo_root: Path, artifact: Path) ->
         else:
             raise ValueError("unsupported setBlockDetect effect artifact")
         expected_unknowns = LEGACY_UNKNOWNS
-    elif analysis_revision == ANALYSIS_REVISION:
+    elif analysis_revision in (ANALYSIS_REVISION, TYPED_IMPORT_REVISION):
         expected_keys = IMPORTED_KEYS
-        expected_assumptions = IMPORTED_ASSUMPTIONS
+        expected_assumptions = (TYPED_RETAINED_ASSUMPTIONS if analysis_revision == TYPED_IMPORT_REVISION
+                                else IMPORTED_ASSUMPTIONS)
         expected_refs = IMPORTED_EVIDENCE_REFS
         expected_unknowns = IMPORTED_UNKNOWNS
-        if effect.get("source_location") != SOURCE_LOCATION:
+        if not same_json(effect.get("source_location"), SOURCE_LOCATION):
             raise ValueError("existing setBlockDetect effect has mismatched source location")
     else:
         raise ValueError("existing setBlockDetect effect has unsupported analysis revision")
@@ -187,18 +253,19 @@ def validate_existing_effect(effect: object, repo_root: Path, artifact: Path) ->
         raise ValueError("existing setBlockDetect effect has unexpected or missing fields")
     if (effect.get("assumptions") != expected_assumptions
             or effect.get("evidence_refs") != expected_refs
-            or effect.get("unknowns") != expected_unknowns):
+            or (not valid_unknowns(effect.get("unknowns"), expected_unknowns) if typed_mode
+                else not same_json(effect.get("unknowns"), expected_unknowns))):
         raise ValueError("existing setBlockDetect effect has changed source or uncertainty claims")
     return effect
 
 
-def _existing_effect(rows: object, repo_root: Path, artifact: Path) -> dict:
+def _existing_effect(rows: object, repo_root: Path, artifact: Path, *, typed_mode=False) -> dict:
     if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
         raise ValueError(f"{artifact} must be a list of objects")
     matches = [row for row in rows if row.get("record_id") == EFFECT_ID]
     if len(matches) != 1:
         raise ValueError(f"{artifact} must contain exactly one setBlockDetect effect")
-    return validate_existing_effect(matches[0], repo_root, artifact)
+    return validate_existing_effect(matches[0], repo_root, artifact, typed_mode=typed_mode)
 
 
 def build_effect(row: dict[str, str], repo_root: Path, existing: dict) -> dict:
@@ -262,29 +329,44 @@ def replace_effect(rows: object, effect: dict) -> list:
 
 
 def prepare_updates(snapshot_rows: object, catalog_rows: object, row: dict[str, str],
-                    repo_root: Path) -> tuple[list, list]:
+                    repo_root: Path, *, typed=None) -> tuple[list, list]:
     """Validate paired pre-state and compute adapter updates without writing."""
-    snapshot_effect = _existing_effect(snapshot_rows, repo_root, SNAPSHOT)
-    catalog_effect = _existing_effect(catalog_rows, repo_root, CATALOG)
+    snapshot_effect = _existing_effect(snapshot_rows, repo_root, SNAPSHOT, typed_mode=typed is not None)
+    catalog_effect = _existing_effect(catalog_rows, repo_root, CATALOG, typed_mode=typed is not None)
     provenance_fields = {"assumptions", "evidence_refs"}
     snapshot_shared = {k: v for k, v in snapshot_effect.items() if k not in provenance_fields}
     catalog_shared = {k: v for k, v in catalog_effect.items() if k not in provenance_fields}
-    if snapshot_shared != catalog_shared:
+    if not same_json(snapshot_shared, catalog_shared):
         raise PrestateMismatch("setBlockDetect snapshot and catalog rows are not in lockstep")
+    if typed is None and catalog_effect["analysis_revision"] == TYPED_IMPORT_REVISION:
+        raise ValueError("typed-to-CSV downgrade is not supported")
     # Reject aliases before deriving a post-state or consulting policy joins.
     replace_effect(snapshot_rows, catalog_effect)
     replace_effect(catalog_rows, catalog_effect)
     effect = build_effect(row, repo_root, catalog_effect)
+    if typed is not None:
+        effect["analysis_revision"] = TYPED_IMPORT_REVISION
+        effect["assumptions"] = TYPED_RETAINED_ASSUMPTIONS
+        effect["unknowns"] = list(dict.fromkeys([*IMPORTED_UNKNOWNS, *catalog_effect["unknowns"], *typed["unknowns"]]))
     return replace_effect(snapshot_rows, effect), replace_effect(catalog_rows, effect)
 
 
 def import_table(csv_path: Path, source_root: Path, repo_root: Path = REPO_ROOT) -> None:
     row = validate_table(csv_path, source_root, repo_root)
+    _import_observation(row, repo_root)
+
+
+def import_typed(path: Path, source_root: Path, repo_root: Path = REPO_ROOT) -> None:
+    record = validate_typed(path, source_root, repo_root)
+    _import_observation(dict(zip(COLUMNS, EXPECTED)), repo_root, typed=record)
+
+
+def _import_observation(row, repo_root, *, typed=None):
     snapshot_path = repo_root / SNAPSHOT
     catalog_path = repo_root / CATALOG
     snapshot_rows = read_json(snapshot_path)
     catalog_rows = read_json(catalog_path)
-    snapshot_update, catalog_update = prepare_updates(snapshot_rows, catalog_rows, row, repo_root)
+    snapshot_update, catalog_update = prepare_updates(snapshot_rows, catalog_rows, row, repo_root, typed=typed)
     updates = [(snapshot_path, snapshot_update), (catalog_path, catalog_update)]
     staged = []
     backups = []
@@ -324,10 +406,15 @@ def import_table(csv_path: Path, source_root: Path, repo_root: Path = REPO_ROOT)
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--csv", type=Path, required=True)
+    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--csv", type=Path)
+    inputs.add_argument("--typed-json", type=Path)
     parser.add_argument("--source-root", type=Path, required=True)
     args = parser.parse_args()
-    import_table(args.csv, args.source_root)
+    if args.typed_json is not None:
+        import_typed(args.typed_json, args.source_root)
+    else:
+        import_table(args.csv, args.source_root)
 
 
 if __name__ == "__main__":

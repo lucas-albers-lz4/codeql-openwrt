@@ -1,0 +1,86 @@
+## Verdict
+
+**The proposed sequence is sound, but it is not yet an approved executable packet.** Its final consumer pin, concrete paths, recorder/comparator bytes and inventories must exist and receive independent approval **before database creation**.
+
+I read live [#89](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/89), recovered the complete prior recipe, inspected both implementations and checked CodeQL 2.27.4’s command help. No database, exporter, importer or test suite was run; no files or GitHub state were changed.
+
+## Required corrections
+
+1. **Make the local approval gate unconditional.**
+   - The issue does not demand exhaustive OS/runtime closure. Nevertheless, the agreed local requirement is strict: independently approve the **exact packet and independent oracle before the fresh run**.
+   - This review approves the design only. It cannot approve a future consumer SHA or an unmaterialized recorder.
+   - Changing a pin, oracle, executable recipe, resolved dependency or approved execution path requires renewed approval. Post-hoc review cannot turn an unapproved run into a preapproved one.
+
+2. **Finish the tooling/environment inventory.**
+   - `/usr/bin/python3` actually resolves to **Python 3.13.5** here; do not substitute the environment’s generic `python3` description.
+   - Hashing the `codeql` launcher alone is insufficient: it is a shell script launching bundled Java, `tools/codeql.jar` and downstream tools. Identify the selected distribution and bind its relevant contents or a complete distribution manifest.
+   - Include extractor shell scripts, executable modes, executable, dbscheme/stats, `.codeqlmanifest.json`, pack manifests/lockfiles and resolved packs.
+   - Full policy tests require **gcc** and their C inputs. Rust/Cargo are unnecessary for this run if the prepared extractor is explicitly reused.
+   - Freeze an environment allowlist, including PATH, HOME, XDG configuration/cache roots, scratch TMPDIR and locale. Do not inherit Python, Java, loader or CodeQL override variables accidentally.
+
+3. **Add explicit dependency-resolution vectors.**
+   For **each** selected query, preflight:
+   ```bash
+   "$Q" resolve library-path \
+     "--query=$P/ql/src/$QUERY" --format=json \
+     "--search-path=$SP" \
+     "--additional-packs=$P/resolved-packs" \
+     --no-default-compilation-cache \
+     "--compilation-cache=$E/query-cache" \
+     "--common-caches=$E/common-cache"
+   ```
+   These options are supported by the installed CLI. Retain the actual JSON and reject unapproved library/dbscheme paths. Resolution and query execution must use identical dependency-selection arguments.
+
+4. **Do not repurpose the old runner unchanged.**
+   - `observed-unique.py` ultimately invokes the **CSV-only** `policy.setblock_handoff`; it is not a typed acceptance checker.
+   - It also assumes Git checkouts (`git show HEAD`, `git status`), whereas the proposed preparation uses commit exports.
+   - Use a small reviewed recorder/comparator with export-manifest checks instead. Do not reuse the CSV manifest/result vocabulary to imply typed validation.
+   - Compare actual path sets as well as hashes of known paths; otherwise newly added modules/files escape detection.
+   - Connect receipts through finalized-database identity, BQRS, raw decoded stdout, typed payload and actual report states. Record process results directly, including failures—never synthesize successful receipts.
+
+5. **Preserve the exact path and transition contracts.**
+   - Keep the source root ending in `ql/test/extractor-smoke`, containing exactly `usr/share/rpcd/ucode/luci`.
+   - The successful-extraction CSV uses the **absolute resolved source path**; the effects table uses the installed-relative path. Do not normalize either output manually.
+   - Preserve routing immediately after indexing, source-archive evidence and all before/after/reimport report bytes.
+   - Require a genuine CSV→typed revision change in **both** reports. A successful no-op is not acceptance.
+   - `-S -B` is appropriate for the live Python commands, but `-B` does not disable reading existing bytecode. Exclude product bytecode from staged copies; describe remaining system-runtime trust honestly rather than claiming exhaustive closure.
+
+## Minimal executable handoff plan
+
+Use the prior recipe’s database/query/decode/export/import vectors, with these checkpoints:
+
+1. **Prepare, without creating the database.**
+   - Producer: `ae946190661eb221bc1f562fdba02088ef83de2d`.
+   - Consumer: the eventual committed, tested revision—not `HEAD` resolved later.
+   - Allocate a new attempt root; replace the old `cbc0527f` path labels or explicitly declare them merely labels.
+   - Export exact commits, stage/hash the source, copy only inventoried prepared extractor/dependencies, and allocate empty external caches.
+   - Freeze baseline reports, complete consumed policy/profile inputs, oracles, recorder/comparator, expanded argv/cwds/environment and preflight results.
+
+2. **Independent approval checkpoint.**
+   Retain an acknowledgment identifying the packet’s raw digest outside runner-written results. Stop on unresolved inputs or discrepancies.
+
+3. **Execute through the approved recorder.**
+   ```text
+   database init → index-files → preserve/check routing → finalize
+   three query runs → three raw CSV decodes
+   independent CSV/diagnostic checks
+   real exporter → independent neutral-record check
+   real --typed-json consumer → independent retained-state checks
+   identical consumer reimport → byte-idempotence checks
+   ```
+   Use exclusive output creation, fresh database/output roots and the approved external cache flags. Any failed attempt remains separately labeled.
+
+4. **Acceptance comparisons.**
+   Strict UTF-8 CSV/JSON parsing; preserve multiplicity and JSON types. Check exact neutral/retained expectations, per-target mounts-primary/root-supplementary partitions, unauthenticated deny/no grant, required uncertainty, ordered unrelated state and unchanged protected inputs. No assertion-only guards.
+
+5. **Tests and publication packet.**
+   Run full policy CI-equivalent tests in a separate clean export of the pinned consumer; retain producer exporter tests and separately labeled mutation-control receipts. Publish actual commands, outputs, comparisons, tests and limitations—not expected outcomes presented as observations.
+
+I independently reproduced the prior neutral and retained oracle digests from the reviewed consumer expectations:
+
+- Neutral: `5c619d5aa3566c5296080b0a9be7072b38d6eb7a98eae647d68c5dcf09b2b59b`
+- Retained: `c6ba7438debd5d65250448fb60346eb051dfad1d438f38513c7fd732c5a0ae59`
+
+Recompute and review them against the **final** consumer commit; the test-source digest will change with the pending fixes.
+
+**Permitted outcome:** preapproved, observed, fresh bounded typed handoff with idempotent reimport; coverage remains `partial`. Not exhaustive runtime attestation, authenticated producer origin, runtime reachability, authorization violation or general analysis completeness.

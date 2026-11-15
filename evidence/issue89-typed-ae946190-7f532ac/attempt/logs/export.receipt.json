@@ -1,0 +1,135 @@
+{
+  "argv": [
+    "/usr/bin/python3.13",
+    "-E",
+    "-S",
+    "-B",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/tools/export_setblock_detect.py",
+    "--csv",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/effects.csv",
+    "--extracted",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.csv",
+    "--errors",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/errors.csv",
+    "--source-root",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke",
+    "--lock",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/consumer/corpus/lock.json"
+  ],
+  "boundary_errors": [],
+  "cwd": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer",
+  "elapsed_ns": 36600704,
+  "environment": {
+    "HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/home",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/cache",
+    "XDG_CONFIG_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/config"
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-15T08:47:00.138663+00:00",
+  "inputs_after": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/effects.csv": {
+      ".": {
+        "mode": 420,
+        "sha256": "9d9a1a7178e7f5fbd3cb772122fe172354004fac09ce00e91647d6b35ba9d0a0",
+        "size": 246,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/errors.csv": {
+      ".": {
+        "mode": 420,
+        "sha256": "0bb9068729a2970f4b125b6893565812fdd2d1fc6510626f214f3d055b4f94f5",
+        "size": 22,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.csv": {
+      ".": {
+        "mode": 420,
+        "sha256": "ab842728312739e69fc47983c85abaa09a59a297ead156d6ceca3df333b570f4",
+        "size": 148,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/consumer/corpus/lock.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+        "size": 4661,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci": {
+      ".": {
+        "mode": 420,
+        "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+        "size": 16161,
+        "type": "file"
+      }
+    }
+  },
+  "inputs_before": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/effects.csv": {
+      ".": {
+        "mode": 420,
+        "sha256": "9d9a1a7178e7f5fbd3cb772122fe172354004fac09ce00e91647d6b35ba9d0a0",
+        "size": 246,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/errors.csv": {
+      ".": {
+        "mode": 420,
+        "sha256": "0bb9068729a2970f4b125b6893565812fdd2d1fc6510626f214f3d055b4f94f5",
+        "size": 22,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.csv": {
+      ".": {
+        "mode": 420,
+        "sha256": "ab842728312739e69fc47983c85abaa09a59a297ead156d6ceca3df333b570f4",
+        "size": 148,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/consumer/corpus/lock.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+        "size": 4661,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci": {
+      ".": {
+        "mode": 420,
+        "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+        "size": 16161,
+        "type": "file"
+      }
+    }
+  },
+  "launch_error": null,
+  "mutables_after": {},
+  "mutables_before": {},
+  "outputs": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/typed.json": {
+      ".": {
+        "mode": 420,
+        "sha256": "5c619d5aa3566c5296080b0a9be7072b38d6eb7a98eae647d68c5dcf09b2b59b",
+        "size": 1908,
+        "type": "file"
+      }
+    }
+  },
+  "stage": "export",
+  "started_utc": "2026-11-15T08:47:00.102065+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "5c619d5aa3566c5296080b0a9be7072b38d6eb7a98eae647d68c5dcf09b2b59b"
+}

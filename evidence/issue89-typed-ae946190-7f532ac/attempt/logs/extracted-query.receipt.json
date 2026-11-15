@@ -1,0 +1,2917 @@
+{
+  "argv": [
+    "/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql",
+    "query",
+    "run",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+    "--database=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/database",
+    "--search-path=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/extractor-pack:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/lib:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs",
+    "--additional-packs=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs",
+    "--output=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.bqrs",
+    "--no-default-compilation-cache",
+    "--compilation-cache=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/query-cache",
+    "--common-caches=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/common-cache"
+  ],
+  "boundary_errors": [],
+  "cwd": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer",
+  "elapsed_ns": 5936289199,
+  "environment": {
+    "HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/home",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/cache",
+    "XDG_CONFIG_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/config"
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-15T08:46:48.211697+00:00",
+  "inputs_after": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/source-archive.zip": {
+      ".": {
+        "mode": 420,
+        "sha256": "c3a841f0f08290af2c73624d376008f109de5a39211e42ae48ac3c5e173d5ab8",
+        "size": 5072,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci": {
+      ".": {
+        "mode": 420,
+        "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+        "size": 16161,
+        "type": "file"
+      }
+    }
+  },
+  "inputs_before": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/source-archive.zip": {
+      ".": {
+        "mode": 420,
+        "sha256": "c3a841f0f08290af2c73624d376008f109de5a39211e42ae48ac3c5e173d5ab8",
+        "size": 5072,
+        "type": "file"
+      }
+    },
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci": {
+      ".": {
+        "mode": 420,
+        "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+        "size": 16161,
+        "type": "file"
+      }
+    }
+  },
+  "launch_error": null,
+  "mutables_after": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/database": {
+      ".": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "baseline-info.json": {
+        "mode": 420,
+        "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "size": 2,
+        "type": "file"
+      },
+      "codeql-database.yml": {
+        "mode": 420,
+        "sha256": "c26ba977f12f34c791f5dea508419145d102a91c17b25fef0885c54f1bf6b0e4",
+        "size": 370,
+        "type": "file"
+      },
+      "db-ucode": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/.lock": {
+        "mode": 420,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/buckets": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/buckets/info": {
+        "mode": 420,
+        "sha256": "64fbf1c189dfac4325b090df3e6eda406d98814ebbe346292ac7c624719272a9",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/buckets/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/ids1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/ids1/info": {
+        "mode": 420,
+        "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/ids1/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/indices1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/indices1/info": {
+        "mode": 420,
+        "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/indices1/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/info": {
+        "mode": 420,
+        "sha256": "50943aab7d03f74bedf883411289525ad298d91e491732b5442bb72c0126ae61",
+        "size": 41,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/metadata": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/metadata/info": {
+        "mode": 420,
+        "sha256": "4e7223a472e9ea0ee83c42de587ce7ee94235acbccdf92fda5646ffabf76f465",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/metadata/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/pageDump": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/pageDump/page-000000000": {
+        "mode": 420,
+        "sha256": "e4b4feafeeb1da14d81e10706fa949f5675af06bc9a25bd3f901ce6758ccaddc",
+        "size": 1048592,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/poolInfo": {
+        "mode": 420,
+        "sha256": "ddb845f25f00cbed82385a9ee3e43875ff299d48ce60c64a68f13c8a8f21cfe3",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/tuple-pool": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/tuple-pool/header": {
+        "mode": 420,
+        "sha256": "221f8af2372a95064f2ef7d7712216a9ab46e7ef98482fd237e106f83eaa7569",
+        "size": 4,
+        "type": "file"
+      },
+      "db-ucode/default/cache/is-trimmed": {
+        "mode": 420,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "type": "file"
+      },
+      "db-ucode/default/cache/pages": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/predicates": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/relations": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/version": {
+        "mode": 420,
+        "sha256": "620a69a93644d31f07dcf4c6dc51287b8f93d25168436d9b05b4690f25b0bdd0",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/containerparent.rel": {
+        "mode": 420,
+        "sha256": "d2550ef15dc7e7dcd5a20975f476304d94b008c37dc12b042ed82c09ed8b4dd5",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/containerparent.rel.meta": {
+        "mode": 420,
+        "sha256": "6f0e88c5ef97a16dc2a5f1c23eb28f64c8e561d296d0bb427e001e6d6b497200",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/empty_location.rel": {
+        "mode": 420,
+        "sha256": "5b7b40e598383a4b5adeadf8a3aafbbfea26b6d6ff4f9faa690084833901ba4a",
+        "size": 17,
+        "type": "file"
+      },
+      "db-ucode/default/empty_location.rel.meta": {
+        "mode": 420,
+        "sha256": "6330555213bb5966c2d174cdbbca9558501586bca0099cc0291cb298c67f187e",
+        "size": 23,
+        "type": "file"
+      },
+      "db-ucode/default/files.rel": {
+        "mode": 420,
+        "sha256": "65c47b649b2172de25f77c6cd79f6519f4334575353d954027e60d3726844851",
+        "size": 30,
+        "type": "file"
+      },
+      "db-ucode/default/files.rel.meta": {
+        "mode": 420,
+        "sha256": "98af1b9027831f9f0336073f804ddbf8dc3a5a38caa5f319be5c971f697ddc33",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/folders.rel": {
+        "mode": 420,
+        "sha256": "a396a245d3b261667ee4aa96fcc7477dee9cc0b671dc0e03fefb963644653738",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/folders.rel.meta": {
+        "mode": 420,
+        "sha256": "1f7386554f42764b0e207ccd96ceadfd107347a052b32fe63ecc2063e7f3a377",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/locations_default.rel": {
+        "mode": 420,
+        "sha256": "9047fd6d0cae106c94c649bbfe61bd4c5a7fe9bb795f438ff21d336ad27a2d52",
+        "size": 22533,
+        "type": "file"
+      },
+      "db-ucode/default/locations_default.rel.meta": {
+        "mode": 420,
+        "sha256": "abd590eaef407a36b11604e8449c61c55f6191659f3e418f85a0c2f48373f747",
+        "size": 49,
+        "type": "file"
+      },
+      "db-ucode/default/pools": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0/buckets": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0/buckets/info": {
+        "mode": 420,
+        "sha256": "28743f1071f8eaf43006616eaa10e0f4859667742f645ec93628ccccc343929a",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/buckets/page-000000": {
+        "mode": 420,
+        "sha256": "9ef8569809fc1be5c59d8d20e9bddb5197c2b3f803b3aeef31c73f5956900c90",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/info": {
+        "mode": 420,
+        "sha256": "9bf1bcfc9e7b9e029e549d41494af2edcd8445c18998620d2197d00324f8b83c",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/metadata": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0/metadata/info": {
+        "mode": 420,
+        "sha256": "03497400425d625cff8e05946fa38d7dfb7e2afd5d5419194a24dc6bcb9e9fa9",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/metadata/page-000000": {
+        "mode": 420,
+        "sha256": "889feb0145929df23216e5cd17e61a26f5765b3d7332c00a0f64582f4ed78a5b",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/pageDump": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0/pageDump/page-000000000": {
+        "mode": 420,
+        "sha256": "4035ba1fd10ea299c34a286775368f03ca459a23f3d2e38a804c7b2db404a908",
+        "size": 1048592,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/buckets": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/buckets/info": {
+        "mode": 420,
+        "sha256": "64fbf1c189dfac4325b090df3e6eda406d98814ebbe346292ac7c624719272a9",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/buckets/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/ids1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/ids1/info": {
+        "mode": 420,
+        "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/ids1/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/indices1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/indices1/info": {
+        "mode": 420,
+        "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/indices1/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/info": {
+        "mode": 420,
+        "sha256": "3d3af351862097bb443d4fef96f6474c07c634f9733da692981ce99a4276b214",
+        "size": 41,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/metadata": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/metadata/info": {
+        "mode": 420,
+        "sha256": "4e7223a472e9ea0ee83c42de587ce7ee94235acbccdf92fda5646ffabf76f465",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/metadata/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/pageDump": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/pageDump/page-000000000": {
+        "mode": 420,
+        "sha256": "e4b4feafeeb1da14d81e10706fa949f5675af06bc9a25bd3f901ce6758ccaddc",
+        "size": 1048592,
+        "type": "file"
+      },
+      "db-ucode/default/pools/max-id#Dynamic-New-Entities": {
+        "mode": 420,
+        "sha256": "0896e506ddeb8a5f83c8fb4e9438f55e91c275c14d9ef128596a246a605b3021",
+        "size": 16,
+        "type": "file"
+      },
+      "db-ucode/default/pools/poolInfo": {
+        "mode": 420,
+        "sha256": "03f6b14bb7d27cc03ba5f5319d99615cf44afee32e6bfa351df710c948193bb1",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/pools/tuples#Dynamic-New-Entities": {
+        "mode": 420,
+        "sha256": "052bbbd9726b6cfb227d9fda99e9a66ad7b35f10b6a55e4064c71ad2a5c3d27c",
+        "size": 16,
+        "type": "file"
+      },
+      "db-ucode/default/sourceLocationPrefix.rel": {
+        "mode": 420,
+        "sha256": "5b7b40e598383a4b5adeadf8a3aafbbfea26b6d6ff4f9faa690084833901ba4a",
+        "size": 17,
+        "type": "file"
+      },
+      "db-ucode/default/sourceLocationPrefix.rel.meta": {
+        "mode": 420,
+        "sha256": "8dd7b8e214f8ac92f71358e876edbb7a93af1318273ce7e87114ddae02c03bc3",
+        "size": 22,
+        "type": "file"
+      },
+      "db-ucode/default/strings": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/ucode_arguments_child.rel": {
+        "mode": 420,
+        "sha256": "c3f50a23e6542108c58f8cdb96300aa489ce79f8fd15bbb39646862a8cd75830",
+        "size": 947,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arguments_child.rel.meta": {
+        "mode": 420,
+        "sha256": "39c52c95c1dd6b13462080a4ff28d300951575cee7816bc7f3ebfbb063b9e7de",
+        "size": 42,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arguments_def.rel": {
+        "mode": 420,
+        "sha256": "d19f2f35146d77cb25bb34d107556e0b70ab352e4fcac6a201d78a925ee5122b",
+        "size": 248,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arguments_def.rel.meta": {
+        "mode": 420,
+        "sha256": "f07c91ed1b3450f21e77c2881e6a3c8a0f760bce90c42ed0e52d64ac07b9b948",
+        "size": 31,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_array_child.rel": {
+        "mode": 420,
+        "sha256": "07e65fd327836f58a128b4b8ac0ba59541f7ebbf8dc827035ce43664c95badbc",
+        "size": 83,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_array_child.rel.meta": {
+        "mode": 420,
+        "sha256": "c189f618b89c99acc758f6b28872004172bdde76544abde177c4a4fc4d5de814",
+        "size": 39,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_array_def.rel": {
+        "mode": 420,
+        "sha256": "e2cbc7106286fec9dfd6a385e0cad509940ff512909009dc2982585c8c747187",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_array_def.rel.meta": {
+        "mode": 420,
+        "sha256": "085be4c059a0406808700dfa7f6c8b343a542c438dc24921b101d52987f9fd4c",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_def.rel": {
+        "mode": 420,
+        "sha256": "4437b8f9439475c3c6f188c6a6d1729c53bfac26a362dc5c34543c8f4ead3d76",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_def.rel.meta": {
+        "mode": 420,
+        "sha256": "71422a3ff56b025433b571dc2d6aac7601dc8304c2e4f32ebc45e283154ea204",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_parameter.rel": {
+        "mode": 420,
+        "sha256": "d5b6f376f7f894a9ab182131dde43d945a51d8ae3fc996c9f682cef1cc35fc6b",
+        "size": 38,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_parameter.rel.meta": {
+        "mode": 420,
+        "sha256": "432c2ee11df9e7977a09dd8bb96d77d298c0d458ea3679c17f241b16e776ccc3",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_parameters.rel": {
+        "mode": 420,
+        "sha256": "96ff27012b25926fe2438fd780b1e39ce1e62fa5363b622e2dda5a52370c1be3",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_parameters.rel.meta": {
+        "mode": 420,
+        "sha256": "6907a94b0c2fb289d3ed4b882ec3c5ddca30727c20a07724cff20428b6f42570",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_assignment_expression_def.rel": {
+        "mode": 420,
+        "sha256": "eba9790a9143f4023e6c97add87da5681cd2bb9bd12abb984c093e68a006d2f6",
+        "size": 342,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_assignment_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "d2a240705148b9a6d4883348bfdc9f5cfcaa3179f1bd7721db407bcede9d1265",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ast_node_location.rel": {
+        "mode": 420,
+        "sha256": "584e387e0bc0c14f145f21ccf521895f28c900af8301356fae01b8c9667cb685",
+        "size": 12786,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ast_node_location.rel.meta": {
+        "mode": 420,
+        "sha256": "29cfb73e11cbd98e3a1e7e98d5a4ea0ca4305bd70e923ff0ba1bfa84c8bb4553",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ast_node_parent.rel": {
+        "mode": 420,
+        "sha256": "7cd6138f00db4d0b40d7b21c6c904c272fdf7a100939850e54c04d5759777136",
+        "size": 19912,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ast_node_parent.rel.meta": {
+        "mode": 420,
+        "sha256": "b20c2f0e257c003aef7d5801d3d599fd9dc56237e374b5e1d424f3e8b90251d1",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_augmented_assignment_expression_def.rel": {
+        "mode": 420,
+        "sha256": "ec34a1e2044ea93c42007524a1e7d9d8e7453ccc867f48a9436c521d90bf174f",
+        "size": 65,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_augmented_assignment_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "1ef17d6c9b10a305e95c95baedd3db3bcdb8c2a7a209490b283291f9bf088905",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_binary_expression_def.rel": {
+        "mode": 420,
+        "sha256": "3eb40b97642579e639ea632ba61a565a8567e3dbd62e5eace23a086556603a9d",
+        "size": 381,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_binary_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "21014c5556eb6dc64329534e92b0c0f611e7e0886da2685d0f954f480f55d59e",
+        "size": 47,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_call_expression_def.rel": {
+        "mode": 420,
+        "sha256": "53cacafe4553c0041690caa4584f657fc311fb64544c61ead6cb8dbf0ed4e042",
+        "size": 819,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_call_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "21b98c87fcb8bd3baf06986c84eaf944cb5fca7868a2563884ae9b17b77b3582",
+        "size": 47,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_call_expression_optional_chain.rel": {
+        "mode": 420,
+        "sha256": "704063eac44ab1039c71bd1cc5da9a35c75568b37f77a55d87731deda30a04c8",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_call_expression_optional_chain.rel.meta": {
+        "mode": 420,
+        "sha256": "8d13b2adb05bbd6dc9e8874c332c3e6be09bb088c450afe1a20f8199e2493fad",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_catch_clause_def.rel": {
+        "mode": 420,
+        "sha256": "ebf24ff84fc92bee4b5dcede4c5cd591a6932f13eb4e50cbb29b7f86baa967e9",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_catch_clause_def.rel.meta": {
+        "mode": 420,
+        "sha256": "5d979ee3d6ef71757701643664d273c8844c145b51b9bd23841930af9fe6e769",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_catch_clause_parameter.rel": {
+        "mode": 420,
+        "sha256": "98faf26613bec4be58aed84019cbf737929018bdc9a6997b01369868e1122ad0",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_catch_clause_parameter.rel.meta": {
+        "mode": 420,
+        "sha256": "959ab7420056595b7fe18ccc463d56db976fb45eb79b8d3d233ed8abb0950cf1",
+        "size": 31,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_else_clause_def.rel": {
+        "mode": 420,
+        "sha256": "9e64f54120bdb8881468bf484558ced3f378d9b17bcabaa1c7cef6ec7b084376",
+        "size": 102,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_else_clause_def.rel.meta": {
+        "mode": 420,
+        "sha256": "011787698333a1dfc4a988227a281805ea296d54cdcb92b377e241099d6994b9",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_expression_statement_def.rel": {
+        "mode": 420,
+        "sha256": "712ece50d73361c82eed99cfaea039ee958ab47ee7b8a013872c16eb47f678f7",
+        "size": 269,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_expression_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "b0f85a84dbd0e27dec257ec10d18296fd30d02fdd1666ccf1ab86e3ddfb72e32",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_def.rel": {
+        "mode": 420,
+        "sha256": "6d24b4af0cfc87476a8443879adec996f61b00fb305c88638f573af916ecc3e9",
+        "size": 128,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "f3067ee1048b9bc4949f1c8a8669f082757ab1d46b930fee4596a43a80efd2a6",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_key.rel": {
+        "mode": 420,
+        "sha256": "b8122b26990e824f1a6d7252217d82c64ca316bbae3797c09a123fa23396906a",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_key.rel.meta": {
+        "mode": 420,
+        "sha256": "0b7f9db95972f1a20894fb4ce93402f998fb2478f95ec13a83697612b761793f",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_kind.rel": {
+        "mode": 420,
+        "sha256": "744eb1016d1c91ae0e177ee62d191d98a7af2616eb5b6174c00d8cee1f7c6489",
+        "size": 88,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_kind.rel.meta": {
+        "mode": 420,
+        "sha256": "8463bec826f2cab769ba8d2debe3c8d79c5da9544bde40642da5d8031a1e2cf4",
+        "size": 35,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_value.rel": {
+        "mode": 420,
+        "sha256": "0858efe99c164d797e2e1a62b4b5d2a1c96f666ebb59ef73cd88fa815fa2b523",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_value.rel.meta": {
+        "mode": 420,
+        "sha256": "54724e874a13ef66cf03149bfdefeca483e325269d134040069e173655de95cb",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_variable.rel": {
+        "mode": 420,
+        "sha256": "05ea4bdc946db641725a28120b07c5e71e3a27b018a610347b5b31758da6e0a8",
+        "size": 84,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_variable.rel.meta": {
+        "mode": 420,
+        "sha256": "a0bafe5a885d36a027c18bbe87accb28a6d5dd38bce0435a30d73171e5671672",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_statement_def.rel": {
+        "mode": 420,
+        "sha256": "37ff44bb051ff113efd71611ba69b3d80909581e04b8e553f912c64e96941090",
+        "size": 97,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "c43d31be5780dcaa400073d2b74ea2145d375aa8e7f30b3ba31aef906d6202e0",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_statement_increment.rel": {
+        "mode": 420,
+        "sha256": "71ea4d53e083ec60c44a82d91c93b4de01b9acd89f3affd36bc2a48567cdc327",
+        "size": 53,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_statement_increment.rel.meta": {
+        "mode": 420,
+        "sha256": "4a4fdc38b6e63f33d713829eacafebcf16aa079cc16041895b45e6a7235c7167",
+        "size": 35,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_formal_parameters_child.rel": {
+        "mode": 420,
+        "sha256": "75a922704251e10c1db22e714ee9b7729f2450f11fb532d0744176bf6ccc4187",
+        "size": 114,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_formal_parameters_child.rel.meta": {
+        "mode": 420,
+        "sha256": "76c6f0c369427f39f11f8899b41c70f16b35871d201a2e40dda26aa0c16fca3e",
+        "size": 39,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_formal_parameters_def.rel": {
+        "mode": 420,
+        "sha256": "91020217561a6ea4f37ae69dd640b40bcbadb8336d5417ff899297d6041fddc3",
+        "size": 66,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_formal_parameters_def.rel.meta": {
+        "mode": 420,
+        "sha256": "06e55a1fac2826ece376efc94b5d8bb479f64600ef9d1f153a29bf50008a507f",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_declaration_body.rel": {
+        "mode": 420,
+        "sha256": "7132864f73310ea6fa4ab2bd76bad933aec27a35f83efd87ef9f25f6aa056e85",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_declaration_body.rel.meta": {
+        "mode": 420,
+        "sha256": "f2e5685e929133b51b7dd9fb511605c837d3b79a37f04e6e6aa524427a2ec7fc",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_declaration_def.rel": {
+        "mode": 420,
+        "sha256": "3dcaa243c66faa095956daed63198a1067e610b189b2c79a4bb7621024189082",
+        "size": 50,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_declaration_def.rel.meta": {
+        "mode": 420,
+        "sha256": "1339493c5cc1f04ab049a0ac53b501e4f7cb8ad347560a772418942b7aa2342e",
+        "size": 41,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_expression_def.rel": {
+        "mode": 420,
+        "sha256": "8ad59af4d008d130a90fd9d07524141d085d6d741ea8f9e7cbc29288b46f8f7d",
+        "size": 160,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "66702c63c7acfc601fe3db6d52a8c1b882741b8880b47c2042e5be8ea05a6d6b",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_if_statement_alternative.rel": {
+        "mode": 420,
+        "sha256": "11cfb2d787f9f3be556333c2cdadba73c6337d5a94e5bbee2575edcca2698763",
+        "size": 102,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_if_statement_alternative.rel.meta": {
+        "mode": 420,
+        "sha256": "26fc9c13346cbd17f07092f536854a9d603847cb7a8d0ea8d840e0ddd4934846",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_if_statement_def.rel": {
+        "mode": 420,
+        "sha256": "dccaaa0390c0e7c5c2ca67e745b86d4efe726bf9295fbe8fe8ff6064e258afd6",
+        "size": 360,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_if_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "4f7a2df812d870143e8a146ef3c961b97b7a8d2109c0374db209c49fd50ff99a",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_def.rel": {
+        "mode": 420,
+        "sha256": "b81ca26a652d8c0510f9935f09ef5debc97487f5e30cbc5ffcc3dcca4307bf65",
+        "size": 27,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_def.rel.meta": {
+        "mode": 420,
+        "sha256": "0672bb74159949f791297f972fd0c8a7e277761cf6d20fcd3b54d32e7d257c3e",
+        "size": 27,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_default.rel": {
+        "mode": 420,
+        "sha256": "1845ba5fa502d8055cc534358aa1fcc6ff0425c593350347f1ba892cbbdea88c",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_default.rel.meta": {
+        "mode": 420,
+        "sha256": "5e0a1c723460fd06365474f994bb8c24844e40fea78c1814c4c337ef6a5a894f",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_named.rel": {
+        "mode": 420,
+        "sha256": "6c9c77b2b877e5ac707e2b3705230d3daabd6f30d67c3a00f1cfbaec58fe3305",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_named.rel.meta": {
+        "mode": 420,
+        "sha256": "5cdad4c150cc3eeb5f55ed8338515f3fcdd6243c3ed153f629cf62bdec5013ca",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_specifier_def.rel": {
+        "mode": 420,
+        "sha256": "b0e85950108759ab93af42c8486b5be19f5880506cce5a0891c1c1b440115529",
+        "size": 79,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_specifier_def.rel.meta": {
+        "mode": 420,
+        "sha256": "7a59bee69decbd66d5e0e8b49368e84e92e42cdc75b5d111d0920d643fdd05f2",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_statement_clause.rel": {
+        "mode": 420,
+        "sha256": "5ab7caa3373c5f3297a143c63b88713c611904ec3e997e09c1564a04e410781c",
+        "size": 46,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_statement_clause.rel.meta": {
+        "mode": 420,
+        "sha256": "44a67ae8cce6b59db8f2bb7c582433a137d40520123102cd080e445a25be5c4d",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_statement_def.rel": {
+        "mode": 420,
+        "sha256": "795805ef220fc4a0ad4c715215c175416bebfb7eff350ee772a98aef332ef4f6",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "543502e8134bf4fcd2668a2ccc4f9d9c64dbc363d8b33975a4ddbb6a63414056",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_child.rel": {
+        "mode": 420,
+        "sha256": "17cf2407d2b5800ae3437cdf66dfea035bf805e1d5401874edbdd185db78babe",
+        "size": 273,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_child.rel.meta": {
+        "mode": 420,
+        "sha256": "126a06307951c891dfcecb3af03f1cb6670fed9ee324f000ec97b6bb2c73179a",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_def.rel": {
+        "mode": 420,
+        "sha256": "8c1c783a318b478d0c3aa92c61a5768412d3638549eff85422c83f7a793c9818",
+        "size": 120,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_def.rel.meta": {
+        "mode": 420,
+        "sha256": "82779e54b10a93324227a3c5e46378fb9ac72bc9a0799ca1aefd451156c5d6a0",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_kind.rel": {
+        "mode": 420,
+        "sha256": "14dad20d7ed4946cb5dc49d5cc0df73042ffaa41adfb341d8f70868634055a44",
+        "size": 236,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_kind.rel.meta": {
+        "mode": 420,
+        "sha256": "4258d53a00772589642fec62a29347ea8eca2516cc4cd785eba5957ec89eaa15",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_member_expression_def.rel": {
+        "mode": 420,
+        "sha256": "6f5c5f800b2ee0a1dca9b96e872a19b1704fd0f3dcd1774199a2e400e19ee0fd",
+        "size": 593,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_member_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "fdc808920352f15185b2fbe06dda21aeb41149bacf93d9151f0a6b55d378b3d2",
+        "size": 47,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_member_expression_optional_chain.rel": {
+        "mode": 420,
+        "sha256": "5238c5e4882e7d5f77ff8465821a92bbc87409baeb499af2066e4b202dce72cc",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_member_expression_optional_chain.rel.meta": {
+        "mode": 420,
+        "sha256": "dc3ce29bb2d28da2d436a2b37acd02b1e51a66d7ae596e5c3ed34bc5f016a600",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_named_imports_child.rel": {
+        "mode": 420,
+        "sha256": "b862dd9b0cd061a575224c7b66df19a994c0a6600dd412e555335c15b5e87e92",
+        "size": 103,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_named_imports_child.rel.meta": {
+        "mode": 420,
+        "sha256": "89376d436490ba18b5985d39b0378b32857de008cee2551c2c38a3cbe8634e59",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_named_imports_def.rel": {
+        "mode": 420,
+        "sha256": "8b05dfb98535dc91912dddd81b98afe63cbed1df6215a27ece39f93e9e7d6a24",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_named_imports_def.rel.meta": {
+        "mode": 420,
+        "sha256": "676eb4f5ced724dbca17340bc01f7a876230aea2339e6b1effc2e4dabf6a7ff1",
+        "size": 27,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_object_child.rel": {
+        "mode": 420,
+        "sha256": "05dd7e4bd9e5df13564f91fea5ad0976f0d2b20bcdf086e1fdbdcf17ec895398",
+        "size": 527,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_object_child.rel.meta": {
+        "mode": 420,
+        "sha256": "6bc0964eb9c95cf4097358e1b28fb0a3b4009e557aad0cdfa1fb9bda5bf2b2f4",
+        "size": 42,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_object_def.rel": {
+        "mode": 420,
+        "sha256": "cd0d6f54a80f4eb8755b3733e154d82f80e14929b31a6a8dc7b9f0745dec68d1",
+        "size": 128,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_object_def.rel.meta": {
+        "mode": 420,
+        "sha256": "23145082df4a9548c88185a24c388bc962a4abfe3dad3882376a6009bc2e9f2c",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_pair_def.rel": {
+        "mode": 420,
+        "sha256": "47507afee2b5846f9c00579e79ce98d5c2d1160c2baa8b6e88f183d9de167ab6",
+        "size": 552,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_pair_def.rel.meta": {
+        "mode": 420,
+        "sha256": "16f447c161a399af4a1d76c8fafe1eba4f8e96a0ec29088583a9e45703d49436",
+        "size": 47,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_parenthesized_expression_def.rel": {
+        "mode": 420,
+        "sha256": "edd53f8288533485b1ea832ff165c6aaacc9f4e85408b007d10e33130420a69f",
+        "size": 254,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_parenthesized_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "67b6148acbfa5772cc9e08530a6a77ab54d9d1d81b19d8a5bbf8ce910073a7b5",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_program_child.rel": {
+        "mode": 420,
+        "sha256": "503f7602d4d527acb8591047dbc2ad319898ea217b0c77f2e86013c57f1dce09",
+        "size": 72,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_program_child.rel.meta": {
+        "mode": 420,
+        "sha256": "dd2d432e6337b36f03958381822aa14b4bd89f3fee8e630de4f7709f9ba36a4a",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_program_def.rel": {
+        "mode": 420,
+        "sha256": "a2cd0085682b9830d9e754403055ed59549b75d63be6a831e7265851244737eb",
+        "size": 21,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_program_def.rel.meta": {
+        "mode": 420,
+        "sha256": "e637da807f219cb00e1cf0d0873aa7ad8026295c22aa3bafbeee4ecc3f70b98d",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_regex_def.rel": {
+        "mode": 420,
+        "sha256": "0e82aa0c586e7c4413bb8f6fe7d1bead468782d8722bb5197b95f2d7a036faf4",
+        "size": 132,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_regex_def.rel.meta": {
+        "mode": 420,
+        "sha256": "18e57fb7b2bd81133d911524663388ddf6c6dc77bd7ad092715cb34cf3e8b96f",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_regex_flags.rel": {
+        "mode": 420,
+        "sha256": "13e25fbd7a296af3bf5424f276058964778cb3e163edd1b48b26a3ae2c0aadfa",
+        "size": 56,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_regex_flags.rel.meta": {
+        "mode": 420,
+        "sha256": "4d8f2e96314af5832ec6aac79294c881af9b9b0c0bea82b2350189de61ee45a6",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_return_statement_child.rel": {
+        "mode": 420,
+        "sha256": "36ab2f620ac0a073e95c78e92513bddc4a61bc1428890c522f97e3ab25defe5b",
+        "size": 143,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_return_statement_child.rel.meta": {
+        "mode": 420,
+        "sha256": "c4df713c69f4cd25707718160f3e2173ea90e5dca94c20c2cc6668d954946350",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_return_statement_def.rel": {
+        "mode": 420,
+        "sha256": "471bd2455897fbfc3d4f22003f32cac54034e16e95dc96f4a87b5cb33a6c3fde",
+        "size": 74,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_return_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "b74bdf05f3978a8ca97fdf8b82a1e2dd1565e3ed79f5c07148386b11b17a3125",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_statement_block_child.rel": {
+        "mode": 420,
+        "sha256": "953a2b709d7d62eba3f2e81b97057df896cdd2897c679084c9b85ce4fd346987",
+        "size": 823,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_statement_block_child.rel.meta": {
+        "mode": 420,
+        "sha256": "c2fd1d51931e7a890449cb694c3c4b3f33f050d10991f08d99560b9eb7b3f11c",
+        "size": 42,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_statement_block_def.rel": {
+        "mode": 420,
+        "sha256": "fa407d6c62d24e321efb9f6a6d0e44d61f8a87c5996a4200b1541425f8d5384f",
+        "size": 139,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_statement_block_def.rel.meta": {
+        "mode": 420,
+        "sha256": "cf29edfac591aa8d26f2ff39e7230c29cc4b0e6167f4218d1c55b435b6369862",
+        "size": 29,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_string_child.rel": {
+        "mode": 420,
+        "sha256": "314f80a3b23cfa8c79a1a8eb9c4586fc7cf46cc3d51f423747a99f4d33a6d44a",
+        "size": 446,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_string_child.rel.meta": {
+        "mode": 420,
+        "sha256": "2adeac237afbc51a594a41f7f8d0eefdde1f90e60b146352e4fb4f67407c2af1",
+        "size": 42,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_string_def.rel": {
+        "mode": 420,
+        "sha256": "c3b4c819ac4a3511b8c2b13c72100fddead3981cc2a5b33ff1a99d92b64af14b",
+        "size": 202,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_string_def.rel.meta": {
+        "mode": 420,
+        "sha256": "ce083db4b96091d51447e1f3347dab917d2d1a87bc90646be168c1704d43f220",
+        "size": 31,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_subscript_expression_def.rel": {
+        "mode": 420,
+        "sha256": "1a85b7f365de706d6a685e364a9561911286cb2e2c55c4c70a8bb926b7e13790",
+        "size": 282,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_subscript_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "f7a4d2575fc1379ca563ab0ffd1dd691fda361783ac1f153fb6ccac71ac894c8",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_subscript_expression_optional_chain.rel": {
+        "mode": 420,
+        "sha256": "f94f843cfa076d97d879b82157d2f78718d7147538cafd6abcd125694e1572f3",
+        "size": 76,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_subscript_expression_optional_chain.rel.meta": {
+        "mode": 420,
+        "sha256": "0d69ab73f2fa1973147e3efd1f93e5106a62a97576f8418561e15b0dce676095",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_body_child.rel": {
+        "mode": 420,
+        "sha256": "313fcb8ed6ed5f2db4f2fdb1a91bdc06d23ceb9ce6222535ba9a8a47e50fab9e",
+        "size": 58,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_body_child.rel.meta": {
+        "mode": 420,
+        "sha256": "143aa5fb9a721d5ca8d44da81a74f7a35b19616ca951fc9f9f0faa3be31db6ca",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_body_def.rel": {
+        "mode": 420,
+        "sha256": "1bbb1eb076683e464111098e3702d4fbe7ab2bbe1e0b62b13e36446e90727352",
+        "size": 21,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_body_def.rel.meta": {
+        "mode": 420,
+        "sha256": "94dafd0c1308b1c19e2e73ec5d423cf8f84f56eaf244b4b0146eb5e673e83107",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_case_body.rel": {
+        "mode": 420,
+        "sha256": "4df0672d27db0e6776adc294858b9bef830ee75a5cedf2bca3f04c1b9b724486",
+        "size": 49,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_case_body.rel.meta": {
+        "mode": 420,
+        "sha256": "41c72d7f921caf9f145e54eaa428a14829e2d4ba214116d7aca950a00ad4718d",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_case_def.rel": {
+        "mode": 420,
+        "sha256": "1a4c8856f7daa234e63f3239e01a68b97262d38ec1919b2de8301b23b4d8553b",
+        "size": 43,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_case_def.rel.meta": {
+        "mode": 420,
+        "sha256": "a6fe69705d35f86f0f42526bc33415c5ac6fde23e4440b171f47b9579bf8ca35",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_default_body.rel": {
+        "mode": 420,
+        "sha256": "8fe603dd4c3b80bf72ac3a76b873520c0f192330ad574d7e8f929cf2d0399f11",
+        "size": 43,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_default_body.rel.meta": {
+        "mode": 420,
+        "sha256": "a416aa5cba585be8ece98c9a456941dbec5d9955c1fdbc14c4d58140d6b1409c",
+        "size": 35,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_default_def.rel": {
+        "mode": 420,
+        "sha256": "9d3b7a36bd538f3ef7a49850f31c4f6148c038b6eb18fc6aa71e13acdbecfa93",
+        "size": 21,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_default_def.rel.meta": {
+        "mode": 420,
+        "sha256": "38153ae14db2094690dc47835fb5baf77757d6eb0bb27525f7da313a8d1e43ba",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_statement_def.rel": {
+        "mode": 420,
+        "sha256": "70830441e29c4b292177f03a35531cf011d4952e6f6ce7731f23dec5b6eea2fe",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "c16f7769fca8361a1505cc2be3cbc068e8eea6ad3ccadc05a27a0426ba732919",
+        "size": 38,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_string_child.rel": {
+        "mode": 420,
+        "sha256": "8dc611422b1ed57256d0a8667809ff588d052fcd69542804afaffe515015d239",
+        "size": 284,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_string_child.rel.meta": {
+        "mode": 420,
+        "sha256": "06c1caea03128909861617a6b5d81f5c2ba0f8b2c4e7cb9e5bdd168c5c4e3149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_string_def.rel": {
+        "mode": 420,
+        "sha256": "a0113846c3848d94be64ccbd2a699f2cfd9208840dd7356793b361af81784b8b",
+        "size": 59,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_string_def.rel.meta": {
+        "mode": 420,
+        "sha256": "0d65ba067cb8c7eb4afdeab1209a5d27c2feff8ebeff7b6aedd360adcc78b9fe",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_substitution_def.rel": {
+        "mode": 420,
+        "sha256": "7bcb60b31a663d0faeff240e0d1799de997c59ebec71befced17892bf4538d0a",
+        "size": 118,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_substitution_def.rel.meta": {
+        "mode": 420,
+        "sha256": "9199f11e2f8c575e2ba32b670dd6db8721f6bf6bfbdb79a584b9297d0312d369",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ternary_expression_def.rel": {
+        "mode": 420,
+        "sha256": "f82be91b69dd8366ab2317ce5a723d5f7bfe2b0c626d880f10b6fddb18c99ea3",
+        "size": 68,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ternary_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "32fb0cf25408c9a1a59921ed162f622ba875612a9236e985136abadfcbc1cfad",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_tokeninfo.rel": {
+        "mode": 420,
+        "sha256": "be801f3bbec3e26d81b2d7f78d11acca2f403070aadbc4a0e9ef78a7ca6e1e60",
+        "size": 14306,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_tokeninfo.rel.meta": {
+        "mode": 420,
+        "sha256": "5bf44f1a2b09d6f1546beadfda4a289f7bdb9676aac35f197763476ddb6c9526",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_try_statement_def.rel": {
+        "mode": 420,
+        "sha256": "06bb1508d9b952b1af7807c3e8f65cba55a86c04ef83aebaad9995e4c0045b24",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_try_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "b136bca6bb09e8ba361695a2c8ba86d9bd67e1ba8782f907f530eefe480f307c",
+        "size": 38,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_unary_expression_def.rel": {
+        "mode": 420,
+        "sha256": "668ee442fce5857ff7ec9cf9ff63927d7d2651b04cab4b0ca25bd75ecaa0bab0",
+        "size": 133,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_unary_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "2eb3713d8d6869386dbb395e5553b0b6263c1a85c674eb00b637a2dc57a6c9ca",
+        "size": 39,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_variable_declarator_def.rel": {
+        "mode": 420,
+        "sha256": "63f7c9ff3fc47583b0e3a7eb315616039460b653997eb9e958113a23d8458275",
+        "size": 252,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_variable_declarator_def.rel.meta": {
+        "mode": 420,
+        "sha256": "1fa09af7e0ccaecd2ec89ea04aa7d509df57835abe516e41fa90c5dca7034195",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_variable_declarator_value.rel": {
+        "mode": 420,
+        "sha256": "93d563c3ae6f45a0312c251c83d04729a45d81c45446e4777f38e8d879429386",
+        "size": 236,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_variable_declarator_value.rel.meta": {
+        "mode": 420,
+        "sha256": "1ffa216f51dfe82a53e36bca82ebf0f7ceb773f679400c933c83e4b3d1caa41e",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/ucode.dbscheme": {
+        "mode": 420,
+        "sha256": "b89454d8ca4ceb2909877efbba04b39be6b585085df0ff4c62c6c727a4d2330c",
+        "size": 30894,
+        "type": "file"
+      },
+      "db-ucode/ucode.dbscheme.stats": {
+        "mode": 420,
+        "sha256": "90d6939a021bb0cb71fd491117d1ecb4c7968fb5a80262ddc44975a75bd97767",
+        "size": 68,
+        "type": "file"
+      },
+      "diagnostic": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/cli-diagnostics-add-20261115T084629.052Z.json": {
+        "mode": 420,
+        "sha256": "68f766800eb036838f030ab75964fad2978531b2cf3719a08bea0113e8f9cee8",
+        "size": 492,
+        "type": "file"
+      },
+      "diagnostic/extractors": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/extractors/ucode": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/extractors/yaml": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/tracer": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "log": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "log/database-finalize-20261115.084630.890.log": {
+        "mode": 420,
+        "sha256": "94c6cc4f599e5166bc4c27e7ca04f2310ce10fb3e7768d9486bbba1482fc89fe",
+        "size": 19412,
+        "type": "file"
+      },
+      "log/database-index-files-20261115.084629.861.log": {
+        "mode": 420,
+        "sha256": "9c365f3383e20cf464ea4303e41fb235550b3ed99c0a769d61f5a00898bbe732",
+        "size": 3208,
+        "type": "file"
+      },
+      "log/database-index-files-20261115.084631.845.log": {
+        "mode": 420,
+        "sha256": "45c9926a44c4bceb27fa5c53f776cd9c5d0fe08bb9d9c40680861a30889ca496",
+        "size": 2055,
+        "type": "file"
+      },
+      "log/database-init-20261115.084628.314.log": {
+        "mode": 420,
+        "sha256": "aceccdb59d583a19cfdd2e38469cc0421952cd67ce908daf22590f448f3d0d14",
+        "size": 27240,
+        "type": "file"
+      },
+      "log/execute-queries-20261115.084634.999.log": {
+        "mode": 420,
+        "sha256": "c369e9c2737996d9f46ab771c8da1fd6379e4915280accfa96f1a9b758d13e14",
+        "size": 74402,
+        "type": "file"
+      },
+      "log/execute-queries-20261115.084644.084.log": {
+        "mode": 420,
+        "sha256": "a2168c0fa5c489505aff92fc2d04a877aa868f1dc71db6063ff1e9b38aca8fda",
+        "size": 39336,
+        "type": "file"
+      },
+      "log/query-run-20261115.084634.212.log": {
+        "mode": 420,
+        "sha256": "070e05d06f431deaf7755bbdfaccba8c1fbe064897b91f3905b91c28276d0e62",
+        "size": 3203,
+        "type": "file"
+      },
+      "log/query-run-20261115.084643.310.log": {
+        "mode": 420,
+        "sha256": "5409722df9d11c46dcbc3d7361bc76cce8569f8681e5db055834caff3e0b113b",
+        "size": 3227,
+        "type": "file"
+      },
+      "src.zip": {
+        "mode": 420,
+        "sha256": "c3a841f0f08290af2c73624d376008f109de5a39211e42ae48ac3c5e173d5ab8",
+        "size": 5072,
+        "type": "file"
+      }
+    }
+  },
+  "mutables_before": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/database": {
+      ".": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "baseline-info.json": {
+        "mode": 420,
+        "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "size": 2,
+        "type": "file"
+      },
+      "codeql-database.yml": {
+        "mode": 420,
+        "sha256": "c26ba977f12f34c791f5dea508419145d102a91c17b25fef0885c54f1bf6b0e4",
+        "size": 370,
+        "type": "file"
+      },
+      "db-ucode": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/.lock": {
+        "mode": 420,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/buckets": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/buckets/info": {
+        "mode": 420,
+        "sha256": "64fbf1c189dfac4325b090df3e6eda406d98814ebbe346292ac7c624719272a9",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/buckets/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/ids1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/ids1/info": {
+        "mode": 420,
+        "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/ids1/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/indices1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/indices1/info": {
+        "mode": 420,
+        "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/indices1/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/info": {
+        "mode": 420,
+        "sha256": "50943aab7d03f74bedf883411289525ad298d91e491732b5442bb72c0126ae61",
+        "size": 41,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/metadata": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/metadata/info": {
+        "mode": 420,
+        "sha256": "4e7223a472e9ea0ee83c42de587ce7ee94235acbccdf92fda5646ffabf76f465",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/metadata/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/pageDump": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/pools/0/pageDump/page-000000000": {
+        "mode": 420,
+        "sha256": "e4b4feafeeb1da14d81e10706fa949f5675af06bc9a25bd3f901ce6758ccaddc",
+        "size": 1048592,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/pools/poolInfo": {
+        "mode": 420,
+        "sha256": "ddb845f25f00cbed82385a9ee3e43875ff299d48ce60c64a68f13c8a8f21cfe3",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/cache/cached-strings/tuple-pool": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/cached-strings/tuple-pool/header": {
+        "mode": 420,
+        "sha256": "221f8af2372a95064f2ef7d7712216a9ab46e7ef98482fd237e106f83eaa7569",
+        "size": 4,
+        "type": "file"
+      },
+      "db-ucode/default/cache/is-trimmed": {
+        "mode": 420,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0,
+        "type": "file"
+      },
+      "db-ucode/default/cache/pages": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/predicates": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/relations": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/cache/version": {
+        "mode": 420,
+        "sha256": "620a69a93644d31f07dcf4c6dc51287b8f93d25168436d9b05b4690f25b0bdd0",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/containerparent.rel": {
+        "mode": 420,
+        "sha256": "d2550ef15dc7e7dcd5a20975f476304d94b008c37dc12b042ed82c09ed8b4dd5",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/containerparent.rel.meta": {
+        "mode": 420,
+        "sha256": "6f0e88c5ef97a16dc2a5f1c23eb28f64c8e561d296d0bb427e001e6d6b497200",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/empty_location.rel": {
+        "mode": 420,
+        "sha256": "5b7b40e598383a4b5adeadf8a3aafbbfea26b6d6ff4f9faa690084833901ba4a",
+        "size": 17,
+        "type": "file"
+      },
+      "db-ucode/default/empty_location.rel.meta": {
+        "mode": 420,
+        "sha256": "6330555213bb5966c2d174cdbbca9558501586bca0099cc0291cb298c67f187e",
+        "size": 23,
+        "type": "file"
+      },
+      "db-ucode/default/files.rel": {
+        "mode": 420,
+        "sha256": "65c47b649b2172de25f77c6cd79f6519f4334575353d954027e60d3726844851",
+        "size": 30,
+        "type": "file"
+      },
+      "db-ucode/default/files.rel.meta": {
+        "mode": 420,
+        "sha256": "98af1b9027831f9f0336073f804ddbf8dc3a5a38caa5f319be5c971f697ddc33",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/folders.rel": {
+        "mode": 420,
+        "sha256": "a396a245d3b261667ee4aa96fcc7477dee9cc0b671dc0e03fefb963644653738",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/folders.rel.meta": {
+        "mode": 420,
+        "sha256": "1f7386554f42764b0e207ccd96ceadfd107347a052b32fe63ecc2063e7f3a377",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/locations_default.rel": {
+        "mode": 420,
+        "sha256": "9047fd6d0cae106c94c649bbfe61bd4c5a7fe9bb795f438ff21d336ad27a2d52",
+        "size": 22533,
+        "type": "file"
+      },
+      "db-ucode/default/locations_default.rel.meta": {
+        "mode": 420,
+        "sha256": "abd590eaef407a36b11604e8449c61c55f6191659f3e418f85a0c2f48373f747",
+        "size": 49,
+        "type": "file"
+      },
+      "db-ucode/default/pools": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0/buckets": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0/buckets/info": {
+        "mode": 420,
+        "sha256": "28743f1071f8eaf43006616eaa10e0f4859667742f645ec93628ccccc343929a",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/buckets/page-000000": {
+        "mode": 420,
+        "sha256": "9ef8569809fc1be5c59d8d20e9bddb5197c2b3f803b3aeef31c73f5956900c90",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/info": {
+        "mode": 420,
+        "sha256": "9bf1bcfc9e7b9e029e549d41494af2edcd8445c18998620d2197d00324f8b83c",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/metadata": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0/metadata/info": {
+        "mode": 420,
+        "sha256": "03497400425d625cff8e05946fa38d7dfb7e2afd5d5419194a24dc6bcb9e9fa9",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/metadata/page-000000": {
+        "mode": 420,
+        "sha256": "889feb0145929df23216e5cd17e61a26f5765b3d7332c00a0f64582f4ed78a5b",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/0/pageDump": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/0/pageDump/page-000000000": {
+        "mode": 420,
+        "sha256": "4035ba1fd10ea299c34a286775368f03ca459a23f3d2e38a804c7b2db404a908",
+        "size": 1048592,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/buckets": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/buckets/info": {
+        "mode": 420,
+        "sha256": "64fbf1c189dfac4325b090df3e6eda406d98814ebbe346292ac7c624719272a9",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/buckets/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/ids1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/ids1/info": {
+        "mode": 420,
+        "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/ids1/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/indices1": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/indices1/info": {
+        "mode": 420,
+        "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/indices1/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/info": {
+        "mode": 420,
+        "sha256": "3d3af351862097bb443d4fef96f6474c07c634f9733da692981ce99a4276b214",
+        "size": 41,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/metadata": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/metadata/info": {
+        "mode": 420,
+        "sha256": "4e7223a472e9ea0ee83c42de587ce7ee94235acbccdf92fda5646ffabf76f465",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/metadata/page-000000": {
+        "mode": 420,
+        "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+        "size": 8192,
+        "type": "file"
+      },
+      "db-ucode/default/pools/1/pageDump": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/pools/1/pageDump/page-000000000": {
+        "mode": 420,
+        "sha256": "e4b4feafeeb1da14d81e10706fa949f5675af06bc9a25bd3f901ce6758ccaddc",
+        "size": 1048592,
+        "type": "file"
+      },
+      "db-ucode/default/pools/max-id#Dynamic-New-Entities": {
+        "mode": 420,
+        "sha256": "0896e506ddeb8a5f83c8fb4e9438f55e91c275c14d9ef128596a246a605b3021",
+        "size": 16,
+        "type": "file"
+      },
+      "db-ucode/default/pools/poolInfo": {
+        "mode": 420,
+        "sha256": "03f6b14bb7d27cc03ba5f5319d99615cf44afee32e6bfa351df710c948193bb1",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/pools/tuples#Dynamic-New-Entities": {
+        "mode": 420,
+        "sha256": "052bbbd9726b6cfb227d9fda99e9a66ad7b35f10b6a55e4064c71ad2a5c3d27c",
+        "size": 16,
+        "type": "file"
+      },
+      "db-ucode/default/sourceLocationPrefix.rel": {
+        "mode": 420,
+        "sha256": "5b7b40e598383a4b5adeadf8a3aafbbfea26b6d6ff4f9faa690084833901ba4a",
+        "size": 17,
+        "type": "file"
+      },
+      "db-ucode/default/sourceLocationPrefix.rel.meta": {
+        "mode": 420,
+        "sha256": "8dd7b8e214f8ac92f71358e876edbb7a93af1318273ce7e87114ddae02c03bc3",
+        "size": 22,
+        "type": "file"
+      },
+      "db-ucode/default/strings": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "db-ucode/default/ucode_arguments_child.rel": {
+        "mode": 420,
+        "sha256": "c3f50a23e6542108c58f8cdb96300aa489ce79f8fd15bbb39646862a8cd75830",
+        "size": 947,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arguments_child.rel.meta": {
+        "mode": 420,
+        "sha256": "39c52c95c1dd6b13462080a4ff28d300951575cee7816bc7f3ebfbb063b9e7de",
+        "size": 42,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arguments_def.rel": {
+        "mode": 420,
+        "sha256": "d19f2f35146d77cb25bb34d107556e0b70ab352e4fcac6a201d78a925ee5122b",
+        "size": 248,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arguments_def.rel.meta": {
+        "mode": 420,
+        "sha256": "f07c91ed1b3450f21e77c2881e6a3c8a0f760bce90c42ed0e52d64ac07b9b948",
+        "size": 31,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_array_child.rel": {
+        "mode": 420,
+        "sha256": "07e65fd327836f58a128b4b8ac0ba59541f7ebbf8dc827035ce43664c95badbc",
+        "size": 83,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_array_child.rel.meta": {
+        "mode": 420,
+        "sha256": "c189f618b89c99acc758f6b28872004172bdde76544abde177c4a4fc4d5de814",
+        "size": 39,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_array_def.rel": {
+        "mode": 420,
+        "sha256": "e2cbc7106286fec9dfd6a385e0cad509940ff512909009dc2982585c8c747187",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_array_def.rel.meta": {
+        "mode": 420,
+        "sha256": "085be4c059a0406808700dfa7f6c8b343a542c438dc24921b101d52987f9fd4c",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_def.rel": {
+        "mode": 420,
+        "sha256": "4437b8f9439475c3c6f188c6a6d1729c53bfac26a362dc5c34543c8f4ead3d76",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_def.rel.meta": {
+        "mode": 420,
+        "sha256": "71422a3ff56b025433b571dc2d6aac7601dc8304c2e4f32ebc45e283154ea204",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_parameter.rel": {
+        "mode": 420,
+        "sha256": "d5b6f376f7f894a9ab182131dde43d945a51d8ae3fc996c9f682cef1cc35fc6b",
+        "size": 38,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_parameter.rel.meta": {
+        "mode": 420,
+        "sha256": "432c2ee11df9e7977a09dd8bb96d77d298c0d458ea3679c17f241b16e776ccc3",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_parameters.rel": {
+        "mode": 420,
+        "sha256": "96ff27012b25926fe2438fd780b1e39ce1e62fa5363b622e2dda5a52370c1be3",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_arrow_function_parameters.rel.meta": {
+        "mode": 420,
+        "sha256": "6907a94b0c2fb289d3ed4b882ec3c5ddca30727c20a07724cff20428b6f42570",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_assignment_expression_def.rel": {
+        "mode": 420,
+        "sha256": "eba9790a9143f4023e6c97add87da5681cd2bb9bd12abb984c093e68a006d2f6",
+        "size": 342,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_assignment_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "d2a240705148b9a6d4883348bfdc9f5cfcaa3179f1bd7721db407bcede9d1265",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ast_node_location.rel": {
+        "mode": 420,
+        "sha256": "584e387e0bc0c14f145f21ccf521895f28c900af8301356fae01b8c9667cb685",
+        "size": 12786,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ast_node_location.rel.meta": {
+        "mode": 420,
+        "sha256": "29cfb73e11cbd98e3a1e7e98d5a4ea0ca4305bd70e923ff0ba1bfa84c8bb4553",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ast_node_parent.rel": {
+        "mode": 420,
+        "sha256": "7cd6138f00db4d0b40d7b21c6c904c272fdf7a100939850e54c04d5759777136",
+        "size": 19912,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ast_node_parent.rel.meta": {
+        "mode": 420,
+        "sha256": "b20c2f0e257c003aef7d5801d3d599fd9dc56237e374b5e1d424f3e8b90251d1",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_augmented_assignment_expression_def.rel": {
+        "mode": 420,
+        "sha256": "ec34a1e2044ea93c42007524a1e7d9d8e7453ccc867f48a9436c521d90bf174f",
+        "size": 65,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_augmented_assignment_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "1ef17d6c9b10a305e95c95baedd3db3bcdb8c2a7a209490b283291f9bf088905",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_binary_expression_def.rel": {
+        "mode": 420,
+        "sha256": "3eb40b97642579e639ea632ba61a565a8567e3dbd62e5eace23a086556603a9d",
+        "size": 381,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_binary_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "21014c5556eb6dc64329534e92b0c0f611e7e0886da2685d0f954f480f55d59e",
+        "size": 47,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_call_expression_def.rel": {
+        "mode": 420,
+        "sha256": "53cacafe4553c0041690caa4584f657fc311fb64544c61ead6cb8dbf0ed4e042",
+        "size": 819,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_call_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "21b98c87fcb8bd3baf06986c84eaf944cb5fca7868a2563884ae9b17b77b3582",
+        "size": 47,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_call_expression_optional_chain.rel": {
+        "mode": 420,
+        "sha256": "704063eac44ab1039c71bd1cc5da9a35c75568b37f77a55d87731deda30a04c8",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_call_expression_optional_chain.rel.meta": {
+        "mode": 420,
+        "sha256": "8d13b2adb05bbd6dc9e8874c332c3e6be09bb088c450afe1a20f8199e2493fad",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_catch_clause_def.rel": {
+        "mode": 420,
+        "sha256": "ebf24ff84fc92bee4b5dcede4c5cd591a6932f13eb4e50cbb29b7f86baa967e9",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_catch_clause_def.rel.meta": {
+        "mode": 420,
+        "sha256": "5d979ee3d6ef71757701643664d273c8844c145b51b9bd23841930af9fe6e769",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_catch_clause_parameter.rel": {
+        "mode": 420,
+        "sha256": "98faf26613bec4be58aed84019cbf737929018bdc9a6997b01369868e1122ad0",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_catch_clause_parameter.rel.meta": {
+        "mode": 420,
+        "sha256": "959ab7420056595b7fe18ccc463d56db976fb45eb79b8d3d233ed8abb0950cf1",
+        "size": 31,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_else_clause_def.rel": {
+        "mode": 420,
+        "sha256": "9e64f54120bdb8881468bf484558ced3f378d9b17bcabaa1c7cef6ec7b084376",
+        "size": 102,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_else_clause_def.rel.meta": {
+        "mode": 420,
+        "sha256": "011787698333a1dfc4a988227a281805ea296d54cdcb92b377e241099d6994b9",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_expression_statement_def.rel": {
+        "mode": 420,
+        "sha256": "712ece50d73361c82eed99cfaea039ee958ab47ee7b8a013872c16eb47f678f7",
+        "size": 269,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_expression_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "b0f85a84dbd0e27dec257ec10d18296fd30d02fdd1666ccf1ab86e3ddfb72e32",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_def.rel": {
+        "mode": 420,
+        "sha256": "6d24b4af0cfc87476a8443879adec996f61b00fb305c88638f573af916ecc3e9",
+        "size": 128,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "f3067ee1048b9bc4949f1c8a8669f082757ab1d46b930fee4596a43a80efd2a6",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_key.rel": {
+        "mode": 420,
+        "sha256": "b8122b26990e824f1a6d7252217d82c64ca316bbae3797c09a123fa23396906a",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_key.rel.meta": {
+        "mode": 420,
+        "sha256": "0b7f9db95972f1a20894fb4ce93402f998fb2478f95ec13a83697612b761793f",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_kind.rel": {
+        "mode": 420,
+        "sha256": "744eb1016d1c91ae0e177ee62d191d98a7af2616eb5b6174c00d8cee1f7c6489",
+        "size": 88,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_kind.rel.meta": {
+        "mode": 420,
+        "sha256": "8463bec826f2cab769ba8d2debe3c8d79c5da9544bde40642da5d8031a1e2cf4",
+        "size": 35,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_value.rel": {
+        "mode": 420,
+        "sha256": "0858efe99c164d797e2e1a62b4b5d2a1c96f666ebb59ef73cd88fa815fa2b523",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_value.rel.meta": {
+        "mode": 420,
+        "sha256": "54724e874a13ef66cf03149bfdefeca483e325269d134040069e173655de95cb",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_variable.rel": {
+        "mode": 420,
+        "sha256": "05ea4bdc946db641725a28120b07c5e71e3a27b018a610347b5b31758da6e0a8",
+        "size": 84,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_in_statement_variable.rel.meta": {
+        "mode": 420,
+        "sha256": "a0bafe5a885d36a027c18bbe87accb28a6d5dd38bce0435a30d73171e5671672",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_statement_def.rel": {
+        "mode": 420,
+        "sha256": "37ff44bb051ff113efd71611ba69b3d80909581e04b8e553f912c64e96941090",
+        "size": 97,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "c43d31be5780dcaa400073d2b74ea2145d375aa8e7f30b3ba31aef906d6202e0",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_statement_increment.rel": {
+        "mode": 420,
+        "sha256": "71ea4d53e083ec60c44a82d91c93b4de01b9acd89f3affd36bc2a48567cdc327",
+        "size": 53,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_for_statement_increment.rel.meta": {
+        "mode": 420,
+        "sha256": "4a4fdc38b6e63f33d713829eacafebcf16aa079cc16041895b45e6a7235c7167",
+        "size": 35,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_formal_parameters_child.rel": {
+        "mode": 420,
+        "sha256": "75a922704251e10c1db22e714ee9b7729f2450f11fb532d0744176bf6ccc4187",
+        "size": 114,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_formal_parameters_child.rel.meta": {
+        "mode": 420,
+        "sha256": "76c6f0c369427f39f11f8899b41c70f16b35871d201a2e40dda26aa0c16fca3e",
+        "size": 39,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_formal_parameters_def.rel": {
+        "mode": 420,
+        "sha256": "91020217561a6ea4f37ae69dd640b40bcbadb8336d5417ff899297d6041fddc3",
+        "size": 66,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_formal_parameters_def.rel.meta": {
+        "mode": 420,
+        "sha256": "06e55a1fac2826ece376efc94b5d8bb479f64600ef9d1f153a29bf50008a507f",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_declaration_body.rel": {
+        "mode": 420,
+        "sha256": "7132864f73310ea6fa4ab2bd76bad933aec27a35f83efd87ef9f25f6aa056e85",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_declaration_body.rel.meta": {
+        "mode": 420,
+        "sha256": "f2e5685e929133b51b7dd9fb511605c837d3b79a37f04e6e6aa524427a2ec7fc",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_declaration_def.rel": {
+        "mode": 420,
+        "sha256": "3dcaa243c66faa095956daed63198a1067e610b189b2c79a4bb7621024189082",
+        "size": 50,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_declaration_def.rel.meta": {
+        "mode": 420,
+        "sha256": "1339493c5cc1f04ab049a0ac53b501e4f7cb8ad347560a772418942b7aa2342e",
+        "size": 41,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_expression_def.rel": {
+        "mode": 420,
+        "sha256": "8ad59af4d008d130a90fd9d07524141d085d6d741ea8f9e7cbc29288b46f8f7d",
+        "size": 160,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_function_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "66702c63c7acfc601fe3db6d52a8c1b882741b8880b47c2042e5be8ea05a6d6b",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_if_statement_alternative.rel": {
+        "mode": 420,
+        "sha256": "11cfb2d787f9f3be556333c2cdadba73c6337d5a94e5bbee2575edcca2698763",
+        "size": 102,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_if_statement_alternative.rel.meta": {
+        "mode": 420,
+        "sha256": "26fc9c13346cbd17f07092f536854a9d603847cb7a8d0ea8d840e0ddd4934846",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_if_statement_def.rel": {
+        "mode": 420,
+        "sha256": "dccaaa0390c0e7c5c2ca67e745b86d4efe726bf9295fbe8fe8ff6064e258afd6",
+        "size": 360,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_if_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "4f7a2df812d870143e8a146ef3c961b97b7a8d2109c0374db209c49fd50ff99a",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_def.rel": {
+        "mode": 420,
+        "sha256": "b81ca26a652d8c0510f9935f09ef5debc97487f5e30cbc5ffcc3dcca4307bf65",
+        "size": 27,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_def.rel.meta": {
+        "mode": 420,
+        "sha256": "0672bb74159949f791297f972fd0c8a7e277761cf6d20fcd3b54d32e7d257c3e",
+        "size": 27,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_default.rel": {
+        "mode": 420,
+        "sha256": "1845ba5fa502d8055cc534358aa1fcc6ff0425c593350347f1ba892cbbdea88c",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_default.rel.meta": {
+        "mode": 420,
+        "sha256": "5e0a1c723460fd06365474f994bb8c24844e40fea78c1814c4c337ef6a5a894f",
+        "size": 32,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_named.rel": {
+        "mode": 420,
+        "sha256": "6c9c77b2b877e5ac707e2b3705230d3daabd6f30d67c3a00f1cfbaec58fe3305",
+        "size": 44,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_clause_named.rel.meta": {
+        "mode": 420,
+        "sha256": "5cdad4c150cc3eeb5f55ed8338515f3fcdd6243c3ed153f629cf62bdec5013ca",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_specifier_def.rel": {
+        "mode": 420,
+        "sha256": "b0e85950108759ab93af42c8486b5be19f5880506cce5a0891c1c1b440115529",
+        "size": 79,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_specifier_def.rel.meta": {
+        "mode": 420,
+        "sha256": "7a59bee69decbd66d5e0e8b49368e84e92e42cdc75b5d111d0920d643fdd05f2",
+        "size": 33,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_statement_clause.rel": {
+        "mode": 420,
+        "sha256": "5ab7caa3373c5f3297a143c63b88713c611904ec3e997e09c1564a04e410781c",
+        "size": 46,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_statement_clause.rel.meta": {
+        "mode": 420,
+        "sha256": "44a67ae8cce6b59db8f2bb7c582433a137d40520123102cd080e445a25be5c4d",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_statement_def.rel": {
+        "mode": 420,
+        "sha256": "795805ef220fc4a0ad4c715215c175416bebfb7eff350ee772a98aef332ef4f6",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_import_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "543502e8134bf4fcd2668a2ccc4f9d9c64dbc363d8b33975a4ddbb6a63414056",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_child.rel": {
+        "mode": 420,
+        "sha256": "17cf2407d2b5800ae3437cdf66dfea035bf805e1d5401874edbdd185db78babe",
+        "size": 273,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_child.rel.meta": {
+        "mode": 420,
+        "sha256": "126a06307951c891dfcecb3af03f1cb6670fed9ee324f000ec97b6bb2c73179a",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_def.rel": {
+        "mode": 420,
+        "sha256": "8c1c783a318b478d0c3aa92c61a5768412d3638549eff85422c83f7a793c9818",
+        "size": 120,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_def.rel.meta": {
+        "mode": 420,
+        "sha256": "82779e54b10a93324227a3c5e46378fb9ac72bc9a0799ca1aefd451156c5d6a0",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_kind.rel": {
+        "mode": 420,
+        "sha256": "14dad20d7ed4946cb5dc49d5cc0df73042ffaa41adfb341d8f70868634055a44",
+        "size": 236,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_lexical_declaration_kind.rel.meta": {
+        "mode": 420,
+        "sha256": "4258d53a00772589642fec62a29347ea8eca2516cc4cd785eba5957ec89eaa15",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_member_expression_def.rel": {
+        "mode": 420,
+        "sha256": "6f5c5f800b2ee0a1dca9b96e872a19b1704fd0f3dcd1774199a2e400e19ee0fd",
+        "size": 593,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_member_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "fdc808920352f15185b2fbe06dda21aeb41149bacf93d9151f0a6b55d378b3d2",
+        "size": 47,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_member_expression_optional_chain.rel": {
+        "mode": 420,
+        "sha256": "5238c5e4882e7d5f77ff8465821a92bbc87409baeb499af2066e4b202dce72cc",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_member_expression_optional_chain.rel.meta": {
+        "mode": 420,
+        "sha256": "dc3ce29bb2d28da2d436a2b37acd02b1e51a66d7ae596e5c3ed34bc5f016a600",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_named_imports_child.rel": {
+        "mode": 420,
+        "sha256": "b862dd9b0cd061a575224c7b66df19a994c0a6600dd412e555335c15b5e87e92",
+        "size": 103,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_named_imports_child.rel.meta": {
+        "mode": 420,
+        "sha256": "89376d436490ba18b5985d39b0378b32857de008cee2551c2c38a3cbe8634e59",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_named_imports_def.rel": {
+        "mode": 420,
+        "sha256": "8b05dfb98535dc91912dddd81b98afe63cbed1df6215a27ece39f93e9e7d6a24",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_named_imports_def.rel.meta": {
+        "mode": 420,
+        "sha256": "676eb4f5ced724dbca17340bc01f7a876230aea2339e6b1effc2e4dabf6a7ff1",
+        "size": 27,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_object_child.rel": {
+        "mode": 420,
+        "sha256": "05dd7e4bd9e5df13564f91fea5ad0976f0d2b20bcdf086e1fdbdcf17ec895398",
+        "size": 527,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_object_child.rel.meta": {
+        "mode": 420,
+        "sha256": "6bc0964eb9c95cf4097358e1b28fb0a3b4009e557aad0cdfa1fb9bda5bf2b2f4",
+        "size": 42,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_object_def.rel": {
+        "mode": 420,
+        "sha256": "cd0d6f54a80f4eb8755b3733e154d82f80e14929b31a6a8dc7b9f0745dec68d1",
+        "size": 128,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_object_def.rel.meta": {
+        "mode": 420,
+        "sha256": "23145082df4a9548c88185a24c388bc962a4abfe3dad3882376a6009bc2e9f2c",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_pair_def.rel": {
+        "mode": 420,
+        "sha256": "47507afee2b5846f9c00579e79ce98d5c2d1160c2baa8b6e88f183d9de167ab6",
+        "size": 552,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_pair_def.rel.meta": {
+        "mode": 420,
+        "sha256": "16f447c161a399af4a1d76c8fafe1eba4f8e96a0ec29088583a9e45703d49436",
+        "size": 47,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_parenthesized_expression_def.rel": {
+        "mode": 420,
+        "sha256": "edd53f8288533485b1ea832ff165c6aaacc9f4e85408b007d10e33130420a69f",
+        "size": 254,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_parenthesized_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "67b6148acbfa5772cc9e08530a6a77ab54d9d1d81b19d8a5bbf8ce910073a7b5",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_program_child.rel": {
+        "mode": 420,
+        "sha256": "503f7602d4d527acb8591047dbc2ad319898ea217b0c77f2e86013c57f1dce09",
+        "size": 72,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_program_child.rel.meta": {
+        "mode": 420,
+        "sha256": "dd2d432e6337b36f03958381822aa14b4bd89f3fee8e630de4f7709f9ba36a4a",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_program_def.rel": {
+        "mode": 420,
+        "sha256": "a2cd0085682b9830d9e754403055ed59549b75d63be6a831e7265851244737eb",
+        "size": 21,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_program_def.rel.meta": {
+        "mode": 420,
+        "sha256": "e637da807f219cb00e1cf0d0873aa7ad8026295c22aa3bafbeee4ecc3f70b98d",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_regex_def.rel": {
+        "mode": 420,
+        "sha256": "0e82aa0c586e7c4413bb8f6fe7d1bead468782d8722bb5197b95f2d7a036faf4",
+        "size": 132,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_regex_def.rel.meta": {
+        "mode": 420,
+        "sha256": "18e57fb7b2bd81133d911524663388ddf6c6dc77bd7ad092715cb34cf3e8b96f",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_regex_flags.rel": {
+        "mode": 420,
+        "sha256": "13e25fbd7a296af3bf5424f276058964778cb3e163edd1b48b26a3ae2c0aadfa",
+        "size": 56,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_regex_flags.rel.meta": {
+        "mode": 420,
+        "sha256": "4d8f2e96314af5832ec6aac79294c881af9b9b0c0bea82b2350189de61ee45a6",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_return_statement_child.rel": {
+        "mode": 420,
+        "sha256": "36ab2f620ac0a073e95c78e92513bddc4a61bc1428890c522f97e3ab25defe5b",
+        "size": 143,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_return_statement_child.rel.meta": {
+        "mode": 420,
+        "sha256": "c4df713c69f4cd25707718160f3e2173ea90e5dca94c20c2cc6668d954946350",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_return_statement_def.rel": {
+        "mode": 420,
+        "sha256": "471bd2455897fbfc3d4f22003f32cac54034e16e95dc96f4a87b5cb33a6c3fde",
+        "size": 74,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_return_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "b74bdf05f3978a8ca97fdf8b82a1e2dd1565e3ed79f5c07148386b11b17a3125",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_statement_block_child.rel": {
+        "mode": 420,
+        "sha256": "953a2b709d7d62eba3f2e81b97057df896cdd2897c679084c9b85ce4fd346987",
+        "size": 823,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_statement_block_child.rel.meta": {
+        "mode": 420,
+        "sha256": "c2fd1d51931e7a890449cb694c3c4b3f33f050d10991f08d99560b9eb7b3f11c",
+        "size": 42,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_statement_block_def.rel": {
+        "mode": 420,
+        "sha256": "fa407d6c62d24e321efb9f6a6d0e44d61f8a87c5996a4200b1541425f8d5384f",
+        "size": 139,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_statement_block_def.rel.meta": {
+        "mode": 420,
+        "sha256": "cf29edfac591aa8d26f2ff39e7230c29cc4b0e6167f4218d1c55b435b6369862",
+        "size": 29,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_string_child.rel": {
+        "mode": 420,
+        "sha256": "314f80a3b23cfa8c79a1a8eb9c4586fc7cf46cc3d51f423747a99f4d33a6d44a",
+        "size": 446,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_string_child.rel.meta": {
+        "mode": 420,
+        "sha256": "2adeac237afbc51a594a41f7f8d0eefdde1f90e60b146352e4fb4f67407c2af1",
+        "size": 42,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_string_def.rel": {
+        "mode": 420,
+        "sha256": "c3b4c819ac4a3511b8c2b13c72100fddead3981cc2a5b33ff1a99d92b64af14b",
+        "size": 202,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_string_def.rel.meta": {
+        "mode": 420,
+        "sha256": "ce083db4b96091d51447e1f3347dab917d2d1a87bc90646be168c1704d43f220",
+        "size": 31,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_subscript_expression_def.rel": {
+        "mode": 420,
+        "sha256": "1a85b7f365de706d6a685e364a9561911286cb2e2c55c4c70a8bb926b7e13790",
+        "size": 282,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_subscript_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "f7a4d2575fc1379ca563ab0ffd1dd691fda361783ac1f153fb6ccac71ac894c8",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_subscript_expression_optional_chain.rel": {
+        "mode": 420,
+        "sha256": "f94f843cfa076d97d879b82157d2f78718d7147538cafd6abcd125694e1572f3",
+        "size": 76,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_subscript_expression_optional_chain.rel.meta": {
+        "mode": 420,
+        "sha256": "0d69ab73f2fa1973147e3efd1f93e5106a62a97576f8418561e15b0dce676095",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_body_child.rel": {
+        "mode": 420,
+        "sha256": "313fcb8ed6ed5f2db4f2fdb1a91bdc06d23ceb9ce6222535ba9a8a47e50fab9e",
+        "size": 58,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_body_child.rel.meta": {
+        "mode": 420,
+        "sha256": "143aa5fb9a721d5ca8d44da81a74f7a35b19616ca951fc9f9f0faa3be31db6ca",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_body_def.rel": {
+        "mode": 420,
+        "sha256": "1bbb1eb076683e464111098e3702d4fbe7ab2bbe1e0b62b13e36446e90727352",
+        "size": 21,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_body_def.rel.meta": {
+        "mode": 420,
+        "sha256": "94dafd0c1308b1c19e2e73ec5d423cf8f84f56eaf244b4b0146eb5e673e83107",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_case_body.rel": {
+        "mode": 420,
+        "sha256": "4df0672d27db0e6776adc294858b9bef830ee75a5cedf2bca3f04c1b9b724486",
+        "size": 49,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_case_body.rel.meta": {
+        "mode": 420,
+        "sha256": "41c72d7f921caf9f145e54eaa428a14829e2d4ba214116d7aca950a00ad4718d",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_case_def.rel": {
+        "mode": 420,
+        "sha256": "1a4c8856f7daa234e63f3239e01a68b97262d38ec1919b2de8301b23b4d8553b",
+        "size": 43,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_case_def.rel.meta": {
+        "mode": 420,
+        "sha256": "a6fe69705d35f86f0f42526bc33415c5ac6fde23e4440b171f47b9579bf8ca35",
+        "size": 34,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_default_body.rel": {
+        "mode": 420,
+        "sha256": "8fe603dd4c3b80bf72ac3a76b873520c0f192330ad574d7e8f929cf2d0399f11",
+        "size": 43,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_default_body.rel.meta": {
+        "mode": 420,
+        "sha256": "a416aa5cba585be8ece98c9a456941dbec5d9955c1fdbc14c4d58140d6b1409c",
+        "size": 35,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_default_def.rel": {
+        "mode": 420,
+        "sha256": "9d3b7a36bd538f3ef7a49850f31c4f6148c038b6eb18fc6aa71e13acdbecfa93",
+        "size": 21,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_default_def.rel.meta": {
+        "mode": 420,
+        "sha256": "38153ae14db2094690dc47835fb5baf77757d6eb0bb27525f7da313a8d1e43ba",
+        "size": 26,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_statement_def.rel": {
+        "mode": 420,
+        "sha256": "70830441e29c4b292177f03a35531cf011d4952e6f6ce7731f23dec5b6eea2fe",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_switch_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "c16f7769fca8361a1505cc2be3cbc068e8eea6ad3ccadc05a27a0426ba732919",
+        "size": 38,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_string_child.rel": {
+        "mode": 420,
+        "sha256": "8dc611422b1ed57256d0a8667809ff588d052fcd69542804afaffe515015d239",
+        "size": 284,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_string_child.rel.meta": {
+        "mode": 420,
+        "sha256": "06c1caea03128909861617a6b5d81f5c2ba0f8b2c4e7cb9e5bdd168c5c4e3149",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_string_def.rel": {
+        "mode": 420,
+        "sha256": "a0113846c3848d94be64ccbd2a699f2cfd9208840dd7356793b361af81784b8b",
+        "size": 59,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_string_def.rel.meta": {
+        "mode": 420,
+        "sha256": "0d65ba067cb8c7eb4afdeab1209a5d27c2feff8ebeff7b6aedd360adcc78b9fe",
+        "size": 28,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_substitution_def.rel": {
+        "mode": 420,
+        "sha256": "7bcb60b31a663d0faeff240e0d1799de997c59ebec71befced17892bf4538d0a",
+        "size": 118,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_template_substitution_def.rel.meta": {
+        "mode": 420,
+        "sha256": "9199f11e2f8c575e2ba32b670dd6db8721f6bf6bfbdb79a584b9297d0312d369",
+        "size": 36,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ternary_expression_def.rel": {
+        "mode": 420,
+        "sha256": "f82be91b69dd8366ab2317ce5a723d5f7bfe2b0c626d880f10b6fddb18c99ea3",
+        "size": 68,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_ternary_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "32fb0cf25408c9a1a59921ed162f622ba875612a9236e985136abadfcbc1cfad",
+        "size": 52,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_tokeninfo.rel": {
+        "mode": 420,
+        "sha256": "be801f3bbec3e26d81b2d7f78d11acca2f403070aadbc4a0e9ef78a7ca6e1e60",
+        "size": 14306,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_tokeninfo.rel.meta": {
+        "mode": 420,
+        "sha256": "5bf44f1a2b09d6f1546beadfda4a289f7bdb9676aac35f197763476ddb6c9526",
+        "size": 40,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_try_statement_def.rel": {
+        "mode": 420,
+        "sha256": "06bb1508d9b952b1af7807c3e8f65cba55a86c04ef83aebaad9995e4c0045b24",
+        "size": 45,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_try_statement_def.rel.meta": {
+        "mode": 420,
+        "sha256": "b136bca6bb09e8ba361695a2c8ba86d9bd67e1ba8782f907f530eefe480f307c",
+        "size": 38,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_unary_expression_def.rel": {
+        "mode": 420,
+        "sha256": "668ee442fce5857ff7ec9cf9ff63927d7d2651b04cab4b0ca25bd75ecaa0bab0",
+        "size": 133,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_unary_expression_def.rel.meta": {
+        "mode": 420,
+        "sha256": "2eb3713d8d6869386dbb395e5553b0b6263c1a85c674eb00b637a2dc57a6c9ca",
+        "size": 39,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_variable_declarator_def.rel": {
+        "mode": 420,
+        "sha256": "63f7c9ff3fc47583b0e3a7eb315616039460b653997eb9e958113a23d8458275",
+        "size": 252,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_variable_declarator_def.rel.meta": {
+        "mode": 420,
+        "sha256": "1fa09af7e0ccaecd2ec89ea04aa7d509df57835abe516e41fa90c5dca7034195",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_variable_declarator_value.rel": {
+        "mode": 420,
+        "sha256": "93d563c3ae6f45a0312c251c83d04729a45d81c45446e4777f38e8d879429386",
+        "size": 236,
+        "type": "file"
+      },
+      "db-ucode/default/ucode_variable_declarator_value.rel.meta": {
+        "mode": 420,
+        "sha256": "1ffa216f51dfe82a53e36bca82ebf0f7ceb773f679400c933c83e4b3d1caa41e",
+        "size": 37,
+        "type": "file"
+      },
+      "db-ucode/ucode.dbscheme": {
+        "mode": 420,
+        "sha256": "b89454d8ca4ceb2909877efbba04b39be6b585085df0ff4c62c6c727a4d2330c",
+        "size": 30894,
+        "type": "file"
+      },
+      "db-ucode/ucode.dbscheme.stats": {
+        "mode": 420,
+        "sha256": "90d6939a021bb0cb71fd491117d1ecb4c7968fb5a80262ddc44975a75bd97767",
+        "size": 68,
+        "type": "file"
+      },
+      "diagnostic": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/cli-diagnostics-add-20261115T084629.052Z.json": {
+        "mode": 420,
+        "sha256": "68f766800eb036838f030ab75964fad2978531b2cf3719a08bea0113e8f9cee8",
+        "size": 492,
+        "type": "file"
+      },
+      "diagnostic/extractors": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/extractors/ucode": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/extractors/yaml": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/tracer": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "log": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "log/database-finalize-20261115.084630.890.log": {
+        "mode": 420,
+        "sha256": "94c6cc4f599e5166bc4c27e7ca04f2310ce10fb3e7768d9486bbba1482fc89fe",
+        "size": 19412,
+        "type": "file"
+      },
+      "log/database-index-files-20261115.084629.861.log": {
+        "mode": 420,
+        "sha256": "9c365f3383e20cf464ea4303e41fb235550b3ed99c0a769d61f5a00898bbe732",
+        "size": 3208,
+        "type": "file"
+      },
+      "log/database-index-files-20261115.084631.845.log": {
+        "mode": 420,
+        "sha256": "45c9926a44c4bceb27fa5c53f776cd9c5d0fe08bb9d9c40680861a30889ca496",
+        "size": 2055,
+        "type": "file"
+      },
+      "log/database-init-20261115.084628.314.log": {
+        "mode": 420,
+        "sha256": "aceccdb59d583a19cfdd2e38469cc0421952cd67ce908daf22590f448f3d0d14",
+        "size": 27240,
+        "type": "file"
+      },
+      "log/execute-queries-20261115.084634.999.log": {
+        "mode": 420,
+        "sha256": "c369e9c2737996d9f46ab771c8da1fd6379e4915280accfa96f1a9b758d13e14",
+        "size": 74402,
+        "type": "file"
+      },
+      "log/query-run-20261115.084634.212.log": {
+        "mode": 420,
+        "sha256": "070e05d06f431deaf7755bbdfaccba8c1fbe064897b91f3905b91c28276d0e62",
+        "size": 3203,
+        "type": "file"
+      },
+      "src.zip": {
+        "mode": 420,
+        "sha256": "c3a841f0f08290af2c73624d376008f109de5a39211e42ae48ac3c5e173d5ab8",
+        "size": 5072,
+        "type": "file"
+      }
+    }
+  },
+  "outputs": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/artifacts/extracted.bqrs": {
+      ".": {
+        "mode": 420,
+        "sha256": "e3f66cc0131639edd36422263ad0290b378db130d02540811117fde38d70e8ad",
+        "size": 3130,
+        "type": "file"
+      }
+    }
+  },
+  "stage": "extracted-query",
+  "started_utc": "2026-11-15T08:46:42.275411+00:00",
+  "stderr_sha256": "507d017683099670fd752c42aa2902a590edc3c3fd4fa6201d556ba08cf583f9",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

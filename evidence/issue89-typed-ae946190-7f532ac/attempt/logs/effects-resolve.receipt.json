@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql",
+    "resolve",
+    "library-path",
+    "--query=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src/m4/SetBlockDetectEffectTable.ql",
+    "--format=json",
+    "--search-path=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/extractor-pack:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/lib:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src:/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs",
+    "--additional-packs=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs",
+    "--no-default-compilation-cache",
+    "--compilation-cache=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/query-cache",
+    "--common-caches=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/common-cache"
+  ],
+  "boundary_errors": [],
+  "cwd": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer",
+  "elapsed_ns": 1010565928,
+  "environment": {
+    "HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/home",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/cache",
+    "XDG_CONFIG_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/config"
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-15T08:46:22.269347+00:00",
+  "inputs_after": {},
+  "inputs_before": {},
+  "launch_error": null,
+  "mutables_after": {},
+  "mutables_before": {},
+  "outputs": {},
+  "stage": "effects-resolve",
+  "started_utc": "2026-11-15T08:46:21.258772+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "0f193bc344f1ab60d6fda8796c798016c542168f5c0b82636c5742ed8b6c5735"
+}

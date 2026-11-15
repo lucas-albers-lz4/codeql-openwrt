@@ -1,0 +1,39 @@
+test_csv_omission_substitution_duplicate_and_bad_quote (test_draft.ComparatorTests.test_csv_omission_substitution_duplicate_and_bad_quote) ... ok
+test_diagnostics_and_neutral_unknown_mutations (test_draft.ComparatorTests.test_diagnostics_and_neutral_unknown_mutations) ... ok
+test_first_import_checked_before_reimport (test_draft.ComparatorTests.test_first_import_checked_before_reimport) ... ok
+test_grant_and_deny_mutations_rejected (test_draft.ComparatorTests.test_grant_and_deny_mutations_rejected) ... ok
+test_independent_prestate_validation_before_import (test_draft.ComparatorTests.test_independent_prestate_validation_before_import) ... ok
+test_json_duplicate_key_and_nonfinite (test_draft.ComparatorTests.test_json_duplicate_key_and_nonfinite) ... ok
+test_malformed_extraction_and_coherent_omission (test_draft.ComparatorTests.test_malformed_extraction_and_coherent_omission) ... ok
+test_prestates_and_unknowns_are_exact (test_draft.ComparatorTests.test_prestates_and_unknowns_are_exact) ... ok
+test_reimport_byte_difference_rejected (test_draft.ComparatorTests.test_reimport_byte_difference_rejected) ... ok
+test_routing_and_source_archive_binding (test_draft.ComparatorTests.test_routing_and_source_archive_binding) ... ok
+test_strict_csv_parser_rejects_permissive_recovery (test_draft.ComparatorTests.test_strict_csv_parser_rejects_permissive_recovery) ... ok
+test_synthetic_positive (test_draft.ComparatorTests.test_synthetic_positive) ... ok
+test_target_wrong_type_noop_and_unrelated_change (test_draft.ComparatorTests.test_target_wrong_type_noop_and_unrelated_change) ... ok
+test_type_sensitive_equality (test_draft.ComparatorTests.test_type_sensitive_equality) ... ok
+test_bootstrap_rejects_valid_shaped_duplicate_approval_json (test_draft.OrchestratorTests.test_bootstrap_rejects_valid_shaped_duplicate_approval_json) ... ok
+test_bootstrap_requires_isolated_startup (test_draft.OrchestratorTests.test_bootstrap_requires_isolated_startup) ... ok
+test_complete_synthetic_pipeline_with_real_stub_processes (test_draft.OrchestratorTests.test_complete_synthetic_pipeline_with_real_stub_processes) ... ok
+test_exact_source_root_layout (test_draft.OrchestratorTests.test_exact_source_root_layout) ... ok
+test_executables_must_be_in_frozen_roots (test_draft.OrchestratorTests.test_executables_must_be_in_frozen_roots) ... ok
+test_input_inventory_types_stop_before_attempt (test_draft.OrchestratorTests.test_input_inventory_types_stop_before_attempt) ... ok
+test_invalid_command_specs_stop_before_attempt (test_draft.OrchestratorTests.test_invalid_command_specs_stop_before_attempt) ... ok
+test_isolated_bootstrap_ignores_poisoned_cache_with_valid_pins (test_draft.OrchestratorTests.test_isolated_bootstrap_ignores_poisoned_cache_with_valid_pins) ... ok
+test_packet_tampering_stops_before_attempt (test_draft.OrchestratorTests.test_packet_tampering_stops_before_attempt) ... ok
+test_poisoned_cache_cannot_bypass_wrong_pins (test_draft.OrchestratorTests.test_poisoned_cache_cannot_bypass_wrong_pins) ... ok
+test_unapproved_packet_never_creates_attempt (test_draft.OrchestratorTests.test_unapproved_packet_never_creates_attempt) ... ok
+test_approval_digest_and_manifest_fail_closed (test_draft.RecorderTests.test_approval_digest_and_manifest_fail_closed) ... ok
+test_approval_manifest_is_utf8_and_type_sensitive (test_draft.RecorderTests.test_approval_manifest_is_utf8_and_type_sensitive) ... ok
+test_existing_output_stops_before_process_and_input_mutation_fails (test_draft.RecorderTests.test_existing_output_stops_before_process_and_input_mutation_fails) ... ok
+test_launch_error_is_retained_not_success (test_draft.RecorderTests.test_launch_error_is_retained_not_success) ... ok
+test_mutable_and_stdout_artifact_boundaries (test_draft.RecorderTests.test_mutable_and_stdout_artifact_boundaries) ... ok
+test_success_failure_and_real_receipts (test_draft.RecorderTests.test_success_failure_and_real_receipts) ... ok
+test_symlink_inventory_and_missing_output_are_rejected (test_draft.RecorderTests.test_symlink_inventory_and_missing_output_are_rejected) ... ok
+test_valid_shaped_duplicate_manifest_and_ack_rejected (test_draft.RecorderTests.test_valid_shaped_duplicate_manifest_and_ack_rejected) ... ok
+test_value_and_encoding_launch_errors_leave_structured_receipts (test_draft.RecorderTests.test_value_and_encoding_launch_errors_leave_structured_receipts) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 7.085s
+
+OK

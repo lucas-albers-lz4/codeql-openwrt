@@ -1,0 +1,698 @@
+{
+  "transitions": [
+    {
+      "report_index": 0,
+      "rows": 3,
+      "full_computed_transition_and_bytes_match": true
+    },
+    {
+      "report_index": 1,
+      "rows": 59,
+      "full_computed_transition_and_bytes_match": true
+    }
+  ],
+  "per_record_joins": [
+    {
+      "report_index": 0,
+      "row_index": 0,
+      "record_id": "m4:effect:luci-getBlockDevices-popen",
+      "primary": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:luci.getBlockDevices"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getBlockDevices"
+      ]
+    },
+    {
+      "report_index": 0,
+      "row_index": 1,
+      "record_id": "m4:effect:luci-setBlockDetect-system",
+      "primary": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.setBlockDetect"
+      ]
+    },
+    {
+      "report_index": 0,
+      "row_index": 2,
+      "record_id": "m4:effect:luci-setLocaltime-sysfixtime-system",
+      "primary": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime"
+      ],
+      "supplementary": []
+    },
+    {
+      "report_index": 1,
+      "row_index": 0,
+      "record_id": "m3:getfeatures-netifd-popen",
+      "primary": [
+        "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getFeatures"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 1,
+      "record_id": "m4:getfeatures-hostapd-system",
+      "primary": [
+        "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getFeatures"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 2,
+      "record_id": "m4:getfeatures-wpasupplicant-system",
+      "primary": [
+        "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getFeatures"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 3,
+      "record_id": "m4:getfeatures-dnsmasq-popen",
+      "primary": [
+        "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getFeatures"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 4,
+      "record_id": "m4:getfeatures-odhcpd-popen",
+      "primary": [
+        "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getFeatures"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 5,
+      "record_id": "m4:getfeatures-ipset-popen",
+      "primary": [
+        "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getFeatures"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 6,
+      "record_id": "m4:effect:luci-getSwconfigFeatures-popen",
+      "primary": [
+        "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigFeatures"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getSwconfigFeatures"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 7,
+      "record_id": "m4:effect:luci-getSwconfigPortState-popen",
+      "primary": [
+        "policy:grant:luci-mod-network-config:ubus_http:luci.getSwconfigPortState"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getSwconfigPortState"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 8,
+      "record_id": "m4:effect:luci-getRealtimeStats-popen",
+      "primary": [
+        "policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getRealtimeStats"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 9,
+      "record_id": "m4:effect:luci-setPassword-system",
+      "primary": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.setPassword"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.setPassword"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 10,
+      "record_id": "m4:effect:luci-setLocaltime-system",
+      "primary": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.setLocaltime"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 11,
+      "record_id": "m4:effect:luci-setLocaltime-sysfixtime-system",
+      "primary": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.setLocaltime"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 12,
+      "record_id": "m4:effect:luci-getBlockDevices-popen",
+      "primary": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:luci.getBlockDevices"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getBlockDevices"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 13,
+      "record_id": "m4:effect:luci-setBlockDetect-system",
+      "primary": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:luci.setBlockDetect"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.setBlockDetect"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 14,
+      "record_id": "m4:effect:luci-getConntrackList-popen",
+      "primary": [
+        "policy:grant:luci-mod-status-realtime:ubus_http:luci.getConntrackList"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getConntrackList"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 15,
+      "record_id": "m4:effect:luci-getProcessList-popen",
+      "primary": [
+        "policy:grant:luci-mod-status-processes:ubus_http:luci.getProcessList"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getProcessList"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 16,
+      "record_id": "m4:luci-sys-init-action-system",
+      "primary": [],
+      "supplementary": []
+    },
+    {
+      "report_index": 1,
+      "row_index": 17,
+      "record_id": "policy:effect:cgi-backup-sensitive-read",
+      "primary": [
+        "policy:grant:luci-mod-system-flash:cgi_io:cgi-backup"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-backup"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 18,
+      "record_id": "policy:effect:cgi-upload-file-write",
+      "primary": [
+        "policy:grant:luci-base:cgi_io:cgi-upload"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-upload"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 19,
+      "record_id": "policy:effect:cgi-download-file-read",
+      "primary": [
+        "policy:grant:luci-mod-system-flash:cgi_io:cgi-download"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-download"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 20,
+      "record_id": "policy:effect:cgi-exec-session-access",
+      "primary": [
+        "policy:grant:luci-mod-network-config:cgi_io:cgi-exec"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 21,
+      "record_id": "policy:effect:cgi-exec-file:syslog-wrapper",
+      "primary": [
+        "policy:grant:luci-mod-status-logs:cgi_io:cgi-exec:syslog-wrapper"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:syslog-wrapper"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 22,
+      "record_id": "policy:effect:cgi-exec-file:luci-peeraddr",
+      "primary": [
+        "policy:grant:luci-mod-network-config:cgi_io:cgi-exec:luci-peeraddr"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:luci-peeraddr"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 23,
+      "record_id": "policy:effect:cgi-exec-file:package-manager-call",
+      "primary": [
+        "policy:grant:luci-app-package-manager:cgi_io:cgi-exec:package-manager-call"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:package-manager-call"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 24,
+      "record_id": "policy:effect:cgi-exec-status:dmesg",
+      "primary": [
+        "policy:grant:luci-mod-status-logs:cgi_io:cgi-exec:dmesg"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:dmesg"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 25,
+      "record_id": "policy:effect:cgi-exec-status:nft",
+      "primary": [
+        "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:nft"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:nft"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 26,
+      "record_id": "policy:effect:cgi-exec-status:iptables",
+      "primary": [
+        "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:iptables"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:iptables"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 27,
+      "record_id": "policy:effect:cgi-exec-status:ip6tables",
+      "primary": [
+        "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:ip6tables"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:ip6tables"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 28,
+      "record_id": "policy:effect:cgi-exec-status:iptables-save",
+      "primary": [
+        "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:iptables-save"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:iptables-save"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 29,
+      "record_id": "policy:effect:cgi-exec-status:ip6tables-save",
+      "primary": [
+        "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:ip6tables-save"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:ip6tables-save"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 30,
+      "record_id": "policy:effect:cgi-exec-status:firewall-init",
+      "primary": [
+        "policy:grant:luci-mod-status-firewall:cgi_io:cgi-exec:firewall-init"
+      ],
+      "supplementary": [
+        "policy:grant:root:cgi_io:cgi-exec:firewall-init"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 31,
+      "record_id": "policy:effect:ubus-file-exec:iptables",
+      "primary": [
+        "policy:grant:luci-mod-status-firewall:ubus_http:file.exec:iptables"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:iptables"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 32,
+      "record_id": "policy:effect:ubus-file-exec:ip6tables",
+      "primary": [
+        "policy:grant:luci-mod-status-firewall:ubus_http:file.exec:ip6tables"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:ip6tables"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 33,
+      "record_id": "policy:effect:ubus-file-exec:ip",
+      "primary": [
+        "policy:grant:luci-mod-status-routes:ubus_http:file.exec:ip"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:ip"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 34,
+      "record_id": "policy:effect:ubus-file-exec:ip-json",
+      "primary": [
+        "policy:grant:luci-mod-status-routes-json:ubus_http:file.exec:ip-json"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:ip-json"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 35,
+      "record_id": "policy:effect:ubus-file-exec-ifup:ifup",
+      "primary": [
+        "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:ifup"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:ifup"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 36,
+      "record_id": "policy:effect:ubus-file-exec-ifup:ifdown",
+      "primary": [
+        "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:ifdown"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:ifdown"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 37,
+      "record_id": "policy:effect:ubus-file-exec-ifup:wifi",
+      "primary": [
+        "policy:grant:luci-mod-network-config-write:ubus_http:file.exec:wifi"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:wifi"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 38,
+      "record_id": "policy:effect:ubus-file-exec-kill:kill",
+      "primary": [
+        "policy:grant:luci-mod-status-processes-write:ubus_http:file.exec:kill"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:kill"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 39,
+      "record_id": "policy:effect:ubus-file-exec-mounts:umount",
+      "primary": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:file.exec:umount"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:umount"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 40,
+      "record_id": "policy:effect:ubus-file-exec-mounts:block",
+      "primary": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:file.exec:block"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:block"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 41,
+      "record_id": "policy:effect:ubus-file-exec-list-backup:list-backup",
+      "primary": [
+        "policy:grant:luci-mod-system-flash:ubus_http:file.exec:list-backup"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:file.exec:list-backup"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 42,
+      "record_id": "policy:effect:ubus-system-reboot",
+      "primary": [
+        "policy:grant:luci-mod-system-reboot:ubus_http:system.reboot"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:system.reboot"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 43,
+      "record_id": "policy:effect:ubus-rc-init",
+      "primary": [
+        "policy:grant:luci-mod-system-init:ubus_http:rc.init"
+      ],
+      "supplementary": [
+        "policy:grant:luci-mod-system-config:ubus_http:rc.init",
+        "policy:grant:root:ubus_http:rc.init"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 44,
+      "record_id": "policy:effect:ubus-rc-list",
+      "primary": [
+        "policy:grant:luci-mod-system-init-read:ubus_http:rc.list"
+      ],
+      "supplementary": [
+        "policy:grant:luci-mod-system-init:ubus_http:rc.list",
+        "policy:grant:luci-mod-system-config:ubus_http:rc.list",
+        "policy:grant:root:ubus_http:rc.list"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 45,
+      "record_id": "policy:effect:ubus-system-board",
+      "primary": [
+        "policy:grant:luci-mod-status-index:ubus_http:system.board"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:system.board"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 46,
+      "record_id": "policy:effect:ubus-system-info",
+      "primary": [
+        "policy:grant:luci-mod-status-index:ubus_http:system.info"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:system.info"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 47,
+      "record_id": "policy:effect:ubus-luci-getversion",
+      "primary": [
+        "policy:grant:luci-mod-status-index:ubus_http:luci.getVersion"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getVersion"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 48,
+      "record_id": "policy:effect:ubus-luci-getunixtime",
+      "primary": [
+        "policy:grant:luci-mod-status-index:ubus_http:luci.getUnixtime"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getUnixtime"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 49,
+      "record_id": "policy:effect:ubus-hostapd-del-client",
+      "primary": [
+        "policy:grant:luci-mod-network-config-write:ubus_http:hostapd.del_client"
+      ],
+      "supplementary": [
+        "policy:grant:luci-mod-status-index-wifi:ubus_http:hostapd.del_client",
+        "policy:grant:root:ubus_http:hostapd.del_client"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 50,
+      "record_id": "policy:effect:ubus-hostapd-wps-start",
+      "primary": [
+        "policy:grant:luci-mod-status-index-wifi:ubus_http:hostapd.wps_start"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:hostapd.wps_start"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 51,
+      "record_id": "policy:effect:ubus-hostapd-wps-cancel",
+      "primary": [
+        "policy:grant:luci-mod-status-index-wifi:ubus_http:hostapd.wps_cancel"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:hostapd.wps_cancel"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 52,
+      "record_id": "policy:effect:ubus-hostapd-wps-status",
+      "primary": [
+        "policy:grant:luci-mod-status-index-wifi:ubus_http:hostapd.wps_status"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:hostapd.wps_status"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 53,
+      "record_id": "policy:effect:ubus-luci-getodhcp6cstats",
+      "primary": [
+        "policy:grant:luci-mod-status-index:ubus_http:luci.getOdhcp6cStats"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getOdhcp6cStats"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 54,
+      "record_id": "policy:effect:ubus-luci-gettimezones",
+      "primary": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.getTimezones"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getTimezones"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 55,
+      "record_id": "policy:effect:ubus-luci-getleds",
+      "primary": [
+        "policy:grant:luci-mod-system-config:ubus_http:luci.getLEDs"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getLEDs"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 56,
+      "record_id": "policy:effect:ubus-luci-getmountpoints",
+      "primary": [
+        "policy:grant:luci-mod-status-index-storage:ubus_http:luci.getMountPoints"
+      ],
+      "supplementary": [
+        "policy:grant:luci-mod-system-mounts:ubus_http:luci.getMountPoints",
+        "policy:grant:luci-app-package-manager:ubus_http:luci.getMountPoints",
+        "policy:grant:root:ubus_http:luci.getMountPoints"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 57,
+      "record_id": "policy:effect:ubus-luci-getbuiltinethernetports",
+      "primary": [
+        "policy:grant:luci-mod-status-index-ports:ubus_http:luci.getBuiltinEthernetPorts"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getBuiltinEthernetPorts"
+      ]
+    },
+    {
+      "report_index": 1,
+      "row_index": 58,
+      "record_id": "policy:effect:ubus-luci-getconntrackhelpers",
+      "primary": [
+        "policy:grant:luci-app-firewall:ubus_http:luci.getConntrackHelpers"
+      ],
+      "supplementary": [
+        "policy:grant:root:ubus_http:luci.getConntrackHelpers"
+      ]
+    }
+  ]
+}

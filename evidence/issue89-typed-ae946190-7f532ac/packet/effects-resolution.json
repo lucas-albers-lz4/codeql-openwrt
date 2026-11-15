@@ -1,0 +1,20 @@
+{
+  "libraryPath" : [
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/src",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/lib",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs/controlflow",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs/dataflow",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs/regex",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs/ssa",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs/threat-models",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs/typetracking",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs/util",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/resolved-packs/yaml"
+  ],
+  "dbscheme" : "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/ql/lib/ucode.dbscheme",
+  "compilationCache" : [
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/query-cache"
+  ],
+  "relativeName" : "lucas-albers-lz4/ucode-queries/m4/SetBlockDetectEffectTable.ql",
+  "qlPackName" : "lucas-albers-lz4/ucode-queries"
+}

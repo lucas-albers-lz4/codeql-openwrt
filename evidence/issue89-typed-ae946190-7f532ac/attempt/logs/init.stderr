@@ -1,0 +1,5 @@
+Calculating baseline information in /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke
+Calculated baseline information for languages:  (27ms).
+Resolving extractor ucode.
+Successfully loaded extractor ucode (ucode) from /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/extractor-pack.
+Created skeleton CodeQL database at /root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/database. This in-progress database is ready to be populated by an extractor.

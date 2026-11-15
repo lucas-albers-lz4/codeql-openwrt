@@ -1,0 +1,11 @@
+{
+  "HOME": "/root/workspace/workflow-design/evidence/issue83-live-fbcad-d233/home",
+  "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue83-live-fbcad-d233/cache",
+  "TMPDIR": "/root/workspace/workflow-design/evidence/issue83-live-fbcad-d233/tmp",
+  "PATH": "/root/.hermes/profiles/work/cache/scratch/ucode-rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin:/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4:/usr/bin:/bin",
+  "LC_ALL": "C.UTF-8",
+  "PYTHONNOUSERSITE": "1",
+  "PYTHONDONTWRITEBYTECODE": "1",
+  "CARGO_HOME": "/root/.hermes/profiles/work/cache/scratch/ucode-cargo",
+  "CARGO_TARGET_DIR": "/root/workspace/workflow-design/evidence/issue83-live-fbcad-d233/target-clean"
+}

@@ -1,0 +1,94 @@
+{
+  "argv": [
+    "/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql",
+    "database",
+    "init",
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/database",
+    "--language=ucode",
+    "--search-path=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer/extractor-pack",
+    "--source-root=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke",
+    "--common-caches=/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/common-cache"
+  ],
+  "boundary_errors": [],
+  "cwd": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/producer",
+  "elapsed_ns": 1335751597,
+  "environment": {
+    "HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/home",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/cache",
+    "XDG_CONFIG_HOME": "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/config"
+  },
+  "exit_code": 0,
+  "finished_utc": "2026-11-15T08:46:29.076058+00:00",
+  "inputs_after": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci": {
+      ".": {
+        "mode": 420,
+        "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+        "size": 16161,
+        "type": "file"
+      }
+    }
+  },
+  "inputs_before": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci": {
+      ".": {
+        "mode": 420,
+        "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+        "size": 16161,
+        "type": "file"
+      }
+    }
+  },
+  "launch_error": null,
+  "mutables_after": {},
+  "mutables_before": {},
+  "outputs": {
+    "/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/attempt/database": {
+      ".": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "baseline-info.json": {
+        "mode": 420,
+        "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "size": 2,
+        "type": "file"
+      },
+      "codeql-database.yml": {
+        "mode": 420,
+        "sha256": "c1a663557a26f23ca23987254e476382ca14eaacb816f5e5f0bdb8f2d3ba85e5",
+        "size": 1868,
+        "type": "file"
+      },
+      "diagnostic": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "diagnostic/cli-diagnostics-add-20261115T084629.052Z.json": {
+        "mode": 420,
+        "sha256": "68f766800eb036838f030ab75964fad2978531b2cf3719a08bea0113e8f9cee8",
+        "size": 492,
+        "type": "file"
+      },
+      "log": {
+        "mode": 493,
+        "type": "directory"
+      },
+      "log/database-init-20261115.084628.314.log": {
+        "mode": 420,
+        "sha256": "aceccdb59d583a19cfdd2e38469cc0421952cd67ce908daf22590f448f3d0d14",
+        "size": 27240,
+        "type": "file"
+      }
+    }
+  },
+  "stage": "init",
+  "started_utc": "2026-11-15T08:46:27.740309+00:00",
+  "stderr_sha256": "dbc85c9a8415f1a909c0bc3d91c3182c8f2d22fbb883c82838d508d70caa6196",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

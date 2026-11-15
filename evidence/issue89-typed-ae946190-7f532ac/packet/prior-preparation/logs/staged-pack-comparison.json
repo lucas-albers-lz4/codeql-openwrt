@@ -1,0 +1,34 @@
+{
+  "controlflow": {
+    "file_count": 4,
+    "version_dir": "1.0.12"
+  },
+  "dataflow": {
+    "file_count": 14,
+    "version_dir": "1.1.6"
+  },
+  "regex": {
+    "file_count": 12,
+    "version_dir": "1.0.12"
+  },
+  "ssa": {
+    "file_count": 4,
+    "version_dir": "1.0.12"
+  },
+  "threat-models": {
+    "file_count": 6,
+    "version_dir": "1.1.1"
+  },
+  "typetracking": {
+    "file_count": 6,
+    "version_dir": "1.0.12"
+  },
+  "util": {
+    "file_count": 18,
+    "version_dir": "1.0.12"
+  },
+  "yaml": {
+    "file_count": 6,
+    "version_dir": "1.0.61"
+  }
+}
