@@ -1,5 +1,6 @@
 """Record-specific policy joins for the bounded interchange contract."""
 import contextlib
+import copy
 import hashlib
 import io
 import json
@@ -135,6 +136,33 @@ class RecordScopeTests(unittest.TestCase):
                     path.write_text(json.dumps(report))
                     with self.assertRaisesRegex(contract.ContractError, 'coverage'):
                         validate(root)
+
+    def test_historical_coverage_rejects_extra_and_duplicate_members(self):
+        fixture = Path(__file__).parent / 'fixtures/ucode-snapshot'
+        manifest = json.loads((contract.REPO_ROOT / 'policy/ucode_snapshot_manifest.json').read_text())
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / 'ucode'
+            shutil.copytree(fixture, root)
+            for name, spec in manifest['coverage'].items():
+                path = root / 'docs' / name
+                original_bytes = path.read_bytes()
+                report = json.loads(original_bytes)
+                for field, values in spec['contents'].items():
+                    if field == 'unknowns':
+                        continue
+                    # An empty historical list has no member that can be duplicated.
+                    for action in (('extra', 'duplicate') if values else ('extra',)):
+                        changed = copy.deepcopy(report)
+                        value = (copy.deepcopy(values[0]) if action == 'duplicate' else
+                                 {'line': 9999, 'kind': 'system', 'command': 'extra probe'}
+                                 if field == 'call_sites' else 'extra report member')
+                        changed[field].append(value)
+                        path.write_text(json.dumps(changed))
+                        for validate in (contract.validate_ucode_root, contract.validate_ucode_snapshot):
+                            with self.subTest(name=name, field=field, action=action, mode=validate.__name__):
+                                with self.assertRaisesRegex(contract.ContractError, f'coverage {field} identity mismatch'):
+                                    validate(root)
+                        path.write_bytes(original_bytes)
 
     def test_partial_historical_document_identity_cannot_be_omitted_or_substituted(self):
         fixture = Path(__file__).parent / 'fixtures/ucode-snapshot'
@@ -282,6 +310,18 @@ class RecordScopeTests(unittest.TestCase):
             typed.unlink()
             with self.assertRaisesRegex(contract.ContractError, 'documents missing'):
                 contract.validate_ucode_snapshot(root)
+
+    def test_catalog_effects_partition_each_cited_grant_by_expectation(self):
+        for effect in self.effects:
+            with self.subTest(record_id=effect['record_id']):
+                primary, supplementary = contract.join_policy_grants(effect, self.grants, scope='aggregate')
+                refs = [ref for ref in effect['evidence_refs'] if ref.startswith('policy:grant:')]
+                expected_primary = [(ref, self.grants[ref]['expectation_id']) for ref in refs
+                                    if self.grants[ref]['expectation_id'] == effect.get('expectation_id')]
+                expected_supplementary = [(ref, self.grants[ref]['expectation_id']) for ref in refs
+                                          if self.grants[ref]['expectation_id'] != effect.get('expectation_id')]
+                self.assertCountEqual([(g['record_id'], g['expectation_id']) for g in primary], expected_primary)
+                self.assertCountEqual([(g['record_id'], g['expectation_id']) for g in supplementary], expected_supplementary)
 
     def test_catalog_effects_partition_primary_and_supplementary(self):
         totals = [0, 0]

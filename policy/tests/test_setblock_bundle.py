@@ -182,8 +182,38 @@ class BundleTests(unittest.TestCase):
                 self.assertNotEqual(proc.returncode, 0, proc.stdout)
                 self.assertIn('unexpected_mutation', proc.stderr)
 
+    def test_composed_context_comparison_preserves_json_types(self):
+        context = self.base / 'expected.json'
+        oracle = self.base / 'oracle.json'
+        oracle.write_bytes(self.oracle_bytes)
+        for field, expected, actual in (('clean', True, 1),
+                                        ('type_probe', {'values': [False]}, {'values': [0]}),
+                                        ('type_probe', {'values': [1]}, {'values': [1.0]})):
+            with self.subTest(field=field, expected=expected, actual=actual):
+                self.context[field] = expected
+                self.manifest['context'] = copy.deepcopy(self.context)
+                context.write_bytes(encoded(self.context))
+                self.refresh()
+                self.assertEqual(self.validate()['status'], 'consistent_offline')
+                self.manifest['context'][field] = actual
+                self.refresh()
+                with self.subTest(interface='API'):
+                    with self.assertRaises(h.HandoffError) as caught:
+                        self.validate()
+                    self.assertEqual(caught.exception.code, 'expected_context_mismatch')
+                for optimized in (False, True):
+                    with self.subTest(optimized=optimized):
+                        proc = subprocess.run(
+                            [sys.executable, *(['-O'] if optimized else []), '-B', '-m',
+                             'policy.setblock_handoff', str(self.bundle),
+                             '--expected-context', str(context), '--oracle', str(oracle),
+                             '--consumer-root', str(self.consumer), '--producer-root', str(self.producer)],
+                            cwd=ROOT, text=True, capture_output=True)
+                        self.assertNotEqual(proc.returncode, 0, proc.stdout)
+                        self.assertIn('expected_context_mismatch', proc.stderr)
+
     def test_composed_offline_success_never_claims_live_execution(self):
-        for run_kind in ('offline_fixture', 'live'):
+        for run_kind in ('offline_fixture', 'historical', 'live'):
             with self.subTest(run_kind=run_kind):
                 self.manifest['run_kind'] = run_kind
                 self.refresh()
@@ -284,19 +314,21 @@ class BundleTests(unittest.TestCase):
         oracle = self.base / 'oracle.json'
         context.write_bytes(encoded(self.context))
         oracle.write_bytes(self.oracle_bytes)
-        cmd = [sys.executable, '-B', '-m', 'policy.setblock_handoff', str(self.bundle),
-               '--expected-context', str(context), '--oracle', str(oracle),
-               '--consumer-root', str(self.consumer), '--producer-root', str(self.producer)]
-        for run_kind in ('offline_fixture', 'live'):
-            with self.subTest(run_kind=run_kind):
-                self.manifest['run_kind'] = run_kind
-                self.refresh()
-                proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True)
-                self.assertEqual(proc.returncode, 0, proc.stderr)
-                result = json.loads(proc.stdout)
-                self.assertEqual(result['status'], 'consistent_offline')
-                self.assertIs(result['execution_verified'], False)
-                self.assertIs(result['freshness_verified'], False)
+        for run_kind in ('offline_fixture', 'historical', 'live'):
+            self.manifest['run_kind'] = run_kind
+            self.refresh()
+            for optimized in (False, True):
+                with self.subTest(run_kind=run_kind, optimized=optimized):
+                    cmd = [sys.executable, *(['-O'] if optimized else []), '-B', '-m',
+                           'policy.setblock_handoff', str(self.bundle),
+                           '--expected-context', str(context), '--oracle', str(oracle),
+                           '--consumer-root', str(self.consumer), '--producer-root', str(self.producer)]
+                    proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True)
+                    self.assertEqual(proc.returncode, 0, proc.stderr)
+                    result = json.loads(proc.stdout)
+                    self.assertEqual(result['status'], 'consistent_offline')
+                    self.assertIs(result['execution_verified'], False)
+                    self.assertIs(result['freshness_verified'], False)
         (self.bundle / 'adapter_stdout').unlink()
         proc = subprocess.run(cmd, cwd=ROOT, text=True, capture_output=True)
         self.assertNotEqual(proc.returncode, 0)

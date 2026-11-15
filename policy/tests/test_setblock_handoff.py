@@ -69,6 +69,12 @@ class ContextTests(unittest.TestCase):
                     'producer_files': {p: digest(v) for p, v in producer.items()}}
         actual = copy.deepcopy(expected)
         validate_context(expected, actual, consumer, producer, oracle)
+        for malformed in (None, [], 'context'):
+            with self.subTest(malformed=malformed):
+                with self.assertRaisesRegex(HandoffError, 'expected_context_mismatch'):
+                    validate_context(expected, malformed, consumer, producer, oracle)
+                with self.assertRaisesRegex(HandoffError, 'expected_context_mismatch'):
+                    validate_context(malformed, actual, consumer, producer, oracle)
         for field in ('consumer_commit', 'oracle_sha256', 'clean'):
             with self.subTest(field=field):
                 changed = copy.deepcopy(actual)

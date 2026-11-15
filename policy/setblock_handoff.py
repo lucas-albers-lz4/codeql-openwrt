@@ -36,7 +36,8 @@ def validate_context(expected, actual, consumer_files, producer_files, oracle_by
     Caller must independently obtain complete file maps and trusted commit/status
     observations. A claimed clean flag or digest is not execution attestation.
     """
-    if not isinstance(expected, dict) or expected != actual:
+    if (not isinstance(expected, dict) or not isinstance(actual, dict)
+            or not _json_equal(expected, actual)):
         raise HandoffError('expected_context_mismatch', 'context differs')
     if (expected.get('version') != 'setblock-handoff-context-v1'
             or expected.get('clean') is not True
