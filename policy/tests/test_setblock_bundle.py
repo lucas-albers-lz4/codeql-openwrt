@@ -193,19 +193,51 @@ class BundleTests(unittest.TestCase):
                 self.assertIs(result['execution_verified'], False)
                 self.assertIs(result['freshness_verified'], False)
 
-    def test_real_codeql_diagnostics_accept_exact_approved_root(self):
-        evidence = Path('/root/workspace/workflow-design/evidence/ucode76-afb1400-handoff/artifacts')
-        if not evidence.is_dir():
-            self.skipTest('historical diagnostic evidence not available')
-        self.context['handoff_source_root'] = '/root/workspace/wt-ucode-76/ql/test/extractor-smoke'
-        old = '/run/sealed/source'
+    def real_diagnostics(self):
+        evidence = ROOT / 'policy/tests/fixtures/codeql-diagnostics-afb1400'
+        extracted = (evidence / 'extracted.csv').read_bytes()
+        errors = (evidence / 'errors.csv').read_bytes()
+        # This is a recorded CSV value, never a filesystem dependency.
+        recorded_root = b'/root/workspace/wt-ucode-76/ql/test/extractor-smoke'
+        approved_root = str(self.base / 'approved-source')
+        (self.base / 'approved-source').mkdir()
+        self.assertEqual(extracted.count(recorded_root + b'/'), 1)
+        extracted = extracted.replace(recorded_root + b'/', approved_root.encode() + b'/', 1)
+        old = self.context['handoff_source_root']
+        self.context['handoff_source_root'] = approved_root
         for command in self.context['commands'].values():
-            command['argv'] = [arg.replace(old, self.context['handoff_source_root']) for arg in command['argv']]
+            command['argv'] = [arg.replace(old, approved_root) for arg in command['argv']]
         self.manifest['context'] = copy.deepcopy(self.context)
-        for name in ('extracted_csv', 'errors_csv'):
-            self.put(name, (evidence / (name.replace('_csv', '') + '.csv')).read_bytes())
+        return extracted, errors
+
+    def test_real_codeql_diagnostics_accept_exact_approved_root(self):
+        extracted, errors = self.real_diagnostics()
+        self.put('extracted_csv', extracted)
+        self.put('errors_csv', errors)
         self.refresh()
         self.assertEqual(self.validate()['status'], 'consistent_offline')
+
+    def test_real_codeql_diagnostics_reject_mutations(self):
+        extracted, errors = self.real_diagnostics()
+        row = extracted.splitlines(keepends=True)[1]
+        root = self.context['handoff_source_root'].encode()
+        cases = {
+            'wrong_root': (extracted.replace(root + b'/', root + b'-other/', 1), errors),
+            'extracted_header': (extracted.replace(b'"f","col1"', b'"col1","f"', 1), errors),
+            'error_header': (extracted, errors.replace(b'"error","col1","col2"', b'"error","col2","col1"', 1)),
+            'error_row': (extracted, errors + b'"error","x","y"\n'),
+            'duplicate_row': (extracted + row, errors),
+            'missing_row': (extracted.splitlines(keepends=True)[0], errors),
+            'extra_column': (extracted.replace(b',""\n', b',"","extra"\n', 1), errors),
+        }
+        for name, (bad_extracted, bad_errors) in cases.items():
+            with self.subTest(case=name):
+                self.put('extracted_csv', bad_extracted)
+                self.put('errors_csv', bad_errors)
+                self.refresh()
+                with self.assertRaises(h.HandoffError) as caught:
+                    self.validate()
+                self.assertEqual(caught.exception.code, 'execution_inconclusive')
 
     def test_diagnostics_reject_wrong_format_or_source(self):
         good = ('"f","col1"\n"/run/sealed/source/' + self.oracle['source_path'] + '",""\n').encode()
