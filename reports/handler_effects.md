@@ -82,7 +82,7 @@ Findings are evidence, not proof. This catalog does not emit `authorization_viol
 | [m2-ubus-hostapd-wps-cancel-effect.json](m2-ubus-hostapd-wps-cancel-effect.json) | synthetic ubus `hostapd.<ifname>.wps_cancel` of luci-mod-status-index-wifi (C, not ucode) |
 | [m2-ubus-hostapd-wps-status-effect.json](m2-ubus-hostapd-wps-status-effect.json) | synthetic ubus `hostapd.<ifname>.wps_status` of luci-mod-status-index-wifi (C, not ucode) |
 
-Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote barrier `no_path` rows, same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing classification ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher. Helper `exec_helper_inventory` rows stay in the files inventory; this catalog holds the cgi-exec file.exec effects those helpers join.
+Not collected: synthetic taint fixtures, `taint_path` / `backend_method` rows, shellquote findings ([m4-shellquote-findings.json](m4-shellquote-findings.json)), same-function-local quoting inventory ([m4-realtime-password-quoted-locals.json](m4-realtime-password-quoted-locals.json)), luci-ssl `files[]` routing classification ([m4-luci-ssl-files.json](m4-luci-ssl-files.json)), dispatcher. Helper `exec_helper_inventory` rows stay in the files inventory; this catalog holds the cgi-exec file.exec effects those helpers join.
 
 ## Grant ↔ effect joins
 
@@ -110,7 +110,7 @@ Unauthenticated `/ubus` is a **non-join** (M2 deny). Delegated module sessions a
 | `setPassword` | `setPassword.busybox-passwd.system` | `policy:grant:luci-mod-system-config:ubus_http:luci.setPassword` | `policy:grant:root:ubus_http:luci.setPassword` | no-join (`policy:decision:unauthenticated-setPassword-deny`) |
 | `setLocaltime` | `setLocaltime.date.system` | `policy:grant:luci-mod-system-config:ubus_http:luci.setLocaltime` | `policy:grant:root:ubus_http:luci.setLocaltime` | no-join (`policy:decision:unauthenticated-setLocaltime-deny`) |
 
-Those five effects are handler sinks collected from the existing request.args inventory. The analyzer observes `shellquote` on the swconfig / luci-bwc / passwd paths without treating it as a global sanitizer. `localtime` / `sprintf %d` on `setLocaltime` are not sanitizers. Runtime quoting is preserved through same-function `getRealtimeStats` `flags` and `setPassword` `u`/`p`; the analyzer's direct-template barrier does not track those locals; quoting inventory is [m4-realtime-password-quoted-locals.md](m4-realtime-password-quoted-locals.md), not extra catalog sinks.
+Those five effects are handler sinks collected from the existing request.args inventory. The analyzer observes `shellquote` on the swconfig / luci-bwc / passwd paths without treating it as a global sanitizer. `localtime` / `sprintf %d` on `setLocaltime` are not sanitizers. Source-described quoting is preserved through same-function `getRealtimeStats` `flags` and `setPassword` `u`/`p`; no trusted shellquote barrier is modeled, and those locals remain unmodeled. Quoting inventory is [m4-realtime-password-quoted-locals.md](m4-realtime-password-quoted-locals.md), not extra catalog sinks.
 
 ### Fixed plugin-body exec (`luci-mod-system-mounts` + sysfixtime)
 

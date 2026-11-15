@@ -1,20 +1,27 @@
 [
   {
     "record_type": "taint_path",
-    "evidence_status": "no_path",
+    "evidence_status": "inconclusive",
     "producer": "step3",
     "record_id": "m4:quote-ok-complete-arg-no-injection",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",
-    "analysis_revision": "step3:shellquote-barrier-v1",
+    "analysis_revision": "step3:shellquote-barrier-v2",
     "sink_kind": "popen",
     "assessment": "unassessed",
     "assumptions": [
-      "Synthetic quote_ok fixture",
-      "Barrier is complete-argument template substitution only"
+      "Historical record_id retained for interchange compatibility; its no-injection wording is not a current conclusion",
+      "No shellquote implementation has a trusted semantic model; shell-injection candidate retained",
+      "Query checks cover the committed smoke fixtures, not a full pinned-corpus rerun"
     ],
-    "evidence_refs": ["ql/src/m4/CompleteQuotedArg.ql", "ql/src/m4/ShellInjection.ql"],
-    "unknowns": []
+    "evidence_refs": [
+      "ql/src/m4/CompleteQuotedArg.ql",
+      "ql/src/m4/ShellInjection.ql"
+    ],
+    "unknowns": [
+      "Binding and quoting semantics of shellquote are unmodeled",
+      "Runtime execution and exploitability not established"
+    ]
   },
   {
     "record_type": "taint_path",
@@ -23,24 +30,26 @@
     "record_id": "m4:quote-exe-executable-selection",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",
-    "analysis_revision": "step3:shellquote-barrier-v1",
+    "analysis_revision": "step3:shellquote-barrier-v2",
     "sink_kind": "popen",
     "assessment": "unassessed",
     "assumptions": [
       "Synthetic quote_exe fixture",
       "shellquote of the entire command is executable selection, not a complete ordinary argument"
     ],
-    "evidence_refs": ["ql/src/m4/ShellInjection.ql"],
+    "evidence_refs": [
+      "ql/src/m4/ShellInjection.ql"
+    ],
     "unknowns": []
   },
   {
     "record_type": "taint_path",
-    "evidence_status": "no_path",
+    "evidence_status": "inconclusive",
     "producer": "step3",
     "record_id": "m4:getSwconfigFeatures-complete-quote-no-injection",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",
-    "analysis_revision": "step3:shellquote-barrier-v1",
+    "analysis_revision": "step3:shellquote-barrier-v2",
     "ingress": "ubus_http",
     "entrypoint_id": "ubus_http:luci.getSwconfigFeatures",
     "ubus_object": "luci",
@@ -50,21 +59,27 @@
     "assessment": "unassessed",
     "expectation_id": "luci-mod-network-swconfig",
     "assumptions": [
-      "Complete-argument shellquote into a literal swconfig command",
-      "Does not retract taint-reaches-sink evidence from step3:request-args-exec-v1",
-      "Not a global sanitizer"
+      "Historical record_id retained for interchange compatibility; its no-injection wording is not a current conclusion",
+      "No shellquote implementation has a trusted semantic model; shell-injection candidate retained",
+      "Query checks cover the committed smoke fixtures, not a full pinned-corpus rerun"
     ],
-    "evidence_refs": ["ql/src/m4/CompleteQuotedArg.ql", "ql/src/m4/ShellInjection.ql"],
-    "unknowns": ["live uhttpd/rpcd not executed"]
+    "evidence_refs": [
+      "ql/src/m4/CompleteQuotedArg.ql",
+      "ql/src/m4/ShellInjection.ql"
+    ],
+    "unknowns": [
+      "Binding and quoting semantics of shellquote are unmodeled",
+      "Runtime execution and exploitability not established"
+    ]
   },
   {
     "record_type": "taint_path",
-    "evidence_status": "no_path",
+    "evidence_status": "inconclusive",
     "producer": "step3",
     "record_id": "m4:getSwconfigPortState-complete-quote-no-injection",
     "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
     "profile": "luci-ssl-25.12",
-    "analysis_revision": "step3:shellquote-barrier-v1",
+    "analysis_revision": "step3:shellquote-barrier-v2",
     "ingress": "ubus_http",
     "entrypoint_id": "ubus_http:luci.getSwconfigPortState",
     "ubus_object": "luci",
@@ -74,10 +89,17 @@
     "assessment": "unassessed",
     "expectation_id": "luci-mod-network-swconfig",
     "assumptions": [
-      "Complete-argument shellquote into a literal swconfig command",
-      "Does not retract taint-reaches-sink evidence from step3:request-args-exec-v1"
+      "Historical record_id retained for interchange compatibility; its no-injection wording is not a current conclusion",
+      "No shellquote implementation has a trusted semantic model; shell-injection candidate retained",
+      "Query checks cover the committed smoke fixtures, not a full pinned-corpus rerun"
     ],
-    "evidence_refs": ["ql/src/m4/CompleteQuotedArg.ql", "ql/src/m4/ShellInjection.ql"],
-    "unknowns": ["live uhttpd/rpcd not executed"]
+    "evidence_refs": [
+      "ql/src/m4/CompleteQuotedArg.ql",
+      "ql/src/m4/ShellInjection.ql"
+    ],
+    "unknowns": [
+      "Binding and quoting semantics of shellquote are unmodeled",
+      "Runtime execution and exploitability not established"
+    ]
   }
 ]

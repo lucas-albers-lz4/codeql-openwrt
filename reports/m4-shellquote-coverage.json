@@ -1,17 +1,50 @@
 {
-  "analysis_revision": "step3:shellquote-barrier-v1",
+  "analysis_revision": "step3:shellquote-barrier-v2",
   "profile": "luci-ssl-25.12",
   "status": "partial",
-  "extracted_files": ["luci", "taint_pos", "taint_neg", "quote_ok", "quote_exe"],
+  "extracted_files": [
+    "luci",
+    "taint_pos",
+    "taint_neg",
+    "quote_bad_ash_c.uc",
+    "quote_bad_assignment.uc",
+    "quote_bad_bash_c.uc",
+    "quote_bad_conditional.uc",
+    "quote_bad_echo",
+    "quote_bad_import.uc",
+    "quote_bad_local.uc",
+    "quote_bad_parameter.uc",
+    "quote_bad_pipe.uc",
+    "quote_bad_prefix_join.uc",
+    "quote_bad_separator.uc",
+    "quote_bad_separator_space.uc",
+    "quote_bad_sh_c",
+    "quote_bad_sh_c_suffix.uc",
+    "quote_bad_shell_flags.uc",
+    "quote_bad_shell_path.uc",
+    "quote_bad_shell_wrapper.uc",
+    "quote_bad_suffix",
+    "quote_bad_suffix_join.uc",
+    "quote_bad_trailing_substitution.uc",
+    "quote_bad_transform.uc",
+    "quote_bad_unknown_command.uc",
+    "quote_bad_variable.uc",
+    "quote_exe",
+    "quote_ok",
+    "quote_ok_echo.uc",
+    "quote_ok_printf.uc"
+  ],
   "analyzed": [
-    "complete-argument shellquote as template substitution into popen/system",
-    "quoted entire command retained as executable-selection candidate",
-    "unquoted taint_pos remains a shell-injection candidate"
+    "All shellquote candidates retained because trusted helper semantics are not modeled",
+    "Independent syntactic shape controls for direct calls, fixed commands and word boundaries",
+    "Interpreter, transformed output, command-position and binding-ambiguity regression controls",
+    "Untainted negative control remains absent from ShellInjection"
   ],
   "unsupported_constructs": [
-    "shellquote as a global sanitizer",
-    "same-function locals (inventoried in reports/m4-realtime-password-quoted-locals-coverage.json)",
-    "interpreter program input",
-    "quoted value embedded or concatenated unsafely beyond a single substitution"
+    "Trusted shellquote builtin or local-helper semantics",
+    "Scope-aware binding resolution",
+    "General shell grammar and commands outside the small shape allowlist",
+    "Same-function locals (getRealtimeStats flags, setPassword u/p)",
+    "Full pinned-corpus reanalysis and runtime execution"
   ]
 }
