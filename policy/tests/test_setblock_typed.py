@@ -11,7 +11,7 @@ import unittest
 from unittest.mock import patch
 
 from policy.interchange_contract import join_policy_grants
-from policy.setblock_table import import_typed
+from policy.setblock_table import import_table, import_typed
 
 ROOT = Path(__file__).resolve().parents[2]
 SNAPSHOT = Path('reports/m4-block-device-exec.json')
@@ -105,12 +105,15 @@ class TypedCLI(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr.decode())
         self.assertEqual(once, self.targets())
 
-    def reject(self, raw, message=None):
+    def reject(self, raw, message=None, *, csv=False):
         self.payload.write_bytes(raw)
         before = self.protected()
         with patch('policy.setblock_table.os.replace') as replace:
             with self.assertRaises((ValueError, OSError, UnicodeError)) as raised:
-                import_typed(self.payload, self.source, self.repo)
+                if csv:
+                    import_table(ROOT / 'policy/fixtures/setblock-observation.csv', self.source, self.repo)
+                else:
+                    import_typed(self.payload, self.source, self.repo)
         if message:
             self.assertIn(message, str(raised.exception))
         replace.assert_not_called()
@@ -164,6 +167,31 @@ class TypedCLI(unittest.TestCase):
         record['evidence_refs'].append('policy:grant:root:ubus_http:luci.setBlockDetect')
         self.reject(json.dumps([record]).encode(), 'supported family')
 
+    def test_same_type_family_substitutions_fail_before_writes(self):
+        # Type-correct alternatives must not identify the pinned observation.
+        alternatives = {
+            'record_type': 'other_effect', 'evidence_status': 'possible', 'producer': 'other',
+            'record_id': 'm4:effect:other', 'corpus_revision': 'sha256:' + '0' * 64,
+            'profile': 'luci-ssl-25.12-no-ubusauth', 'analysis_revision': 'step3:other-v1',
+            'ingress': 'ssh', 'entrypoint_id': 'ubus_http:luci.getBlockDevices',
+            'ubus_object': 'other', 'method': 'getBlockDevices',
+            'effect_id': 'other.effect', 'target_id': 'command:other', 'op': 'read',
+            'sink_kind': 'exec', 'assessment': 'intended_access',
+        }
+        self.assertEqual(set(alternatives), {k for k, v in NEUTRAL.items() if type(v) is str})
+        for field, value in alternatives.items():
+            with self.subTest(field=field):
+                record = copy.deepcopy(NEUTRAL)
+                record[field] = value
+                self.reject(json.dumps([record]).encode(), 'supported family')
+        for field in NEUTRAL['source_location']:
+            with self.subTest(source_location=field):
+                record = copy.deepcopy(NEUTRAL)
+                location = record['source_location']
+                location[field] = (location[field] + '.other' if field == 'path'
+                                   else location[field] + 1)
+                self.reject(json.dumps([record]).encode(), 'supported family')
+
     def test_legacy_transition_merges_unknowns_and_reimport_and_rejects_downgrade(self):
         legacy = json.loads((ROOT / 'policy/fixtures/setblock-legacy-effects.json').read_text())
         for artifact, key in ((SNAPSHOT, 'snapshot_effect'), (CATALOG, 'catalog_effect')):
@@ -187,6 +215,34 @@ class TypedCLI(unittest.TestCase):
         self.assertNotEqual(proc.returncode, 0)
         self.assertEqual(once, self.targets())
         self.reject(b'[]')
+
+    def test_csv_prestate_extra_unknowns_are_merged_once_and_reimported(self):
+        for artifact in (SNAPSHOT, CATALOG):
+            path = self.repo / artifact
+            rows = json.loads(path.read_text())
+            next(r for r in rows if r.get('record_id') == RID)['unknowns'].extend(
+                ['retained CSV extra', 'shared extra'])
+            path.write_text(json.dumps(rows))
+        record = copy.deepcopy(NEUTRAL)
+        record['unknowns'].extend(['shared extra', 'producer extra', 'retained CSV extra'])
+        self.payload.write_text(json.dumps([record]))
+        before = self.protected()
+        proc = self.run_cli('--typed-json', self.payload, '--source-root', self.source)
+        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+        for index, data in enumerate(self.targets()):
+            rows = json.loads(data)
+            original_rows = json.loads(before[index])
+            self.assertEqual([r for r in rows if r.get('record_id') != RID],
+                             [r for r in original_rows if r.get('record_id') != RID])
+            target = next(r for r in rows if r.get('record_id') == RID)
+            expected = copy.deepcopy(RETAINED)
+            expected['unknowns'] += ['retained CSV extra', 'shared extra', 'producer extra']
+            self.assertEqual(target, expected)
+        self.assertEqual(before[2:], self.protected()[2:])
+        once = self.targets()
+        proc = self.run_cli('--typed-json', self.payload, '--source-root', self.source)
+        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+        self.assertEqual(once, self.targets())
 
     def test_typed_context_and_pair_rejections(self):
         for artifact in (SNAPSHOT, CATALOG):
@@ -264,6 +320,44 @@ class TypedCLI(unittest.TestCase):
             record[key].reverse()
             self.reject(json.dumps([record]).encode(), 'supported family')
 
+    def test_malformed_input_extra_unknowns_fail_before_writes(self):
+        for value in ('', ' ', '\t\n', 1, True, None):
+            with self.subTest(extra=value):
+                record = copy.deepcopy(NEUTRAL)
+                record['unknowns'].append(value)
+                self.reject(json.dumps([record]).encode(), 'supported family')
+
+    def test_coherent_malformed_prestate_unknowns_fail_before_writes(self):
+        legacy = json.loads((ROOT / 'policy/fixtures/setblock-legacy-effects.json').read_text())
+        csv_state = self.targets()
+        proc = self.run_cli('--typed-json', self.payload, '--source-root', self.source)
+        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+        typed_state = self.targets()
+        for mode in ('legacy', 'csv', 'typed'):
+            base = typed_state if mode == 'typed' else csv_state
+            templates = []
+            for data, key in zip(base, ('snapshot_effect', 'catalog_effect')):
+                rows = json.loads(data)
+                if mode == 'legacy':
+                    rows = [copy.deepcopy(legacy[key]) if r.get('record_id') == RID else r for r in rows]
+                templates.append(rows)
+            required = next(r for r in templates[0] if r.get('record_id') == RID)['unknowns']
+            variants = [('extra', v) for v in ('', ' ', '\t\n', 1, True, None)]
+            variants += [(kind, i) for kind in ('missing', 'duplicate') for i in range(len(required))]
+            for kind, value in variants:
+                with self.subTest(mode=mode, kind=kind, value=value):
+                    for artifact, template in zip((SNAPSHOT, CATALOG), templates):
+                        rows = copy.deepcopy(template)
+                        unknowns = next(r for r in rows if r.get('record_id') == RID)['unknowns']
+                        if kind == 'missing':
+                            unknowns.pop(value)
+                        elif kind == 'duplicate':
+                            unknowns.append(unknowns[value])
+                        else:
+                            unknowns.append(value)
+                        (self.repo / artifact).write_text(json.dumps(rows))
+                    self.reject(json.dumps([NEUTRAL]).encode(), 'uncertainty claims')
+
     def test_policy_mutations_fail_closed(self):
         path = self.repo / 'policy/grants.json'
         original = path.read_bytes()
@@ -292,6 +386,32 @@ class TypedCLI(unittest.TestCase):
         expectations.write_text(json.dumps(rows))
         self.reject(json.dumps([NEUTRAL]).encode(), 'mounts expectation')
         expectations.write_bytes(original)
+
+    def test_deny_session_and_helper_constraint_are_required_for_both_formats(self):
+        decisions = self.repo / 'policy/policy_decisions.json'
+        expectations = self.repo / 'corpus/profiles/luci-ssl-25.12/expected-capabilities.json'
+        originals = {path: path.read_bytes() for path in (decisions, expectations)}
+        for csv in (False, True):
+            for case in ('deny_session', 'helper_constraint'):
+                with self.subTest(format='csv' if csv else 'typed', case=case):
+                    for path, original in originals.items():
+                        path.write_bytes(original)
+                    if case == 'deny_session':
+                        rows = json.loads(originals[decisions])
+                        decision = next(r for r in rows['decisions'] if r.get('record_id') ==
+                                        'policy:decision:unauthenticated-setBlockDetect-deny')
+                        decision['session_class'] = 'root'
+                        decisions.write_text(json.dumps(rows))
+                        message = 'deny decision'
+                    else:
+                        rows = json.loads(originals[expectations])
+                        mounts = next(r for r in rows['expectations'] if r.get('expectation_id') ==
+                                      'luci-mod-system-mounts')
+                        helper = next(r for r in mounts['allowed_helper_effects'] if r.get('sink_kind') == 'system')
+                        helper['constraint'] = 'request_controlled'
+                        expectations.write_text(json.dumps(rows))
+                        message = 'mounts expectation'
+                    self.reject(json.dumps([NEUTRAL]).encode(), message, csv=csv)
 
     def test_typed_transaction_rolls_back_second_replace_failure(self):
         before = self.targets()
