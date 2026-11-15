@@ -1,7 +1,7 @@
 {
   "codeql": {
     "version": "2.27.4",
-    "binary_sha256": "7eb0047c90fffaeb822564a0ac56d585dc871f30"
+    "reported_version_sha": "7eb0047c90fffaeb822564a0ac56d585dc871f30"
   },
   "commands": [
     "${CODEQL} bqrs decode --format=csv artifacts/errors.bqrs --common-caches=${VERIFIER_CACHE}",
