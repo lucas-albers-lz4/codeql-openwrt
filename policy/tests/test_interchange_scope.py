@@ -315,13 +315,26 @@ class RecordScopeTests(unittest.TestCase):
             self.assertEqual(cases['contract'], version)
             self.assertEqual(len(cases['cases']), count)
             for item in cases['cases']:
-                with self.subTest(fixture=version, name=item['name']):
+                with self.subTest(fixture=version, name=item['name'], mode='partial-api'):
                     case.write_array([base_row(**item['overrides'])])
                     if item['valid']:
                         self.assertEqual(contract.validate_ucode_root(case.ucode_root), (1, 1))
                     else:
                         with self.assertRaisesRegex(contract.ContractError, item['error_field']):
                             contract.validate_ucode_root(case.ucode_root)
+                with self.subTest(fixture=version, name=item['name'], mode='partial-cli'):
+                    case.write_array([base_row(**item['overrides'])])
+                    stderr = io.StringIO()
+                    if item['valid']:
+                        stdout = io.StringIO()
+                        with contextlib.redirect_stdout(stdout):
+                            self.assertEqual(contract.main(['--ucode-root', str(case.ucode_root)]), 0)
+                        self.assertIn('limited partial documents', stdout.getvalue())
+                    else:
+                        with contextlib.redirect_stderr(stderr), self.assertRaises(SystemExit) as raised:
+                            contract.main(['--ucode-root', str(case.ucode_root)])
+                        self.assertEqual(raised.exception.code, 2)
+                        self.assertIn(item['error_field'], stderr.getvalue())
 
     def test_malformed_structural_fields_fail_as_contract_error(self):
         from policy.tests.test_interchange_contract import InterchangeContractTests, base_row
