@@ -224,7 +224,7 @@ class TypedCLI(unittest.TestCase):
                 ['retained CSV extra', 'shared extra'])
             path.write_text(json.dumps(rows))
         record = copy.deepcopy(NEUTRAL)
-        record['unknowns'].extend(['shared extra', 'producer extra', 'retained CSV extra'])
+        record['unknowns'].extend(['shared extra', 'producer extra'])
         self.payload.write_text(json.dumps([record]))
         before = self.protected()
         proc = self.run_cli('--typed-json', self.payload, '--source-root', self.source)
