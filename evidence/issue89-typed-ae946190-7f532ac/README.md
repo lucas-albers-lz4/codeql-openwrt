@@ -17,7 +17,7 @@ This directory preserves evidence from the approved, observed typed handoff. It 
 | Bootstrap SHA-256 | `6e91c66a9f7c856f01c376687947634e0037ca966349f7e3dc7035b580e5620c` |
 | Python interpreter SHA-256 | `889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9` |
 
-The copied approval files are in `attempt/`. The packet manifest binds the approved packet. `packet/` contains the execution recipe, config, oracles, provenance, and key inventories. It is a selected copy, not the complete approved packet.
+The exact approval extract and its minimal provenance are in `attempt/approval-content.md` and `attempt/approval-provenance.txt`. External packet manifest and acknowledgment copies are also in `attempt/`. `packet/` now contains the full approved packet, including every manifest path and mode. The historical packet files are unchanged.
 
 ## Execution record
 
@@ -25,7 +25,7 @@ The attempt has 15 stage receipts and 45 separate raw stdout and stderr files. E
 
 All 15 commands returned exit code 0. The attempt retained the three BQRS files and decoded CSV files. It also retained typed exporter stdout, before/after/reimport report bytes, routing, the source archive, and a finalized database inventory. The live database itself is not included.
 
-The exact argv for each stage is in its `attempt/logs/*.receipt.json` file. The approved command configuration is in `packet/config.json`. These paths describe the original environment. They are evidence, not a promise that the old commands can run unchanged from this repository.
+The exact argv for each stage is in its `attempt/logs/*.receipt.json` file. The approved command configuration is in `packet/config.json`. These absolute paths describe the original environment. Read `REPRODUCE.md` before you attempt a rerun.
 
 ## Observed result
 
@@ -43,7 +43,7 @@ The independent audit re-decoded all three BQRS artifacts. The resulting CSV byt
 
 ## Test results
 
-The independent audit ran both complete Python unit suites from clean archives of the executed commits. Raw output and receipts are in `tests/`.
+The independent audit ran both complete Python unit suites from clean archives of the executed commits. Raw output and receipts are in `tests/`. The actual a3 runner-control logs are `tests/a3-synthetic-normal.log` and `tests/a3-synthetic-optimized.log`. They are explicitly synthetic controls, not live producer output.
 
 - Consumer: 850 tests passed. Command: `/usr/bin/python3.13 -E -S -B -m unittest discover -s policy/tests -t . -v`.
 - Producer: 47 tests passed. Command: `/usr/bin/python3.13 -E -S -B -m unittest discover -s tests -v`.
