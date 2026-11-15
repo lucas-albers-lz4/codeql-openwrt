@@ -33,7 +33,57 @@ def rows():
     return list(csv.reader(io.StringIO(TABLE.decode(), newline='')))
 
 
+def invalid_comparison_inputs(source_root, kind):
+    """Single-fault inputs: all unspecified bytes and context stay valid."""
+    good_success = csv_bytes([['f','col1'], [str(source_root/ORACLE['source_path']), '']])
+    good_errors = csv_bytes([['error','col1','col2']])
+    if kind == 'table':
+        table = rows()
+        substitution = copy.deepcopy(table); substitution[-1][2] = 'differentMethod'
+        swapped = copy.deepcopy(table); swapped[1][4:], swapped[2][4:] = swapped[2][4:], swapped[1][4:]
+        cases = [
+            ('empty', b'', 'CSV header or row width mismatch'),
+            ('header-only', csv_bytes(table[:1]), 'empty table is unknown'),
+            ('omission', csv_bytes(table[:-1]), 'source identity/span multiset mismatch'),
+            ('same-count-substitution', csv_bytes(substitution), 'source identity/span multiset mismatch'),
+            ('duplicate', csv_bytes(table + [table[-1]]), 'source identity/span multiset mismatch'),
+            ('span-swap', csv_bytes(swapped), 'source identity/span multiset mismatch'),
+        ]
+        return [(name, data, good_success, good_errors, error) for name,data,error in cases]
+    success_row = [str(source_root/ORACLE['source_path']), '']
+    return [
+        ('wrong-success-path', TABLE, csv_bytes([['f','col1'], ['/wrong/source','']]), good_errors, 'successful extraction diagnostic mismatch'),
+        ('misplaced-success-path', TABLE, csv_bytes([['f','col1'], ['',success_row[0]]]), good_errors, 'successful extraction diagnostic mismatch'),
+        ('duplicate-success-path', TABLE, csv_bytes([['f','col1'], success_row, success_row]), good_errors, 'successful extraction diagnostic mismatch'),
+        ('malformed-success', TABLE, b'f,col1\n"unterminated', good_errors, 'invalid UTF-8 CSV'),
+        ('nonempty-errors', TABLE, good_success, csv_bytes([['error','col1','col2'], ['actual extraction failed','x','x']]), 'extraction errors reported'),
+        ('malformed-errors', TABLE, good_success, b'error,col1,col2\n"unterminated', 'invalid UTF-8 CSV'),
+    ]
+
+
+def policy_artifacts():
+    """Bytes and path set for actual policy, corpus and retained reports."""
+    return {p.relative_to(ROOT): p.read_bytes()
+            for directory in ('policy', 'corpus', 'reports')
+            for p in (ROOT/directory).rglob('*')
+            if p.is_file() and '__pycache__' not in p.parts and p.suffix != '.pyc'}
+
+
 class BackendComparisonTests(unittest.TestCase):
+    def assert_json_exact(self, actual, expected):
+        """Compare JSON recursively without Python's bool/int/float coercion."""
+        self.assertIs(type(actual), type(expected))
+        if isinstance(expected, dict):
+            self.assertEqual(set(actual), set(expected))
+            for key in expected:
+                self.assert_json_exact(actual[key], expected[key])
+        elif isinstance(expected, list):
+            self.assertEqual(len(actual), len(expected))
+            for item, wanted in zip(actual, expected):
+                self.assert_json_exact(item, wanted)
+        else:
+            self.assertEqual(actual, expected)
+
     def test_historical_raw_artifacts_keep_original_digests(self):
         import hashlib
         lines = (HIST/'sha256.txt').read_text().splitlines()
@@ -121,8 +171,8 @@ class BackendComparisonTests(unittest.TestCase):
 
     def test_report_actual_retained_reconciles_and_no_claims(self):
         report = c.make_report(c.validate_observations(c.parse_table(TABLE), ORACLE), c.validate_grants(GRANTS, EXPECTED_GRANTS))
-        retained = json.loads(REPORT.read_bytes())
-        self.assertEqual(retained, report)
+        retained = c._json(REPORT.read_bytes())
+        self.assert_json_exact(retained, report)
         self.assertEqual(report['summary'], {'declarations':21,'represented_methods':18,'grant_rows':38,'source_only':3,'grant_only':0})
         self.assertEqual(report['source_only'], ['getInitList','getUSBDevices','setInitAction'])
         self.assertEqual(len(next(x for x in report['declarations'] if x['method']=='getMountPoints')['grant_ids']),4)
@@ -156,11 +206,11 @@ class BackendComparisonTests(unittest.TestCase):
                 with self.assertRaises(c.ValidationError): c.compare(TABLE,extracted,errors,str(source_root))
 
     def test_retained_report_against_independent_identity_map(self):
-        report = json.loads(REPORT.read_bytes())
+        report = c._json(REPORT.read_bytes())
         def check(value):
             self.assertEqual(set(value), {'artifact_format','format_version','source','context','scope','declarations','source_only','grant_only','summary'})
             self.assertEqual(value['artifact_format'], 'luci_backend_declaration_grant_comparison_report')
-            self.assertEqual(value['format_version'], 1)
+            self.assert_json_exact(value['format_version'], 1)
             self.assertEqual(value['source'], {'repository':ORACLE['source_repository'],'revision':ORACLE['source_revision'],'path':ORACLE['source_path'],'sha256':ORACLE['source_sha256']})
             self.assertEqual(value['context'], {'profile':'luci-ssl-25.12','corpus_revision':'sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a','producer_revision_reference':'d54c17a8cefc43ef9cde36d65558c986348aa7b2','query_sha256':'58d11ee8bf4f27db2dec4e34292d5155874f035bac8b98121c9ee8d85225a298','consumer_baseline_reference':'fc084f564660c8366022787aaf09e38f8ee32139'})
             self.assertEqual(value['scope'], ['Syntactic source declarations only; no runtime registration, reachability or execution is established.', 'Unmatched means no current materialized grant row, not denial or an ACL defect.', 'Offline validation does not attest fresh extraction or execution.'])
@@ -168,8 +218,8 @@ class BackendComparisonTests(unittest.TestCase):
             for observation in ORACLE['observations']:
                 ids = sorted(x['record_id'] for x in EXPECTED_GRANTS if x['method']==observation['method'])
                 expected.append({k:v for k,v in observation.items() if k != 'key_line'} | {'grant_ids':ids,'relation':'current_grant_rows' if ids else 'no_current_grant_row'})
-            self.assertEqual(value['declarations'], expected)
-            self.assertEqual(value['summary'], {'declarations':21,'represented_methods':18,'grant_rows':38,'source_only':3,'grant_only':0})
+            self.assert_json_exact(value['declarations'], expected)
+            self.assert_json_exact(value['summary'], {'declarations':21,'represented_methods':18,'grant_rows':38,'source_only':3,'grant_only':0})
             self.assertEqual(value['source_only'], ['getInitList','getUSBDevices','setInitAction'])
             self.assertEqual(value['grant_only'], [])
         check(report)
@@ -186,6 +236,88 @@ class BackendComparisonTests(unittest.TestCase):
             else: value['context']['profile'] = 'wrong'
             with self.subTest(mutation=mutation), self.assertRaises(AssertionError): check(value)
 
+    def test_retained_file_readers_reject_representation_mutations(self):
+        # Exercise the same retained-file tests against on-disk mutated copies;
+        # the real retained path is also checked directly by both tests.
+        from unittest.mock import patch
+        original = REPORT.read_bytes()
+        changes = [
+            (b'"format_version": 1,', b'"format_version": 0,\n  "format_version": 1,', c.ValidationError),
+            (b'"format_version": 1,', b'"format_version": true,', AssertionError),
+            (b'"start_line": 51,', b'"start_line": 51.0,', AssertionError),
+            (b'"declarations": 21,', b'"declarations": 21.0,', AssertionError),
+            (b'"format_version": 1,', b'"format_version": NaN,', c.ValidationError),
+        ]
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d)/REPORT.name
+            with patch(__name__+'.REPORT', path):
+                for old,new,error in changes:
+                    self.assertEqual(original.count(old), 1)
+                    path.write_bytes(original.replace(old,new))
+                    for check in (self.test_report_actual_retained_reconciles_and_no_claims,
+                                  self.test_retained_report_against_independent_identity_map):
+                        with self.subTest(mutation=new, check=check.__name__):
+                            with self.assertRaises(error):
+                                check()
+
+    def _check_composed_invalid_inputs(self, kind, cli):
+        from contextlib import redirect_stdout
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source = root/ORACLE['source_path']
+            source.parent.mkdir(parents=True)
+            source.write_bytes(SOURCE.read_bytes())
+            table_path, success_path, errors_path = (root/name for name in ('table.csv','success.csv','errors.csv'))
+            good_success = csv_bytes([['f','col1'], [str(source), '']])
+            good_errors = csv_bytes([['error','col1','col2']])
+            before = policy_artifacts()
+            cmd = [sys.executable] + (['-O'] if sys.flags.optimize else []) + [
+                '-m', 'policy.backend_declarations', '--table', str(table_path),
+                '--extracted', str(success_path), '--errors', str(errors_path), '--source-root', d]
+            if cli:
+                table_path.write_bytes(TABLE); success_path.write_bytes(good_success); errors_path.write_bytes(good_errors)
+                valid = subprocess.run(cmd, cwd=ROOT, capture_output=True)
+                self.assertEqual(valid.returncode, 0, valid.stderr)
+                self.assert_json_exact(c._json(valid.stdout), c._json(REPORT.read_bytes()))
+            else:
+                valid = c.compare(TABLE, good_success, good_errors, d)
+                self.assert_json_exact(valid, c._json(REPORT.read_bytes()))
+            self.assertEqual(before, policy_artifacts())
+            for name,table,success,errors,message in invalid_comparison_inputs(root,kind):
+                with self.subTest(kind=kind, cli=cli, case=name):
+                    if cli:
+                        table_path.write_bytes(table); success_path.write_bytes(success); errors_path.write_bytes(errors)
+                        result = subprocess.run(cmd, cwd=ROOT, capture_output=True)
+                        self.assertNotEqual(result.returncode, 0, name)
+                        self.assertEqual(result.stdout, b'')
+                        self.assertIn(message.encode(), result.stderr)
+                    else:
+                        stdout = io.StringIO()
+                        with redirect_stdout(stdout), self.assertRaisesRegex(c.ValidationError, message):
+                            c.compare(table, success, errors, d)
+                        self.assertEqual(stdout.getvalue(), '')
+                    self.assertEqual(before, policy_artifacts())
+            if cli and kind == 'table':
+                table_path.unlink()
+                success_path.write_bytes(good_success); errors_path.write_bytes(good_errors)
+                result = subprocess.run(cmd, cwd=ROOT, capture_output=True)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(result.stdout, b'')
+                self.assertIn(b'comparison failed:', result.stderr)
+                self.assertEqual(before, policy_artifacts())
+
+    def test_invalid_tables_through_compare(self):
+        self._check_composed_invalid_inputs('table', False)
+
+    def test_invalid_tables_through_cli(self):
+        self._check_composed_invalid_inputs('table', True)
+
+    def test_invalid_diagnostics_through_compare(self):
+        self._check_composed_invalid_inputs('diagnostics', False)
+
+    def test_invalid_diagnostics_through_cli(self):
+        self._check_composed_invalid_inputs('diagnostics', True)
+
     def test_cli_pinned_context_and_encoding_no_writes(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
@@ -198,7 +330,7 @@ class BackendComparisonTests(unittest.TestCase):
                 env = dict(os.environ, PYTHONIOENCODING=encoding)
                 p = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True)
                 self.assertEqual(p.returncode,0,p.stderr)
-                self.assertEqual(json.loads(p.stdout.decode('utf-8')), json.loads(REPORT.read_bytes()))
+                self.assert_json_exact(c._json(p.stdout), c._json(REPORT.read_bytes()))
                 self.assertFalse(p.stdout.startswith(b'\xef\xbb\xbf'))
             source.write_bytes(b'wrong source')
             p = subprocess.run(cmd,cwd=ROOT,capture_output=True)
