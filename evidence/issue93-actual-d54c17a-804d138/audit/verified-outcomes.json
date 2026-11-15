@@ -1,0 +1,38 @@
+{
+  "actual_phase_receipts": 21,
+  "all_phase_receipts_zero": true,
+  "all_redecoded_csv_bytes_equal": true,
+  "catalog_unique_id_rows": 110,
+  "consumer_executed_commit": "804d1386c54f4c273ca593e5dd2051636aa19245",
+  "extraction_error_rows": 0,
+  "extraction_success_rows": 1,
+  "getMountPoints_grant_ids": 4,
+  "grant_only": [],
+  "independent_audit": "PASS \u2014 bounded actual-run acceptance",
+  "independent_bqrs_redecodes": 3,
+  "limitations": [
+    "producer export tree equality, not merge checkout",
+    "reused extractor, no build attestation",
+    "no OS/runtime/cryptographic execution attestation",
+    "source-only does not mean denied",
+    "evidence-only later commit not executed"
+  ],
+  "merged_producer_commit": "d54c17a8cefc43ef9cde36d65558c986348aa7b2",
+  "producer_export_commit": "95b7ec86532301f59927a26806d29575c02a5b7f",
+  "producer_merge_tree": "b259eb7fb16cbfe6669a8e434d6493c90b393fdb",
+  "raw_routing": {
+    "input_count": 1,
+    "other_counts_zero": true,
+    "plain_count": 1
+  },
+  "represented_methods": 18,
+  "retained_declarations": 21,
+  "selected_grant_ids": 38,
+  "source_observations": 21,
+  "source_only": [
+    "getInitList",
+    "getUSBDevices",
+    "setInitAction"
+  ],
+  "unique_source_observations": 21
+}

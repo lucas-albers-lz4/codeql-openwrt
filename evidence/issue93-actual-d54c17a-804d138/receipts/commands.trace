@@ -1,0 +1,78 @@
++ 1794746449.045721 23: phase=input-check
++ 1794746449.045820 24: sha256sum -c ${PACKET}/inputs.sha256
++ 1794746449.481191 25: printf '0\n'
++ 1794746449.481300 26: phase=stage-source
++ 1794746449.481334 27: env -0
++ 1794746449.482407 28: pwd
++ 1794746449.482552 30: mkdir -p ${ATTEMPT}/ql/test/extractor-smoke/usr/share/rpcd/ucode
++ 1794746449.483816 31: cp ${PACKET}/inputs/consumer/policy/fixtures/getblock-source/usr/share/rpcd/ucode/luci ${ATTEMPT}/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci
++ 1794746449.485235 32: printf '%s  %s\n' 6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e ${ATTEMPT}/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci
++ 1794746449.485383 33: sha256sum -c ${ATTEMPT}/logs/staged-source.sha256
++ 1794746449.487607 34: printf '0\n'
++ 1794746449.487714 35: SEARCH=${PACKET}/inputs/extractor-pack:${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src
++ 1794746449.487935 36: ADDITIONAL=${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src:${PACKET}/inputs/dependencies/controlflow:${PACKET}/inputs/dependencies/dataflow:${PACKET}/inputs/dependencies/regex:${PACKET}/inputs/dependencies/ssa:${PACKET}/inputs/dependencies/threat-models:${PACKET}/inputs/dependencies/typetracking:${PACKET}/inputs/dependencies/util:${PACKET}/inputs/dependencies/yaml
++ 1794746449.487955 37: phase=version
++ 1794746449.488017 38: ${CODEQL} version --format=json
++ 1794746450.199812 39: printf '0\n'
++ 1794746450.199908 40: phase=init
++ 1794746450.200042 41: ${CODEQL} database init ${ATTEMPT}/db --language=ucode --search-path=${PACKET}/inputs/extractor-pack --source-root=${ATTEMPT}/ql/test/extractor-smoke --common-caches=${ATTEMPT}/common-caches
++ 1794746451.474151 42: printf '0\n'
++ 1794746451.474240 43: phase=index
++ 1794746451.474384 44: ${CODEQL} database index-files --language=ucode '--include=**/rpcd/ucode/luci' --working-dir=${ATTEMPT}/ql/test/extractor-smoke --common-caches=${ATTEMPT}/common-caches ${ATTEMPT}/db
++ 1794746452.449286 45: printf '0\n'
++ 1794746452.449378 46: phase=routing-copy
++ 1794746452.449425 47: cp ${ATTEMPT}/db/trap/ucode/routing.json ${ATTEMPT}/artifacts/routing.json
++ 1794746452.450735 48: printf '0\n'
++ 1794746452.450813 49: phase=finalize
++ 1794746452.450925 50: ${CODEQL} database finalize ${ATTEMPT}/db --threads=2 --ram=2048 --common-caches=${ATTEMPT}/common-caches
++ 1794746456.073700 51: printf '0\n'
++ 1794746456.074985 53: for entry in 'diagnostics/SuccessfullyExtractedFiles.ql extracted' 'diagnostics/ExtractionErrors.ql errors' 'm4/LuciBackendDeclarations.ql table'
++ 1794746456.075015 54: read -r query name
++ 1794746456.075142 55: phase=resolve-extracted
++ 1794746456.075213 56: ${CODEQL} resolve library-path --query=${PACKET}/inputs/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql --search-path=${PACKET}/inputs/extractor-pack:${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src --additional-packs=${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src:${PACKET}/inputs/dependencies/controlflow:${PACKET}/inputs/dependencies/dataflow:${PACKET}/inputs/dependencies/regex:${PACKET}/inputs/dependencies/ssa:${PACKET}/inputs/dependencies/threat-models:${PACKET}/inputs/dependencies/typetracking:${PACKET}/inputs/dependencies/util:${PACKET}/inputs/dependencies/yaml --common-caches=${ATTEMPT}/common-caches --format=json
++ 1794746457.145837 57: printf '0\n'
++ 1794746457.145922 58: phase=resolution-match-extracted
++ 1794746457.145940 59: cmp ${ATTEMPT}/logs/resolve-extracted.stdout ${PACKET}/preflight/resolve-extracted.stdout
++ 1794746457.146969 60: printf '0\n'
++ 1794746457.147047 61: phase=query-extracted
++ 1794746457.147099 62: ${CODEQL} query run ${PACKET}/inputs/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql --database=${ATTEMPT}/db --search-path=${PACKET}/inputs/extractor-pack:${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src --additional-packs=${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src:${PACKET}/inputs/dependencies/controlflow:${PACKET}/inputs/dependencies/dataflow:${PACKET}/inputs/dependencies/regex:${PACKET}/inputs/dependencies/ssa:${PACKET}/inputs/dependencies/threat-models:${PACKET}/inputs/dependencies/typetracking:${PACKET}/inputs/dependencies/util:${PACKET}/inputs/dependencies/yaml --no-default-compilation-cache --compilation-cache=${ATTEMPT}/compilation-cache --common-caches=${ATTEMPT}/common-caches --threads=2 --ram=2048 --output=${ATTEMPT}/artifacts/extracted.bqrs
++ 1794746461.302899 63: printf '0\n'
++ 1794746461.302980 64: phase=decode-extracted
++ 1794746461.303000 65: ${CODEQL} bqrs decode --format=csv ${ATTEMPT}/artifacts/extracted.bqrs --common-caches=${ATTEMPT}/common-caches
++ 1794746461.835937 66: printf '0\n'
++ 1794746461.836033 53: for entry in 'diagnostics/SuccessfullyExtractedFiles.ql extracted' 'diagnostics/ExtractionErrors.ql errors' 'm4/LuciBackendDeclarations.ql table'
++ 1794746461.836051 54: read -r query name
++ 1794746461.836133 55: phase=resolve-errors
++ 1794746461.836183 56: ${CODEQL} resolve library-path --query=${PACKET}/inputs/producer/ql/src/diagnostics/ExtractionErrors.ql --search-path=${PACKET}/inputs/extractor-pack:${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src --additional-packs=${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src:${PACKET}/inputs/dependencies/controlflow:${PACKET}/inputs/dependencies/dataflow:${PACKET}/inputs/dependencies/regex:${PACKET}/inputs/dependencies/ssa:${PACKET}/inputs/dependencies/threat-models:${PACKET}/inputs/dependencies/typetracking:${PACKET}/inputs/dependencies/util:${PACKET}/inputs/dependencies/yaml --common-caches=${ATTEMPT}/common-caches --format=json
++ 1794746462.880792 57: printf '0\n'
++ 1794746462.880897 58: phase=resolution-match-errors
++ 1794746462.880946 59: cmp ${ATTEMPT}/logs/resolve-errors.stdout ${PACKET}/preflight/resolve-errors.stdout
++ 1794746462.882011 60: printf '0\n'
++ 1794746462.882102 61: phase=query-errors
++ 1794746462.882165 62: ${CODEQL} query run ${PACKET}/inputs/producer/ql/src/diagnostics/ExtractionErrors.ql --database=${ATTEMPT}/db --search-path=${PACKET}/inputs/extractor-pack:${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src --additional-packs=${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src:${PACKET}/inputs/dependencies/controlflow:${PACKET}/inputs/dependencies/dataflow:${PACKET}/inputs/dependencies/regex:${PACKET}/inputs/dependencies/ssa:${PACKET}/inputs/dependencies/threat-models:${PACKET}/inputs/dependencies/typetracking:${PACKET}/inputs/dependencies/util:${PACKET}/inputs/dependencies/yaml --no-default-compilation-cache --compilation-cache=${ATTEMPT}/compilation-cache --common-caches=${ATTEMPT}/common-caches --threads=2 --ram=2048 --output=${ATTEMPT}/artifacts/errors.bqrs
++ 1794746467.170299 63: printf '0\n'
++ 1794746467.170381 64: phase=decode-errors
++ 1794746467.170408 65: ${CODEQL} bqrs decode --format=csv ${ATTEMPT}/artifacts/errors.bqrs --common-caches=${ATTEMPT}/common-caches
++ 1794746467.707924 66: printf '0\n'
++ 1794746467.708006 53: for entry in 'diagnostics/SuccessfullyExtractedFiles.ql extracted' 'diagnostics/ExtractionErrors.ql errors' 'm4/LuciBackendDeclarations.ql table'
++ 1794746467.708023 54: read -r query name
++ 1794746467.708091 55: phase=resolve-table
++ 1794746467.708166 56: ${CODEQL} resolve library-path --query=${PACKET}/inputs/producer/ql/src/m4/LuciBackendDeclarations.ql --search-path=${PACKET}/inputs/extractor-pack:${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src --additional-packs=${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src:${PACKET}/inputs/dependencies/controlflow:${PACKET}/inputs/dependencies/dataflow:${PACKET}/inputs/dependencies/regex:${PACKET}/inputs/dependencies/ssa:${PACKET}/inputs/dependencies/threat-models:${PACKET}/inputs/dependencies/typetracking:${PACKET}/inputs/dependencies/util:${PACKET}/inputs/dependencies/yaml --common-caches=${ATTEMPT}/common-caches --format=json
++ 1794746468.734984 57: printf '0\n'
++ 1794746468.735073 58: phase=resolution-match-table
++ 1794746468.735089 59: cmp ${ATTEMPT}/logs/resolve-table.stdout ${PACKET}/preflight/resolve-table.stdout
++ 1794746468.736065 60: printf '0\n'
++ 1794746468.736155 61: phase=query-table
++ 1794746468.736204 62: ${CODEQL} query run ${PACKET}/inputs/producer/ql/src/m4/LuciBackendDeclarations.ql --database=${ATTEMPT}/db --search-path=${PACKET}/inputs/extractor-pack:${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src --additional-packs=${PACKET}/inputs/producer/ql/lib:${PACKET}/inputs/producer/ql/src:${PACKET}/inputs/dependencies/controlflow:${PACKET}/inputs/dependencies/dataflow:${PACKET}/inputs/dependencies/regex:${PACKET}/inputs/dependencies/ssa:${PACKET}/inputs/dependencies/threat-models:${PACKET}/inputs/dependencies/typetracking:${PACKET}/inputs/dependencies/util:${PACKET}/inputs/dependencies/yaml --no-default-compilation-cache --compilation-cache=${ATTEMPT}/compilation-cache --common-caches=${ATTEMPT}/common-caches --threads=2 --ram=2048 --output=${ATTEMPT}/artifacts/table.bqrs
++ 1794746477.959343 63: printf '0\n'
++ 1794746477.959424 64: phase=decode-table
++ 1794746477.959443 65: ${CODEQL} bqrs decode --format=csv ${ATTEMPT}/artifacts/table.bqrs --common-caches=${ATTEMPT}/common-caches
++ 1794746478.523666 66: printf '0\n'
++ 1794746478.523772 68: phase=consumer
++ 1794746478.523941 69: /usr/bin/python3 -I -S -B ${PACKET}/inputs/consumer/policy/backend_declarations.py --table ${ATTEMPT}/artifacts/table.csv --extracted ${ATTEMPT}/artifacts/extracted.csv --errors ${ATTEMPT}/artifacts/errors.csv --source-root ${ATTEMPT}/ql/test/extractor-smoke
++ 1794746478.560089 70: printf '0\n'
++ 1794746478.560225 71: phase=postcheck
++ 1794746478.560304 72: sha256sum -c ${PACKET}/inputs.sha256
++ 1794746478.994761 73: sha256sum -c ${ATTEMPT}/logs/staged-source.sha256
++ 1794746478.997134 74: sha256sum ${ATTEMPT}/artifacts/routing.json ${ATTEMPT}/artifacts/extracted.bqrs ${ATTEMPT}/artifacts/errors.bqrs ${ATTEMPT}/artifacts/table.bqrs ${ATTEMPT}/artifacts/extracted.csv ${ATTEMPT}/artifacts/errors.csv ${ATTEMPT}/artifacts/table.csv ${ATTEMPT}/artifacts/comparison.json
++ 1794746478.999448 75: printf '0\n'

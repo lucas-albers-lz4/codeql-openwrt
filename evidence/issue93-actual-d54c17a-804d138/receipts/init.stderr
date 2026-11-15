@@ -1,0 +1,5 @@
+Calculating baseline information in ${ATTEMPT}/ql/test/extractor-smoke
+Calculated baseline information for languages:  (25ms).
+Resolving extractor ucode.
+Successfully loaded extractor ucode (ucode) from ${PACKET}/inputs/extractor-pack.
+Created skeleton CodeQL database at ${ATTEMPT}/db. This in-progress database is ready to be populated by an extractor.

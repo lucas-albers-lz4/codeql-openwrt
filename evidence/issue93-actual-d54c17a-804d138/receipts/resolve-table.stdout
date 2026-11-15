@@ -1,0 +1,20 @@
+{
+  "libraryPath" : [
+    "${PACKET}/inputs/producer/ql/src",
+    "${PACKET}/inputs/producer/ql/lib",
+    "${PACKET}/inputs/dependencies/controlflow",
+    "${PACKET}/inputs/dependencies/dataflow",
+    "${PACKET}/inputs/dependencies/regex",
+    "${PACKET}/inputs/dependencies/ssa",
+    "${PACKET}/inputs/dependencies/threat-models",
+    "${PACKET}/inputs/dependencies/typetracking",
+    "${PACKET}/inputs/dependencies/util",
+    "${PACKET}/inputs/dependencies/yaml"
+  ],
+  "dbscheme" : "${PACKET}/inputs/producer/ql/lib/ucode.dbscheme",
+  "compilationCache" : [
+    "${ATTEMPT}/common-caches/compile-cache"
+  ],
+  "relativeName" : "lucas-albers-lz4/ucode-queries/m4/LuciBackendDeclarations.ql",
+  "qlPackName" : "lucas-albers-lz4/ucode-queries"
+}

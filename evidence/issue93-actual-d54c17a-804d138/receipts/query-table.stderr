@@ -1,0 +1,10 @@
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1254 MB.
+Compiling query plan for ${PACKET}/inputs/producer/ql/src/m4/LuciBackendDeclarations.ql.
+[1/1 comp 6.3s] Compiled ${PACKET}/inputs/producer/ql/src/m4/LuciBackendDeclarations.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/m4/LuciBackendDeclarations.ql.
+[1/1 eval 294ms] Evaluation done; writing results to ${ATTEMPT}/artifacts/table.bqrs.
+Shutting down query evaluator.
