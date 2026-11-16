@@ -12,6 +12,71 @@ from policy import cgi_backup, cgi_download, ubus_file_exec_list_backup
 from policy.interchange_contract import ContractError, join_policy_grants
 
 ROOT = Path(__file__).resolve().parents[2]
+# Independent publication contract: update deliberately when outputs change.
+# The successful-emission trace below must match exactly, catching both missing
+# writes and new outputs that also need rejection-path sentinel coverage.
+EXPECTED_OUTPUTS = frozenset(map(Path, (
+    'policy/cgi_backup_decisions.json',
+    'policy/cgi_download_decisions.json',
+    'policy/cgi_exec_decisions.json',
+    'policy/cgi_exec_file_decisions.json',
+    'policy/cgi_exec_status_decisions.json',
+    'policy/cgi_upload_decisions.json',
+    'policy/grants.json',
+    'policy/no_ubusauth_decisions.json',
+    'policy/policy_decisions.json',
+    'policy/ubus_file_exec_decisions.json',
+    'policy/ubus_file_exec_ifup_decisions.json',
+    'policy/ubus_file_exec_kill_decisions.json',
+    'policy/ubus_file_exec_list_backup_decisions.json',
+    'policy/ubus_file_exec_mounts_decisions.json',
+    'policy/ubus_hostapd_del_client_decisions.json',
+    'policy/ubus_hostapd_wps_cancel_decisions.json',
+    'policy/ubus_hostapd_wps_start_decisions.json',
+    'policy/ubus_hostapd_wps_status_decisions.json',
+    'policy/ubus_luci_getbuiltinethernetports_decisions.json',
+    'policy/ubus_luci_getconntrackhelpers_decisions.json',
+    'policy/ubus_luci_getleds_decisions.json',
+    'policy/ubus_luci_getmountpoints_decisions.json',
+    'policy/ubus_luci_getodhcp6cstats_decisions.json',
+    'policy/ubus_luci_gettimezones_decisions.json',
+    'policy/ubus_luci_getunixtime_decisions.json',
+    'policy/ubus_luci_getversion_decisions.json',
+    'policy/ubus_rc_init_decisions.json',
+    'policy/ubus_rc_list_decisions.json',
+    'policy/ubus_system_board_decisions.json',
+    'policy/ubus_system_info_decisions.json',
+    'policy/ubus_system_reboot_decisions.json',
+    'policy/uci_consumers.json',
+    'reports/handler_effects.json',
+    'reports/m2-cgi-download-effect.json',
+    'reports/m2-cgi-exec-effect.json',
+    'reports/m2-cgi-exec-file-effect.json',
+    'reports/m2-cgi-exec-status-effect.json',
+    'reports/m2-cgi-upload-effect.json',
+    'reports/m2-ubus-file-exec-effect.json',
+    'reports/m2-ubus-file-exec-ifup-effect.json',
+    'reports/m2-ubus-file-exec-kill-effect.json',
+    'reports/m2-ubus-file-exec-list-backup-effect.json',
+    'reports/m2-ubus-file-exec-mounts-effect.json',
+    'reports/m2-ubus-hostapd-del-client-effect.json',
+    'reports/m2-ubus-hostapd-wps-cancel-effect.json',
+    'reports/m2-ubus-hostapd-wps-start-effect.json',
+    'reports/m2-ubus-hostapd-wps-status-effect.json',
+    'reports/m2-ubus-luci-getbuiltinethernetports-effect.json',
+    'reports/m2-ubus-luci-getconntrackhelpers-effect.json',
+    'reports/m2-ubus-luci-getleds-effect.json',
+    'reports/m2-ubus-luci-getmountpoints-effect.json',
+    'reports/m2-ubus-luci-getodhcp6cstats-effect.json',
+    'reports/m2-ubus-luci-gettimezones-effect.json',
+    'reports/m2-ubus-luci-getunixtime-effect.json',
+    'reports/m2-ubus-luci-getversion-effect.json',
+    'reports/m2-ubus-rc-init-effect.json',
+    'reports/m2-ubus-rc-list-effect.json',
+    'reports/m2-ubus-system-board-effect.json',
+    'reports/m2-ubus-system-info-effect.json',
+    'reports/m2-ubus-system-reboot-effect.json',
+)))
 CASES = (
     (cgi_backup, 'policy:effect:cgi-backup-sensitive-read', 'luci-mod-system-flash-backup', 'policy:grant:root:cgi_io:cgi-backup'),
     (cgi_download, 'policy:effect:cgi-download-file-read', 'luci-mod-system-flash-download', 'policy:grant:root:cgi_io:cgi-download'),
@@ -85,7 +150,7 @@ print(json.dumps({'writes': sorted(writes), 'read_outputs': sorted(writes & read
         self.assertEqual(result.returncode, 0, result.stderr)
         data = json.loads(result.stdout)
         targets = {Path(p) for p in data['writes']}
-        self.assertTrue(targets)
+        self.assertSetEqual(targets, EXPECTED_OUTPUTS, 'successful emission output set changed')
         # This retained output is also input to preflight. If another output
         # becomes an input, review its sentinel before corrupting its semantics.
         self.assertEqual(data['read_outputs'], ['reports/handler_effects.json'])
@@ -213,7 +278,9 @@ finally:
         catalog.write_text(json.dumps(rows))
         before = self.files()
         result = self.emit()
-        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertEqual(result.stdout, '')
+        self.assertNotIn('Traceback', result.stderr)
         self.assertIn(row['record_id'], result.stderr)
         self.assertIn('primary expectation-matching grant', result.stderr)
         self.assertEqual(before, self.files())
