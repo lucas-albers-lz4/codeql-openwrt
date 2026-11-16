@@ -1,5 +1,6 @@
 """Synthetic CSV controls only: these are not a producer execution or handoff."""
 import copy
+import contextlib
 import csv
 import io
 import json
@@ -41,6 +42,21 @@ def diagnostics(root=SOURCE_ROOT):
 
 def protected():
     return {str(p.relative_to(ROOT)):(p.stat().st_mode, p.read_bytes()) for base in ('policy','corpus','reports') for p in (ROOT/base).rglob('*') if p.is_file() and p.suffix != '.pyc' and '__pycache__' not in p.parts}
+
+
+def inventory(root):
+    # Include paths, modes, symlink targets and file contents, not just files
+    # already expected to exist. The consumer must not create artifacts.
+    result = {}
+    for current, dirs, files in os.walk(root, followlinks=False):
+        if Path(current) == root:
+            dirs[:] = [name for name in dirs if name != '.git']
+            files = [name for name in files if name != '.git']
+        for name in dirs + files:
+            p = Path(current)/name
+            mode = p.lstat().st_mode
+            result[str(p.relative_to(root))] = (mode, os.readlink(p) if p.is_symlink() else p.read_bytes() if p.is_file() else None)
+    return result
 
 
 class TableTests(unittest.TestCase):
@@ -132,6 +148,68 @@ class TableTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             alias = Path(d)/'alias'; alias.symlink_to(SOURCE_ROOT, target_is_directory=True)
             with self.assertRaises(c.ValidationError): c.compare(table,ex,err,str(alias))
+
+    def test_source_bytes_changed_but_declared_hash_is_original(self):
+        self._check_source_file_guard('changed-bytes')
+
+    def test_source_file_alias_under_canonical_root(self):
+        self._check_source_file_guard('file-alias')
+
+    def _check_source_file_guard(self, variant):
+        # Both negatives have otherwise valid synthetic table/diagnostics. A
+        # positive control in the same canonical root proves the rest of the
+        # composed API and real CLI paths are capable of accepting the input.
+        table = csv_bytes(synthetic_rows())
+        with tempfile.TemporaryDirectory() as d:
+            work = Path(d).resolve()
+            root = work/'source-root'
+            source = root/c.SOURCE_PATH
+            source.parent.mkdir(parents=True)
+            original = SOURCE.read_bytes()
+            self.assertEqual(c.digest(original), ORACLE['source_sha256'])
+            self.assertEqual(c.digest(original), c.SOURCE_HASH)
+            source.write_bytes(original)
+            self.assertEqual(root.resolve(), root)
+            ex, err = diagnostics(root)
+            t,e,x = [work/n for n in ('table','extracted','errors')]
+            t.write_bytes(table); e.write_bytes(ex); x.write_bytes(err)
+            cmd = [sys.executable,'-B'] + (['-O'] if sys.flags.optimize else []) + ['-m','policy.setlocaltime_construction','--table',str(t),'--extracted',str(e),'--errors',str(x),'--source-root',str(root)]
+            before_repo = inventory(ROOT)
+            before_valid = inventory(work)
+            report = c.compare(table, ex, err, str(root))
+            self.assertEqual(report['source']['sha256'], c.SOURCE_HASH)
+            self.assertEqual(report['observation'], ORACLE['observation'])
+            valid = subprocess.run(cmd, cwd=ROOT, capture_output=True)
+            self.assertEqual(valid.returncode, 0, valid.stderr)
+            self.assertEqual(json.loads(valid.stdout)['source']['sha256'], c.SOURCE_HASH)
+            self.assertEqual(valid.stderr, b'')
+            self.assertEqual(inventory(work), before_valid)
+            self.assertEqual(inventory(ROOT), before_repo)
+
+            if variant == 'changed-bytes':
+                source.write_bytes(original+b'\n')
+                self.assertEqual(source.resolve(), source)
+                self.assertNotEqual(c.digest(source.read_bytes()), c.SOURCE_HASH)
+            else:
+                target = source.with_name('luci-real')
+                source.rename(target)
+                source.symlink_to(target.name)
+                self.assertNotEqual(source.resolve(), source)
+                self.assertEqual(c.digest(source.read_bytes()), c.SOURCE_HASH)
+            before_invalid = inventory(work)
+            with self.subTest(path='API'):
+                stdout = io.StringIO()
+                with contextlib.redirect_stdout(stdout):
+                    with self.assertRaisesRegex(c.ValidationError, '^source path or digest mismatch$'):
+                        c.compare(table, ex, err, str(root))
+                self.assertEqual(stdout.getvalue(), '')
+            with self.subTest(path='CLI'):
+                result = subprocess.run(cmd, cwd=ROOT, capture_output=True)
+                self.assertEqual(result.returncode, 1, result.stderr)
+                self.assertEqual(result.stdout, b'')
+                self.assertEqual(result.stderr, b'unassessed: source path or digest mismatch\n')
+            self.assertEqual(inventory(work), before_invalid)
+            self.assertEqual(inventory(ROOT), before_repo)
 
     def test_invalid_diagnostics_cli_no_payload(self):
         table = csv_bytes(synthetic_rows()); ex, err = diagnostics(); before = protected()
