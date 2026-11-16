@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 from typing import Optional
@@ -37,6 +38,31 @@ from . import (
     ubus_system_info,
     ubus_system_reboot,
 )
+from .interchange_contract import ContractError, join_policy_grants
+
+
+def validate_publication(grants, effects, repo_root: Path) -> None:
+    """Validate the exact aggregate after upserts, before any artifact is written."""
+    by_id = {}
+    for grant in grants:
+        grant_id = grant.get("record_id")
+        if not isinstance(grant_id, str) or not grant_id.strip() or grant_id in by_id:
+            raise ContractError(f"invalid or duplicate emitted grant ID: {grant_id!r}")
+        by_id[grant_id] = grant
+
+    path = repo_root / "reports" / "handler_effects.json"
+    rows = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+    for effect in effects:
+        rows = [row for row in rows if row.get("record_id") != effect["record_id"]]
+        rows.append(effect)
+    errors = []
+    for row in rows:
+        try:
+            join_policy_grants(row, by_id, scope="aggregate")
+        except ContractError as exc:
+            errors.append(f"{row.get('record_id', '<missing ID>')} (expectation {row.get('expectation_id')!r}): {exc}")
+    if errors:
+        raise ContractError("cannot publish handler effects; missing or invalid grant support is not a denial:\n" + "\n".join(errors))
 
 
 def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
@@ -122,6 +148,26 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
         ubus_luci_getconntrackhelpers.build_artifacts(fixtures, repo_root)
     )
     noauth_bundle = no_ubusauth.build_artifacts(fixtures, repo_root)
+    grants = (
+        luci_grants + backup_grants + upload_grants + download_grants + exec_grants
+        + helper_grants + status_grants + file_exec_grants + ifup_grants + kill_grants
+        + mounts_grants + list_backup_grants + reboot_grants + rc_init_grants + rc_list_grants
+        + board_grants + info_grants + getversion_grants + getunixtime_grants + hostapd_grants
+        + wps_grants + wps_cancel_grants + wps_status_grants + getodhcp6cstats_grants
+        + gettimezones_grants + getleds_grants + getmountpoints_grants
+        + getbuiltinethernetports_grants + getconntrackhelpers_grants
+    )
+    effects = (
+        [backup_effect, upload_effect, download_effect, exec_effect]
+        + helper_effects + status_effects + file_exec_effects + ifup_effects + kill_effects
+        + mounts_effects + list_backup_effects + reboot_effects + rc_init_effects
+        + rc_list_effects + board_effects + info_effects + getversion_effects
+        + getunixtime_effects + hostapd_effects + wps_effects + wps_cancel_effects
+        + wps_status_effects + getodhcp6cstats_effects + gettimezones_effects
+        + getleds_effects + getmountpoints_effects + getbuiltinethernetports_effects
+        + getconntrackhelpers_effects
+    )
+    validate_publication(grants, effects, repo_root)
     consumer_path = repo_root / "policy" / "uci_consumers.json"
     oracle.dump_json(consumer_path, uci_consumers.build_artifacts(repo_root))
     grants_path = repo_root / "policy" / "grants.json"
@@ -182,38 +228,7 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     getmountpoints_effect_path = repo_root / "reports" / "m2-ubus-luci-getmountpoints-effect.json"
     getbuiltinethernetports_effect_path = repo_root / "reports" / "m2-ubus-luci-getbuiltinethernetports-effect.json"
     getconntrackhelpers_effect_path = repo_root / "reports" / "m2-ubus-luci-getconntrackhelpers-effect.json"
-    oracle.dump_json(
-        grants_path,
-        luci_grants
-        + backup_grants
-        + upload_grants
-        + download_grants
-        + exec_grants
-        + helper_grants
-        + status_grants
-        + file_exec_grants
-        + ifup_grants
-        + kill_grants
-        + mounts_grants
-        + list_backup_grants
-        + reboot_grants
-        + rc_init_grants
-        + rc_list_grants
-        + board_grants
-        + info_grants
-        + getversion_grants
-        + getunixtime_grants
-        + hostapd_grants
-        + wps_grants
-        + wps_cancel_grants
-        + wps_status_grants
-        + getodhcp6cstats_grants
-        + gettimezones_grants
-        + getleds_grants
-        + getmountpoints_grants
-        + getbuiltinethernetports_grants
-        + getconntrackhelpers_grants,
-    )
+    oracle.dump_json(grants_path, grants)
     oracle.dump_json(luci_decisions_path, luci_bundle)
     oracle.dump_json(backup_decisions_path, backup_bundle)
     oracle.dump_json(upload_decisions_path, {"grants": upload_grants, **upload_bundle})
@@ -271,59 +286,9 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
     oracle.dump_json(getmountpoints_effect_path, getmountpoints_effects)
     oracle.dump_json(getbuiltinethernetports_effect_path, getbuiltinethernetports_effects)
     oracle.dump_json(getconntrackhelpers_effect_path, getconntrackhelpers_effects)
-    cgi_backup.upsert_handler_effect(backup_effect, repo_root)
-    cgi_backup.upsert_handler_effect(upload_effect, repo_root)
-    cgi_backup.upsert_handler_effect(download_effect, repo_root)
-    cgi_backup.upsert_handler_effect(exec_effect, repo_root)
     effect_path = repo_root / "reports" / "handler_effects.json"
-    for helper_effect in helper_effects:
-        effect_path = cgi_backup.upsert_handler_effect(helper_effect, repo_root)
-    for status_effect in status_effects:
-        effect_path = cgi_backup.upsert_handler_effect(status_effect, repo_root)
-    for file_exec_effect in file_exec_effects:
-        effect_path = cgi_backup.upsert_handler_effect(file_exec_effect, repo_root)
-    for ifup_effect in ifup_effects:
-        effect_path = cgi_backup.upsert_handler_effect(ifup_effect, repo_root)
-    for kill_effect in kill_effects:
-        effect_path = cgi_backup.upsert_handler_effect(kill_effect, repo_root)
-    for mounts_effect in mounts_effects:
-        effect_path = cgi_backup.upsert_handler_effect(mounts_effect, repo_root)
-    for list_backup_effect in list_backup_effects:
-        effect_path = cgi_backup.upsert_handler_effect(list_backup_effect, repo_root)
-    for reboot_effect in reboot_effects:
-        effect_path = cgi_backup.upsert_handler_effect(reboot_effect, repo_root)
-    for rc_init_effect in rc_init_effects:
-        effect_path = cgi_backup.upsert_handler_effect(rc_init_effect, repo_root)
-    for rc_list_effect in rc_list_effects:
-        effect_path = cgi_backup.upsert_handler_effect(rc_list_effect, repo_root)
-    for board_effect in board_effects:
-        effect_path = cgi_backup.upsert_handler_effect(board_effect, repo_root)
-    for info_effect in info_effects:
-        effect_path = cgi_backup.upsert_handler_effect(info_effect, repo_root)
-    for getversion_effect in getversion_effects:
-        effect_path = cgi_backup.upsert_handler_effect(getversion_effect, repo_root)
-    for getunixtime_effect in getunixtime_effects:
-        effect_path = cgi_backup.upsert_handler_effect(getunixtime_effect, repo_root)
-    for hostapd_effect in hostapd_effects:
-        effect_path = cgi_backup.upsert_handler_effect(hostapd_effect, repo_root)
-    for wps_effect in wps_effects:
-        effect_path = cgi_backup.upsert_handler_effect(wps_effect, repo_root)
-    for wps_cancel_effect in wps_cancel_effects:
-        effect_path = cgi_backup.upsert_handler_effect(wps_cancel_effect, repo_root)
-    for wps_status_effect in wps_status_effects:
-        effect_path = cgi_backup.upsert_handler_effect(wps_status_effect, repo_root)
-    for getodhcp6cstats_effect in getodhcp6cstats_effects:
-        effect_path = cgi_backup.upsert_handler_effect(getodhcp6cstats_effect, repo_root)
-    for gettimezones_effect in gettimezones_effects:
-        effect_path = cgi_backup.upsert_handler_effect(gettimezones_effect, repo_root)
-    for getleds_effect in getleds_effects:
-        effect_path = cgi_backup.upsert_handler_effect(getleds_effect, repo_root)
-    for getmountpoints_effect in getmountpoints_effects:
-        effect_path = cgi_backup.upsert_handler_effect(getmountpoints_effect, repo_root)
-    for getbuiltinethernetports_effect in getbuiltinethernetports_effects:
-        effect_path = cgi_backup.upsert_handler_effect(getbuiltinethernetports_effect, repo_root)
-    for getconntrackhelpers_effect in getconntrackhelpers_effects:
-        effect_path = cgi_backup.upsert_handler_effect(getconntrackhelpers_effect, repo_root)
+    for effect in effects:
+        effect_path = cgi_backup.upsert_handler_effect(effect, repo_root)
     return (
         consumer_path,
         grants_path,
@@ -364,7 +329,12 @@ def emit_all(repo_root: Optional[Path] = None) -> tuple[Path, ...]:
 def main(argv: Optional[list[str]] = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
     if not argv or argv[0] == "emit":
-        for path in emit_all():
+        try:
+            paths = emit_all()
+        except ContractError as exc:
+            print(f"policy emit: {exc}", file=sys.stderr)
+            return 1
+        for path in paths:
             print(path)
         return 0
     return oracle.main(argv)
