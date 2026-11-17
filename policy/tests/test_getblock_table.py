@@ -131,6 +131,22 @@ class ImportTests(unittest.TestCase):
         path.write_text(json.dumps(expectations))
         self.rejected_unchanged()
 
+    def test_missing_helper_support_fails_without_writes(self):
+        path = self.repo / 'corpus/profiles/luci-ssl-25.12/expected-capabilities.json'
+        expectations = json.loads(path.read_text())
+        mounts = next(e for e in expectations['expectations']
+                      if e.get('expectation_id') == 'luci-mod-system-mounts')
+        self.assertTrue(any(e.get('sink_kind') == 'popen' and e.get('constraint') == 'fixed_command'
+                            and '/sbin/block info' in e.get('examples', [])
+                            for e in mounts['allowed_helper_effects']))
+        # Keep the expectation, session, ingress and invocation intact; withdraw only helper support.
+        mounts['allowed_helper_effects'] = []
+        path.write_text(json.dumps(expectations))
+        before = self.artifacts()
+        with self.assertRaisesRegex(ValueError, '^missing or mismatched independent mounts expectation$'):
+            import_table(self.csv, self.source, self.repo)
+        self.assertEqual(self.artifacts(), before)
+
     def test_conflicting_effect_identity_fails_without_writes(self):
         path = self.repo / CATALOG
         rows = json.loads(path.read_text())
