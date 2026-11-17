@@ -1,0 +1,19 @@
+{
+  "contract": "interchange-raw-v1",
+  "cases": [
+    {"name":"status-wrong-first", "file":"m4-imported-callee-findings.json", "anchor":"\"evidence_status\": \"inconclusive\"", "replacement":"\"evidence_status\": \"no_path\", \"evidence_status\": \"inconclusive\"", "error":"duplicate"},
+    {"name":"status-wrong-last", "file":"m4-imported-callee-findings.json", "anchor":"\"evidence_status\": \"inconclusive\"", "replacement":"\"evidence_status\": \"inconclusive\", \"evidence_status\": \"no_path\"", "error":"duplicate"},
+    {"name":"producer-wrong-first", "file":"m4-imported-callee-findings.json", "anchor":"\"producer\": \"step3\"", "replacement":"\"producer\": \"step4\", \"producer\": \"step3\"", "error":"duplicate"},
+    {"name":"producer-wrong-last", "file":"m4-imported-callee-findings.json", "anchor":"\"producer\": \"step3\"", "replacement":"\"producer\": \"step3\", \"producer\": \"step4\"", "error":"duplicate"},
+    {"name":"identical-id", "file":"m4-imported-callee-findings.json", "anchor":"\"record_id\": \"m4:setInitAction-init_action-unresolved\"", "replacement":"\"record_id\": \"m4:setInitAction-init_action-unresolved\", \"record_id\": \"m4:setInitAction-init_action-unresolved\"", "error":"duplicate"},
+    {"name":"escaped-key", "file":"m4-imported-callee-findings.json", "anchor":"\"producer\": \"step3\"", "replacement":"\"\\u0070roducer\": \"step3\", \"producer\": \"step3\"", "error":"duplicate"},
+    {"name":"duplicate-unknowns", "file":"m4-imported-callee-findings.json", "anchor":"\"unknowns\": [", "replacement":"\"unknowns\": [], \"unknowns\": [", "error":"duplicate"},
+    {"name":"coverage-nested", "file":"m4-getfeatures-direct-exec-coverage.json", "anchor":"\"line\": 268", "replacement":"\"line\": 999, \"line\": 268", "error":"duplicate"},
+    {"name":"coverage-nested-identical", "file":"m4-getfeatures-direct-exec-coverage.json", "anchor":"\"line\": 268", "replacement":"\"line\": 268, \"line\": 268", "error":"duplicate"},
+    {"name":"nested-additional-duplicate", "file":"m4-imported-callee-findings.json", "anchor":"\"producer\": \"step3\"", "replacement":"\"extra\": {\"nested\": [{\"x\": 1, \"x\": 1}]}, \"producer\": \"step3\"", "error":"duplicate"},
+    {"name":"nan", "file":"m4-imported-callee-findings.json", "anchor":"\"producer\": \"step3\"", "replacement":"\"extra\": {\"nested\": [NaN]}, \"producer\": \"step3\"", "error":"NaN"},
+    {"name":"infinity", "file":"m4-imported-callee-findings.json", "anchor":"\"producer\": \"step3\"", "replacement":"\"extra\": {\"nested\": [Infinity]}, \"producer\": \"step3\"", "error":"Infinity"},
+    {"name":"negative-infinity", "file":"m4-imported-callee-findings.json", "anchor":"\"producer\": \"step3\"", "replacement":"\"extra\": {\"nested\": [-Infinity]}, \"producer\": \"step3\"", "error":"Infinity"},
+    {"name":"coverage-nested-constant", "file":"m4-getfeatures-direct-exec-coverage.json", "anchor":"\"line\": 268", "replacement":"\"line\": NaN, \"line\": 268", "error":"NaN"}
+  ]
+}

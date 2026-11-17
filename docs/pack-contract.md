@@ -24,7 +24,11 @@ Run `python3 -m policy.interchange_contract --ucode-root <ucode-checkout>`
 offline to validate typed record arrays in the ucode checkout's `docs/`
 directory against this repository's `schemas/finding.schema.json`,
 `corpus/lock.json`, profile inventory, and local policy grants. The validator
-supports the schema keywords currently used by the finding schema and fails
+reads the supplied typed and coverage documents as UTF-8 JSON and rejects
+duplicate object keys at every depth (even equal values), and the non-JSON
+constants `NaN`, `Infinity`, and `-Infinity`, before semantic checks. Valid
+additional properties remain subject to the existing schema and coverage rules.
+The validator supports the schema keywords currently used by the finding schema and fails
 closed if the schema introduces an unsupported keyword. Typed ucode records
 must use the lockfile SHA-256 as `corpus_revision`, producer `step3`, profile
 `luci-ssl-25.12` (other known OpenWrt profiles are not ucode capabilities),
@@ -83,6 +87,11 @@ They cover revision, producer, type, profile, IDs, corpus shape and uncertainty;
 they do not establish full schema, semantic-join, or provenance equivalence.
 Both wrappers must explicitly pin and execute a common revision before a paired
 conformance claim; merely adding this file does not establish that alignment.
+The consumer also executes raw-text mutation vectors in
+`policy/tests/fixtures/interchange-raw-v1.json` (SHA-256
+`37d41d361d417f519b1523a25ddbb9a2ffd4d90b7fce2140d17c03c14eac68da`),
+which exercise duplicate keys and non-JSON constants before decoding. These
+consumer-side vectors alone do not establish paired producer agreement.
 
 
 A live paired run must independently bind both revisions and actual code/schema,
