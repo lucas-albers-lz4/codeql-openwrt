@@ -185,16 +185,33 @@ def _validate(instance: Any, schema: dict[str, Any], where: str) -> list[str]:
     return errors
 
 
+def _read_document(path: Path) -> Any:
+    """Decode a producer document without silently normalizing ambiguous JSON."""
+    def unique_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result: dict[str, Any] = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError(f"duplicate JSON key {key!r}")
+            result[key] = value
+        return result
+
+    def invalid_constant(value: str) -> None:
+        raise ValueError(f"invalid JSON constant {value}")
+
+    try:
+        return json.loads(path.read_text(encoding="utf-8"),
+                          object_pairs_hook=unique_pairs, parse_constant=invalid_constant)
+    except (OSError, ValueError) as exc:
+        raise ContractError(f"{path}: cannot read JSON: {exc}") from exc
+
+
 def _typed_arrays(ucode_root: Path) -> list[tuple[Path, list[dict[str, Any]]]]:
     docs = ucode_root / "docs"
     if not docs.is_dir():
         raise ContractError(f"ucode root has no docs directory: {docs}")
     result: list[tuple[Path, list[dict[str, Any]]]] = []
     for path in sorted(docs.glob("*.json")):
-        try:
-            value = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as exc:
-            raise ContractError(f"{path}: cannot read JSON: {exc}") from exc
+        value = _read_document(path)
         if path.name in TYPED_ARRAY_NAMES:
             if not isinstance(value, list):
                 raise ContractError(f"{path}: expected typed record array")
@@ -404,7 +421,7 @@ def validate_ucode_root(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tuple[
     for name, spec in manifest["coverage"].items():
         path = ucode_root / "docs" / name
         if path.exists():
-            _validate_coverage(name, json.loads(path.read_text(encoding="utf-8")), spec)
+            _validate_coverage(name, _read_document(path), spec)
     if errors:
         raise ContractError("\n".join(errors))
     return len(files), row_count
@@ -424,7 +441,7 @@ def validate_ucode_snapshot(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tu
         raise ContractError(f"snapshot documents missing {sorted(expected - actual)} or unfamiliar {sorted(actual - expected)}")
     counts = validate_ucode_root(ucode_root, repo_root)
     for name, spec in manifest["typed"].items():
-        rows = json.loads((docs / name).read_text(encoding="utf-8"))
+        rows = _read_document(docs / name)
         ids = {row["record_id"] for row in rows}
         if ids != set(spec["rows"]):
             raise ContractError(f"{name}: snapshot record identity mismatch")
