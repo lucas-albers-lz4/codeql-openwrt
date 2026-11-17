@@ -118,6 +118,104 @@ class ImportTests(unittest.TestCase):
                     self.rejected_unchanged()
         path.write_text(json.dumps(original))
 
+    def test_grant_metadata_is_required_for_both_grants(self):
+        path = self.repo / 'policy/grants.json'
+        original_bytes = path.read_bytes()
+        original = json.loads(original_bytes)
+        metadata = {'record_type': 'policy_grant', 'evidence_status': 'fact',
+                    'producer': 'policy_facts'}
+
+        # Positive control: the same valid input imports the intended effect.
+        import_table(self.csv, self.source, self.repo)
+        self.assertEqual(path.read_bytes(), original_bytes)
+        for artifact in (SNAPSHOT, CATALOG):
+            rows = json.loads((self.repo / artifact).read_text())
+            effects = [r for r in rows if r.get('record_id') == EFFECT_ID]
+            self.assertEqual(len(effects), 1)
+            self.assertEqual(effects[0]['assessment'], 'intended_access')
+            self.assertTrue(set(GRANT_IDS.values()) <= set(effects[0]['evidence_refs']))
+
+        for record_id in GRANT_IDS.values():
+            matches = [g for g in original if g.get('record_id') == record_id]
+            self.assertEqual(len(matches), 1)
+            for field, expected in metadata.items():
+                self.assertEqual(matches[0].get(field), expected)
+                for case in ('wrong', 'missing'):
+                    with self.subTest(record_id=record_id, field=field, case=case):
+                        changed = json.loads(original_bytes)
+                        grant = next(g for g in changed if g.get('record_id') == record_id)
+                        if case == 'wrong':
+                            grant[field] = 'other'
+                        else:
+                            del grant[field]
+                        path.write_text(json.dumps(changed))
+                        before = self.artifacts()
+                        with self.assertRaises(ValueError) as raised:
+                            import_table(self.csv, self.source, self.repo)
+                        self.assertEqual(str(raised.exception), f'missing or mismatched grant: {record_id}')
+                        self.assertEqual(self.artifacts(), before)
+
+    def test_independent_mounts_expectation_clauses_are_required(self):
+        path = self.repo / 'corpus/profiles/luci-ssl-25.12/expected-capabilities.json'
+        original = json.loads(path.read_bytes())
+        mounts = next(e for e in original['expectations']
+                      if e.get('expectation_id') == 'luci-mod-system-mounts')
+        invocation = {'target_id': 'ubus:luci.getBlockDevices', 'op': 'invoke'}
+        self.assertEqual(mounts['session_class'], 'luci-mod-system-mounts')
+        self.assertEqual(mounts['ingress'], 'ubus_http')
+        self.assertIn(invocation, mounts['intended_access'])
+        self.assertGreater(len(mounts['intended_access']), 1)
+        helpers = [h for h in mounts['allowed_helper_effects']
+                   if h.get('sink_kind') == 'popen' and h.get('constraint') == 'fixed_command'
+                   and '/sbin/block info' in h.get('examples', [])]
+        self.assertEqual(len(helpers), 1)
+
+        # Membership is not exclusivity: extra invocation, helper and example are valid.
+        helpers[0]['examples'].append('/another/example')
+        path.write_text(json.dumps(original))
+        expectation_before = path.read_bytes()
+        grants_before = (self.repo / 'policy/grants.json').read_bytes()
+        import_table(self.csv, self.source, self.repo)
+        self.assertEqual(path.read_bytes(), expectation_before)
+        self.assertEqual((self.repo / 'policy/grants.json').read_bytes(), grants_before)
+        for artifact in (SNAPSHOT, CATALOG):
+            effects = [r for r in json.loads((self.repo / artifact).read_text())
+                       if r.get('record_id') == EFFECT_ID]
+            self.assertEqual(len(effects), 1)
+            self.assertEqual(effects[0]['assessment'], 'intended_access')
+            self.assertTrue(set(GRANT_IDS.values()) <= set(effects[0]['evidence_refs']))
+
+        for case in ('session', 'ingress', 'invocation', 'helper_sink',
+                     'helper_constraint', 'helper_example'):
+            with self.subTest(clause=case):
+                changed = json.loads(json.dumps(original))
+                expectation = next(e for e in changed['expectations']
+                                   if e.get('expectation_id') == 'luci-mod-system-mounts')
+                if case == 'session':
+                    expectation['session_class'] = 'other'
+                elif case == 'ingress':
+                    expectation['ingress'] = 'other'
+                elif case == 'invocation':
+                    expectation['intended_access'].remove(invocation)
+                else:
+                    helper = next(h for h in expectation['allowed_helper_effects']
+                                  if h.get('sink_kind') == 'popen'
+                                  and h.get('constraint') == 'fixed_command'
+                                  and '/sbin/block info' in h.get('examples', []))
+                    expectation['allowed_helper_effects'] = [helper]
+                    if case == 'helper_sink':
+                        helper['sink_kind'] = 'other'
+                    elif case == 'helper_constraint':
+                        helper['constraint'] = 'other'
+                    else:
+                        helper['examples'].remove('/sbin/block info')
+                path.write_text(json.dumps(changed))
+                before = (path.read_bytes(), self.artifacts())
+                with self.assertRaises(ValueError) as raised:
+                    import_table(self.csv, self.source, self.repo)
+                self.assertEqual(str(raised.exception), 'missing or mismatched independent mounts expectation')
+                self.assertEqual((path.read_bytes(), self.artifacts()), before)
+
     def test_missing_effect_or_expectation_fails_without_writes(self):
         path = self.repo / CATALOG
         rows = json.loads(path.read_text())
