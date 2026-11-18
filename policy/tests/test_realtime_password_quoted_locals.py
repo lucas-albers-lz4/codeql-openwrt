@@ -12,6 +12,7 @@ REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
+from policy.interchange_contract import _load_grants, _validate, join_policy_grants  # noqa: E402
 from policy.oracle import corpus_revision  # noqa: E402
 
 JOIN_KEYS = (
@@ -32,7 +33,6 @@ ROWS = {
     "getRealtimeStats": {
         "record_id": "m4:inventory:luci-getRealtimeStats-flags-quoted-locals",
         "delegated": "policy:grant:luci-mod-status-realtime:ubus_http:luci.getRealtimeStats",
-        "root": "policy:grant:root:ubus_http:luci.getRealtimeStats",
         "deny": "policy:decision:unauthenticated-getRealtimeStats-deny",
         "local": "flags",
         "sink_kind": "popen",
@@ -42,7 +42,6 @@ ROWS = {
     "setPassword": {
         "record_id": "m4:inventory:luci-setPassword-u-p-quoted-locals",
         "delegated": "policy:grant:luci-mod-system-config:ubus_http:luci.setPassword",
-        "root": "policy:grant:root:ubus_http:luci.setPassword",
         "deny": "policy:decision:unauthenticated-setPassword-deny",
         "local": "u/p",
         "sink_kind": "system",
@@ -104,29 +103,54 @@ class TestRealtimePasswordQuotedLocals(unittest.TestCase):
             self.assertNotIn("dispatcher", blob)
 
     def test_rows_join_existing_grants_and_unauth_deny(self) -> None:
-        by_id = {grant["record_id"]: grant for grant in self.grants}
+        by_id = _load_grants(REPO)
         for row in self.rows:
-            spec = ROWS[row["method"]]
-            refs = row["evidence_refs"]
-            self.assertIn(spec["delegated"], refs)
-            self.assertIn(spec["root"], refs)
-            self.assertIn(spec["deny"], refs)
-            self.assertIn(spec["taint_path"], refs)
-            for grant_id in (spec["delegated"], spec["root"]):
-                grant = by_id[grant_id]
-                self.assertTrue(
-                    all(row[key] == grant[key] for key in JOIN_KEYS),
-                    f"{row['record_id']} does not join {grant_id}",
-                )
-                self.assertEqual(grant["analysis_revision"], "policy:ubus-luci-exec-methods-v2")
-                self.assertEqual(grant["assessment"], "intended_access")
-            unauth = [
-                grant
-                for grant in self.grants
-                if grant.get("method") == row["method"]
-                and grant["session_class"] == "unauthenticated"
-            ]
-            self.assertEqual(unauth, [])
+            with self.subTest(method=row["method"]):
+                spec = ROWS[row["method"]]
+                refs = row["evidence_refs"]
+                self.assertIn(spec["delegated"], refs)
+                self.assertIn(spec["deny"], refs)
+                self.assertIn(spec["taint_path"], refs)
+                grant_ids = [ref for ref in refs if ref.startswith("policy:grant:")]
+                self.assertTrue(grant_ids)
+                for grant_id in grant_ids:
+                    self.assertIn(grant_id, by_id, f"unresolved grant: {grant_id}")
+                    grant = by_id[grant_id]
+                    for key in (*JOIN_KEYS, "session_class", "expectation_id"):
+                        self.assertEqual(row[key], grant[key], f"{grant_id}: {key}")
+                    self.assertEqual(grant["analysis_revision"], "policy:ubus-luci-exec-methods-v2")
+                    self.assertEqual(grant["assessment"], "intended_access")
+                primary, supplementary = join_policy_grants(row, by_id, scope="caller")
+                self.assertCountEqual([grant["record_id"] for grant in primary], grant_ids)
+                self.assertEqual(supplementary, [])
+                unauth = [
+                    grant
+                    for grant in self.grants
+                    if grant.get("method") == row["method"]
+                    and grant["session_class"] == "unauthenticated"
+                ]
+                self.assertEqual(unauth, [])
+
+    def test_retained_getfeatures_no_path_has_matching_grant(self) -> None:
+        rows = _load(REPO / "reports" / "findings.json")
+        matching = [row for row in rows if row["record_id"] == "m3:getfeatures-netifd-request-args-no-path"]
+        self.assertEqual(len(matching), 1)
+        row = matching[0]
+        grant_id = "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+        self.assertIn(grant_id, row["evidence_refs"])
+        primary, supplementary = join_policy_grants(row, _load_grants(REPO), scope="caller")
+        self.assertEqual([grant["record_id"] for grant in primary], [grant_id])
+        self.assertEqual(primary[0]["session_class"], "unauthenticated")
+        self.assertEqual(primary[0]["expectation_id"], row["expectation_id"])
+        self.assertEqual(supplementary, [])
+
+    def test_corrected_retained_rows_validate_against_schema(self) -> None:
+        rows = self.rows + [row for row in _load(REPO / "reports" / "findings.json")
+                            if row["record_id"] == "m3:getfeatures-netifd-request-args-no-path"]
+        self.assertEqual(len(rows), 3)
+        for row in rows:
+            with self.subTest(record_id=row["record_id"]):
+                self.assertEqual(_validate(row, SCHEMA, row["record_id"]), [])
 
     def test_runtime_quoting_and_analyzer_coverage_are_distinct(self) -> None:
         swconfig = [row for row in self.barrier if row.get("method") in {

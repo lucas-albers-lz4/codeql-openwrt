@@ -54,6 +54,7 @@
       "No CFG/SSA/global dataflow"
     ],
     "evidence_refs": [
+      "policy:grant:unauthenticated:ubus_http:luci.getFeatures",
       "ql/src/m3/GetFeaturesHelperTaint.ql"
     ],
     "unknowns": []
