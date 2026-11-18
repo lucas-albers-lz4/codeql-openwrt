@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import unittest
 from pathlib import Path
@@ -12,6 +13,7 @@ REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
+from policy.interchange_contract import ContractError, join_policy_grants  # noqa: E402
 from policy.oracle import (  # noqa: E402
     EXEC_METHODS,
     REQUEST_ARGS_EXEC_METHODS,
@@ -1021,6 +1023,50 @@ class TestHandlerEffectJoins(unittest.TestCase):
             self.assertEqual(source["sink_kind"], effect["sink_kind"])
             self.assertEqual(source["target_id"], effect["target_id"])
 
+    def _retained_direct_exec_source(self) -> dict:
+        rows = _load(REPO / "reports" / "m4-getfeatures-direct-exec.json")
+        return copy.deepcopy(rows[0])
+
+    def test_retained_direct_exec_join_rejects_missing_primary_grant(self) -> None:
+        source = self._retained_direct_exec_source()
+        source["evidence_refs"].remove(
+            "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+        )
+        grants_by_id = {grant["record_id"]: grant for grant in self.grants}
+
+        with self.assertRaisesRegex(
+            ContractError, "authorization assessment requires a cited policy grant"
+        ):
+            join_policy_grants(source, grants_by_id, scope="aggregate")
+
+    def test_retained_direct_exec_join_rejects_dangling_grant_reference(self) -> None:
+        source = self._retained_direct_exec_source()
+        source["evidence_refs"].append("policy:grant:missing-retained-regression-control")
+        grants_by_id = {grant["record_id"]: grant for grant in self.grants}
+
+        with self.assertRaisesRegex(
+            ContractError, "cited grant ID does not exist: policy:grant:missing-retained-regression-control"
+        ):
+            join_policy_grants(source, grants_by_id, scope="aggregate")
+
+    def test_retained_direct_exec_join_allows_supplementary_root_grant(self) -> None:
+        source = self._retained_direct_exec_source()
+        source["evidence_refs"].append("policy:grant:root:ubus_http:luci.getFeatures")
+        grants_by_id = {grant["record_id"]: grant for grant in self.grants}
+
+        primary, supplementary = join_policy_grants(
+            source, grants_by_id, scope="aggregate"
+        )
+
+        self.assertEqual(
+            [grant["record_id"] for grant in primary],
+            ["policy:grant:unauthenticated:ubus_http:luci.getFeatures"],
+        )
+        self.assertEqual(
+            [grant["record_id"] for grant in supplementary],
+            ["policy:grant:root:ubus_http:luci.getFeatures"],
+        )
+
     def test_every_catalog_effect_resolves_to_its_producer_snapshot(self) -> None:
         """Catalog rows must be copied effects or projections of retained paths."""
         copied_sources = []
@@ -1048,6 +1094,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             and row.get("ubus_object") == "luci"
             and row.get("producer") == "step3"
         ]
+        grants_by_id = {grant["record_id"]: grant for grant in self.grants}
         resolved_source_keys = []
         for effect in luci_effects:
             copied = [
@@ -1068,6 +1115,11 @@ class TestHandlerEffectJoins(unittest.TestCase):
             )
             source_path, source = matches[0]
             resolved_source_keys.append((source_path, source["record_id"]))
+            join_policy_grants(
+                source,
+                grants_by_id,
+                scope="caller" if source_path == PROJECTED_PATH_SNAPSHOT else "aggregate",
+            )
 
             if source_path == PROJECTED_PATH_SNAPSHOT:
                 self.assertEqual(source["record_type"], "taint_path")
