@@ -5,9 +5,12 @@ from __future__ import annotations
 
 import copy
 import json
+import shutil
+import tempfile
 import unittest
 from pathlib import Path
 import sys
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
@@ -1027,8 +1030,47 @@ class TestHandlerEffectJoins(unittest.TestCase):
         rows = _load(REPO / "reports" / "m4-getfeatures-direct-exec.json")
         return copy.deepcopy(rows[0])
 
-    def test_retained_direct_exec_join_rejects_missing_primary_grant(self) -> None:
+    def _retained_direct_exec_primary_fixture(self) -> dict:
         source = self._retained_direct_exec_source()
+        primary = "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+        self.assertIn(primary, source["evidence_refs"])
+        # Only synthetic controls need an isolated grant set; leave retained
+        # source files and all non-grant evidence unchanged.
+        source["evidence_refs"] = [
+            ref for ref in source["evidence_refs"]
+            if not ref.startswith("policy:grant:") or ref == primary
+        ]
+        return source
+
+    def test_retained_source_controls_accept_supplementary_enrichment(self) -> None:
+        # Exercise the real snapshot reader and all three controls against a
+        # temporary retained tree, without changing the checked-in reports.
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for relative_path in (*COPIED_EFFECT_SNAPSHOTS, PROJECTED_PATH_SNAPSHOT):
+                dest = root / relative_path
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(REPO / relative_path, dest)
+            direct = root / "reports/m4-getfeatures-direct-exec.json"
+            rows = _load(direct)
+            root_grant = "policy:grant:root:ubus_http:luci.getFeatures"
+            if root_grant not in rows[0]["evidence_refs"]:
+                rows[0]["evidence_refs"].append(root_grant)
+            direct.write_text(json.dumps(rows), encoding="utf-8")
+
+            with patch(f"{__name__}.REPO", root):
+                for check in (
+                    self.test_every_catalog_effect_resolves_to_its_producer_snapshot,
+                    self.test_retained_direct_exec_join_rejects_missing_primary_grant,
+                    self.test_retained_direct_exec_join_rejects_missing_primary_with_supplementary,
+                    self.test_retained_direct_exec_join_rejects_dangling_grant_reference,
+                    self.test_retained_direct_exec_join_allows_supplementary_root_grant,
+                ):
+                    with self.subTest(check=check.__name__):
+                        check()
+
+    def test_retained_direct_exec_join_rejects_missing_primary_grant(self) -> None:
+        source = self._retained_direct_exec_primary_fixture()
         source["evidence_refs"].remove(
             "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
         )
@@ -1036,6 +1078,19 @@ class TestHandlerEffectJoins(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ContractError, "authorization assessment requires a cited policy grant"
+        ):
+            join_policy_grants(source, grants_by_id, scope="aggregate")
+
+    def test_retained_direct_exec_join_rejects_missing_primary_with_supplementary(self) -> None:
+        source = self._retained_direct_exec_primary_fixture()
+        source["evidence_refs"].remove(
+            "policy:grant:unauthenticated:ubus_http:luci.getFeatures"
+        )
+        source["evidence_refs"].append("policy:grant:root:ubus_http:luci.getFeatures")
+        grants_by_id = {grant["record_id"]: grant for grant in self.grants}
+
+        with self.assertRaisesRegex(
+            ContractError, "assessment requires a primary expectation-matching grant"
         ):
             join_policy_grants(source, grants_by_id, scope="aggregate")
 
@@ -1050,7 +1105,7 @@ class TestHandlerEffectJoins(unittest.TestCase):
             join_policy_grants(source, grants_by_id, scope="aggregate")
 
     def test_retained_direct_exec_join_allows_supplementary_root_grant(self) -> None:
-        source = self._retained_direct_exec_source()
+        source = self._retained_direct_exec_primary_fixture()
         source["evidence_refs"].append("policy:grant:root:ubus_http:luci.getFeatures")
         grants_by_id = {grant["record_id"]: grant for grant in self.grants}
 
