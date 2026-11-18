@@ -290,7 +290,8 @@ def login_test_permission(login: Optional[Login], perm: str, group: str) -> bool
         pattern = _c_string(pattern)
         if not pattern or pattern[0] != "!":
             continue
-        negated = pattern[1:].lstrip()
+        # rpcd uses isspace() in the C locale, not Unicode whitespace.
+        negated = pattern[1:].lstrip(" \t\n\r\v\f")
         if negated and libc_fnmatch(negated, group, 0):
             return False
     for pattern in values:
