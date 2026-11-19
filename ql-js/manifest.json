@@ -1,0 +1,706 @@
+[
+  {
+    "package": "luci-app-firewall",
+    "source": "applications/luci-app-firewall/htdocs/luci-static/resources/tools/firewall.js",
+    "installed": "/www/luci-static/resources/tools/firewall.js",
+    "mode": "100644",
+    "blob": "a63f18aee1c6e67d14f8183bf50e6858d554c177",
+    "sha256": "4527279b8759585c5f4e4c993af7b4bd01530e12c978e4694bcc1508133e339e"
+  },
+  {
+    "package": "luci-app-firewall",
+    "source": "applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/custom.js",
+    "installed": "/www/luci-static/resources/view/firewall/custom.js",
+    "mode": "100644",
+    "blob": "b273db47042391c8095a315db3ec83ac3a91dfe0",
+    "sha256": "52ed1efec79734740e208291a5b2da2cb800e51a48ea24a97f89e6e9ea8eec09"
+  },
+  {
+    "package": "luci-app-firewall",
+    "source": "applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/forwards.js",
+    "installed": "/www/luci-static/resources/view/firewall/forwards.js",
+    "mode": "100644",
+    "blob": "dd23826997b907117907c504b5d2e466831598f3",
+    "sha256": "7155e8ae2a8f3b0981574ab8e2d5c40e0b9e2552e0b2e3449b0453b332fbe0fa"
+  },
+  {
+    "package": "luci-app-firewall",
+    "source": "applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/ipsets.js",
+    "installed": "/www/luci-static/resources/view/firewall/ipsets.js",
+    "mode": "100644",
+    "blob": "7097008be6917f5c9c615356c0322d447650e94f",
+    "sha256": "8a7bfc98c02565fed8bd8dde28ce66149dc852fd368bf6ee6ee6189682b6a45d"
+  },
+  {
+    "package": "luci-app-firewall",
+    "source": "applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/rules.js",
+    "installed": "/www/luci-static/resources/view/firewall/rules.js",
+    "mode": "100644",
+    "blob": "3123385224a913e769b07d71355a8eb3f974bcea",
+    "sha256": "8b73f16b9603dd90b1e3cb223b37fd55d7252017a20e2e0346799722f358b214"
+  },
+  {
+    "package": "luci-app-firewall",
+    "source": "applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/snats.js",
+    "installed": "/www/luci-static/resources/view/firewall/snats.js",
+    "mode": "100644",
+    "blob": "ae3f552de3720e2a2f5b7e59524e8d0eae6f7744",
+    "sha256": "58fb0aca4f0ab33d9e4f4d337d58a569f730c72bce6eeb858e278793baf3e6c0"
+  },
+  {
+    "package": "luci-app-firewall",
+    "source": "applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js",
+    "installed": "/www/luci-static/resources/view/firewall/zones.js",
+    "mode": "100644",
+    "blob": "129d290e5c227f6ff7a30f0175c06de624ab5451",
+    "sha256": "9b05ee3939f3cb9558e9d33091a42565125cae8fa94fa8bca794adc4504ed526"
+  },
+  {
+    "package": "luci-app-package-manager",
+    "source": "applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js",
+    "installed": "/www/luci-static/resources/view/package-manager.js",
+    "mode": "100644",
+    "blob": "7a86d96775227107b62ea64a38ffb238fc85729a",
+    "sha256": "096672f2f3e066886edc8cece805da08950889a61261fe1335add26f5453603e"
+  },
+  {
+    "package": "luci-lib-uqr",
+    "source": "libs/luci-lib-uqr/htdocs/luci-static/resources/uqr.js",
+    "installed": "/www/luci-static/resources/uqr.js",
+    "mode": "100644",
+    "blob": "8d8ad4a31a8edc77eef187205d81922cfbf5deab",
+    "sha256": "fa6181301806e395c428285ec0d0c7b7462d2ae7b13298946fda1fd5a62484ad"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/cbi.js",
+    "installed": "/www/luci-static/resources/cbi.js",
+    "mode": "100644",
+    "blob": "9b8604251fbc095f9f4070fc85801578465ba73b",
+    "sha256": "8366d9648e55e403de77bdec3de96088afa795f192f8972f3861e35c1a8df154"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/firewall.js",
+    "installed": "/www/luci-static/resources/firewall.js",
+    "mode": "100644",
+    "blob": "8db4268daede3bd72bf8dd94d7e795a9051f4000",
+    "sha256": "2b45435dba6d837b98bd44b1b160e672792e2071112890c153c44d04a88ea2ae"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/form.js",
+    "installed": "/www/luci-static/resources/form.js",
+    "mode": "100644",
+    "blob": "7e5c4a256970c5922f59e582591fa9613f531292",
+    "sha256": "ead132eb037b4484ad6119f238ad3906ec376a8e2138fc7ac0775b264728c4b7"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/fs.js",
+    "installed": "/www/luci-static/resources/fs.js",
+    "mode": "100644",
+    "blob": "20213bdbd37ec91fa6c8131f7a0b41ab749ba215",
+    "sha256": "f2eda3d529b3053318d034a7f792e6b63e3800ffb27fa34b486592594ffd4e00"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/luci.js",
+    "installed": "/www/luci-static/resources/luci.js",
+    "mode": "100644",
+    "blob": "5649d07e77b763a776f4bf925d5aa3fe54b498eb",
+    "sha256": "a8fd2e9100249f54e64def80bf96d43a03b5af6a3f86a9f151d898994a1e1966"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/network.js",
+    "installed": "/www/luci-static/resources/network.js",
+    "mode": "100644",
+    "blob": "4d519b002affc9f5a07649f83b4478d20297cc0f",
+    "sha256": "129e79dbd467054bbf9d8a98cceafb7b67e8bc39f78c1418bd51478d99ae4a2f"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/protocol/dhcp.js",
+    "installed": "/www/luci-static/resources/protocol/dhcp.js",
+    "mode": "100644",
+    "blob": "2c1e68899c0404ae3148e3b568e87b4bf3335d5f",
+    "sha256": "5b8127e1ed7b278162c5eeab36a0aaf41a4b7e2e1a6a88ba42dd96a27b46f6a7"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/protocol/none.js",
+    "installed": "/www/luci-static/resources/protocol/none.js",
+    "mode": "100644",
+    "blob": "37674c0ea407c5c95b5f86dcaf0cbe7e4a9997bd",
+    "sha256": "88e2b56e8b82581028ab988033316c0a1304ccf909adbee5d72ad3ed630ec6bb"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/protocol/static.js",
+    "installed": "/www/luci-static/resources/protocol/static.js",
+    "mode": "100644",
+    "blob": "e7f810ecaecec5a68fb0a94d7402b5aad8ec4cd5",
+    "sha256": "766c302e7ba5ef1364e87df077a35d224b971695b9c9533116000c4e14b19379"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/rpc.js",
+    "installed": "/www/luci-static/resources/rpc.js",
+    "mode": "100644",
+    "blob": "72ccbd26e28b009b48851206c8d99733c6e39e7a",
+    "sha256": "7d1c23fac98fc1c8a86d1c75106eb39bd045eaeb1e3f1d10085abf2b87a9955f"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/tools/prng.js",
+    "installed": "/www/luci-static/resources/tools/prng.js",
+    "mode": "100644",
+    "blob": "77b4f231fcfb9ebdd68ffd9c3dbfb31861c9c91a",
+    "sha256": "77b2095ac2ad41fe3fecce5b8d7324d26a08910665e2e14967ee90c07743ac3a"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/tools/views.js",
+    "installed": "/www/luci-static/resources/tools/views.js",
+    "mode": "100644",
+    "blob": "d7115644575beca18c326d31644aab9745b0ae99",
+    "sha256": "ccfcae2d0917a3fd44c54dbba3f57cec526a508e20c52e8e280f89b0ee4202a7"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/tools/widgets.js",
+    "installed": "/www/luci-static/resources/tools/widgets.js",
+    "mode": "100644",
+    "blob": "5f7f4ac6206f65c3df392f12f1804f9568b9d697",
+    "sha256": "50c9ab409f693de6f732f5e69baa95b4c6838a3caa388449b3d40a99ea3dd319"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/uci.js",
+    "installed": "/www/luci-static/resources/uci.js",
+    "mode": "100644",
+    "blob": "f53b548e3eeb3ae45dfe9c8e3a09fdb77f30c78f",
+    "sha256": "c14a05d8bd458d57e855513f1397132f73ce8af82ab3d1be8e102df1d22e29f3"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/ui.js",
+    "installed": "/www/luci-static/resources/ui.js",
+    "mode": "100644",
+    "blob": "2fe55d09b6b64ed6b36e61b44ff337ae59641eec",
+    "sha256": "b3e8886bfe94a58a81d12d89355db0f453aee56741f515690ae5c7442bc9517d"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/validation.js",
+    "installed": "/www/luci-static/resources/validation.js",
+    "mode": "100644",
+    "blob": "1721794a13bec4a36aa41f7425c451dae52465bc",
+    "sha256": "27440380ee0fdfd21c354d68549c532a331461c0bb9084815303ce99c537933f"
+  },
+  {
+    "package": "luci-base",
+    "source": "modules/luci-base/htdocs/luci-static/resources/xhr.js",
+    "installed": "/www/luci-static/resources/xhr.js",
+    "mode": "100644",
+    "blob": "10bc88e1f43243f963649d2bce493814c6ef1623",
+    "sha256": "38b0436de95d0520feb85ebe0c034d3b647d0ceaf59f28921ae5a269e44a05bd"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/tools/dnsrecordhandlers.js",
+    "installed": "/www/luci-static/resources/tools/dnsrecordhandlers.js",
+    "mode": "100644",
+    "blob": "06bc08bbf739410ce9bfba74c2f44e7bca010cb7",
+    "sha256": "76dc238a2bb84b9d3b184f05ad6b58ecfec7e8250e4fe95d6735869cfc92476e"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/tools/network.js",
+    "installed": "/www/luci-static/resources/tools/network.js",
+    "mode": "100644",
+    "blob": "c96e268df9ea37da3a22348c112156f08c465c94",
+    "sha256": "d81da1db8b9e462528d17b7e5f97bf2182ab6fbfa8d5e88142217e04e8473522"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js",
+    "installed": "/www/luci-static/resources/view/network/dhcp.js",
+    "mode": "100644",
+    "blob": "a0c589fcbac98a9781a4eb80c44af35f8120a0d6",
+    "sha256": "b02c16b896a31789d24e615452de0596bb6b52ff4f82061172ce27e6e567f8b2"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js",
+    "installed": "/www/luci-static/resources/view/network/diagnostics.js",
+    "mode": "100644",
+    "blob": "9cabfc73187f603ea75710a42a5aa356587a9d5c",
+    "sha256": "15455ac4bdaa74bce8c7d23b6b76f98155a3f2bebc1fe408b7077f23aa877e71"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/view/network/dns.js",
+    "installed": "/www/luci-static/resources/view/network/dns.js",
+    "mode": "100644",
+    "blob": "cba74650359b544bbc0c5f39c078d71882d1e3d5",
+    "sha256": "8e6d5230b37b79d7c5ea305cd331fe4a7cd85af2addbe08425cae86b94c78bdb"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js",
+    "installed": "/www/luci-static/resources/view/network/interfaces.js",
+    "mode": "100644",
+    "blob": "61cc26c51d316d5ca6cd83a2da2d6e44bf843207",
+    "sha256": "5d19509cbec92a2a57f7ee1cf7016ce21d42c89c779305ef9e21ab0b24f89e20"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/view/network/routes.js",
+    "installed": "/www/luci-static/resources/view/network/routes.js",
+    "mode": "100644",
+    "blob": "2382fc42997195eb09607ca27efeffafb0347e62",
+    "sha256": "8756f0336dced2d48c67b086102614c3bd0826c3205c565944eb1d825dbbae1e"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/view/network/switch.js",
+    "installed": "/www/luci-static/resources/view/network/switch.js",
+    "mode": "100644",
+    "blob": "9379be18c8ba2c4eb6109d3e6aceb62b207e6161",
+    "sha256": "f87cd212ca6d7118ff1fc59328f0377dffd091efc3b5996c08a5a8390b145f37"
+  },
+  {
+    "package": "luci-mod-network",
+    "source": "modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js",
+    "installed": "/www/luci-static/resources/view/network/wireless.js",
+    "mode": "100644",
+    "blob": "7ad2e0a7ed7c0495db64fe2f0cc0f88b15bdccd8",
+    "sha256": "6385cebb2b415257d05def51e890620d7e6b9f8b14071a374ed9dc2ed392c45f"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/bandwidth.js",
+    "installed": "/www/luci-static/resources/view/status/bandwidth.js",
+    "mode": "100644",
+    "blob": "1588a7d8ad4ece44e0bf15a7af7df29a08bc882e",
+    "sha256": "a9e1494431b6402ccb4ec4003b2c4c95ae41713761ce68165b87750fd9e431cf"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/channel_analysis.js",
+    "installed": "/www/luci-static/resources/view/status/channel_analysis.js",
+    "mode": "100644",
+    "blob": "c4a85e0be78a0c211b3bd83357c426f12878c15a",
+    "sha256": "e90bfb3ffccf6a7e3413b465e94e5fffc0d7c023266c16cbf2dc9f42e6324b1a"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/connections.js",
+    "installed": "/www/luci-static/resources/view/status/connections.js",
+    "mode": "100644",
+    "blob": "5ae31b6cd221cf2220226b394bea686d4438936d",
+    "sha256": "54038fdd17565424af02185c425c65c40ac4d0f7de3d679ff2f0906227581d33"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js",
+    "installed": "/www/luci-static/resources/view/status/dmesg.js",
+    "mode": "100644",
+    "blob": "d4c3f2dc9f9f586a179d7534f8300b8b778631b6",
+    "sha256": "d5aaddb13829eb55e678d0e4ec77f0f3979586b3ac1785b75203bcd1689b33af"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js",
+    "installed": "/www/luci-static/resources/view/status/include/10_system.js",
+    "mode": "100644",
+    "blob": "3a2d2f1f2f1060606905daafb2b7e9d2ab213fd0",
+    "sha256": "4001ac4a10e1cdbe7ff3fb5a883d47dc203e81cc40d47254c3717832e99f2a75"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/20_memory.js",
+    "installed": "/www/luci-static/resources/view/status/include/20_memory.js",
+    "mode": "100644",
+    "blob": "0a885c01c9b45e296f4fb1cacf0cde30fa2e086d",
+    "sha256": "27bfea2820f8eee3538f30e819dbe300766729b54e85ecf6006c0c9a255dba6f"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js",
+    "installed": "/www/luci-static/resources/view/status/include/25_storage.js",
+    "mode": "100644",
+    "blob": "60661f63e51ddb6b8e098d242df016538f35276e",
+    "sha256": "b4815f01ebd54c051e246b7c42674feef5fd63d9243161d792803e43fd0d1db0"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js",
+    "installed": "/www/luci-static/resources/view/status/include/29_ports.js",
+    "mode": "100644",
+    "blob": "9ff30bb473d408408a842b1f5ce2940d95cb6178",
+    "sha256": "ab51ee180d25d9b3710864ebf85ed8cea7fb28dd8496f215199732dd3c02feab"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/30_network.js",
+    "installed": "/www/luci-static/resources/view/status/include/30_network.js",
+    "mode": "100644",
+    "blob": "723b73d43d413a01fc031f3f236bd49aec2fce58",
+    "sha256": "e449c84c0a0a970ab4c31c45e615c77f9f0348663e6f5f8ada70129c9836a24d"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/40_dhcp.js",
+    "installed": "/www/luci-static/resources/view/status/include/40_dhcp.js",
+    "mode": "100644",
+    "blob": "7be0eb9046c919230f5f8f99773fc567eef91979",
+    "sha256": "31b85eff2159929f262a846e15f5aa4adc1317d39c8386c2d4690ef980d4e4d8"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/50_dsl.js",
+    "installed": "/www/luci-static/resources/view/status/include/50_dsl.js",
+    "mode": "100644",
+    "blob": "3482a9fd084bb2249030492f819a5a50076a3ea2",
+    "sha256": "65e19a038df4ccd4d3d4f34fa1f4aafa9c4bfe1133be977049a78156847e31ed"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/60_wifi.js",
+    "installed": "/www/luci-static/resources/view/status/include/60_wifi.js",
+    "mode": "100644",
+    "blob": "96a9eece87d908607d537dc975665ce65b133589",
+    "sha256": "85a1ce3717649a809080f0f5c08dd1491c6a456eef6d235a832067d26146c762"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/index.js",
+    "installed": "/www/luci-static/resources/view/status/index.js",
+    "mode": "100644",
+    "blob": "75f5ccb40779c18b8731f64308e605308e6e9b6c",
+    "sha256": "8e8dbcb6771ad83b7298c07fb79db4c77e6bfe6cbf579ff988903e8b3637c6c9"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/iptables.js",
+    "installed": "/www/luci-static/resources/view/status/iptables.js",
+    "mode": "100644",
+    "blob": "1830411443a37bb96179cdfd7483193316ac0fe5",
+    "sha256": "7b236608e6ab66a491b845556f7f6acb9006e969cb7c58c99b4bb79075469f47"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/load.js",
+    "installed": "/www/luci-static/resources/view/status/load.js",
+    "mode": "100644",
+    "blob": "82b3ab241112589ef49bbc024ee32f88db64d807",
+    "sha256": "add4a6e16bccadb36e3c45eff5706372245609a9f0c800200ddd25ca0d0e841c"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js",
+    "installed": "/www/luci-static/resources/view/status/nftables.js",
+    "mode": "100644",
+    "blob": "0b7d1371b1e7ee38f26ce3d25c0b8380d34a1a26",
+    "sha256": "68d3746c5b201ee3e50d12432763c94c0a9736a648fe65e57e7672e214e93a58"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/processes.js",
+    "installed": "/www/luci-static/resources/view/status/processes.js",
+    "mode": "100644",
+    "blob": "a59c6183025c772c27e0adecb35feb2185e3eae5",
+    "sha256": "ee63f80a732f8332194658d02ebb91bc772ca24d94987c22125ae8685ce42532"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/routes.js",
+    "installed": "/www/luci-static/resources/view/status/routes.js",
+    "mode": "100644",
+    "blob": "7c7668110ae9f9f429d08ee666347276009d7307",
+    "sha256": "e7f12d7d17f583510c2b316c4a779be4f94511e343e6be156ea333d4b437510c"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/routesj.js",
+    "installed": "/www/luci-static/resources/view/status/routesj.js",
+    "mode": "100644",
+    "blob": "5ca5b3a51abfaf0edcac4aa30839eed42f0033f0",
+    "sha256": "de1db1312f3190f4e9433fad5871127348a352c2e5ad354d5f418e9894e90936"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/syslog.js",
+    "installed": "/www/luci-static/resources/view/status/syslog.js",
+    "mode": "100644",
+    "blob": "5240decf8685417e7c7df248f58c489a593141b7",
+    "sha256": "bbe2677f95ffda03473abbdd2ecd6296035cb133d913f8ae9c01ccb8adccfee7"
+  },
+  {
+    "package": "luci-mod-status",
+    "source": "modules/luci-mod-status/htdocs/luci-static/resources/view/status/wireless.js",
+    "installed": "/www/luci-static/resources/view/status/wireless.js",
+    "mode": "100644",
+    "blob": "6b1affccdffad458f268f7766ef5bd099499c11a",
+    "sha256": "3f2a84fd214a173d9d6a266957ae4426ab061500689f625691aa0896436599e0"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/crontab.js",
+    "installed": "/www/luci-static/resources/view/system/crontab.js",
+    "mode": "100644",
+    "blob": "955fcee525de13a220ead51f1c98ffeb4ce965bc",
+    "sha256": "16f920a749dcecf3561b0f8a5fde5d0a768bedcbdca62c1c1fe005f6d5ceaa70"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/dropbear.js",
+    "installed": "/www/luci-static/resources/view/system/dropbear.js",
+    "mode": "100644",
+    "blob": "00acc920b91a94ab6f64e1a3e6c0f53b35c0b24f",
+    "sha256": "2f937fb62db2d61799254071a35d8f3ca5eec1514c58c2a630d00c203eaacf8c"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/flash.js",
+    "installed": "/www/luci-static/resources/view/system/flash.js",
+    "mode": "100644",
+    "blob": "94f23f91efaf522860c4cb407899ad48848e764e",
+    "sha256": "0f377176eb62be0169fc19179e69717ccd2d7d13edef1d5bf97ae2a3a6fd9e60"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/default-on.js",
+    "installed": "/www/luci-static/resources/view/system/led-trigger/default-on.js",
+    "mode": "100644",
+    "blob": "73263b8b0ebf6d4208fe483abfc8007dd07e473f",
+    "sha256": "de046ae7902fc82c15eafd589bb39510bab19ff61b70be8b54c711351a74091e"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/heartbeat.js",
+    "installed": "/www/luci-static/resources/view/system/led-trigger/heartbeat.js",
+    "mode": "100644",
+    "blob": "4a093ffed55328e1a84b9f45ead0ad913d4ca2fa",
+    "sha256": "3333b72be322c2210c36c433bf649f8637be3948f022c049c37ccadec79cce8c"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/netdev.js",
+    "installed": "/www/luci-static/resources/view/system/led-trigger/netdev.js",
+    "mode": "100644",
+    "blob": "41caaa2aa9634791e775f2a9dd9520c60fe2c4f3",
+    "sha256": "c05882838038c16af1dd74e89fd6e95fd8c08f3ee5cf7f2526aa3f3fe122ae13"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/none.js",
+    "installed": "/www/luci-static/resources/view/system/led-trigger/none.js",
+    "mode": "100644",
+    "blob": "a68ab5a004b1bc49710752c54c732f93d2efde35",
+    "sha256": "848357d62f8c6db8bd38ad51f8209723acecab639703ff8403b77f8f87e551e8"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/timer.js",
+    "installed": "/www/luci-static/resources/view/system/led-trigger/timer.js",
+    "mode": "100644",
+    "blob": "c2f20f2c971f5396056fd0ddce1c752c28da8fc4",
+    "sha256": "a9a2726d36d5f58dee8e53f083f44048db2b19bc63d7bd03672ffd00d1c8eca2"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/leds.js",
+    "installed": "/www/luci-static/resources/view/system/leds.js",
+    "mode": "100644",
+    "blob": "f8e36d28aa2b1c33348d414107e636acbeb22563",
+    "sha256": "979078be9a894111e58dfbf319974274b48900bea697c5698701b6400364f7a9"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/mounts.js",
+    "installed": "/www/luci-static/resources/view/system/mounts.js",
+    "mode": "100644",
+    "blob": "d496faa8c3480b9d551db6f7b9c2cfb899b9688b",
+    "sha256": "18f0df6266ee7f381a90e2bccab6a9dd8785edd90c98c0bb6992250be999959b"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/password.js",
+    "installed": "/www/luci-static/resources/view/system/password.js",
+    "mode": "100644",
+    "blob": "eb9d4a6d76338c1e4eb320e235e597e1575f989f",
+    "sha256": "107d3fc8fa3c0a05c9fe382c7978ff0f577bfe59272d602c02f7ec1e8d24b30c"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js",
+    "installed": "/www/luci-static/resources/view/system/reboot.js",
+    "mode": "100644",
+    "blob": "92e1dd49208f465f0d91099fa69c64b74b800161",
+    "sha256": "dd7e1ad72d2da510e53b194d40d9b45ec2a901939cdf655a4fc930cf42fba079"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/repokeys.js",
+    "installed": "/www/luci-static/resources/view/system/repokeys.js",
+    "mode": "100644",
+    "blob": "c6dfcbdc4e3e0e347c3182eb6c36b4f6301171d8",
+    "sha256": "538d2324a336acf5445a80341f1ad0b60e969737e6aa240a33b1e2f98c5284be"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/sshkeys.js",
+    "installed": "/www/luci-static/resources/view/system/sshkeys.js",
+    "mode": "100644",
+    "blob": "b953a8f9ab18c95169d8c1223e259243b564da7b",
+    "sha256": "40307fe178574632a12c89838f9587dfbcf8a4efcfe5d172ca16871ae23ed176"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/startup.js",
+    "installed": "/www/luci-static/resources/view/system/startup.js",
+    "mode": "100644",
+    "blob": "7823ac12a7ba1cab13cad8969ea055cee9df9184",
+    "sha256": "3abe50cb07b2622b1d8e0e0fc5560ab0c9598608065034e90fcc9f897500e3cf"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js",
+    "installed": "/www/luci-static/resources/view/system/system.js",
+    "mode": "100644",
+    "blob": "2b9b8f5f0fe6b1b1aaaceef05474a7a0003a29fd",
+    "sha256": "7a79896707f11d126b264ce3a14de034f550c5699786a04bfdc24911c78164dc"
+  },
+  {
+    "package": "luci-mod-system",
+    "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/uhttpd.js",
+    "installed": "/www/luci-static/resources/view/system/uhttpd.js",
+    "mode": "100644",
+    "blob": "6febb4cc173246657d4aaf34718c8ce051b11f41",
+    "sha256": "a2fd2a65031699dabd206f722feb20c4af7a2ef5900764be7abe6b25cb265132"
+  },
+  {
+    "package": "luci-proto-ipv6",
+    "source": "protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/464xlat.js",
+    "installed": "/www/luci-static/resources/protocol/464xlat.js",
+    "mode": "100644",
+    "blob": "3f1fc6b0ac18a58402abbcbe5cb5c206d95034ee",
+    "sha256": "c3fdc76dfa143c26237ec17eea8f66883bec2a7ee7b798f92cce056f810c9476"
+  },
+  {
+    "package": "luci-proto-ipv6",
+    "source": "protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6in4.js",
+    "installed": "/www/luci-static/resources/protocol/6in4.js",
+    "mode": "100644",
+    "blob": "aa509a13f81564010656e134dd1c35805d15a241",
+    "sha256": "4ff26b28b0cb26e4ab4cb346ab65a5de9ccb0941bd99505140ad2216a1002593"
+  },
+  {
+    "package": "luci-proto-ipv6",
+    "source": "protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6rd.js",
+    "installed": "/www/luci-static/resources/protocol/6rd.js",
+    "mode": "100644",
+    "blob": "db27b4e2d675f53b4cbff616c9a0a40eec73f154",
+    "sha256": "3c1204cadcdc7370b5f27838b06a7c8b9174f342f07097aeabbedb7aa762ac27"
+  },
+  {
+    "package": "luci-proto-ipv6",
+    "source": "protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6to4.js",
+    "installed": "/www/luci-static/resources/protocol/6to4.js",
+    "mode": "100644",
+    "blob": "d479bfc6585e94f1e9aac46533237743eb9322a4",
+    "sha256": "20c2bb81c3cd57967b43258ffbb90aec9575f74b23368f74b9677469e5d9233c"
+  },
+  {
+    "package": "luci-proto-ipv6",
+    "source": "protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/dhcpv6.js",
+    "installed": "/www/luci-static/resources/protocol/dhcpv6.js",
+    "mode": "100644",
+    "blob": "c072155fefe0e80e87d12819557e023a79c27493",
+    "sha256": "228f294d85f942e2edcedaad8f0e939065e68e628920cda5aa105ea036d29ccc"
+  },
+  {
+    "package": "luci-proto-ipv6",
+    "source": "protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/dslite.js",
+    "installed": "/www/luci-static/resources/protocol/dslite.js",
+    "mode": "100644",
+    "blob": "cd7d548e008b1127d6da7b0705949bde8ad2d9f2",
+    "sha256": "d1c0ed7d87760aa018a9fce6e5fd19136e1f9fe69e7b387c6de6762cc2edaebb"
+  },
+  {
+    "package": "luci-proto-ipv6",
+    "source": "protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/ipip6.js",
+    "installed": "/www/luci-static/resources/protocol/ipip6.js",
+    "mode": "100644",
+    "blob": "11ca875190b14be49ffb9cb33dca85bf6afe4eeb",
+    "sha256": "158e4efb7030e270d95ec9206a1c5cc17163e1cded308a3d095fb6b73e7ad929"
+  },
+  {
+    "package": "luci-proto-ipv6",
+    "source": "protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/map.js",
+    "installed": "/www/luci-static/resources/protocol/map.js",
+    "mode": "100644",
+    "blob": "62bc3648a9cf03a77b9fa626081dbd6135819672",
+    "sha256": "789d0e3df589878241607173d27531684a5002b31c4f4ba215511fbc3b59dbb5"
+  },
+  {
+    "package": "luci-proto-ppp",
+    "source": "protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/l2tp.js",
+    "installed": "/www/luci-static/resources/protocol/l2tp.js",
+    "mode": "100644",
+    "blob": "ab72d4ad727192874d8d372ef5bf4eaa05d5dfb8",
+    "sha256": "a6ba2210e42797c7a83a098dc254ef22d62562ed02f6467e5f11a31bef29cc3b"
+  },
+  {
+    "package": "luci-proto-ppp",
+    "source": "protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/ppp.js",
+    "installed": "/www/luci-static/resources/protocol/ppp.js",
+    "mode": "100644",
+    "blob": "f9761c222cbe335f606b3013a4323aea34f5323b",
+    "sha256": "baa4512893818c19e7c3a912c9503a184bdd985ad72a52e8de9333260457191c"
+  },
+  {
+    "package": "luci-proto-ppp",
+    "source": "protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pppoa.js",
+    "installed": "/www/luci-static/resources/protocol/pppoa.js",
+    "mode": "100644",
+    "blob": "5c3e87c8a9abd2608963c9bc4a994f434e785921",
+    "sha256": "3e20af942b56b46f8b4e03cb397c6a006930c94afa3837258edea1e0916ff0d6"
+  },
+  {
+    "package": "luci-proto-ppp",
+    "source": "protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pppoe.js",
+    "installed": "/www/luci-static/resources/protocol/pppoe.js",
+    "mode": "100644",
+    "blob": "d66da8a0212aa464a5e7b0a35455e3fefebfc9ef",
+    "sha256": "33a8d88d668b1b88d5251104f378fbe04855c32d9c73b6a13d1fa20df5c81e02"
+  },
+  {
+    "package": "luci-proto-ppp",
+    "source": "protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pptp.js",
+    "installed": "/www/luci-static/resources/protocol/pptp.js",
+    "mode": "100644",
+    "blob": "d65b079b7d2c2c11f68c2a560d837e87ca59fb9b",
+    "sha256": "455424b98b6803c3f82113c535d3a3d3f488a481aabf3916cb6d8e9b80302177"
+  },
+  {
+    "package": "luci-theme-bootstrap",
+    "source": "themes/luci-theme-bootstrap/htdocs/luci-static/resources/menu-bootstrap.js",
+    "installed": "/www/luci-static/resources/menu-bootstrap.js",
+    "mode": "100644",
+    "blob": "a246cc1e2a9c813169914ef3da4fefd347badf03",
+    "sha256": "8080281a455044d21477ad4e1c41508265dd05302712dde96e9a3eac8a6b2a16"
+  },
+  {
+    "package": "luci-theme-bootstrap",
+    "source": "themes/luci-theme-bootstrap/htdocs/luci-static/resources/view/bootstrap/sysauth.js",
+    "installed": "/www/luci-static/resources/view/bootstrap/sysauth.js",
+    "mode": "100644",
+    "blob": "cace51b27c1426ca136dcd6f84e4e78882b59e6f",
+    "sha256": "06439bf669828b52c470d5ed68b24e1deebcfeaf591d88ed6fa67aba47ded223"
+  }
+]

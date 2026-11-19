@@ -18,3 +18,5 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y gcc
       - name: Conformance tests
         run: python3 -m unittest discover -s policy/tests -t . -v
+      - name: JavaScript extraction gate offline checks
+        run: python3 -m unittest discover -s ql-js -p 'test_*.py' -v
