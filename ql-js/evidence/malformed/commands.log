@@ -1,0 +1,263 @@
+CODEQL_EXTRACTOR_JAVASCRIPT_ALLOW_MINIFIED_FILES=true
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "database", "create", "/root/workspace/js69-controls-absolute-20261119/malformed/db", "--language=javascript", "--source-root=/root/workspace/js69-controls-absolute-20261119/malformed/source", "--threads=2", "--ram=3072"]
+Initializing database at /root/workspace/js69-controls-absolute-20261119/malformed/db.
+Running build command: []
+Running command in /root/workspace/js69-controls-absolute-20261119/malformed/source: [/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/autobuild.sh]
+[2026-11-19 06:04:00] [build-stdout] Parallel extraction with 2 threads.
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/workspace/js69-controls-absolute-20261119/malformed/source/broken.js
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/workspace/js69-controls-absolute-20261119/malformed/source/good.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/workspace/js69-controls-absolute-20261119/malformed/source/good.js (109 ms)
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/workspace/js69-controls-absolute-20261119/malformed/source/broken.js (337 ms)
+[2026-11-19 06:04:00] [build-stderr] No externs trap cache found
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es5.js
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es2017.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es2017.js (31 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es2016.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es2016.js (5 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/proxy.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/proxy.js (5 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es3.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es5.js (95 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es6_collections.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es6_collections.js (29 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es6.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es3.js (322 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/intl.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es6.js (254 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_dom.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/intl.js (43 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_event.js
+[2026-11-19 06:04:00] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_event.js (14 ms)
+[2026-11-19 06:04:00] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom2.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_dom.js (106 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom4.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom4.js (4 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/page_visibility.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/page_visibility.js (2 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_usercontent.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_usercontent.js (6 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_css.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom2.js (252 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_event3.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_event3.js (9 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_device_sensor_event.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_device_sensor_event.js (13 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_midi.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_css.js (204 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_range.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_midi.js (27 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/fileapi.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_range.js (29 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_anim_timing.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_anim_timing.js (13 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_geolocation.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_geolocation.js (21 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_serviceworker.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_serviceworker.js (82 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_permissions.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_permissions.js (16 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_requestidlecallback.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_requestidlecallback.js (9 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/html5.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/fileapi.js (182 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webgl.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webgl.js (261 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_css.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_css.js (29 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/url.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/html5.js (331 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_event.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/url.js (23 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_batterystatus.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_event.js (5 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/fetchapi.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_batterystatus.js (4 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_gamepad.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_gamepad.js (5 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/flash.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/flash.js (22 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/window.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/window.js (13 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/chrome.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/fetchapi.js (81 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_vml.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_vml.js (5 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_notifications.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/chrome.js (61 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_xml.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_notifications.js (23 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_css3d.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_xml.js (8 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_event.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_css3d.js (18 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_ext.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_ext.js (3 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_dom.js
+[2026-11-19 06:04:01] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_event.js (57 ms)
+[2026-11-19 06:04:01] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_dom.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_dom.js (33 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/whatwg_encoding.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_dom.js (78 ms)
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/whatwg_encoding.js (5 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_css.js
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_rtc.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_css.js (119 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_selectors.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_selectors.js (12 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_event.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_event.js (23 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_elementtraversal.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_elementtraversal.js (7 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_pointer_events.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_pointer_events.js (10 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_navigation_timing.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_rtc.js (177 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webstorage.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webstorage.js (11 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/streamsapi.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_navigation_timing.js (29 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/mediasource.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/mediasource.js (15 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom1.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/streamsapi.js (43 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_css.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_css.js (18 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_touch_event.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_touch_event.js (14 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_indexeddb.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom1.js (71 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_encoding.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_encoding.js (5 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom3.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_indexeddb.js (55 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/iphone.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/iphone.js (11 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_webcrypto.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom3.js (52 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/intl.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_webcrypto.js (26 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_xml.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/intl.js (16 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_screen_orientation.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_screen_orientation.js (5 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/v8.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/v8.js (7 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/rhino.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/rhino.js (6 ms)
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_xml.js (25 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/jsshell.js
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/spidermonkey.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/spidermonkey.js (3 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/v8.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/v8.js (7 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/child_process.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/jsshell.js (67 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/console.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/console.js (3 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/https.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/https.js (24 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/constants.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/child_process.js (96 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/dgram.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/dgram.js (20 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/process.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/process.js (2 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/vm.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/vm.js (16 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/tls.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/tls.js (45 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/crypto.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/constants.js (129 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/util.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/util.js (23 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/sys.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/sys.js (3 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/url.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/url.js (9 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/http.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/crypto.js (87 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/buffer.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/buffer.js (11 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/stream.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/http.js (51 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/globals.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/stream.js (74 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/path.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/path.js (33 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/events.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/events.js (15 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/module.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/module.js (9 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/fs.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/globals.js (165 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/querystring.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/querystring.js (10 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/assert.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/assert.js (13 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/punycode.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/punycode.js (10 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/domain.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/domain.js (9 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/dns.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/dns.js (25 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/zlib.js
+[2026-11-19 06:04:02] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/zlib.js (39 ms)
+[2026-11-19 06:04:02] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/tty.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/tty.js (9 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/cluster.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/fs.js (178 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/readline.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/readline.js (26 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/repl.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/repl.js (11 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/string_decoder.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/string_decoder.js (6 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/assert_legacy.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/assert_legacy.js (2 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/timers.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/timers.js (9 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/os.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/os.js (26 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/net.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/cluster.js (98 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/jquery-3.2.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/net.js (43 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/should.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/should.js (19 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/bdd.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/bdd.js (7 ms)
+[2026-11-19 06:04:03] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/vows.js
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/vows.js (21 ms)
+[2026-11-19 06:04:03] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/jquery-3.2.js (161 ms)
+Finalizing database at /root/workspace/js69-controls-absolute-20261119/malformed/db.
+Running TRAP import for CodeQL database at /root/workspace/js69-controls-absolute-20261119/malformed/db...
+Importing TRAP files
+Merging relations
+Finished writing database (relations: 3.82 MiB; string pool: 4.78 MiB).
+TRAP import complete (3.3s).
+Finished zipping source archive (251.63 KiB).
+Successfully created database at /root/workspace/js69-controls-absolute-20261119/malformed/db.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/workspace/wt-openwrt-js69-20261119/ql-js/files.ql", "--database", "/root/workspace/js69-controls-absolute-20261119/malformed/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-probe/packs", "--output", "/root/workspace/js69-controls-absolute-20261119/malformed/files.bqrs", "--threads=2", "--ram=3072"]
+Resolving data extensions.
+Finished resolving data extensions.
+WARNING: Failed to retrieve qlpack commit hash from Git repository
+Merging data extensions.
+Finished merging data extensions.
+Compiling query plan for /root/workspace/wt-openwrt-js69-20261119/ql-js/files.ql.
+[1/1] Found in cache: /root/workspace/wt-openwrt-js69-20261119/ql-js/files.ql.
+Starting evaluation of local/js69-probe/files.ql.
+[1/1 eval 397ms] Evaluation done; writing results to /root/workspace/js69-controls-absolute-20261119/malformed/files.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/workspace/js69-controls-absolute-20261119/malformed/files.bqrs", "--format=json", "--entities=url,string", "--output", "/root/workspace/js69-controls-absolute-20261119/malformed/files.json"]
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/workspace/wt-openwrt-js69-20261119/ql-js/errors.ql", "--database", "/root/workspace/js69-controls-absolute-20261119/malformed/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-probe/packs", "--output", "/root/workspace/js69-controls-absolute-20261119/malformed/errors.bqrs", "--threads=2", "--ram=3072"]
+Resolving data extensions.
+Finished resolving data extensions.
+WARNING: Failed to retrieve qlpack commit hash from Git repository
+Merging data extensions.
+Finished merging data extensions.
+Compiling query plan for /root/workspace/wt-openwrt-js69-20261119/ql-js/errors.ql.
+[1/1] Found in cache: /root/workspace/wt-openwrt-js69-20261119/ql-js/errors.ql.
+Starting evaluation of local/js69-probe/errors.ql.
+[1/1 eval 297ms] Evaluation done; writing results to /root/workspace/js69-controls-absolute-20261119/malformed/errors.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/workspace/js69-controls-absolute-20261119/malformed/errors.bqrs", "--format=json", "--entities=url,string", "--output", "/root/workspace/js69-controls-absolute-20261119/malformed/errors.json"]

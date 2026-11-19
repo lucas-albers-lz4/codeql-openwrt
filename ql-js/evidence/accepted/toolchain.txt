@@ -1,0 +1,12 @@
+CodeQL command-line toolchain release 2.27.4.
+Copyright (C) 2019-2026 GitHub, Inc.
+Unpacked in: /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4
+   Analysis results depend critically on separately distributed query and
+   extractor modules. To list modules that are visible to the toolchain,
+   use 'codeql resolve packs' and 'codeql resolve languages'.
+
+{
+  "version": "3.0.0",
+  "kind": "library",
+  "path": "/root/.hermes/profiles/work/cache/scratch/js69-probe/packs/codeql/javascript-all/3.0.0/qlpack.yml"
+}
