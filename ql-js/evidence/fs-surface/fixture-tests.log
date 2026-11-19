@@ -1,0 +1,9 @@
+test_exact_positive_and_negative_sites (test_fs_surface.FsSurfaceTest.test_exact_positive_and_negative_sites) ... ok
+test_normalization_rejects_duplicate_and_bad_classification (test_fs_surface.FsSurfaceTest.test_normalization_rejects_duplicate_and_bad_classification) ... ok
+test_normalization_rejects_foreign_selected_paths (test_fs_surface.FsSurfaceTest.test_normalization_rejects_foreign_selected_paths) ... ok
+test_retained_inventory_matches_decoded_rows_and_anchor (test_fs_surface.FsSurfaceTest.test_retained_inventory_matches_decoded_rows_and_anchor) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 14.163s
+
+OK

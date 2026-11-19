@@ -1,7 +1,7 @@
-# Pinned LuCI JavaScript extraction and rpc site inventory
+# Pinned LuCI JavaScript extraction and source-site inventories
 
-The first bounded slice of #69 was the extraction gate. The second inventories
-syntactic `rpc.declare` access candidates as described below, not all JavaScript
+The first bounded slice of #69 was the extraction gate. The site inventories
+cover syntactic `rpc.declare` and `fs` accesses described below, not all JavaScript
 surfaces. The manifest records original Git blob IDs and SHA-256 hashes for
 `htdocs/**/*.js` in the existing `luci-ssl-25.12` LuCI package closure at
 `corpus/lock.json`'s LuCI pin. Installed paths follow the existing `luci.mk`
@@ -91,6 +91,30 @@ read, comments, strings, and unrelated names. To run it, set `JS69_CODEQL` and
 these variables this one test is skipped; CI does not run real CodeQL.
 Retained results and the exact run limits are in `evidence/rpc-surface/`.
 
+## fs access candidates
+
+After running the extraction gate, run:
+
+```sh
+python3 ql-js/fs_inventory.py \
+  --luci-git /path/to/luci.git --codeql /path/to/codeql \
+  --packs /path/to/additional-packs --gate-output /path/to/new-evidence-directory \
+  --output /path/to/new-fs-site-evidence-directory
+```
+
+This independently reconstructs the manifest, rechecks the acceptance inputs,
+selected bytes, exact file membership and `JSParseError` rows, and retains raw
+and decoded results. The new output path must not exist. It selects property
+accesses whose syntactic receiver is the identifier `fs`: dot accesses, literal
+indices, and unresolved computed indices. The property is reported as returned
+by CodeQL, or `<unknown>` for an unresolved index. The `kind` distinguishes an
+actual literal `<unknown>` from that placeholder. Every row is `rpc_surface` /
+`candidate`, including property reads and shadowed receivers; no binding or
+runtime call is proven. Aliases, indirect accesses and other families are outside
+this query. The fixture covers positive, negative, shadowed and computed sites,
+including a numeric index. See `evidence/fs-surface/` for real execution and
+mutation controls. CI runs offline checks only, not real CodeQL fixture tests.
+
 ## Limits
 
 The check establishes membership according to `TopLevel.getFile()` and absence
@@ -100,6 +124,6 @@ CodeQL has its own extern files; matching uses absolute `.js` paths under the
 staged root and rejects unexpected query paths rather than claiming coverage of
 externs. The manifest
 is a source-file selection, not evidence of an actual image or package build.
-It does not inventory all rpc references or fs/uci/cgi sites and says nothing
-about taint, grants, runtime behavior or exploitability.
+It does not inventory all rpc or fs references, or uci/cgi sites, and says
+nothing about taint, grants, runtime behavior or exploitability.
 Track A and other deferred tracks remain held.

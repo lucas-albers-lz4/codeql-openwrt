@@ -1,0 +1,31 @@
+test_exact_positive_and_negative_sites (test_fs_surface.FsSurfaceTest.test_exact_positive_and_negative_sites) ... FAIL
+test_normalization_rejects_duplicate_and_bad_classification (test_fs_surface.FsSurfaceTest.test_normalization_rejects_duplicate_and_bad_classification) ... ok
+test_normalization_rejects_foreign_selected_paths (test_fs_surface.FsSurfaceTest.test_normalization_rejects_foreign_selected_paths) ... ok
+test_retained_inventory_matches_decoded_rows_and_anchor (test_fs_surface.FsSurfaceTest.test_retained_inventory_matches_decoded_rows_and_anchor) ... ok
+
+======================================================================
+FAIL: test_exact_positive_and_negative_sites (test_fs_surface.FsSurfaceTest.test_exact_positive_and_negative_sites)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/workspace/wt-openwrt-js69-fs-20261119/ql-js/test_fs_surface.py", line 94, in test_exact_positive_and_negative_sites
+    self.assertEqual(rows, [
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+        ['fs_surface_fixture.js', '11', '1', '11', '7', 'literal-index', '123', 'candidate'],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        ['fs_surface_fixture.js', '7', '30', '7', '36', 'dot', 'exec', 'candidate'],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ])
+    ^^
+AssertionError: Lists differ: [['fs[483 chars]ate'], ['fs_surface_fixture.js', '8', '1', '8'[31 chars]te']] != [['fs[483 chars]ate']]
+
+First list contains 1 additional elements.
+First extra element 6:
+['fs_surface_fixture.js', '8', '1', '8', '10', 'dot', 'read', 'candidate']
+
+Diff is 917 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 4 tests in 14.205s
+
+FAILED (failures=1)
