@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import sys
 
@@ -15,6 +16,7 @@ REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
+from policy import ubus_file_exec as shared_file_exec  # noqa: E402
 from policy.cgi_exec_file import LOGS_SESSION_CLASS  # noqa: E402
 from policy.cgi_exec_status import FIREWALL_FIXTURE_SID, FIREWALL_SESSION_CLASS  # noqa: E402
 from policy.oracle import (  # noqa: E402
@@ -89,6 +91,35 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertEqual(result.jsonrpc_error, ERROR_PARSE)
         self.assertIn("execv", self.cases["missing-sid-parse-error"]["not"])
         self.assertIn("path_found", self.cases["missing-sid-parse-error"]["not"])
+
+    def test_non_table_data_is_rejected_before_authorization(self) -> None:
+        for data in (None, [], "", 0, 1.5, False, True):
+            with self.subTest(data=data), patch.object(
+                shared_file_exec, "uh_ubus_allowed", wraps=shared_file_exec.uh_ubus_allowed
+            ) as allowed:
+                result = evaluate_kill_exec(
+                    sid=PROCESSES_WRITE_FIXTURE_SID,
+                    data=data,
+                    sessions=self.sessions,
+                )
+                allowed.assert_not_called()
+                self.assertEqual(result.outcome, "jsonrpc_parse_error")
+                self.assertEqual(result.jsonrpc_error, ERROR_PARSE)
+                self.assertFalse(any(step["step"] == "uh_ubus_allowed" for step in result.steps))
+
+    def test_table_data_reaches_authorization(self) -> None:
+        with patch.object(
+            shared_file_exec, "uh_ubus_allowed", wraps=shared_file_exec.uh_ubus_allowed
+        ) as allowed:
+            result = evaluate_kill_exec(
+                sid=PROCESSES_WRITE_FIXTURE_SID,
+                data={"command": KILL, "params": ["-15", "42"]},
+                sessions=self.sessions,
+            )
+            allowed.assert_called_once_with(
+                self.sessions, PROCESSES_WRITE_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD
+            )
+            self.assertEqual(result.outcome, "allow")
 
     def test_write_kill_allow_bare_executable(self) -> None:
         case = self.cases["luci-mod-status-processes-write-kill-allow"]
@@ -300,12 +331,25 @@ class TestCDouble(unittest.TestCase):
         )
 
     def test_parse_and_canon(self) -> None:
-        missing = self._run("parse", "-", UBUS_OBJECT, UBUS_METHOD, "{}")
+        missing = self._run("parse", "-", UBUS_OBJECT, UBUS_METHOD, "table")
         self.assertEqual(missing.stdout.strip(), "ERROR_PARSE")
-        ok = self._run("parse", PROCESSES_WRITE_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD, "{}")
-        self.assertEqual(ok.stdout.strip(), "PARSE_OK")
+        ok = self._run("parse", PROCESSES_WRITE_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD, "table")
+        self.assertEqual((ok.returncode, ok.stdout.strip()), (0, "PARSE_OK"))
         canon = self._run("canon", "/bin/../bin/kill")
         self.assertEqual(canon.stdout.strip(), KILL)
+
+    def test_parse_rejects_non_table_blob_types(self) -> None:
+        # Native blobmsg types; int8 also represents booleans. "-" is this
+        # helper's absent-token sentinel, distinct from the native NULL type.
+        for data_type in (
+            "-", "null", "array", "string", "int8", "int16", "int32",
+            "int64", "double", "boolean", "number",
+        ):
+            with self.subTest(data_type=data_type):
+                result = self._run(
+                    "parse", PROCESSES_WRITE_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD, data_type
+                )
+                self.assertEqual((result.returncode, result.stdout.strip()), (1, "ERROR_PARSE"))
 
     def test_decide_conjunctive_file_acl(self) -> None:
         allow = self._run(
