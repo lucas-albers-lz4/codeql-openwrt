@@ -1,0 +1,15 @@
+{
+  "luci_pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+  "files": 88,
+  "input_sha256": {
+    "manifest.json": "3161274241e086d121fd5122e0dfe0c5fb5d97872710d79c87f86244be2b2627",
+    "extraction_gate.py": "4588a91608e461223586de2e82bb49ad06894314a83c41856d7c9a7515095e70",
+    "files.ql": "4a695db5f8b575f28ea9f4a62ece001664ea923a42bda2260a19fc06160a92ea",
+    "errors.ql": "99544f5e288d6248935e933f09d0115efcdf89906260d1451d865e969c99e8cd",
+    "qlpack.yml": "caa3ab83402a3ca98fdb75b2a688b869d09182f28d1bfc2da9037efdf22d35b4",
+    "codeql-pack.lock.yml": "eb487627c92c867a5760b9c24405db13d028eff5582378a9c4ff252debe13925",
+    "corpus/lock.json": "b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "corpus/luci_ssl_files.py": "b135b5f5dbe3feacd78705d9a85b11cc55f4b6961fe7ee94c8b0d7be316a6b46"
+  },
+  "scope": "TopLevel membership and JSParseError only"
+}
