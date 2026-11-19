@@ -1,5 +1,6 @@
 """C-locale byte matching agrees with the standalone C double."""
 
+import json
 import locale
 import subprocess
 import tempfile
@@ -9,7 +10,16 @@ from unittest.mock import patch
 
 import policy.oracle as oracle
 
-from policy.oracle import FNM_NOESCAPE, Login, acl_match, libc_fnmatch, login_test_permission
+from policy.oracle import (
+    AclEntry,
+    FNM_NOESCAPE,
+    Login,
+    Session,
+    acl_match,
+    libc_fnmatch,
+    login_test_permission,
+    session_access,
+)
 from policy.tests.test_conformance import _compile_c_double
 
 REPO = Path(__file__).resolve().parents[2]
@@ -62,6 +72,89 @@ class TestFnmatchLocale(unittest.TestCase):
                         self.assertEqual(locale.setlocale(locale.LC_ALL), before)
         finally:
             locale.setlocale(locale.LC_ALL, original)
+
+    def test_same_scope_file_pattern_overlap_against_native_libc(self):
+        """A handwritten file×file overlap uses native C-locale fnmatch."""
+        fixture_path = REPO / "policy" / "fixtures" / "luci-mod-network.json"
+        fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+        read_files = fixture["luci-mod-network-config"]["read"]["file"]
+        left = "/proc/sys/net/ipv6/conf/*/mtu"
+        right = "/proc/sys/net/ipv[46]/conf/*"
+        self.assertIn(left, read_files)
+        self.assertIn(right, read_files)
+
+        # Keep the reference independent of Python fnmatch and the evaluator:
+        # C locale, exactly FNM_NOESCAPE, with no pathname/period flags.
+        source = r'''#include <fnmatch.h>
+#include <locale.h>
+#include <stdio.h>
+
+int main(int argc, char **argv) {
+    if (argc != 3 || setlocale(LC_ALL, "C") == NULL)
+        return 2;
+    int result = fnmatch(argv[1], argv[2], FNM_NOESCAPE);
+    if (result == 0)
+        return 0;
+    if (result == FNM_NOMATCH)
+        return 1;
+    return 2;
+}
+'''
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            c_source = root / "native_fnmatch.c"
+            executable = root / "native_fnmatch"
+            c_source.write_text(source, encoding="utf-8")
+            subprocess.run(
+                ["gcc", "-std=c11", "-Wall", "-Wextra", "-Werror", "-O0",
+                 "-o", str(executable), str(c_source)],
+                check=True,
+            )
+
+            def native_match(pattern, candidate):
+                result = subprocess.run(
+                    [str(executable), pattern, candidate],
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertIn(result.returncode, (0, 1), result.stderr)
+                return result.returncode == 0
+
+            controls = (
+                ("/proc/sys/net/ipv6/conf/a/mtu", (True, True)),
+                ("/proc/sys/net/ipv6/conf/a/hop_limit", (False, True)),
+                ("/proc/sys/net/ipv5/conf/a/mtu", (False, False)),
+            )
+            for candidate, expected in controls:
+                for pattern, should_match in zip((left, right), expected):
+                    with self.subTest(pattern=pattern, candidate=candidate):
+                        native = native_match(pattern, candidate)
+                        self.assertEqual(native, should_match)
+
+                        # Exercise the project's file-scope ACL lookup as well
+                        # as native libc; session_access delegates to acl_match.
+                        entry = AclEntry(
+                            group="luci-mod-network-config",
+                            perm="read",
+                            scope="file",
+                            object=pattern,
+                            function="read",
+                            source=fixture_path.name,
+                        )
+                        session = Session(
+                            session_class="luci-mod-network-config",
+                            sid="test",
+                            login=None,
+                            acls=[entry],
+                        )
+                        actual = session_access(session, "file", candidate, "read")
+                        self.assertEqual(actual is not None, native)
+
+                        # Keep the lower-level project matcher visible in the
+                        # same controls, so both file-scope layers are covered.
+                        self.assertEqual(
+                            acl_match(pattern, "read", candidate, "read"), native
+                        )
 
     def test_escaping_and_negated_login(self):
         # Backslash escapes in login patterns, but is literal with FNM_NOESCAPE.
