@@ -33,13 +33,22 @@ It does not establish a sanitizer or prove that a result is safe.
 The table does not remove the production candidate.
 Sources: [ucode:docs/m4-setlocaltime-construction.md:3-34](https://github.com/lucas-albers-lz4/codeql-ucode/blob/ecfc24e992674891c5305f7d2505156238868df9/docs/m4-setlocaltime-construction.md#L3-L34), [ucode:docs/m4-setlocaltime-construction.md:72-99](https://github.com/lucas-albers-lz4/codeql-ucode/blob/ecfc24e992674891c5305f7d2505156238868df9/docs/m4-setlocaltime-construction.md#L72-L99).
 
-OpenWrt #69 schedules only Step 1: a deterministic inventory of pinned-profile JavaScript files and source sites.
-This work adds no taint analysis and makes no security or coverage claims.
-OpenWrt #68 tracks consumer integration for the markup AST-only capability scheduled in [ucode #56](https://github.com/lucas-albers-lz4/codeql-ucode/issues/56). This is a foundational language-pack goal. Markup CFG and data flow remain deferred under [ucode #57](https://github.com/lucas-albers-lz4/codeql-ucode/issues/57).
-The plain dispatcher source inventory investigation is tracked in [ucode #129](https://github.com/lucas-albers-lz4/codeql-ucode/issues/129). It is source discovery only and does not promote dispatcher analysis. Dispatcher HTTP source modeling, authorization analysis, and QL guards remain deferred under [ucode #58](https://github.com/lucas-albers-lz4/codeql-ucode/issues/58) and [OpenWrt #70](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/70).
+[OpenWrt #69](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/69) schedules only Step 1: a deterministic inventory of pinned-profile JavaScript files and source sites.
+The #69 inventory adds no taint analysis and makes no security or coverage claims.
+
+[OpenWrt #68](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/68) tracks consumer integration for the markup AST-only capability scheduled in [ucode #56](https://github.com/lucas-albers-lz4/codeql-ucode/issues/56).
+This is a foundational language-pack goal.
+Markup CFG and data flow remain deferred under [ucode #57](https://github.com/lucas-albers-lz4/codeql-ucode/issues/57).
+
+The plain dispatcher source inventory is tracked in [ucode #129](https://github.com/lucas-albers-lz4/codeql-ucode/issues/129).
+It is source discovery only and does not promote dispatcher analysis.
+Dispatcher HTTP source modeling, authorization analysis, and QL guards remain deferred under [ucode #58](https://github.com/lucas-albers-lz4/codeql-ucode/issues/58) and [OpenWrt #70](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/70).
+
 Track A and Alloy remain deferred.
-The schedule does not change production Models-based queries. Models-to-DataFlow remains blocked under [ucode #50](https://github.com/lucas-albers-lz4/codeql-ucode/issues/50).
-Sources: [OpenWrt #69](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/69), [OpenWrt #68](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/68), [ucode #50](https://github.com/lucas-albers-lz4/codeql-ucode/issues/50), [ucode #56](https://github.com/lucas-albers-lz4/codeql-ucode/issues/56), [ucode #57](https://github.com/lucas-albers-lz4/codeql-ucode/issues/57), [ucode #58](https://github.com/lucas-albers-lz4/codeql-ucode/issues/58), [openwrt:docs/pack-contract.md:3-19](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L3-L19), [openwrt:docs/pack-contract.md:114-118](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L114-L118), [openwrt:docs/pack-contract.md:133-133](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L133-L133).
+The schedule does not change production Models-based queries.
+Models-to-DataFlow remains blocked under [ucode #50](https://github.com/lucas-albers-lz4/codeql-ucode/issues/50).
+
+Sources: [OpenWrt #69](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/69), [OpenWrt #68](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/68), [ucode #50](https://github.com/lucas-albers-lz4/codeql-ucode/issues/50), [ucode #56](https://github.com/lucas-albers-lz4/codeql-ucode/issues/56), [ucode #57](https://github.com/lucas-albers-lz4/codeql-ucode/issues/57), [ucode #58](https://github.com/lucas-albers-lz4/codeql-ucode/issues/58), [ucode #129](https://github.com/lucas-albers-lz4/codeql-ucode/issues/129), [openwrt:docs/pack-contract.md:3-19](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L3-L19), [openwrt:docs/pack-contract.md:114-118](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L114-L118), [openwrt:docs/pack-contract.md:133-133](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L133-L133).
 
 ## Ordered dependencies
 
