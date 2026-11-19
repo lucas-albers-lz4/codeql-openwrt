@@ -3,8 +3,8 @@
 This roadmap uses current tracked contracts at the revisions in its source links.
 It does not reconstruct `PLAN.md`.
 It assigns no meaning to historical section numbers.
-It commits to no new feature work.
-It does not claim that any issue is closed.
+It records the inventory scheduled in [OpenWrt #69](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/69).
+It does not claim that any issue is closed or that the inventory provides coverage.
 
 The related epics are [OpenWrt #56](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/56) and [ucode #43](https://github.com/lucas-albers-lz4/codeql-ucode/issues/43).
 
@@ -33,8 +33,11 @@ It does not establish a sanitizer or prove that a result is safe.
 The table does not remove the production candidate.
 Sources: [ucode:docs/m4-setlocaltime-construction.md:3-34](https://github.com/lucas-albers-lz4/codeql-ucode/blob/ecfc24e992674891c5305f7d2505156238868df9/docs/m4-setlocaltime-construction.md#L3-L34), [ucode:docs/m4-setlocaltime-construction.md:72-99](https://github.com/lucas-albers-lz4/codeql-ucode/blob/ecfc24e992674891c5305f7d2505156238868df9/docs/m4-setlocaltime-construction.md#L72-L99).
 
-This roadmap assigns no work on the dispatcher, markup, JavaScript, Track A, or Alloy.
-Sources: [openwrt:docs/pack-contract.md:3-19](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L3-L19), [openwrt:docs/pack-contract.md:114-118](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L114-L118), [openwrt:docs/pack-contract.md:133-133](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L133-L133).
+OpenWrt #69 schedules only Step 1: a deterministic inventory of pinned-profile JavaScript files and source sites.
+This work adds no taint analysis and makes no security or coverage claims.
+Track A, the dispatcher (#70), markup (#68), and Alloy (#67) remain deferred.
+This schedule assigns no ucode implementation work.
+Sources: [OpenWrt #69](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/69), [openwrt:docs/pack-contract.md:3-19](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L3-L19), [openwrt:docs/pack-contract.md:114-118](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L114-L118), [openwrt:docs/pack-contract.md:133-133](https://github.com/lucas-albers-lz4/codeql-openwrt/blob/4b767dc178fed8e06b918459c1534780b3f4af56/docs/pack-contract.md#L133-L133).
 
 ## Ordered dependencies
 

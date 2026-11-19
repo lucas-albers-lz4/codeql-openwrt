@@ -30,7 +30,7 @@ The gate scope is exact path membership and `JSParseError` rows only. This repor
 
 The RPC and filesystem site runs use separate databases and separate source roots. Their evidence READMEs and command logs identify each run. A second inventory query on the same database is not a new extraction.
 
-The CGI slice uses a private copy of the previously accepted database. It does not use a fresh corpus extraction. Its receipt records the same LuCI pin and 88 selected files. It records `TopLevel` membership and `JSParseError` scope. The CGI runner checked source bytes before and after the query. See the [CGI receipt](../ql-js/evidence/cgi-surface/ACCEPTED.json) and [run notes](../ql-js/evidence/cgi-surface/README.md).
+The CGI slice uses a private copy of the previously accepted database. It does not use a fresh corpus extraction. Its receipt records the same LuCI pin and 88 selected files. It records `TopLevel` membership and `JSParseError` scope. The CGI runner verified source bytes before and after the query. See the [CGI receipt](../ql-js/evidence/cgi-surface/ACCEPTED.json) and [run notes](../ql-js/evidence/cgi-surface/README.md).
 
 The accepted records give matching input digests for the manifest and lock. See [RPC acceptance](../ql-js/evidence/rpc-surface/ACCEPTED.json) and [filesystem acceptance](../ql-js/evidence/fs-surface/ACCEPTED.json).
 
