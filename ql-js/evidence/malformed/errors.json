@@ -1,0 +1,7 @@
+{"#select":{"columns":[
+   {"kind":"String"}
+  ,{"kind":"String"}
+  ,{"kind":"String"}]
+ ,"tuples":[
+   ["broken.js","Error: Unexpected token","const broken = ;\n"]]
+ }}

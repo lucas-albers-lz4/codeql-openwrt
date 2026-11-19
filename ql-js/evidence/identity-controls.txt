@@ -1,0 +1,5 @@
+gate sha256 4588a91608e461223586de2e82bb49ad06894314a83c41856d7c9a7515095e70
+command template ["/usr/bin/python3", "ql-js/extraction_gate.py", "--luci-git", "/root/workspace/luci-fork", "--codeql", "/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "--packs", "/root/.hermes/profiles/work/cache/scratch/js69-probe/packs", "--output", "<fresh-path>"]
+removed-last-entry exit 1 REJECTED: pinned manifest differs from reconstructed tree output_exists False
+altered-first-sha256 exit 1 REJECTED: pinned manifest differs from reconstructed tree output_exists False
+manifest restored sha256 3161274241e086d121fd5122e0dfe0c5fb5d97872710d79c87f86244be2b2627

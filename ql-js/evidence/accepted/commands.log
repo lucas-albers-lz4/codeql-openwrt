@@ -1,0 +1,435 @@
+CODEQL_EXTRACTOR_JAVASCRIPT_ALLOW_MINIFIED_FILES=true
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "database", "create", "/root/workspace/js69-gate-absolute-20261119/db", "--language=javascript", "--source-root=/root/workspace/js69-gate-absolute-20261119/source", "--threads=2", "--ram=3072"]
+Initializing database at /root/workspace/js69-gate-absolute-20261119/db.
+Running build command: []
+Running command in /root/workspace/js69-gate-absolute-20261119/source: [/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/autobuild.sh]
+[2026-11-19 06:02:48] [build-stdout] Parallel extraction with 2 threads.
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/20_memory.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/20_memory.js (173 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js (178 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/25_storage.js (46 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/30_network.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/30_network.js (112 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/40_dhcp.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js (289 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/50_dsl.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/40_dhcp.js (139 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/60_wifi.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/50_dsl.js (21 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/default-on.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/default-on.js (6 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/heartbeat.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/heartbeat.js (8 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/netdev.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/netdev.js (20 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/none.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/none.js (9 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/timer.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/led-trigger/timer.js (9 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/custom.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/custom.js (19 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/forwards.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/include/60_wifi.js (181 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/ipsets.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/ipsets.js (84 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/rules.js
+[2026-11-19 06:02:48] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/forwards.js (177 ms)
+[2026-11-19 06:02:48] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/snats.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/snats.js (211 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/rules.js (241 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js (120 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/diagnostics.js (37 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dns.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js (311 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/dns.js (215 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/routes.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/routes.js (77 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/switch.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/switch.js (86 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js
+[2026-11-19 06:02:49] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/interfaces.js (551 ms)
+[2026-11-19 06:02:49] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/bandwidth.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/bandwidth.js (89 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/channel_analysis.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/channel_analysis.js (99 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/connections.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/connections.js (125 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/dmesg.js (43 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/index.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/index.js (43 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/iptables.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/view/network/wireless.js (775 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/load.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/load.js (58 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/iptables.js (84 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/processes.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/processes.js (17 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/routes.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/routes.js (80 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/routesj.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/nftables.js (149 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/syslog.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/syslog.js (1 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/wireless.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/routesj.js (107 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/crontab.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/crontab.js (9 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/dropbear.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/dropbear.js (11 ms)
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-status/htdocs/luci-static/resources/view/status/wireless.js (78 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/flash.js
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/leds.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/leds.js (25 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/mounts.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/flash.js (99 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/password.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/mounts.js (87 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/password.js (21 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/repokeys.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/reboot.js (12 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/sshkeys.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/repokeys.js (45 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/startup.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/sshkeys.js (52 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/startup.js (30 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/uhttpd.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/uhttpd.js (3 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/themes/luci-theme-bootstrap/htdocs/luci-static/resources/view/bootstrap/sysauth.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/themes/luci-theme-bootstrap/htdocs/luci-static/resources/view/bootstrap/sysauth.js (8 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/tools/firewall.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/system.js (69 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-firewall/htdocs/luci-static/resources/tools/firewall.js (107 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/protocol/dhcp.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/protocol/dhcp.js (9 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/protocol/none.js
+[2026-11-19 06:02:50] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/protocol/none.js (1 ms)
+[2026-11-19 06:02:50] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/protocol/static.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/protocol/static.js (34 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/tools/prng.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/tools/prng.js (19 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/tools/views.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/tools/views.js (39 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/tools/widgets.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/applications/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js (208 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/tools/dnsrecordhandlers.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/tools/dnsrecordhandlers.js (51 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/tools/network.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/tools/widgets.js (122 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/464xlat.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/464xlat.js (8 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6in4.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6in4.js (17 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6rd.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6rd.js (10 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6to4.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/6to4.js (7 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/dhcpv6.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/dhcpv6.js (8 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/dslite.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/dslite.js (10 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/ipip6.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/ipip6.js (9 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/map.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ipv6/htdocs/luci-static/resources/protocol/map.js (13 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/l2tp.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/l2tp.js (11 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/ppp.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/ppp.js (32 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pppoa.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pppoa.js (20 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pppoe.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pppoe.js (20 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pptp.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/protocols/luci-proto-ppp/htdocs/luci-static/resources/protocol/pptp.js (35 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/libs/luci-lib-uqr/htdocs/luci-static/resources/uqr.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-mod-network/htdocs/luci-static/resources/tools/network.js (281 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/cbi.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/libs/luci-lib-uqr/htdocs/luci-static/resources/uqr.js (134 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/firewall.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/cbi.js (143 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/form.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/firewall.js (82 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/fs.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/fs.js (29 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/luci.js
+[2026-11-19 06:02:51] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/luci.js (251 ms)
+[2026-11-19 06:02:51] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/network.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/form.js (557 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/rpc.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/rpc.js (28 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/uci.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/uci.js (70 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/ui.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/network.js (354 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/validation.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/validation.js (183 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/xhr.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/xhr.js (1 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/workspace/js69-gate-absolute-20261119/source/themes/luci-theme-bootstrap/htdocs/luci-static/resources/menu-bootstrap.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/themes/luci-theme-bootstrap/htdocs/luci-static/resources/menu-bootstrap.js (13 ms)
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/workspace/js69-gate-absolute-20261119/source/modules/luci-base/htdocs/luci-static/resources/ui.js (607 ms)
+[2026-11-19 06:02:52] [build-stderr] No externs trap cache found
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es5.js
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es2017.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es2017.js (7 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es2016.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es2016.js (2 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/proxy.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/proxy.js (2 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es3.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es5.js (24 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es6_collections.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es6_collections.js (13 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es6.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es6.js (96 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/intl.js
+[2026-11-19 06:02:52] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/es3.js (128 ms)
+[2026-11-19 06:02:52] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_dom.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/es/intl.js (14 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_event.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_event.js (7 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom2.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_dom.js (70 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom4.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom4.js (3 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/page_visibility.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/page_visibility.js (2 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_usercontent.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_usercontent.js (3 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_css.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom2.js (129 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_event3.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_event3.js (5 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_device_sensor_event.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_device_sensor_event.js (6 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_midi.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_midi.js (15 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_range.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_range.js (14 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/fileapi.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_css.js (134 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_anim_timing.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_anim_timing.js (12 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_geolocation.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_geolocation.js (9 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_serviceworker.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/fileapi.js (62 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_permissions.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_permissions.js (6 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_requestidlecallback.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_requestidlecallback.js (4 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/html5.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_serviceworker.js (51 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webgl.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/html5.js (251 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_css.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webgl.js (216 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/url.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/url.js (10 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_event.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_event.js (3 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_batterystatus.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_css.js (18 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/fetchapi.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_batterystatus.js (4 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_gamepad.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_gamepad.js (6 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/flash.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/flash.js (15 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/window.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/fetchapi.js (31 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/chrome.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/window.js (10 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_vml.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_vml.js (3 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_notifications.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_notifications.js (13 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_xml.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_xml.js (4 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_css3d.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/chrome.js (34 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_event.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_css3d.js (13 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_ext.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_ext.js (2 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_dom.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_event.js (34 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_dom.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_dom.js (19 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/whatwg_encoding.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/whatwg_encoding.js (4 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_rtc.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/gecko_dom.js (48 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_css.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webkit_css.js (77 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_selectors.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_selectors.js (6 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_event.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_event.js (12 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_elementtraversal.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_elementtraversal.js (3 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_pointer_events.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_pointer_events.js (4 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_navigation_timing.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_navigation_timing.js (11 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webstorage.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/webstorage.js (4 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/streamsapi.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_rtc.js (123 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/mediasource.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/mediasource.js (10 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom1.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/streamsapi.js (22 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_css.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/ie_css.js (14 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_touch_event.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_touch_event.js (10 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_indexeddb.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom1.js (59 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_encoding.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_encoding.js (3 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom3.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_indexeddb.js (43 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/iphone.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/iphone.js (6 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_webcrypto.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_dom3.js (28 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/intl.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/intl.js (10 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_xml.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_webcrypto.js (19 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_screen_orientation.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_screen_orientation.js (3 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/v8.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/v8.js (5 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/rhino.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/rhino.js (3 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/jsshell.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/web/w3c_xml.js (21 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/spidermonkey.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/spidermonkey.js (2 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/v8.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/v8.js (5 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/child_process.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/vm/jsshell.js (29 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/console.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/console.js (2 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/https.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/https.js (11 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/constants.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/child_process.js (53 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/dgram.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/dgram.js (10 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/process.js
+[2026-11-19 06:02:53] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/process.js (1 ms)
+[2026-11-19 06:02:53] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/vm.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/vm.js (13 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/tls.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/tls.js (39 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/crypto.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/constants.js (89 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/util.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/util.js (16 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/sys.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/sys.js (2 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/url.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/url.js (10 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/http.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/crypto.js (70 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/buffer.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/http.js (44 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/stream.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/buffer.js (10 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/globals.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/stream.js (63 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/path.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/path.js (30 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/events.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/events.js (10 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/module.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/module.js (6 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/fs.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/globals.js (146 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/querystring.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/querystring.js (7 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/assert.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/assert.js (7 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/punycode.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/punycode.js (5 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/domain.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/domain.js (7 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/dns.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/dns.js (22 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/zlib.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/fs.js (102 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/tty.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/tty.js (8 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/cluster.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/zlib.js (34 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/readline.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/readline.js (17 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/repl.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/repl.js (6 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/string_decoder.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/string_decoder.js (3 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/assert_legacy.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/assert_legacy.js (1 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/timers.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/timers.js (8 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/os.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/os.js (13 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/net.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/cluster.js (67 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/jquery-3.2.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/nodejs/net.js (27 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/should.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/should.js (13 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/bdd.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/bdd.js (7 ms)
+[2026-11-19 06:02:54] [build-stdout] Extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/vows.js
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/vows.js (20 ms)
+[2026-11-19 06:02:54] [build-stdout] Done extracting /root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/javascript/tools/data/externs/lib/jquery-3.2.js (133 ms)
+Finalizing database at /root/workspace/js69-gate-absolute-20261119/db.
+Running TRAP import for CodeQL database at /root/workspace/js69-gate-absolute-20261119/db...
+Importing TRAP files
+Merging relations
+Finished writing database (relations: 13.13 MiB; string pool: 11.03 MiB).
+TRAP import complete (5.5s).
+Finished zipping source archive (667.39 KiB).
+Successfully created database at /root/workspace/js69-gate-absolute-20261119/db.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/workspace/wt-openwrt-js69-20261119/ql-js/files.ql", "--database", "/root/workspace/js69-gate-absolute-20261119/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-probe/packs", "--output", "/root/workspace/js69-gate-absolute-20261119/files.bqrs", "--threads=2", "--ram=3072"]
+Resolving data extensions.
+Finished resolving data extensions.
+WARNING: Failed to retrieve qlpack commit hash from Git repository
+Merging data extensions.
+Finished merging data extensions.
+Compiling query plan for /root/workspace/wt-openwrt-js69-20261119/ql-js/files.ql.
+[1/1 comp 25s] Compiled /root/workspace/wt-openwrt-js69-20261119/ql-js/files.ql.
+Starting evaluation of local/js69-probe/files.ql.
+[1/1 eval 738ms] Evaluation done; writing results to /root/workspace/js69-gate-absolute-20261119/files.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/workspace/js69-gate-absolute-20261119/files.bqrs", "--format=json", "--entities=url,string", "--output", "/root/workspace/js69-gate-absolute-20261119/files.json"]
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/workspace/wt-openwrt-js69-20261119/ql-js/errors.ql", "--database", "/root/workspace/js69-gate-absolute-20261119/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-probe/packs", "--output", "/root/workspace/js69-gate-absolute-20261119/errors.bqrs", "--threads=2", "--ram=3072"]
+Resolving data extensions.
+Finished resolving data extensions.
+WARNING: Failed to retrieve qlpack commit hash from Git repository
+Merging data extensions.
+Finished merging data extensions.
+Compiling query plan for /root/workspace/wt-openwrt-js69-20261119/ql-js/errors.ql.
+[1/1] Found in cache: /root/workspace/wt-openwrt-js69-20261119/ql-js/errors.ql.
+Starting evaluation of local/js69-probe/errors.ql.
+[1/1 eval 48ms] Evaluation done; writing results to /root/workspace/js69-gate-absolute-20261119/errors.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/workspace/js69-gate-absolute-20261119/errors.bqrs", "--format=json", "--entities=url,string", "--output", "/root/workspace/js69-gate-absolute-20261119/errors.json"]
