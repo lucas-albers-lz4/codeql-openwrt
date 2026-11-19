@@ -30,6 +30,8 @@ The gate scope is exact path membership and `JSParseError` rows only. This repor
 
 The RPC and filesystem site runs use separate databases and separate source roots. Their evidence READMEs and command logs identify each run. A second inventory query on the same database is not a new extraction.
 
+The CGI slice uses a private copy of the previously accepted database. It does not use a fresh corpus extraction. Its receipt records the same LuCI pin and 88 selected files. It records `TopLevel` membership and `JSParseError` scope. The CGI runner checked source bytes before and after the query. See the [CGI receipt](../ql-js/evidence/cgi-surface/ACCEPTED.json) and [run notes](../ql-js/evidence/cgi-surface/README.md).
+
 The accepted records give matching input digests for the manifest and lock. See [RPC acceptance](../ql-js/evidence/rpc-surface/ACCEPTED.json) and [filesystem acceptance](../ql-js/evidence/fs-surface/ACCEPTED.json).
 
 ## Separate candidate inventories
@@ -38,8 +40,11 @@ The accepted records give matching input digests for the manifest and lock. See 
 |---|---|---|---|
 | `rpc.declare` | 98 syntactic property-access candidates in 40 selected files | `30d42dca49978cc400e49345516324a30a0c7bfeb42eacf1c62fcdd1d9afda61` | All rows are dot accesses. Rows are candidates, not proven calls or resolved bindings. |
 | `fs` | 102 syntactic property-access candidates in 27 selected files | `d7acf028aa478ed22ff6b1a3e6e938fc1afb927830b629012aae3affbd5517ff` | All rows are dot accesses. Rows are candidates, not proven calls or resolved bindings. |
+| CGI construction | 6 syntactic construction candidates in 3 selected files | `8af4c02d36cd81f17a771c1082706ac19d151a6ce9e357913ed25a6d94519727` | Two bounded shapes only. Rows do not prove requests, routes, bindings, server operations, grants, or effects. |
 
 The RPC [inventory](../ql-js/evidence/rpc-surface/inventory.json) and [run notes](../ql-js/evidence/rpc-surface/README.md) retain spans and limitations. The filesystem [inventory](../ql-js/evidence/fs-surface/inventory.json) and [run notes](../ql-js/evidence/fs-surface/README.md) do the same.
+
+The CGI [inventory](../ql-js/evidence/cgi-surface/inventory.json) and [run notes](../ql-js/evidence/cgi-surface/README.md) retain the six candidate rows and query limits. The rows cover four `base-plus-string` expressions and two `template-base-and-suffix` expressions. They occur in `fs.js`, `ui.js`, and `view/system/flash.js` under the pinned LuCI source tree. The source-first oracle is a pin-specific cross-check, not a parser or completeness proof.
 
 The RPC query only detects syntactic accesses through the identifier `rpc`. The filesystem query only detects syntactic accesses through the identifier `fs`. Shadowed names, property reads, unresolved computed keys, aliases, indirect references, and generated references do not establish runtime behavior. Aliases and indirect references remain unresolved.
 
@@ -47,11 +52,11 @@ The filesystem inventory JSON currently labels each row with `type: rpc_surface`
 
 ## Open boundaries
 
-- CGI inventory is pending. Pull request [#126](https://github.com/lucas-albers-lz4/codeql-openwrt/pull/126) remains open.
-- UCI inventory is held. Its prior approval was withdrawn. This report does not change that decision.
+- Pull request [#126](https://github.com/lucas-albers-lz4/codeql-openwrt/pull/126) merged this bounded CGI syntax slice as `84e2006ecde13c091d24882ad2fe926c89fbd2fd`. It records six candidates in three files. It does not cover all CGI constructions or establish request behavior, bindings, server operations, grants, or effects.
+- UCI inventory remains held. Its prior approval was withdrawn. This report does not change that decision.
 - The candidate counts do not prove complete source coverage, semantic bindings, runtime calls, effects, taint, grants, or exploitability.
 - The extraction result covers the selected paths and recorded `JSParseError` rows. It does not establish semantic correctness or all possible extraction failures.
 - The manifest and package closure do not establish an OpenWrt image build or actual installed files.
 - The roadmap work tracked by pull request [#122](https://github.com/lucas-albers-lz4/codeql-openwrt/pull/122) is separate from this report.
 
-This report is a documentation bridge for shipped evidence. It does not implement UCI or CGI inventory, promote Track A, or change issue status.
+This report bridges retained evidence. It does not implement UCI inventory, promote Track A, or change issue status.
