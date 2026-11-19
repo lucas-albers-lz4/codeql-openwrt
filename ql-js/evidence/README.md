@@ -28,6 +28,16 @@ are not checked in. Raw BQRS and decoded JSON are retained here.
   manifest was restored. The real control also changed staged file bytes and
   the source identity check rejected the change.
 
+Offline test-strength controls are reproducible without modifying the production
+file: run `python3 ql-js/evidence/offline_mutation_controls.py` and repeat with
+`python3 -O`. Each uses an in-memory replacement of the path multiset comparison.
+The count-only mutant produces three expected assertion failures (same-count
+duplicate, foreign path, and foreign same-basename path), and the set-only
+mutant produces one expected duplicate-row subtest failure. There are no setup
+errors. Afterward, ordinary offline discovery passes all eight tests in each
+interpreter mode. These synthetic unit controls are not new CodeQL extraction
+runs; the real extraction evidence above is historical and unchanged.
+
 The queries and their limitations are described in the parent README. This is
 not a site inventory, an all-diagnostics extraction guarantee, or a runtime or
 security result.
