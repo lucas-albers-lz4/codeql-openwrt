@@ -111,6 +111,27 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertEqual(result.outcome, "invalid_request")
         self.assertEqual(result.http_status, 200)
 
+    def test_multipart_content_type_requires_boundary_equals_before_access_checks(self) -> None:
+        for content_type in ("multipart/form-data", "multipart/form-data; boundary"):
+            with self.subTest(content_type=content_type):
+                result = evaluate_upload(
+                    sid=BASE_FIXTURE_SID,
+                    content_type=content_type,
+                    sessions=self.sessions,
+                )
+                self.assertEqual(result.outcome, "invalid_request")
+                self.assertEqual(result.http_status, 200)
+                self.assertFalse(any(step["step"] == "session_access" for step in result.steps))
+
+    def test_multipart_content_type_with_boundary_equals_is_accepted(self) -> None:
+        result = evaluate_upload(
+            sid=BASE_FIXTURE_SID,
+            content_type="multipart/form-data; boundary=----form",
+            sessions=self.sessions,
+        )
+        self.assertEqual(result.outcome, "allow")
+        self.assertTrue(any(step["step"] == "session_access" for step in result.steps))
+
     def test_luci_base_upload_allow(self) -> None:
         result = self._result("luci-base-cgi-upload-allow")
         self.assertEqual(result.outcome, "allow")
@@ -239,6 +260,18 @@ class TestCDouble(unittest.TestCase):
     def test_parse_urlencoded_is_invalid_request(self) -> None:
         proc = self._run("parse", "application/x-www-form-urlencoded", BASE_FIXTURE_SID)
         self.assertEqual(proc.stdout.strip(), "INVALID_REQUEST")
+
+    def test_parse_multipart_without_boundary_equals_is_invalid_request(self) -> None:
+        for content_type in ("multipart/form-data", "multipart/form-data; boundary"):
+            with self.subTest(content_type=content_type):
+                proc = self._run("parse", content_type, BASE_FIXTURE_SID)
+                self.assertEqual(proc.stdout.strip(), "INVALID_REQUEST")
+                self.assertEqual(proc.returncode, 1)
+
+    def test_parse_multipart_with_boundary_equals_is_accepted(self) -> None:
+        proc = self._run("parse", "multipart/form-data; boundary=----form", BASE_FIXTURE_SID)
+        self.assertEqual(proc.stdout.strip(), "PARSE_OK")
+        self.assertEqual(proc.returncode, 0)
 
     def test_parse_does_not_require_sessionid(self) -> None:
         proc = self._run("parse", CONTENT_TYPE_EXAMPLE, "-")
