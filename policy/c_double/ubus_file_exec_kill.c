@@ -139,7 +139,7 @@ next:
 
 static int cmd_parse(int argc, char **argv)
 {
-	const char *sid, *object, *function, *data;
+	const char *sid, *object, *function, *data_type;
 
 	if (argc != 4) {
 		fprintf(stderr, "parse: expected 4 args\n");
@@ -148,8 +148,10 @@ static int cmd_parse(int argc, char **argv)
 	sid = arg_or_null(argv[0]);
 	object = arg_or_null(argv[1]);
 	function = arg_or_null(argv[2]);
-	data = arg_or_null(argv[3]);
-	if (sid == NULL || object == NULL || function == NULL || data == NULL) {
+	/* The fourth token denotes blobmsg type, not payload bytes. */
+	data_type = arg_or_null(argv[3]);
+	if (sid == NULL || object == NULL || function == NULL ||
+	    data_type == NULL || strcmp(data_type, "table") != 0) {
 		puts("ERROR_PARSE");
 		return 1;
 	}
@@ -291,7 +293,7 @@ static int cmd_flags(void)
 static void usage(FILE *fp)
 {
 	fprintf(fp,
-		"usage: ubus_file_exec_kill parse <sid|-> <object|-> <function|-> <data|->\n"
+		"usage: ubus_file_exec_kill parse <sid|-> <object|-> <function|-> <data-type:table|other>\n"
 		"       ubus_file_exec_kill canon <path>\n"
 		"       ubus_file_exec_kill match <obj_pat> <fun_pat> <object> <function>\n"
 		"       ubus_file_exec_kill decide <sid|-> <command|-> <params|-> <ubus_obj_pat|-> <ubus_fun_pat|-> <file_exe_pat|-> <file_exe_fun|-> <file_cmd_pat|-> <file_cmd_fun|-> [env_present:0|1]\n"

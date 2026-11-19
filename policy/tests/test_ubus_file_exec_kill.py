@@ -90,6 +90,17 @@ class TestHandwrittenCases(unittest.TestCase):
         self.assertIn("execv", self.cases["missing-sid-parse-error"]["not"])
         self.assertIn("path_found", self.cases["missing-sid-parse-error"]["not"])
 
+    def test_non_table_data_is_rejected_before_authorization(self) -> None:
+        result = evaluate_kill_exec(
+            sid=PROCESSES_WRITE_FIXTURE_SID,
+            command=KILL,
+            params=["-15", "42"],
+            data=[],
+        )
+        self.assertEqual(result.outcome, "jsonrpc_parse_error")
+        self.assertEqual(result.jsonrpc_error, ERROR_PARSE)
+        self.assertFalse(any(step["step"] == "uh_ubus_allowed" for step in result.steps))
+
     def test_write_kill_allow_bare_executable(self) -> None:
         case = self.cases["luci-mod-status-processes-write-kill-allow"]
         result = self._result(case["id"])
@@ -300,10 +311,14 @@ class TestCDouble(unittest.TestCase):
         )
 
     def test_parse_and_canon(self) -> None:
-        missing = self._run("parse", "-", UBUS_OBJECT, UBUS_METHOD, "{}")
+        missing = self._run("parse", "-", UBUS_OBJECT, UBUS_METHOD, "table")
         self.assertEqual(missing.stdout.strip(), "ERROR_PARSE")
-        ok = self._run("parse", PROCESSES_WRITE_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD, "{}")
+        ok = self._run("parse", PROCESSES_WRITE_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD, "table")
         self.assertEqual(ok.stdout.strip(), "PARSE_OK")
+        non_table = self._run(
+            "parse", PROCESSES_WRITE_FIXTURE_SID, UBUS_OBJECT, UBUS_METHOD, "string"
+        )
+        self.assertEqual(non_table.stdout.strip(), "ERROR_PARSE")
         canon = self._run("canon", "/bin/../bin/kill")
         self.assertEqual(canon.stdout.strip(), KILL)
 
