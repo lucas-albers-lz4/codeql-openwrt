@@ -167,8 +167,9 @@ class BundleTests(unittest.TestCase):
             rows = json.loads((self.bundle / f'after_{i}').read_bytes())
             row = next(r for r in rows if r['record_id'] == row_id)
             row['source_location']['start_line'] = 481.0
-            self.assertTrue(any('start_line: expected integer' in e
-                                for e in interchange_contract._validate(row, schema, 'row')))
+            # Schema integer semantics accept integral decimals, while the
+            # handoff transition must still preserve the original JSON type.
+            self.assertEqual(interchange_contract._validate(row, schema, 'row'), [])
             for phase in ('after', 'reimport'):
                 self.put(f'{phase}_{i}', encoded(rows))
         self.refresh()

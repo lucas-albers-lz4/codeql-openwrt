@@ -10,7 +10,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import re
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 
@@ -71,7 +73,7 @@ def _check_schema_keywords(schema: Any, where: str = "schema") -> None:
         raise ContractError(f"{where}.required: expected an array of strings")
     if "enum" in schema and not isinstance(schema["enum"], list):
         raise ContractError(f"{where}.enum: expected an array")
-    if "minimum" in schema and not isinstance(schema["minimum"], (int, float)):
+    if "minimum" in schema and not isinstance(schema["minimum"], (int, float, Decimal)):
         raise ContractError(f"{where}.minimum: expected a number")
     props = schema.get("properties", {})
     if not isinstance(props, dict):
@@ -103,7 +105,7 @@ def _matches_schema(instance: Any, schema: dict[str, Any]) -> bool:
         return False
     if "enum" in schema and instance not in schema["enum"]:
         return False
-    if "minimum" in schema and isinstance(instance, (int, float)) and instance < schema["minimum"]:
+    if "minimum" in schema and isinstance(instance, (int, float, Decimal)) and instance < schema["minimum"]:
         return False
     if isinstance(instance, dict):
         if any(key not in instance for key in schema.get("required", [])):
@@ -139,9 +141,19 @@ def _has_type(value: Any, expected: str) -> bool:
     if expected == "string":
         return isinstance(value, str)
     if expected == "integer":
-        return isinstance(value, int) and not isinstance(value, bool)
+        if isinstance(value, bool):
+            return False
+        if isinstance(value, int):
+            return True
+        if isinstance(value, Decimal):
+            return value.is_finite() and value == value.to_integral_value()
+        return isinstance(value, float) and math.isfinite(value) and value.is_integer()
     if expected == "number":
-        return isinstance(value, (int, float)) and not isinstance(value, bool)
+        if isinstance(value, bool):
+            return False
+        if isinstance(value, Decimal):
+            return value.is_finite()
+        return isinstance(value, int) or (isinstance(value, float) and math.isfinite(value))
     if expected == "boolean":
         return isinstance(value, bool)
     if expected == "null":
@@ -157,7 +169,7 @@ def _validate(instance: Any, schema: dict[str, Any], where: str) -> list[str]:
         return errors
     if "enum" in schema and instance not in schema["enum"]:
         errors.append(f"{where}: value {instance!r} is not in enum {schema['enum']!r}")
-    if "minimum" in schema and isinstance(instance, (int, float)) and instance < schema["minimum"]:
+    if "minimum" in schema and isinstance(instance, (int, float, Decimal)) and instance < schema["minimum"]:
         errors.append(f"{where}: value is below minimum {schema['minimum']}")
     if isinstance(instance, dict):
         for key in schema.get("required", []):
@@ -199,9 +211,11 @@ def _read_document(path: Path) -> Any:
         raise ValueError(f"invalid JSON constant {value}")
 
     try:
-        return json.loads(path.read_text(encoding="utf-8"),
+        # Binary floats can round a fractional JSON token to an integer. Keep
+        # decimal tokens exact, without expanding large exponents into integers.
+        return json.loads(path.read_text(encoding="utf-8"), parse_float=Decimal,
                           object_pairs_hook=unique_pairs, parse_constant=invalid_constant)
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, InvalidOperation) as exc:
         raise ContractError(f"{path}: cannot read JSON: {exc}") from exc
 
 
@@ -330,7 +344,7 @@ def join_policy_grants(
 def validate_ucode_root(ucode_root: Path, repo_root: Path = REPO_ROOT) -> tuple[int, int]:
     schema_path = repo_root / "schemas" / "finding.schema.json"
     lock_path = repo_root / "corpus" / "lock.json"
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    schema = json.loads(schema_path.read_text(encoding="utf-8"), parse_float=Decimal)
     _check_schema_keywords(schema)
     lock_bytes = lock_path.read_bytes()
     lock = json.loads(lock_bytes)
