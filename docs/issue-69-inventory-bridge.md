@@ -2,7 +2,7 @@
 
 ## Scope
 
-This report joins the shipped manifest, extraction record, and two source-site inventories for #69. It does not report a new extraction.
+This report joins the shipped manifest, extraction record, and three source-site inventories for #69. It does not report a new extraction.
 
 The retained artifacts come from separate runs. The RPC evidence records an OpenWrt base at `4de68a67efa6a9939cc7da0bffd65b94dedbd327`. The filesystem evidence records an OpenWrt base at `23ae5aec9846ab5a4846579df70d2a65ce8b11b8`.
 
