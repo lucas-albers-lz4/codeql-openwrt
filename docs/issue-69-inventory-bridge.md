@@ -20,7 +20,7 @@ Each manifest row records the package, original source path, installed path, Git
 
 For example, `modules/luci-base/htdocs/luci-static/resources/rpc.js` maps to `/www/luci-static/resources/rpc.js`. The [manifest](../ql-js/manifest.json) contains all 88 individual mappings. It has 88 distinct installed paths.
 
-The package closure and package-to-Makefile mapping are transcribed inputs. They are not verified by an OpenWrt image build. The mapping follows the existing `luci.mk` htdocs rule. This report does not prove build or install behavior.
+The package closure and package-to-Makefile mapping are transcribed inputs. This report does not use an OpenWrt image build to verify these inputs. The mapping uses the existing `luci.mk` htdocs rule. This report does not prove build or install behavior.
 
 ## Retained extraction evidence
 
