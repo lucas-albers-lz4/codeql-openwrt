@@ -1,0 +1,36 @@
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/files.ql", "--database", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-input/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-uci-cgi-survey/packs", "--output", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/files.bqrs", "--threads=1", "--ram=2048", "--no-default-compilation-cache", "--compilation-cache=/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/compile-cache", "--common-caches=/root/.hermes/profiles/work/cache/scratch/js69-cgi-owned-cache"]
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1154 MB.
+Compiling query plan for /root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/files.ql.
+[1/1 comp 1m29s] Compiled /root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/files.ql.
+Starting evaluation of local/js69-probe/files.ql.
+[1/1 eval 1.2s] Evaluation done; writing results to /root/.hermes/profiles/work/cache/scratch/js69-cgi-results/files.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/files.bqrs", "--format=json", "--entities=url,string", "--output", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/files.json", "--common-caches=/root/.hermes/profiles/work/cache/scratch/js69-cgi-owned-cache"]
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/errors.ql", "--database", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-input/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-uci-cgi-survey/packs", "--output", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/errors.bqrs", "--threads=1", "--ram=2048", "--no-default-compilation-cache", "--compilation-cache=/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/compile-cache", "--common-caches=/root/.hermes/profiles/work/cache/scratch/js69-cgi-owned-cache"]
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1154 MB.
+Compiling query plan for /root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/errors.ql.
+[1/1 comp 1m15s] Compiled /root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/errors.ql.
+Starting evaluation of local/js69-probe/errors.ql.
+[1/1 eval 140ms] Evaluation done; writing results to /root/.hermes/profiles/work/cache/scratch/js69-cgi-results/errors.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/errors.bqrs", "--format=json", "--entities=url,string", "--output", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/errors.json", "--common-caches=/root/.hermes/profiles/work/cache/scratch/js69-cgi-owned-cache"]
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/cgi_surface.ql", "--database", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-input/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-uci-cgi-survey/packs", "--output", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/cgi_surface.bqrs", "--threads=1", "--ram=2048", "--no-default-compilation-cache", "--compilation-cache=/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/compile-cache", "--common-caches=/root/.hermes/profiles/work/cache/scratch/js69-cgi-owned-cache"]
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1154 MB.
+Compiling query plan for /root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/cgi_surface.ql.
+[1/1 comp 1m50s] Compiled /root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/cgi_surface.ql.
+Starting evaluation of local/js69-probe/cgi_surface.ql.
+[1/1 eval 3.7s] Evaluation done; writing results to /root/.hermes/profiles/work/cache/scratch/js69-cgi-results/cgi_surface.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/cgi_surface.bqrs", "--format=json", "--entities=url,string", "--output", "/root/.hermes/profiles/work/cache/scratch/js69-cgi-results/cgi_surface.json", "--common-caches=/root/.hermes/profiles/work/cache/scratch/js69-cgi-owned-cache"]
