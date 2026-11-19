@@ -1,0 +1,79 @@
+{
+  "luci_pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+  "family": "CGI URL construction syntax",
+  "file_count": 88,
+  "sites": [
+    {
+      "source": "modules/luci-base/htdocs/luci-static/resources/fs.js",
+      "installed": "/www/luci-static/resources/fs.js",
+      "start_line": 392,
+      "start_column": 23,
+      "end_line": 392,
+      "end_column": 54,
+      "kind": "base-plus-string",
+      "endpoint": "/cgi-download",
+      "type": "rpc_surface",
+      "assessment": "candidate"
+    },
+    {
+      "source": "modules/luci-base/htdocs/luci-static/resources/fs.js",
+      "installed": "/www/luci-static/resources/fs.js",
+      "start_line": 462,
+      "start_column": 23,
+      "end_line": 462,
+      "end_column": 50,
+      "kind": "base-plus-string",
+      "endpoint": "/cgi-exec",
+      "type": "rpc_surface",
+      "assessment": "candidate"
+    },
+    {
+      "source": "modules/luci-base/htdocs/luci-static/resources/ui.js",
+      "installed": "/www/luci-static/resources/ui.js",
+      "start_line": 3351,
+      "start_column": 23,
+      "end_line": 3351,
+      "end_column": 52,
+      "kind": "template-base-and-suffix",
+      "endpoint": "/cgi-upload",
+      "type": "rpc_surface",
+      "assessment": "candidate"
+    },
+    {
+      "source": "modules/luci-base/htdocs/luci-static/resources/ui.js",
+      "installed": "/www/luci-static/resources/ui.js",
+      "start_line": 4998,
+      "start_column": 22,
+      "end_line": 4998,
+      "end_column": 51,
+      "kind": "template-base-and-suffix",
+      "endpoint": "/cgi-upload",
+      "type": "rpc_surface",
+      "assessment": "candidate"
+    },
+    {
+      "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/flash.js",
+      "installed": "/www/luci-static/resources/view/system/flash.js",
+      "start_line": 83,
+      "start_column": 12,
+      "end_line": 83,
+      "end_column": 41,
+      "kind": "base-plus-string",
+      "endpoint": "/cgi-backup",
+      "type": "rpc_surface",
+      "assessment": "candidate"
+    },
+    {
+      "source": "modules/luci-mod-system/htdocs/luci-static/resources/view/system/flash.js",
+      "installed": "/www/luci-static/resources/view/system/flash.js",
+      "start_line": 178,
+      "start_column": 14,
+      "end_line": 178,
+      "end_column": 45,
+      "kind": "base-plus-string",
+      "endpoint": "/cgi-download",
+      "type": "rpc_surface",
+      "assessment": "candidate"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{"#select":{"columns":[
+   {"kind":"String"}
+  ,{"kind":"String"}
+  ,{"kind":"String"}
+  ,{"kind":"String"}
+  ,{"kind":"String"}
+  ,{"name":"kind","kind":"String"}
+  ,{"name":"endpoint","kind":"String"}
+  ,{"kind":"String"}]
+ ,"tuples":[
+   ["/root/workspace/js69-sites-extraction-20261119/source/modules/luci-base/htdocs/luci-static/resources/fs.js","392","23","392","54","base-plus-string","/cgi-download","candidate"]
+  ,["/root/workspace/js69-sites-extraction-20261119/source/modules/luci-base/htdocs/luci-static/resources/fs.js","462","23","462","50","base-plus-string","/cgi-exec","candidate"]
+  ,["/root/workspace/js69-sites-extraction-20261119/source/modules/luci-base/htdocs/luci-static/resources/ui.js","3351","23","3351","52","template-base-and-suffix","/cgi-upload","candidate"]
+  ,["/root/workspace/js69-sites-extraction-20261119/source/modules/luci-base/htdocs/luci-static/resources/ui.js","4998","22","4998","51","template-base-and-suffix","/cgi-upload","candidate"]
+  ,["/root/workspace/js69-sites-extraction-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/flash.js","83","12","83","41","base-plus-string","/cgi-backup","candidate"]
+  ,["/root/workspace/js69-sites-extraction-20261119/source/modules/luci-mod-system/htdocs/luci-static/resources/view/system/flash.js","178","14","178","45","base-plus-string","/cgi-download","candidate"]]
+ }}

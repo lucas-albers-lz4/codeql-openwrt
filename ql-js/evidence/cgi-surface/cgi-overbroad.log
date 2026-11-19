@@ -1,0 +1,26 @@
+test_real_fixture (test_cgi_surface.CgiSurfaceTest.test_real_fixture) ... FAIL
+test_selected_rows_and_rejections (test_cgi_surface.CgiSurfaceTest.test_selected_rows_and_rejections) ... ok
+
+======================================================================
+FAIL: test_real_fixture (test_cgi_surface.CgiSurfaceTest.test_real_fixture)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/.hermes/profiles/work/cache/scratch/js69-cgi-inventory/ql-js/test_cgi_surface.py", line 58, in test_real_fixture
+    self.assertEqual(rows, EXPECTED_FIXTURE_ROWS)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [['cg[19 chars]s', '12', '15', '12', '38', 'base-plus-string'[631 chars]te']] != [['cg[19 chars]s', '2', '11', '2', '42', 'base-plus-string', [537 chars]te']]
+
+First differing element 0:
+['cgi[18 chars]s', '12', '15', '12', '38', 'base-plus-string'[18 chars]ate']
+['cgi[18 chars]s', '2', '11', '2', '42', 'base-plus-string', [24 chars]ate']
+
+First list contains 1 additional elements.
+First extra element 6:
+['cgi_surface_fixture.js', '7', '15', '7', '48', 'template-base-and-suffix', '/cgi-upload', 'candidate']
+
+Diff is 923 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 2 tests in 71.331s
+
+FAILED (failures=1)

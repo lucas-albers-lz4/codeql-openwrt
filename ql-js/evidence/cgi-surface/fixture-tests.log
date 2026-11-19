@@ -1,0 +1,8 @@
+test_real_fixture (test_cgi_surface.CgiSurfaceTest.test_real_fixture) ... ok
+test_retained_rows_match_pin_specific_source_oracle (test_cgi_surface.CgiSurfaceTest.test_retained_rows_match_pin_specific_source_oracle) ... ok
+test_selected_rows_and_rejections (test_cgi_surface.CgiSurfaceTest.test_selected_rows_and_rejections) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 42.378s
+
+OK
