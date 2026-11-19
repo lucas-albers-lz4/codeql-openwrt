@@ -1,7 +1,8 @@
-# Pinned LuCI JavaScript extraction check
+# Pinned LuCI JavaScript extraction and rpc site inventory
 
-This is the first bounded slice of #69, **not** the JavaScript surface
-inventory. The manifest records original Git blob IDs and SHA-256 hashes for
+The first bounded slice of #69 was the extraction gate. The second inventories
+syntactic `rpc.declare` access candidates as described below, not all JavaScript
+surfaces. The manifest records original Git blob IDs and SHA-256 hashes for
 `htdocs/**/*.js` in the existing `luci-ssl-25.12` LuCI package closure at
 `corpus/lock.json`'s LuCI pin. Installed paths follow the existing `luci.mk`
 htdocs mapping. The closure and package-to-Makefile mapping come from
@@ -56,6 +57,40 @@ control output retains the raw query results and extraction logs.
 Fast offline checks: `python3 -m unittest discover -s ql-js -p 'test_*.py' -v`.
 CI runs these offline checks, not the real CodeQL gate or controls.
 
+## rpc.declare access candidates
+
+Run the extraction gate first, then use its newly accepted output:
+
+```sh
+python3 ql-js/rpc_inventory.py \
+  --luci-git /path/to/luci.git --codeql /path/to/codeql \
+  --packs /path/to/additional-packs --gate-output /path/to/new-evidence-directory \
+  --output /path/to/new-site-evidence-directory
+```
+
+The runner reconstructs the pinned manifest, checks the acceptance input hashes,
+checks staged bytes before and after the queries, and reruns the file and parse
+error queries against that database. It writes raw BQRS and decoded JSON and a
+sorted `inventory.json`; its output directory must not exist. Use a trusted,
+non-concurrently-modified database and toolchain. A receipt alone does not
+cryptographically authenticate the database or CLI.
+
+The query selects property accesses with the syntactic receiver identifier
+`rpc`: `rpc.declare`, `rpc['declare']`, and `rpc[expression]` when the property
+name cannot be determined. It records the inclusive source span of the property
+access, not the enclosing call. Every row is `rpc_surface` / `candidate`: a
+shadowed `rpc`, a property read rather than a call, or an unresolved computed
+key is not proof of an RPC declaration or runtime target. Aliased receivers,
+other API families (`fs`, `uci`, CGI), and indirect or generated references are
+not inventoried. No absence of those sites is implied.
+
+The real-CodeQL fixture test checks exact positive and negative source spans,
+including a shadowed receiver, computed key, literal bracket access, property
+read, comments, strings, and unrelated names. To run it, set `JS69_CODEQL` and
+`JS69_PACKS` to the paths above and run the offline discovery command. Without
+these variables this one test is skipped; CI does not run real CodeQL.
+Retained results and the exact run limits are in `evidence/rpc-surface/`.
+
 ## Limits
 
 The check establishes membership according to `TopLevel.getFile()` and absence
@@ -65,6 +100,6 @@ CodeQL has its own extern files; matching uses absolute `.js` paths under the
 staged root and rejects unexpected query paths rather than claiming coverage of
 externs. The manifest
 is a source-file selection, not evidence of an actual image or package build.
-It does not inventory rpc/fs/uci/cgi sites, computed references or unresolved
-calls, and says nothing about taint, grants, runtime behavior or exploitability.
+It does not inventory all rpc references or fs/uci/cgi sites and says nothing
+about taint, grants, runtime behavior or exploitability.
 Track A and other deferred tracks remain held.

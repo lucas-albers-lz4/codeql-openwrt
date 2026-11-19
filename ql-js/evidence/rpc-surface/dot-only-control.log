@@ -1,0 +1,39 @@
+test_exact_positive_and_negative_sites (test_rpc_surface.RpcSurfaceTest.test_exact_positive_and_negative_sites) ... FAIL
+test_normalizes_only_exact_selected_paths (test_rpc_surface.RpcSurfaceTest.test_normalizes_only_exact_selected_paths) ... ok
+test_receipt_input_set_is_complete (test_rpc_surface.RpcSurfaceTest.test_receipt_input_set_is_complete) ... ok
+test_retained_inventory_matches_decoded_rows_and_anchors (test_rpc_surface.RpcSurfaceTest.test_retained_inventory_matches_decoded_rows_and_anchors) ... ok
+
+======================================================================
+FAIL: test_exact_positive_and_negative_sites (test_rpc_surface.RpcSurfaceTest.test_exact_positive_and_negative_sites)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/workspace/wt-openwrt-js69-sites-20261119/ql-js/test_rpc_surface.py", line 95, in test_exact_positive_and_negative_sites
+    self.assertEqual(rows, [
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+        ['rpc_surface_fixture.js', '3', '1', '3', '11', 'dot', 'candidate'],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        ['rpc_surface_fixture.js', '7', '24', '7', '34', 'dot', 'candidate'],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ])
+    ^^
+AssertionError: Lists differ: [['rp[88 chars]s', '6', '14', '6', '24', 'dot', 'candidate'],[65 chars]te']] != [['rp[88 chars]s', '4', '1', '4', '14', 'literal-index', 'can[223 chars]te']]
+
+First differing element 1:
+['rpc_surface_fixture.js', '6', '14', '6', '24', 'dot', 'candidate']
+['rpc_surface_fixture.js', '4', '1', '4', '14', 'literal-index', 'candidate']
+
+Second list contains 2 additional elements.
+First extra element 3:
+['rpc_surface_fixture.js', '6', '14', '6', '24', 'dot', 'candidate']
+
+  [['rpc_surface_fixture.js', '3', '1', '3', '11', 'dot', 'candidate'],
++  ['rpc_surface_fixture.js', '4', '1', '4', '14', 'literal-index', 'candidate'],
++  ['rpc_surface_fixture.js', '5', '1', '5', '8', 'computed-index', 'candidate'],
+   ['rpc_surface_fixture.js', '6', '14', '6', '24', 'dot', 'candidate'],
+   ['rpc_surface_fixture.js', '7', '24', '7', '34', 'dot', 'candidate']]
+
+----------------------------------------------------------------------
+Ran 4 tests in 37.146s
+
+FAILED (failures=1)

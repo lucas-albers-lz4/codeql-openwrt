@@ -1,0 +1,36 @@
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/workspace/wt-openwrt-js69-sites-20261119/ql-js/files.ql", "--database", "/root/workspace/js69-sites-extraction-20261119/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-probe/packs", "--output", "/root/workspace/js69-sites-results-final-v3-20261119/files.bqrs", "--threads=2", "--ram=3072"]
+Resolving data extensions.
+Finished resolving data extensions.
+WARNING: Failed to retrieve qlpack commit hash from Git repository
+Merging data extensions.
+Finished merging data extensions.
+Compiling query plan for /root/workspace/wt-openwrt-js69-sites-20261119/ql-js/files.ql.
+[1/1] Found in cache: /root/workspace/wt-openwrt-js69-sites-20261119/ql-js/files.ql.
+Starting evaluation of local/js69-probe/files.ql.
+[1/1 eval 507ms] Evaluation done; writing results to /root/workspace/js69-sites-results-final-v3-20261119/files.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/workspace/js69-sites-results-final-v3-20261119/files.bqrs", "--format=json", "--entities=url,string", "--output", "/root/workspace/js69-sites-results-final-v3-20261119/files.json"]
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/workspace/wt-openwrt-js69-sites-20261119/ql-js/errors.ql", "--database", "/root/workspace/js69-sites-extraction-20261119/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-probe/packs", "--output", "/root/workspace/js69-sites-results-final-v3-20261119/errors.bqrs", "--threads=2", "--ram=3072"]
+Resolving data extensions.
+Finished resolving data extensions.
+WARNING: Failed to retrieve qlpack commit hash from Git repository
+Merging data extensions.
+Finished merging data extensions.
+Compiling query plan for /root/workspace/wt-openwrt-js69-sites-20261119/ql-js/errors.ql.
+[1/1] Found in cache: /root/workspace/wt-openwrt-js69-sites-20261119/ql-js/errors.ql.
+Starting evaluation of local/js69-probe/errors.ql.
+[1/1 eval 76ms] Evaluation done; writing results to /root/workspace/js69-sites-results-final-v3-20261119/errors.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/workspace/js69-sites-results-final-v3-20261119/errors.bqrs", "--format=json", "--entities=url,string", "--output", "/root/workspace/js69-sites-results-final-v3-20261119/errors.json"]
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "query", "run", "/root/workspace/wt-openwrt-js69-sites-20261119/ql-js/rpc_surface.ql", "--database", "/root/workspace/js69-sites-extraction-20261119/db", "--additional-packs=/root/.hermes/profiles/work/cache/scratch/js69-probe/packs", "--output", "/root/workspace/js69-sites-results-final-v3-20261119/rpc_surface.bqrs", "--threads=2", "--ram=3072"]
+Resolving data extensions.
+Finished resolving data extensions.
+WARNING: Failed to retrieve qlpack commit hash from Git repository
+Merging data extensions.
+Finished merging data extensions.
+Compiling query plan for /root/workspace/wt-openwrt-js69-sites-20261119/ql-js/rpc_surface.ql.
+[1/1] Found in cache: /root/workspace/wt-openwrt-js69-sites-20261119/ql-js/rpc_surface.ql.
+Starting evaluation of local/js69-probe/rpc_surface.ql.
+[1/1 eval 1.1s] Evaluation done; writing results to /root/workspace/js69-sites-results-final-v3-20261119/rpc_surface.bqrs.
+Shutting down query evaluator.
+["/root/.local/share/gh/extensions/gh-codeql/dist/release/v2.27.4/codeql", "bqrs", "decode", "/root/workspace/js69-sites-results-final-v3-20261119/rpc_surface.bqrs", "--format=json", "--entities=url,string", "--output", "/root/workspace/js69-sites-results-final-v3-20261119/rpc_surface.json"]

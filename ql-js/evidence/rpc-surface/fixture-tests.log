@@ -1,0 +1,17 @@
+test_exact_paths_and_no_errors_accept (test_extraction_gate.ExtractionAcceptanceTest.test_exact_paths_and_no_errors_accept) ... ok
+test_manifest_identity_rejects_missing_or_altered_row (test_extraction_gate.ExtractionAcceptanceTest.test_manifest_identity_rejects_missing_or_altered_row) ... ok
+test_missing_extra_and_duplicate_paths_reject (test_extraction_gate.ExtractionAcceptanceTest.test_missing_extra_and_duplicate_paths_reject) ... ok
+test_parse_error_and_malformed_results_reject (test_extraction_gate.ExtractionAcceptanceTest.test_parse_error_and_malformed_results_reject) ... ok
+test_same_count_duplicate_rejects (test_extraction_gate.ExtractionAcceptanceTest.test_same_count_duplicate_rejects) ... ok
+test_same_count_foreign_path_substitution_rejects (test_extraction_gate.ExtractionAcceptanceTest.test_same_count_foreign_path_substitution_rejects) ... ok
+test_same_count_foreign_same_basename_substitution_rejects (test_extraction_gate.ExtractionAcceptanceTest.test_same_count_foreign_same_basename_substitution_rejects) ... ok
+test_source_identity_detects_changed_bytes_and_extra_file (test_extraction_gate.ExtractionAcceptanceTest.test_source_identity_detects_changed_bytes_and_extra_file) ... ok
+test_exact_positive_and_negative_sites (test_rpc_surface.RpcSurfaceTest.test_exact_positive_and_negative_sites) ... ok
+test_normalizes_only_exact_selected_paths (test_rpc_surface.RpcSurfaceTest.test_normalizes_only_exact_selected_paths) ... ok
+test_receipt_input_set_is_complete (test_rpc_surface.RpcSurfaceTest.test_receipt_input_set_is_complete) ... ok
+test_retained_inventory_matches_decoded_rows_and_anchors (test_rpc_surface.RpcSurfaceTest.test_retained_inventory_matches_decoded_rows_and_anchors) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 13.819s
+
+OK
