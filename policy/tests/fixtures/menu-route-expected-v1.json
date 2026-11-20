@@ -1,0 +1,33 @@
+{
+  "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json": [
+    "admin/network/firewall", "admin/network/firewall/zones", "admin/network/firewall/forwards",
+    "admin/network/firewall/rules", "admin/network/firewall/snats", "admin/network/firewall/ipsets",
+    "admin/network/firewall/custom"
+  ],
+  "applications/luci-app-package-manager/root/usr/share/luci/menu.d/luci-app-package-manager.json": [
+    "admin/system/package-manager"
+  ],
+  "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json": [
+    "admin", "admin/status", "admin/system", "admin/services", "admin/network", "admin/vpn",
+    "admin/translations/*", "admin/ubus/*", "admin/logout", "admin/uci", "admin/uci/revert",
+    "admin/uci/apply_rollback", "admin/uci/apply_unchecked", "admin/uci/confirm", "admin/menu"
+  ],
+  "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json": [
+    "admin/network/switch", "admin/network/wireless", "admin/network/remote_addr/*",
+    "admin/network/network", "admin/network/routes", "admin/network/dhcp", "admin/network/dns",
+    "admin/network/diagnostics"
+  ],
+  "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json": [
+    "admin/status/overview", "admin/status/routes", "admin/status/routesj", "admin/status/iptables",
+    "admin/status/nftables", "admin/status/nftables/iptables", "admin/status/logs", "admin/status/logs/syslog",
+    "admin/status/logs/dmesg", "admin/status/processes", "admin/status/channel_analysis",
+    "admin/status/realtime", "admin/status/realtime/load", "admin/status/realtime/bandwidth",
+    "admin/status/realtime/wireless", "admin/status/realtime/connections"
+  ],
+  "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json": [
+    "admin/system/system", "admin/system/admin", "admin/system/admin/password", "admin/system/admin/dropbear",
+    "admin/system/admin/sshkeys", "admin/system/admin/uhttpd", "admin/system/admin/repokeys",
+    "admin/system/startup", "admin/system/crontab", "admin/system/mounts", "admin/system/leds",
+    "admin/system/flash", "admin/system/reboot"
+  ]
+}
