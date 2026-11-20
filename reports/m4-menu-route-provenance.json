@@ -1,0 +1,1431 @@
+{
+  "kind": "menu_route_source_inventory",
+  "version": 1,
+  "evidence_need": "M4:menu-route-declaration-provenance",
+  "profile": "luci-ssl-25.12",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "luci_pin": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+  "luci_url": "https://github.com/openwrt/luci.git",
+  "source_tree": "34b39b1f15d8a68898d84cab7f48e87f1ba80ac6",
+  "scope_inputs_sha256": {
+    "corpus/luci_ssl_files.py": "b135b5f5dbe3feacd78705d9a85b11cc55f4b6961fe7ee94c8b0d7be316a6b46",
+    "corpus/menu_routes.py": "b90e679644f7fd0ed83d82c1e397467ba5d8df113436e4b1b6782febf86f03ea"
+  },
+  "selection": "Existing reviewed static LuCI-only luci-ssl closure; direct menu.d/*.json in root/ only.",
+  "ordering": "Source path then literal route key; presentation only, not runtime precedence.",
+  "semantics": "unassessed",
+  "runtime_executed": false,
+  "package_scope": [
+    {
+      "package": "luci-ssl",
+      "makefile": "collections/luci-ssl/Makefile",
+      "menu_sources": []
+    },
+    {
+      "package": "luci-light",
+      "makefile": "collections/luci-light/Makefile",
+      "menu_sources": []
+    },
+    {
+      "package": "luci-mod-admin-full",
+      "makefile": "modules/luci-mod-admin-full/Makefile",
+      "menu_sources": []
+    },
+    {
+      "package": "luci-base",
+      "makefile": "modules/luci-base/Makefile",
+      "menu_sources": [
+        "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json"
+      ]
+    },
+    {
+      "package": "luci-mod-status",
+      "makefile": "modules/luci-mod-status/Makefile",
+      "menu_sources": [
+        "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json"
+      ]
+    },
+    {
+      "package": "luci-mod-system",
+      "makefile": "modules/luci-mod-system/Makefile",
+      "menu_sources": [
+        "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json"
+      ]
+    },
+    {
+      "package": "luci-mod-network",
+      "makefile": "modules/luci-mod-network/Makefile",
+      "menu_sources": [
+        "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json"
+      ]
+    },
+    {
+      "package": "luci-lib-uqr",
+      "makefile": "libs/luci-lib-uqr/Makefile",
+      "menu_sources": []
+    },
+    {
+      "package": "luci-app-firewall",
+      "makefile": "applications/luci-app-firewall/Makefile",
+      "menu_sources": [
+        "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json"
+      ]
+    },
+    {
+      "package": "luci-theme-bootstrap",
+      "makefile": "themes/luci-theme-bootstrap/Makefile",
+      "menu_sources": []
+    },
+    {
+      "package": "luci-proto-ppp",
+      "makefile": "protocols/luci-proto-ppp/Makefile",
+      "menu_sources": []
+    },
+    {
+      "package": "luci-proto-ipv6",
+      "makefile": "protocols/luci-proto-ipv6/Makefile",
+      "menu_sources": []
+    },
+    {
+      "package": "luci-app-package-manager",
+      "makefile": "applications/luci-app-package-manager/Makefile",
+      "menu_sources": [
+        "applications/luci-app-package-manager/root/usr/share/luci/menu.d/luci-app-package-manager.json"
+      ]
+    }
+  ],
+  "source_evidence": [
+    {
+      "source": "applications/luci-app-firewall/Makefile",
+      "source_blob": "1ae78e16f02864984602102239ac208e8aeb87a3",
+      "sha256": "00badd5d4995786561b3466ce5b2b5ee4f09357b03d2452098084411552647b8"
+    },
+    {
+      "source": "applications/luci-app-package-manager/Makefile",
+      "source_blob": "d8398441d3ebd3dab0ddf158bc74ecb11dc717f8",
+      "sha256": "234561b56808263cc060896e0576d15b22a624c9be288cd118e00b784d571e58"
+    },
+    {
+      "source": "collections/luci-light/Makefile",
+      "source_blob": "d0d1997f04f907de8da78a7a96c7179c59abaf51",
+      "sha256": "1d02f3bad127162339bcc49524c383a18c336f9ff832b391fa499184e974fbc6"
+    },
+    {
+      "source": "collections/luci-ssl/Makefile",
+      "source_blob": "6c89b6abad39f8bce20719b41463fca130044296",
+      "sha256": "a02dc41d525f1a0f0cbdb5b697a66bcc3b371b0f25a6362d0d2bc5fd8cf3f684"
+    },
+    {
+      "source": "libs/luci-lib-uqr/Makefile",
+      "source_blob": "688fdef40732d3e96417d768d85624ea490f7b37",
+      "sha256": "8512ed53567209aec9f7fd28d8402d7cbf0eab83c64f51d5e2cb11876d907743"
+    },
+    {
+      "source": "luci.mk",
+      "source_blob": "429f79da7923a39fc7c43428290c8b204eac2542",
+      "sha256": "9716c9a7a1c276b867df5887558e2b63b78f7d3695915adb7fcd0a7f0182ed0d"
+    },
+    {
+      "source": "modules/luci-base/Makefile",
+      "source_blob": "7f5d1809fbc4df656da11644c1d57bda8a2068cd",
+      "sha256": "4a933ee77787783219bdeae45b03d89a6c3b5f1512e8ad8bc68d19f4b250c9bc"
+    },
+    {
+      "source": "modules/luci-base/ucode/controller/admin/index.uc",
+      "source_blob": "d433e1161ea1069a72d7ace916915e82df3ce4b8",
+      "sha256": "7d7a5dc3e694ad232e4e0f3d01db17c2f5502338aa8c4fc44fa714b0b1147620"
+    },
+    {
+      "source": "modules/luci-base/ucode/dispatcher.uc",
+      "source_blob": "99712b85e7bd1a22f300b00403bd66621b3d40f4",
+      "sha256": "4f9923cf569aeebb956343d208bcc38f40d8a26d2f46f12c5539a9582fa4f037"
+    },
+    {
+      "source": "modules/luci-base/ucode/uhttpd.uc",
+      "source_blob": "df1ecc78657d9db618ab253c71497db4c66335fc",
+      "sha256": "a2b2694f52c021af16dd06ac8c988b8a0a726d9e8186d308708268ebb8849493"
+    },
+    {
+      "source": "modules/luci-mod-admin-full/Makefile",
+      "source_blob": "b376b35e55622803f2088a7491c3e1679578c4e5",
+      "sha256": "c64544d6700cc3068b8708f84b66dfdcdc2f49730cc99aae2d3c75fbdd130205"
+    },
+    {
+      "source": "modules/luci-mod-network/Makefile",
+      "source_blob": "eee08272f63f58b3fea7a5dabe39e6c1163b1ff3",
+      "sha256": "6655bfdd158af34233396a24fac0a3f671e543553f8c14b377ac2948932d09d6"
+    },
+    {
+      "source": "modules/luci-mod-status/Makefile",
+      "source_blob": "6b86e8472ca3aa2863ae036168e142026a2ae331",
+      "sha256": "912800ee5a94aa7bf70ef5fb12d1f7fa5e058d123965bc745ff5ac02e701dcdb"
+    },
+    {
+      "source": "modules/luci-mod-system/Makefile",
+      "source_blob": "a6d5a7a456628e8535924358c9584f1fd5e3a318",
+      "sha256": "315224a6aed5598eb229533eb73cc846e79f9d1f6fba4d1e75587910ef95cfe7"
+    },
+    {
+      "source": "protocols/luci-proto-ipv6/Makefile",
+      "source_blob": "edee5705bc9fd153f0a4faa111c20cb3a1376c6e",
+      "sha256": "e00c6cc2b3f7a18af1cd85406ae452ed2afe1a28dbc09e9b398869a0bb5a1967"
+    },
+    {
+      "source": "protocols/luci-proto-ppp/Makefile",
+      "source_blob": "7b60403d881c374acf617ce1e0fd3569a4e2617e",
+      "sha256": "f76b0e6571895ccb6afbc99ff2a011097454965d12368f25830be645d0f49804"
+    },
+    {
+      "source": "themes/luci-theme-bootstrap/Makefile",
+      "source_blob": "5d47ccea215bafb39bac0066d59de97a8caba739",
+      "sha256": "b27851b081fb50afec0f1c901dca6195191089084cd7844ac9e25cfbacbbafb5"
+    }
+  ],
+  "files": [
+    {
+      "package": "luci-app-firewall",
+      "source": "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json",
+      "installed": "/usr/share/luci/menu.d/luci-app-firewall.json",
+      "source_blob": "f024dcfe2537366a5ea9bd418a581ac526b110f3",
+      "mode": "100644",
+      "bytes": 1241,
+      "sha256": "6af5ecc3f9243900a55cca5b8625656e3f8d6318b512121652617ab8d61bdd38"
+    },
+    {
+      "package": "luci-app-package-manager",
+      "source": "applications/luci-app-package-manager/root/usr/share/luci/menu.d/luci-app-package-manager.json",
+      "installed": "/usr/share/luci/menu.d/luci-app-package-manager.json",
+      "source_blob": "c54688e22bf6a4bb17874d54f68b78d15e604b3c",
+      "mode": "100644",
+      "bytes": 207,
+      "sha256": "d87f62c135949edd80f4e5ff5b76416132dedef6c8058260737d3a3b62135241"
+    },
+    {
+      "package": "luci-base",
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "installed": "/usr/share/luci/menu.d/luci-base.json",
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "mode": "100644",
+      "bytes": 2557,
+      "sha256": "8490166253a477e5755c053d6eb76b025c3d6f89c0016b41b6d54de8e2237faa"
+    },
+    {
+      "package": "luci-mod-network",
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json",
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "mode": "100644",
+      "bytes": 1868,
+      "sha256": "8a21b253587d246218c1614d576d4001c451b69b63c920cdb3e0663e3aeb77f4"
+    },
+    {
+      "package": "luci-mod-status",
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json",
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "mode": "100644",
+      "bytes": 3323,
+      "sha256": "93801ac0e9d9ee4573edcf352278d3d23b55604d412807d94f6dccd1d446ea21"
+    },
+    {
+      "package": "luci-mod-system",
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json",
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "mode": "100644",
+      "bytes": 2815,
+      "sha256": "6ba103e908d9ac10c778e2682be59a430fb2efbe34bcef36ae9df7a1c871e8e3"
+    }
+  ],
+  "declarations": [
+    {
+      "source": "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json",
+      "route": "admin/network/firewall",
+      "json_pointer": "/admin~1network~1firewall",
+      "spec": {
+        "title": "Firewall",
+        "order": 60,
+        "action": {
+          "type": "alias",
+          "path": "admin/network/firewall/zones"
+        },
+        "depends": {
+          "acl": [
+            "luci-app-firewall"
+          ],
+          "fs": {
+            "/sbin/fw3": "executable"
+          },
+          "uci": {
+            "firewall": true
+          }
+        }
+      },
+      "source_blob": "f024dcfe2537366a5ea9bd418a581ac526b110f3",
+      "installed": "/usr/share/luci/menu.d/luci-app-firewall.json"
+    },
+    {
+      "source": "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json",
+      "route": "admin/network/firewall/custom",
+      "json_pointer": "/admin~1network~1firewall~1custom",
+      "spec": {
+        "title": "Custom Rules",
+        "order": 50,
+        "action": {
+          "type": "view",
+          "path": "firewall/custom"
+        },
+        "depends": {
+          "fs": {
+            "/usr/share/fw3/helpers.conf": "file"
+          }
+        }
+      },
+      "source_blob": "f024dcfe2537366a5ea9bd418a581ac526b110f3",
+      "installed": "/usr/share/luci/menu.d/luci-app-firewall.json"
+    },
+    {
+      "source": "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json",
+      "route": "admin/network/firewall/forwards",
+      "json_pointer": "/admin~1network~1firewall~1forwards",
+      "spec": {
+        "title": "Port Forwards",
+        "order": 20,
+        "action": {
+          "type": "view",
+          "path": "firewall/forwards"
+        }
+      },
+      "source_blob": "f024dcfe2537366a5ea9bd418a581ac526b110f3",
+      "installed": "/usr/share/luci/menu.d/luci-app-firewall.json"
+    },
+    {
+      "source": "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json",
+      "route": "admin/network/firewall/ipsets",
+      "json_pointer": "/admin~1network~1firewall~1ipsets",
+      "spec": {
+        "title": "IP Sets",
+        "order": 45,
+        "action": {
+          "type": "view",
+          "path": "firewall/ipsets"
+        }
+      },
+      "source_blob": "f024dcfe2537366a5ea9bd418a581ac526b110f3",
+      "installed": "/usr/share/luci/menu.d/luci-app-firewall.json"
+    },
+    {
+      "source": "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json",
+      "route": "admin/network/firewall/rules",
+      "json_pointer": "/admin~1network~1firewall~1rules",
+      "spec": {
+        "title": "Traffic Rules",
+        "order": 30,
+        "action": {
+          "type": "view",
+          "path": "firewall/rules"
+        }
+      },
+      "source_blob": "f024dcfe2537366a5ea9bd418a581ac526b110f3",
+      "installed": "/usr/share/luci/menu.d/luci-app-firewall.json"
+    },
+    {
+      "source": "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json",
+      "route": "admin/network/firewall/snats",
+      "json_pointer": "/admin~1network~1firewall~1snats",
+      "spec": {
+        "title": "NAT Rules",
+        "order": 40,
+        "action": {
+          "type": "view",
+          "path": "firewall/snats"
+        }
+      },
+      "source_blob": "f024dcfe2537366a5ea9bd418a581ac526b110f3",
+      "installed": "/usr/share/luci/menu.d/luci-app-firewall.json"
+    },
+    {
+      "source": "applications/luci-app-firewall/root/usr/share/luci/menu.d/luci-app-firewall.json",
+      "route": "admin/network/firewall/zones",
+      "json_pointer": "/admin~1network~1firewall~1zones",
+      "spec": {
+        "title": "General Settings",
+        "order": 10,
+        "action": {
+          "type": "view",
+          "path": "firewall/zones"
+        }
+      },
+      "source_blob": "f024dcfe2537366a5ea9bd418a581ac526b110f3",
+      "installed": "/usr/share/luci/menu.d/luci-app-firewall.json"
+    },
+    {
+      "source": "applications/luci-app-package-manager/root/usr/share/luci/menu.d/luci-app-package-manager.json",
+      "route": "admin/system/package-manager",
+      "json_pointer": "/admin~1system~1package-manager",
+      "spec": {
+        "title": "Software",
+        "order": 30,
+        "action": {
+          "type": "view",
+          "path": "package-manager"
+        },
+        "depends": {
+          "acl": [
+            "luci-app-package-manager"
+          ]
+        }
+      },
+      "source_blob": "c54688e22bf6a4bb17874d54f68b78d15e604b3c",
+      "installed": "/usr/share/luci/menu.d/luci-app-package-manager.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin",
+      "json_pointer": "/admin",
+      "spec": {
+        "title": "Administration",
+        "order": 10,
+        "action": {
+          "type": "firstchild",
+          "recurse": true
+        },
+        "auth": {
+          "methods": [
+            "cookie:sysauth_https",
+            "cookie:sysauth_http"
+          ],
+          "login": true
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/logout",
+      "json_pointer": "/admin~1logout",
+      "spec": {
+        "title": "Log out",
+        "order": 999,
+        "action": {
+          "type": "function",
+          "module": "luci.controller.admin.index",
+          "function": "action_logout"
+        },
+        "depends": {
+          "acl": [
+            "luci-base"
+          ]
+        },
+        "firstchild_ineligible": true
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/menu",
+      "json_pointer": "/admin~1menu",
+      "spec": {
+        "action": {
+          "type": "function",
+          "module": "luci.controller.admin.index",
+          "function": "action_menu"
+        },
+        "auth": {}
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/network",
+      "json_pointer": "/admin~1network",
+      "spec": {
+        "title": "Network",
+        "order": 50,
+        "action": {
+          "type": "firstchild",
+          "recurse": true
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/services",
+      "json_pointer": "/admin~1services",
+      "spec": {
+        "title": "Services",
+        "order": 40,
+        "action": {
+          "type": "firstchild",
+          "recurse": true
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/status",
+      "json_pointer": "/admin~1status",
+      "spec": {
+        "title": "Status",
+        "order": 10,
+        "action": {
+          "type": "firstchild",
+          "preferred": "overview",
+          "recurse": true
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/system",
+      "json_pointer": "/admin~1system",
+      "spec": {
+        "title": "System",
+        "order": 20,
+        "action": {
+          "type": "firstchild",
+          "preferred": "system",
+          "recurse": true
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/translations/*",
+      "json_pointer": "/admin~1translations~1*",
+      "spec": {
+        "action": {
+          "type": "function",
+          "module": "luci.controller.admin.index",
+          "function": "action_translations"
+        },
+        "auth": {}
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/ubus/*",
+      "json_pointer": "/admin~1ubus~1*",
+      "spec": {
+        "action": {
+          "type": "function",
+          "module": "luci.controller.admin.index",
+          "function": "action_ubus"
+        },
+        "auth": {}
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/uci",
+      "json_pointer": "/admin~1uci",
+      "spec": {
+        "action": {
+          "type": "firstchild"
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/uci/apply_rollback",
+      "json_pointer": "/admin~1uci~1apply_rollback",
+      "spec": {
+        "cors": true,
+        "action": {
+          "type": "function",
+          "module": "luci.controller.admin.uci",
+          "function": "action_apply_rollback",
+          "post": true
+        },
+        "auth": {
+          "methods": [
+            "cookie:sysauth_https",
+            "cookie:sysauth_http"
+          ]
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/uci/apply_unchecked",
+      "json_pointer": "/admin~1uci~1apply_unchecked",
+      "spec": {
+        "cors": true,
+        "action": {
+          "type": "function",
+          "module": "luci.controller.admin.uci",
+          "function": "action_apply_unchecked",
+          "post": true
+        },
+        "auth": {
+          "methods": [
+            "cookie:sysauth_https",
+            "cookie:sysauth_http"
+          ]
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/uci/confirm",
+      "json_pointer": "/admin~1uci~1confirm",
+      "spec": {
+        "cors": true,
+        "action": {
+          "type": "function",
+          "module": "luci.controller.admin.uci",
+          "function": "action_confirm"
+        },
+        "auth": {}
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/uci/revert",
+      "json_pointer": "/admin~1uci~1revert",
+      "spec": {
+        "action": {
+          "type": "function",
+          "module": "luci.controller.admin.uci",
+          "function": "action_revert",
+          "post": true
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-base/root/usr/share/luci/menu.d/luci-base.json",
+      "route": "admin/vpn",
+      "json_pointer": "/admin~1vpn",
+      "spec": {
+        "title": "VPN",
+        "order": 70,
+        "action": {
+          "type": "firstchild",
+          "recurse": true
+        }
+      },
+      "source_blob": "e6deb1fddb924e97a8e748b1b788519842c05d09",
+      "installed": "/usr/share/luci/menu.d/luci-base.json"
+    },
+    {
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "route": "admin/network/dhcp",
+      "json_pointer": "/admin~1network~1dhcp",
+      "spec": {
+        "title": "DHCP",
+        "order": 40,
+        "action": {
+          "type": "view",
+          "path": "network/dhcp"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-network-dhcp"
+          ],
+          "fs": [
+            {
+              "/usr/sbin/odhcpd": "executable"
+            },
+            {
+              "/usr/sbin/dnsmasq": "executable"
+            }
+          ],
+          "uci": {
+            "dhcp": true
+          }
+        }
+      },
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json"
+    },
+    {
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "route": "admin/network/diagnostics",
+      "json_pointer": "/admin~1network~1diagnostics",
+      "spec": {
+        "title": "Diagnostics",
+        "order": 50,
+        "action": {
+          "type": "view",
+          "path": "network/diagnostics"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-network-diagnostics"
+          ]
+        }
+      },
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json"
+    },
+    {
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "route": "admin/network/dns",
+      "json_pointer": "/admin~1network~1dns",
+      "spec": {
+        "title": "DNS",
+        "order": 45,
+        "action": {
+          "type": "view",
+          "path": "network/dns"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-network-dns"
+          ],
+          "fs": {
+            "/usr/sbin/dnsmasq": "executable"
+          },
+          "uci": {
+            "dhcp": true
+          }
+        }
+      },
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json"
+    },
+    {
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "route": "admin/network/network",
+      "json_pointer": "/admin~1network~1network",
+      "spec": {
+        "title": "Interfaces",
+        "order": 10,
+        "action": {
+          "type": "view",
+          "path": "network/interfaces"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-network-config"
+          ]
+        }
+      },
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json"
+    },
+    {
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "route": "admin/network/remote_addr/*",
+      "json_pointer": "/admin~1network~1remote_addr~1*",
+      "spec": {
+        "action": {
+          "type": "call",
+          "module": "luci.controller.admin.network",
+          "function": "remote_addr"
+        }
+      },
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json"
+    },
+    {
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "route": "admin/network/routes",
+      "json_pointer": "/admin~1network~1routes",
+      "spec": {
+        "title": "Routing",
+        "order": 30,
+        "action": {
+          "type": "view",
+          "path": "network/routes"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-network-config"
+          ]
+        }
+      },
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json"
+    },
+    {
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "route": "admin/network/switch",
+      "json_pointer": "/admin~1network~1switch",
+      "spec": {
+        "title": "Switch",
+        "order": 20,
+        "action": {
+          "type": "view",
+          "path": "network/switch"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-network-config"
+          ],
+          "fs": {
+            "/sbin/swconfig": "executable"
+          },
+          "uci": {
+            "network": {
+              "@switch": true
+            }
+          }
+        }
+      },
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json"
+    },
+    {
+      "source": "modules/luci-mod-network/root/usr/share/luci/menu.d/luci-mod-network.json",
+      "route": "admin/network/wireless",
+      "json_pointer": "/admin~1network~1wireless",
+      "spec": {
+        "title": "Wireless",
+        "order": 15,
+        "action": {
+          "type": "view",
+          "path": "network/wireless"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-network-config"
+          ],
+          "uci": {
+            "wireless": {
+              "@wifi-device": true
+            }
+          }
+        }
+      },
+      "source_blob": "66b28c52f8a6ac9f909e92413c8331628164fdf7",
+      "installed": "/usr/share/luci/menu.d/luci-mod-network.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/channel_analysis",
+      "json_pointer": "/admin~1status~1channel_analysis",
+      "spec": {
+        "title": "Channel Analysis",
+        "order": 7,
+        "action": {
+          "type": "view",
+          "path": "status/channel_analysis"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-channel_analysis"
+          ],
+          "uci": {
+            "wireless": {
+              "@wifi-device": true
+            }
+          }
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/iptables",
+      "json_pointer": "/admin~1status~1iptables",
+      "spec": {
+        "title": "Firewall",
+        "order": 3,
+        "action": {
+          "type": "view",
+          "path": "status/iptables"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-firewall"
+          ],
+          "fs": [
+            {
+              "/usr/sbin/nft": "absent",
+              "/usr/sbin/iptables": "executable"
+            },
+            {
+              "/usr/sbin/nft": "absent",
+              "/usr/sbin/ip6tables": "executable"
+            }
+          ]
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/logs",
+      "json_pointer": "/admin~1status~1logs",
+      "spec": {
+        "title": "System Log",
+        "order": 4,
+        "action": {
+          "type": "alias",
+          "path": "admin/status/logs/syslog"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-logs"
+          ]
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/logs/dmesg",
+      "json_pointer": "/admin~1status~1logs~1dmesg",
+      "spec": {
+        "title": "Kernel Log",
+        "order": 2,
+        "action": {
+          "type": "view",
+          "path": "status/dmesg"
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/logs/syslog",
+      "json_pointer": "/admin~1status~1logs~1syslog",
+      "spec": {
+        "title": "System Log",
+        "order": 1,
+        "action": {
+          "type": "view",
+          "path": "status/syslog"
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/nftables",
+      "json_pointer": "/admin~1status~1nftables",
+      "spec": {
+        "title": "Firewall",
+        "order": 3,
+        "action": {
+          "type": "view",
+          "path": "status/nftables"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-firewall"
+          ],
+          "fs": {
+            "/usr/sbin/nft": "executable"
+          }
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/nftables/iptables",
+      "json_pointer": "/admin~1status~1nftables~1iptables",
+      "spec": {
+        "action": {
+          "type": "view",
+          "path": "status/iptables"
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/overview",
+      "json_pointer": "/admin~1status~1overview",
+      "spec": {
+        "title": "Overview",
+        "order": 1,
+        "action": {
+          "type": "template",
+          "path": "admin_status/index"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-index"
+          ]
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/processes",
+      "json_pointer": "/admin~1status~1processes",
+      "spec": {
+        "title": "Processes",
+        "order": 6,
+        "action": {
+          "type": "view",
+          "path": "status/processes"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-processes"
+          ]
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/realtime",
+      "json_pointer": "/admin~1status~1realtime",
+      "spec": {
+        "title": "Realtime Graphs",
+        "order": 7,
+        "action": {
+          "type": "alias",
+          "path": "admin/status/realtime/load"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-realtime"
+          ]
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/realtime/bandwidth",
+      "json_pointer": "/admin~1status~1realtime~1bandwidth",
+      "spec": {
+        "title": "Bandwidth",
+        "order": 2,
+        "action": {
+          "type": "view",
+          "path": "status/bandwidth"
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/realtime/connections",
+      "json_pointer": "/admin~1status~1realtime~1connections",
+      "spec": {
+        "title": "Connections",
+        "order": 4,
+        "action": {
+          "type": "view",
+          "path": "status/connections"
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/realtime/load",
+      "json_pointer": "/admin~1status~1realtime~1load",
+      "spec": {
+        "title": "Load",
+        "order": 1,
+        "action": {
+          "type": "view",
+          "path": "status/load"
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/realtime/wireless",
+      "json_pointer": "/admin~1status~1realtime~1wireless",
+      "spec": {
+        "title": "Wireless",
+        "order": 3,
+        "action": {
+          "type": "view",
+          "path": "status/wireless"
+        },
+        "depends": {
+          "uci": {
+            "wireless": {
+              "@wifi-device": true
+            }
+          }
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/routes",
+      "json_pointer": "/admin~1status~1routes",
+      "spec": {
+        "title": "Routing",
+        "order": 2,
+        "action": {
+          "type": "view",
+          "path": "status/routes"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-routes"
+          ],
+          "fs": [
+            {
+              "/usr/libexec/ip-tiny": "absent",
+              "/usr/libexec/ip-full": "absent"
+            }
+          ]
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-status/root/usr/share/luci/menu.d/luci-mod-status.json",
+      "route": "admin/status/routesj",
+      "json_pointer": "/admin~1status~1routesj",
+      "spec": {
+        "title": "Routing",
+        "order": 2,
+        "action": {
+          "type": "view",
+          "path": "status/routesj"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-status-routes-json"
+          ],
+          "fs": [
+            {
+              "/usr/libexec/ip-tiny": "executable"
+            },
+            {
+              "/usr/libexec/ip-full": "executable"
+            }
+          ]
+        }
+      },
+      "source_blob": "23e8bdb61d66e9716ad8583aac1071b057f5dbe4",
+      "installed": "/usr/share/luci/menu.d/luci-mod-status.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/admin",
+      "json_pointer": "/admin~1system~1admin",
+      "spec": {
+        "title": "Administration",
+        "order": 2,
+        "action": {
+          "type": "firstchild"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-config",
+            "luci-mod-system-ssh"
+          ]
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/admin/dropbear",
+      "json_pointer": "/admin~1system~1admin~1dropbear",
+      "spec": {
+        "title": "SSH Access",
+        "order": 2,
+        "action": {
+          "type": "view",
+          "path": "system/dropbear"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-ssh"
+          ],
+          "fs": {
+            "/usr/sbin/dropbear": "executable"
+          }
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/admin/password",
+      "json_pointer": "/admin~1system~1admin~1password",
+      "spec": {
+        "title": "Router Password",
+        "order": 1,
+        "action": {
+          "type": "view",
+          "path": "system/password"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-config"
+          ]
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/admin/repokeys",
+      "json_pointer": "/admin~1system~1admin~1repokeys",
+      "spec": {
+        "title": "Repo Public Keys",
+        "order": 5,
+        "action": {
+          "type": "view",
+          "path": "system/repokeys"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-repokeys"
+          ]
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/admin/sshkeys",
+      "json_pointer": "/admin~1system~1admin~1sshkeys",
+      "spec": {
+        "title": "SSH-Keys",
+        "order": 3,
+        "action": {
+          "type": "view",
+          "path": "system/sshkeys"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-ssh"
+          ],
+          "fs": {
+            "/usr/sbin/dropbear": "executable"
+          }
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/admin/uhttpd",
+      "json_pointer": "/admin~1system~1admin~1uhttpd",
+      "spec": {
+        "title": "HTTP(S) Access",
+        "order": 4,
+        "action": {
+          "type": "view",
+          "path": "system/uhttpd"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-uhttpd"
+          ],
+          "fs": {
+            "/usr/sbin/uhttpd": "executable"
+          }
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/crontab",
+      "json_pointer": "/admin~1system~1crontab",
+      "spec": {
+        "title": "Scheduled Tasks",
+        "order": 46,
+        "action": {
+          "type": "view",
+          "path": "system/crontab"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-cron"
+          ]
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/flash",
+      "json_pointer": "/admin~1system~1flash",
+      "spec": {
+        "title": "Backup / Flash Firmware",
+        "order": 70,
+        "action": {
+          "type": "view",
+          "path": "system/flash"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-flash"
+          ]
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/leds",
+      "json_pointer": "/admin~1system~1leds",
+      "spec": {
+        "title": "LED Configuration",
+        "order": 60,
+        "action": {
+          "type": "view",
+          "path": "system/leds"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-config"
+          ],
+          "fs": {
+            "/sys/class/leds": "directory"
+          }
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/mounts",
+      "json_pointer": "/admin~1system~1mounts",
+      "spec": {
+        "title": "Mount Points",
+        "order": 50,
+        "action": {
+          "type": "view",
+          "path": "system/mounts"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-mounts"
+          ],
+          "fs": {
+            "/sbin/block": "executable"
+          }
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/reboot",
+      "json_pointer": "/admin~1system~1reboot",
+      "spec": {
+        "title": "Reboot",
+        "order": 90,
+        "action": {
+          "type": "view",
+          "path": "system/reboot"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-reboot"
+          ]
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/startup",
+      "json_pointer": "/admin~1system~1startup",
+      "spec": {
+        "title": "Startup",
+        "order": 45,
+        "action": {
+          "type": "view",
+          "path": "system/startup"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-init"
+          ]
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    },
+    {
+      "source": "modules/luci-mod-system/root/usr/share/luci/menu.d/luci-mod-system.json",
+      "route": "admin/system/system",
+      "json_pointer": "/admin~1system~1system",
+      "spec": {
+        "title": "System",
+        "order": 1,
+        "action": {
+          "type": "view",
+          "path": "system/system"
+        },
+        "depends": {
+          "acl": [
+            "luci-mod-system-config"
+          ]
+        }
+      },
+      "source_blob": "0822d44845c66539f8b81ad2d8adf40ccdd3a555",
+      "installed": "/usr/share/luci/menu.d/luci-mod-system.json"
+    }
+  ],
+  "counts": {
+    "source_files": 6,
+    "declarations": 60,
+    "distinct_route_keys": 60
+  },
+  "duplicate_route_keys": [],
+  "unknowns": [
+    "Runtime file order, duplicate-route merge precedence and cache state are unassessed.",
+    "Parent/child auth inheritance, wildcard dispatch and dependency evaluation are unassessed.",
+    "Declarations do not establish installed availability, HTTP reachability or authorization.",
+    "Lua controller semantics: lua_not_analyzed.",
+    "Sentinel SID rewriting and checked session.access results are not modeled.",
+    "Markup extraction, taint and policy/effect joins are not performed."
+  ]
+}
