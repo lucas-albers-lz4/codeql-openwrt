@@ -110,7 +110,7 @@ exact run limits are in `evidence/rpc-surface/`.
 If you want to run this fixture test, set `JS69_CODEQL` and `JS69_PACKS` to the
 paths above. Then run the offline discovery command.
 
-The runner skips the test if these variables are not set. CI does not run real
+The offline test run skips this test if these variables are not set. CI does not run real
 CodeQL.
 
 ## fs access candidates
