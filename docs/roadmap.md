@@ -40,9 +40,9 @@ The #69 inventory adds no taint analysis and makes no security or coverage claim
 This is a foundational language-pack goal.
 Markup CFG and data flow remain deferred under [ucode #57](https://github.com/lucas-albers-lz4/codeql-ucode/issues/57).
 
-The plain dispatcher source inventory is tracked in [ucode #129](https://github.com/lucas-albers-lz4/codeql-ucode/issues/129).
+[ucode #129](https://github.com/lucas-albers-lz4/codeql-ucode/issues/129) tracks the plain dispatcher source inventory.
 It is source discovery only and does not promote dispatcher analysis.
-Dispatcher HTTP source modeling, authorization analysis, and QL guards remain deferred under [ucode #58](https://github.com/lucas-albers-lz4/codeql-ucode/issues/58) and [OpenWrt #70](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/70).
+HTTP source modeling for the dispatcher, authorization analysis, and QL guards remain deferred under [ucode #58](https://github.com/lucas-albers-lz4/codeql-ucode/issues/58) and [OpenWrt #70](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/70).
 
 Track A and Alloy remain deferred.
 The schedule does not change production Models-based queries.
