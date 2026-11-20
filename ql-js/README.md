@@ -124,6 +124,12 @@ CodeQL has its own extern files; matching uses absolute `.js` paths under the
 staged root and rejects unexpected query paths rather than claiming coverage of
 externs. The manifest
 is a source-file selection, not evidence of an actual image or package build.
-It does not inventory all rpc or fs references, or uci/cgi sites, and says
-nothing about taint, grants, runtime behavior or exploitability.
-Track A and other deferred tracks remain held.
+
+It does not inventory all RPC or filesystem references, or all UCI or CGI sites.
+The CGI slice records six syntactic construction candidates in three files. See
+[the CGI evidence](evidence/cgi-surface/README.md) and [the issue #69 inventory
+bridge](../docs/issue-69-inventory-bridge.md). These candidates do not establish
+requests, routes, bindings, server operations, grants, or effects. The report
+says nothing about taint, runtime behavior, or exploitability.
+
+UCI inventory remains held. Track A and other deferred tracks remain held.
