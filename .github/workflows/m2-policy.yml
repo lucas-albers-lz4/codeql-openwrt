@@ -20,3 +20,19 @@ jobs:
         run: python3 -m unittest discover -s policy/tests -t . -v
       - name: JavaScript extraction gate offline checks
         run: python3 -m unittest discover -s ql-js -p 'test_*.py' -v
+
+  alloy-canonical-baseline:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Experimental Alloy canonical baseline
+        run: python3 -B scratch/alloy-canonical-baseline/run_baseline.py
