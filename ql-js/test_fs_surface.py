@@ -89,7 +89,8 @@ class FsSurfaceTest(unittest.TestCase):
             subprocess.run([codeql, 'bqrs', 'decode', str(bqrs), '--format=json',
                             '--entities=url,string', '--output', str(decoded)], check=True)
             rows = json.loads(decoded.read_text())['#select']['tuples']
-            self.assertTrue(all(row[0] == str(source / FIXTURE.name) for row in rows))
+            expected_source = (source / FIXTURE.name).resolve()
+            self.assertTrue(all(Path(row[0]).resolve() == expected_source for row in rows))
             rows = sorted([Path(row[0]).name, *row[1:]] for row in rows)
             self.assertEqual(rows, [
                 ['fs_surface_fixture.js', '11', '1', '11', '7', 'literal-index', '123', 'candidate'],

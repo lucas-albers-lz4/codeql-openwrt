@@ -70,7 +70,8 @@ class CgiSurfaceTest(unittest.TestCase):
             subprocess.run([codeql, 'query', 'run', str(query), '--database', str(db), '--additional-packs=' + packs, '--output', str(bqrs), '--threads=1', '--ram=2048', '--no-default-compilation-cache', '--compilation-cache=' + str(root / 'compile'), '--common-caches=' + os.environ['JS69_COMMON_CACHE']], check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             subprocess.run([codeql, 'bqrs', 'decode', str(bqrs), '--format=json', '--output', str(decoded), '--common-caches=' + str(root / 'cache')], check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             rows = json.loads(decoded.read_text())['#select']['tuples']
-            self.assertTrue(all(row[0] == str(source / fixture.name) for row in rows))
+            expected_source = (source / fixture.name).resolve()
+            self.assertTrue(all(Path(row[0]).resolve() == expected_source for row in rows))
             rows = sorted([Path(row[0]).name, *row[1:]] for row in rows)
             self.assertEqual(rows, EXPECTED_FIXTURE_ROWS)
 
