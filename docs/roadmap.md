@@ -36,9 +36,12 @@ Sources: [ucode:docs/m4-setlocaltime-construction.md:3-34](https://github.com/lu
 [OpenWrt #69](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/69) schedules only Step 1: a deterministic inventory of pinned-profile JavaScript files and source sites.
 The #69 inventory adds no taint analysis and makes no security or coverage claims.
 
-[OpenWrt #68](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/68) tracks consumer integration for the markup AST-only capability scheduled in [ucode #56](https://github.com/lucas-albers-lz4/codeql-ucode/issues/56).
-This is a foundational language-pack goal.
-Markup CFG and data flow remain deferred under [ucode #57](https://github.com/lucas-albers-lz4/codeql-ucode/issues/57).
+[OpenWrt #68](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/68) tracks consumer integration and classification consequences for the markup AST-only capability delivered by [ucode #137](https://github.com/lucas-albers-lz4/codeql-ucode/pull/137) for [ucode #56](https://github.com/lucas-albers-lz4/codeql-ucode/issues/56).
+At producer revision [`e37b1d2`](https://github.com/lucas-albers-lz4/codeql-ucode/blob/e37b1d298999b43deacc1f0cc1f693e6fe69ff05/docs/markup-ast.md), the documented controls cover selected synthetic markup shapes and the real pinned LuCI `uhttpd.uc` input; they do not establish support for every markup construct.
+The existing [luci-ssl inventory report](../reports/m4-luci-ssl-files.md) retains 12 `markup_not_modeled` classification rows, including `uhttpd.uc`; those rows do not demonstrate extraction or analysis.
+The producer routing receipt still marks markup inconclusive with `markup_not_modeled`; routing alone does not prove a clean parse, so extraction identities and diagnostics must be checked separately.
+Retained reports remain historical snapshots, not evidence of a new paired run.
+Markup CFG and data flow remain deferred under [ucode #57](https://github.com/lucas-albers-lz4/codeql-ucode/issues/57); the AST milestone makes no runtime, authorization, dispatcher coverage, or security finding claim.
 
 [ucode #129](https://github.com/lucas-albers-lz4/codeql-ucode/issues/129) tracks the plain dispatcher source inventory.
 It is source discovery only and does not promote dispatcher analysis.
