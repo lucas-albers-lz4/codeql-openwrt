@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Run real CodeQL negative controls against a successful gate's staged source."""
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 import shutil
@@ -14,6 +15,17 @@ def must_reject(expected, files, errors):
     except ValueError as exc:
         return str(exc)
     raise RuntimeError('negative control unexpectedly accepted')
+
+
+def check_default_minified_omission(expected, actual, minified):
+    """Require the default extractor result to be exactly the manifest minus one file."""
+    expected_paths = Counter(expected)
+    if expected_paths[minified] != 1:
+        raise ValueError('known minified path is not unique in expected selection')
+    expected_paths.subtract([minified])
+    expected_paths += Counter()  # Remove zero-count entries after the subtraction.
+    if Counter(actual) != expected_paths:
+        raise ValueError('default extraction paths differ beyond the known minified omission')
 
 
 def main():
@@ -36,8 +48,10 @@ def main():
     reason = must_reject(expected, files, errors)
     minified = str(original / 'libs/luci-lib-uqr/htdocs/luci-static/resources/uqr.js')
     actual = [row[0] for row in gate.tuples(files, 1)]
-    if minified in actual or len(actual) != len(expected) - 1:
-        raise RuntimeError('default extraction did not demonstrate the expected minified omission')
+    try:
+        check_default_minified_omission(expected, actual, minified)
+    except ValueError as exc:
+        raise RuntimeError('default extraction did not demonstrate the expected minified omission') from exc
     print('default minified omission rejected:', reason)
 
     malformed = out / 'malformed'
