@@ -38,3 +38,27 @@ jobs:
         run: python3 -m unittest discover -s scratch/alloy-canonical-baseline -p 'test_*.py' -v
       - name: Experimental Alloy canonical baseline
         run: python3 -B scratch/alloy-canonical-baseline/run_baseline.py
+
+  fnmatch-witness-experiment:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Record environment
+        run: |
+          python3 --version
+          gcc --version
+          ldd --version
+      - name: Run bounded search tests
+        run: python3 -m unittest discover -s scratch/fnmatch-witness-experiment -v
+      - name: Search and independently verify pinned witness
+        working-directory: scratch/fnmatch-witness-experiment
+        run: |
+          gcc -std=c11 -Wall -Wextra -Werror check.c -o /tmp/fnmatch-check
+          gcc -std=c11 -Wall -Wextra -Werror independent_check.c -o /tmp/fnmatch-independent-check
+          python3 search.py /tmp/fnmatch-check '{"group":"luci-mod-network-config","verb":"read","scope":"file","ubus_object":null}' '/proc/sys/net/ipv6/conf/*/mtu' '{"group":"luci-mod-network-config","verb":"read","scope":"file","ubus_object":null}' '/proc/sys/net/ipv[46]/conf/*'
+          /tmp/fnmatch-independent-check
