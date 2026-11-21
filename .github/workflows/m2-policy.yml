@@ -34,5 +34,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Experiment scope and ACL coverage checks
+        run: python3 -m unittest discover -s scratch/alloy-canonical-baseline -p 'test_*.py' -v
       - name: Experimental Alloy canonical baseline
         run: python3 -B scratch/alloy-canonical-baseline/run_baseline.py

@@ -35,15 +35,26 @@ from policy.oracle import (  # noqa: E402
     LUCI_SHA,
     RPCD_SHA,
     UHTTPD_SHA,
+    AclEntry,
     Session,
+    acl_match,
     corpus_revision,
+    login_test_permission,
     parse_rpcd_logins,
+    load_acl_file,
     session_acls,
 )
-from policy.ubus_system_board import ACL_INDEX_FILE, load_board_catalog  # noqa: E402
+from policy.ubus_system_board import ACL_INDEX_FILE  # noqa: E402
 from policy.ubus_file_exec import UBUS_STATUS_PERMISSION_DENIED  # noqa: E402
 
 EXPERIMENT_BASE_SHA = "fa745e1c62f1f558bd8f6659a1d1040bb569cb96"
+APP_ACL_FILES = ("luci-app-firewall.json", "luci-app-package-manager.json")
+ALL_ACL_FILES = tuple(dict.fromkeys((*ACL_FIXTURE_FILES, ACL_INDEX_FILE, *APP_ACL_FILES)))
+EXPECTED_GETMOUNTPOINTS_GROUPS = {
+    "luci-mod-status-index-storage",
+    "luci-mod-system-mounts",
+    "luci-app-package-manager",
+}
 
 
 def acl_value(value: Any) -> Any:
@@ -92,21 +103,159 @@ def classify_file_exec(result: Any) -> dict[str, str]:
     }
 
 
+def acl_entry_set(entries: list[AclEntry]) -> set[tuple[str, str, str, str, str, str]]:
+    return {
+        (entry.group, entry.perm, entry.scope, entry.object, entry.function, entry.source)
+        for entry in entries
+    }
+
+
+def load_complete_acl_catalog(fixtures: Path) -> tuple[list[AclEntry], set[str]]:
+    catalog: list[AclEntry] = []
+    groups: set[str] = set()
+    for name in ALL_ACL_FILES:
+        path = fixtures / name
+        document = json.loads(path.read_text(encoding="utf-8"))
+        groups.update(document)
+        catalog.extend(load_acl_file(path))
+    return catalog, groups
+
+
+def validate_acl_fixture_sources(fixtures: Path, lock: dict[str, Any]) -> dict[str, Any]:
+    provenance_path = fixtures / "provenance.json"
+    provenance = json.loads(provenance_path.read_text(encoding="utf-8"))
+    if provenance.get("profile") != lock["profile"]:
+        raise ValueError("ACL provenance profile differs from corpus lock")
+    records = provenance.get("files", {})
+    expected_names = set(ALL_ACL_FILES) | {"rpcd.config"}
+    if set(records) != expected_names:
+        raise ValueError(
+            "ACL provenance does not enumerate every ACL JSON and rpcd config: "
+            f"missing={sorted(expected_names - set(records))} "
+            f"extra={sorted(set(records) - expected_names)}"
+        )
+    fixture_hashes: dict[str, str] = {}
+    luci_sha = lock["repos"]["luci"]["sha"]
+    rpcd_sha = lock["packages"]["rpcd"]["PKG_SOURCE_VERSION"]
+    for name in ALL_ACL_FILES:
+        raw = (fixtures / name).read_bytes()
+        digest = hashlib.sha256(raw).hexdigest()
+        record = records[name]
+        if record.get("sha256") != digest:
+            raise ValueError(f"ACL fixture does not match provenance SHA-256: {name}")
+        source_sha = rpcd_sha if name == "unauthenticated.json" else luci_sha
+        if record.get("sha") != source_sha:
+            raise ValueError(f"ACL fixture source revision differs from lock: {name}")
+        fixture_hashes[f"policy/fixtures/{name}"] = digest
+    rpcd_record = records["rpcd.config"]
+    if rpcd_record.get("sha") != lock["repos"]["openwrt"]["sha"]:
+        raise ValueError("rpcd config provenance revision differs from OpenWrt lock")
+    if not rpcd_record.get("stock_sha256"):
+        raise ValueError("rpcd config provenance lacks stock input hash")
+    fixture_hashes["policy/fixtures/provenance.json"] = hashlib.sha256(
+        provenance_path.read_bytes()
+    ).hexdigest()
+    return fixture_hashes
+
+
+def session_for_gate(
+    role: str,
+    sid: str,
+    login: Any,
+    world: dict[str, Session],
+    complete_catalog: list[AclEntry],
+    source_groups: set[str],
+) -> tuple[dict[str, Session] | None, str | None, dict[str, Any]]:
+    """Preserve a gate's native session; synthesize only from a complete ACL catalog."""
+    matches = [session for session in world.values() if session.session_class == role]
+    referenced = {
+        group
+        for group in login.read + login.write
+        if group and group != "*" and not group.startswith("!")
+    }
+    missing_groups = sorted(referenced - source_groups)
+    detail: dict[str, Any] = {
+        "native_session_present": bool(matches),
+        "native_session_count": len(matches),
+        "referenced_acl_groups": sorted(referenced),
+        "missing_acl_groups": missing_groups,
+        "full_catalog_entry_count": None,
+    }
+    if missing_groups:
+        detail["scope_reason"] = "login_acl_group_missing_from_pinned_sources"
+        return None, None, detail
+    expected = session_acls(login, complete_catalog)
+    detail["full_catalog_entry_count"] = len(expected)
+    if len(matches) > 1:
+        detail["scope_reason"] = "ambiguous_native_sessions"
+        return None, None, detail
+    if matches:
+        native = matches[0]
+        native_set = acl_entry_set(native.acls)
+        expected_set = acl_entry_set(expected)
+        detail.update(
+            {
+                "session_source": "native_gate_world",
+                "native_acl_matches_full_catalog": native_set == expected_set,
+                "native_only_acl_entries": sorted(native_set - expected_set),
+                "full_catalog_only_acl_entries": sorted(expected_set - native_set),
+            }
+        )
+        if native_set != expected_set:
+            detail["scope_reason"] = "native_session_acl_scope_differs_from_full_pinned_catalog"
+        return dict(world), native.sid, detail
+    detail["session_source"] = "full_pinned_acl_catalog"
+    detail["native_acl_matches_full_catalog"] = None
+    if not login.read and not login.write:
+        detail["scope_reason"] = "login_has_no_acl_scope"
+        return None, None, detail
+    sessions = dict(world)
+    while sid in sessions:
+        sid = f"{int(sid, 16) + 1:032x}"
+    sessions[sid] = Session(role, sid, login, expected)
+    return sessions, sid, detail
+
+
 def matrix_cell(
-    role: str, sid: str, evaluate, sessions, args: dict[str, Any]
+    role: str,
+    sid: str | None,
+    evaluate,
+    sessions: dict[str, Session] | None,
+    args: dict[str, Any],
+    session_detail: dict[str, Any],
 ) -> dict[str, Any]:
-    result = evaluate(session_class=role, sid=sid, sessions=sessions, **args)
     cell: dict[str, Any] = {
         "role": role,
-        "outcome": result.outcome,
+        "outcome": "not_evaluated",
         "request": args,
         "runtime_execution": "not_evaluated",
+        "scope": session_detail,
     }
+    if sessions is None or sid is None:
+        cell.update(
+            {
+                "http_gate": "unknown",
+                "command_gate": "unknown",
+                "relation_outcome": "unknown",
+                "scope_complete": False,
+                "scope_reason": session_detail.get("scope_reason", "session_not_constructible"),
+                "relevant_steps": [],
+            }
+        )
+        return cell
+    result = evaluate(session_class=role, sid=sid, sessions=sessions, **args)
+    cell["outcome"] = result.outcome
+    scope_complete = session_detail.get("session_source") == "full_pinned_acl_catalog" or session_detail.get(
+        "native_acl_matches_full_catalog"
+    ) is True
+    cell["scope_complete"] = scope_complete
     if hasattr(result, "ubus_matched"):
         classification = classify_file_exec(result)
         cell.update(
             {
                 **classification,
+                "raw_http_gate": classification["http_gate"],
+                "raw_command_gate": classification["command_gate"],
                 "ubus_acl_match": acl_value(result.ubus_matched),
                 "command_acl_match": acl_value(result.file_matched),
                 "command_match_stage": result.match_stage,
@@ -115,6 +264,11 @@ def matrix_cell(
                 "relevant_steps": result.steps,
             }
         )
+        cell["raw_relation_outcome"] = classification["relation_outcome"]
+        if not scope_complete:
+            cell["relation_outcome"] = "unknown"
+            cell["http_gate"] = "unknown"
+            cell["command_gate"] = "unknown"
     else:
         if result.outcome == "allow" and result.matched is not None:
             relation_outcome = "allow"
@@ -128,9 +282,21 @@ def matrix_cell(
             relation_outcome = "unknown"
         cell["http_gate"] = relation_outcome
         cell["relation_outcome"] = relation_outcome
+        cell["raw_http_gate"] = relation_outcome
         cell["acl_match"] = acl_value(result.matched)
         cell["jsonrpc_error"] = result.jsonrpc_error
         cell["relevant_steps"] = result.steps
+        cell["raw_relation_outcome"] = relation_outcome
+    if not scope_complete:
+        cell["relation_outcome"] = "unknown"
+        cell["scope_reason"] = session_detail.get(
+            "scope_reason", "native_session_scope_not_verified"
+        )
+        if hasattr(result, "ubus_matched"):
+            cell["http_gate"] = "unknown"
+            cell["command_gate"] = "unknown"
+        else:
+            cell["http_gate"] = "unknown"
     return cell
 
 
@@ -140,9 +306,70 @@ def main() -> int:
     )
     roles = [login.username for login in logins if login.username != "root"]
     login_by_role = {login.username: login for login in logins}
-    catalog = load_board_catalog()
-
     lock = json.loads((ROOT / "corpus" / "lock.json").read_text(encoding="utf-8"))
+    acl_fixture_hashes = validate_acl_fixture_sources(ROOT / "policy" / "fixtures", lock)
+    fixture_acl_files = sorted(
+        path.name
+        for path in (ROOT / "policy" / "fixtures").glob("luci-*.json")
+    )
+    discovered_acl_files = set(fixture_acl_files) | {"unauthenticated.json"}
+    if discovered_acl_files != set(ALL_ACL_FILES):
+        print(
+            "ACL_FIXTURE_COVERAGE_FAILURE "
+            + json.dumps(
+                {
+                    "expected": sorted(ALL_ACL_FILES),
+                    "discovered": sorted(discovered_acl_files),
+                },
+                sort_keys=True,
+            )
+        )
+        return 2
+    catalog, catalog_groups = load_complete_acl_catalog(ROOT / "policy" / "fixtures")
+    source_group_references = {
+        group
+        for login in login_by_role.values()
+        if login.username != "root"
+        for group in login.read + login.write
+        if group and group != "*" and not group.startswith("!")
+    }
+    missing_source_groups = sorted(source_group_references - catalog_groups)
+    if missing_source_groups:
+        print(
+            "ACL_GROUP_SCOPE_INCOMPLETE "
+            + json.dumps({"missing_groups": missing_source_groups}, sort_keys=True)
+        )
+
+    mount_read_entries = [
+        entry
+        for entry in catalog
+        if entry.perm == "read"
+        and entry.scope == "ubus"
+        and acl_match(entry.object, entry.function, "luci", "getMountPoints")
+    ]
+    source_mount_read_groups = {entry.group for entry in mount_read_entries}
+    source_mount_read_roles = sorted(
+        role
+        for role in roles
+        if any(
+            entry.perm == "read"
+            and login_test_permission(login_by_role[role], "read", entry.group)
+            for entry in mount_read_entries
+        )
+    )
+    if source_mount_read_groups != EXPECTED_GETMOUNTPOINTS_GROUPS:
+        print(
+            "SOURCE_OVERLAP_VALIDATION_FAILURE "
+            + json.dumps(
+                {
+                    "expected_groups": sorted(EXPECTED_GETMOUNTPOINTS_GROUPS),
+                    "actual_groups": sorted(source_mount_read_groups),
+                },
+                sort_keys=True,
+            )
+        )
+        return 3
+
     expected_pins = {
         "profile": lock["profile"],
         "openwrt": lock["repos"]["openwrt"]["sha"],
@@ -286,6 +513,15 @@ def main() -> int:
         "pin_validation": pin_matches,
         "checked_case_pins": checked_case_pins,
         "fixture_sha256": {},
+        "acl_provenance": {
+            "profile": lock["profile"],
+            "source_groups": sorted(catalog_groups),
+            "login_group_references": sorted(source_group_references),
+            "missing_login_groups": missing_source_groups,
+            "mounts_read_source_groups": sorted(source_mount_read_groups),
+            "mounts_read_source_roles": source_mount_read_roles,
+            "catalog_files": list(ALL_ACL_FILES),
+        },
         "runner_sha256": {
             "script": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             "workflow": hashlib.sha256(
@@ -298,15 +534,21 @@ def main() -> int:
     }
     fixture_paths = [
         "corpus/lock.json",
+        "policy/fixtures/provenance.json",
         "policy/fixtures/rpcd.config",
-        *[f"policy/fixtures/{name}" for name in ACL_FIXTURE_FILES],
-        f"policy/fixtures/{ACL_INDEX_FILE}",
+        *[f"policy/fixtures/{name}" for name in ALL_ACL_FILES],
         *case_paths,
     ]
     for relative in fixture_paths:
         pins["fixture_sha256"][relative] = hashlib.sha256(
             (ROOT / relative).read_bytes()
         ).hexdigest()
+    if any(
+        pins["fixture_sha256"].get(path) != digest
+        for path, digest in acl_fixture_hashes.items()
+    ):
+        print("ACL_FIXTURE_HASH_VALIDATION_FAILURE " + json.dumps(acl_fixture_hashes, sort_keys=True))
+        return 2
     print("PINS " + json.dumps(pins, sort_keys=True))
     print(
         "SCOPE "
@@ -322,31 +564,32 @@ def main() -> int:
     )
 
     summaries: dict[str, dict[str, str]] = {role: {} for role in roles}
+    cells_by_key: dict[tuple[str, str], dict[str, Any]] = {}
     for index, role in enumerate(roles, start=1):
-        sid_number = index
-        sid = f"{sid_number:032x}"
-        while any(sid in world for world in worlds.values()):
-            sid_number += 1
-            sid = f"{sid_number:032x}"
         login = login_by_role[role]
-        session = Session(role, sid, login, session_acls(login, catalog))
-        for world in worlds.values():
-            for old_sid, old_session in list(world.items()):
-                if old_session.session_class == role:
-                    del world[old_sid]
-            world[sid] = session
-
         for spec in gate_specs:
+            base_world = worlds[spec["world_name"]]
+            candidate_sid = f"{index:032x}"
+            eval_world, sid, session_detail = session_for_gate(
+                role,
+                candidate_sid,
+                login,
+                base_world,
+                catalog,
+                catalog_groups,
+            )
             cell = matrix_cell(
                 role,
                 sid,
                 spec["evaluate"],
-                worlds[spec["world_name"]],
+                eval_world,
                 spec["args"],
+                session_detail,
             )
             cell["gate"] = spec["gate"]
             cell["analysis_revision"] = spec["analysis_revision"]
             summaries[role][spec["gate"]] = cell["relation_outcome"]
+            cells_by_key[(role, spec["gate"])] = cell
             print("CELL " + json.dumps(cell, sort_keys=True))
 
     positive = ("mounts_read", "unmount_exec", "block_exec")
@@ -366,20 +609,58 @@ def main() -> int:
         ):
             inconclusive.append(role)
 
+    mount_read_scope_complete = all(
+        cells_by_key[(role, "mounts_read")].get("scope_complete") is True
+        and cells_by_key[(role, "mounts_read")]["relation_outcome"] in {"allow", "deny"}
+        for role in roles
+    )
+    observed_mount_read_roles = sorted(
+        role
+        for role in roles
+        if cells_by_key[(role, "mounts_read")]["relation_outcome"] == "allow"
+    )
+    mount_read_known_mismatch = any(
+        cells_by_key[(role, "mounts_read")].get("scope_complete") is True
+        and cells_by_key[(role, "mounts_read")]["relation_outcome"] in {"allow", "deny"}
+        and cells_by_key[(role, "mounts_read")]["relation_outcome"]
+        != ("allow" if role in source_mount_read_roles else "deny")
+        for role in roles
+    )
+    mount_read_validation = (
+        "mismatch"
+        if mount_read_known_mismatch
+        else "unknown"
+        if not mount_read_scope_complete
+        else "validated"
+    )
+    expected_candidate_roles = ["luci-mod-system-mounts"]
+    candidate_validation = (
+        "inconclusive"
+        if inconclusive
+        else "validated"
+        if candidates == expected_candidate_roles
+        else "mismatch"
+    )
+    validation_failure = mount_read_validation == "mismatch" or candidate_validation == "mismatch"
+
     print(
         "RELATION_RESULT "
         + json.dumps(
             {
                 "candidate_roles": candidates,
                 "inconclusive_roles": inconclusive,
-                "candidate_expected_by_handwritten_fixture": "luci-mod-system-mounts",
-                "interpretation": "canonical evaluator result only; not an independent source oracle or added-value result",
+                "candidate_expected_by_handwritten_fixture": expected_candidate_roles,
+                "candidate_validation": candidate_validation,
+                "mounts_read_source_expected_roles": source_mount_read_roles,
+                "mounts_read_observed_allow_roles": observed_mount_read_roles,
+                "mounts_read_overlap_validation": mount_read_validation,
+                "interpretation": "canonical evaluator relation with native-session comparison and complete pinned fixture reconstruction for absent sessions; no runtime execution or added-value claim",
             },
             sort_keys=True,
         )
     )
     print("ALLOY_CANONICAL_BASELINE_END")
-    return 0
+    return 3 if validation_failure else 0
 
 
 if __name__ == "__main__":
