@@ -1,2 +1,7 @@
 # Preserve the pinned upstream source byte-for-byte, including its existing trailing space.
 source/usr/share/rpcd/ucode/luci -whitespace
+# Preserve original local test and hosted CI logs without changing their whitespace.
+preparation/consumer-suite.stderr -whitespace
+preparation/consumer-ubuntu-ci.log -whitespace
+preparation/producer-ubuntu-cargo-ci.log -whitespace
+preparation/producer-ubuntu-ql-ci.log -whitespace
