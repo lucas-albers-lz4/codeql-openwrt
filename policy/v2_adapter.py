@@ -195,6 +195,8 @@ _REAL_PACKAGES = {
 }
 _ARCHIVE_SOURCE = ('/root/workspace/workflow-design/evidence/issue89-typed-ae946190-7f532ac-a3/'
                    'sealed/ql/test/extractor-smoke/usr/share/rpcd/ucode/luci')
+_REAL_POLICY = 'sha256:8192803552814c47cb39b99712c033d0aa5a6631a6d32e05315bd9666630881c'
+_REAL_AUTHORITY = 'openwrt-consumer:luci-ssl-25.12'
 _REAL_PROFILE = 'sha256:16a5468601be4b23f45795a43deedd6fda6726ff7503abb9d80e493d16808ac5'
 _REAL_CORPUS = 'sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a'
 
@@ -286,13 +288,37 @@ def _validate_source_model(inputs, profile):
                not in inputs['feed-config'].decode('utf-8').splitlines()):
         raise ResolutionError('unsupported source dependency model')
 
+
+def _project_real_policy(raw, scope, pairs):
+    """Validate the selected original registry before its reviewed narrowing."""
+    registry = parse_json(raw)
+    if (not isinstance(registry, dict) or registry.get('profile') != 'luci-ssl-25.12'
+            or not isinstance(registry.get('expectations'), list)):
+        raise ResolutionError('invalid selected registry')
+    entries = registry['expectations']
+    ids = [entry.get('expectation_id') if isinstance(entry, dict) else None for entry in entries]
+    if (any(not isinstance(i, str) or not i or i.strip() != i for i in ids)
+            or len(ids) != len(set(ids))):
+        raise ResolutionError('invalid or duplicate registry ID')
+    entry = entries[ids.index('luci-mod-system-mounts')] if 'luci-mod-system-mounts' in ids else None
+    if (not isinstance(entry, dict) or entry.get('session_class') != 'luci-mod-system-mounts'
+            or entry.get('synthetic') is not True or entry.get('ingress') != 'ubus_http'
+            or 'entrypoint_id' in entry
+            or {'target_id': 'ubus:luci.setBlockDetect', 'op': 'invoke'} not in entry.get('intended_access', [])
+            or not any(isinstance(helper, dict) and helper.get('sink_kind') == 'system'
+                       and helper.get('constraint') == 'fixed_command'
+                       and isinstance(helper.get('examples'), list)
+                       and '/sbin/block detect > /etc/config/fstab' in helper['examples']
+                       for helper in entry.get('allowed_helper_effects', []))):
+        raise ResolutionError('unsupported selected registry definition')
+    return {_REAL_AUTHORITY: [{'id': 'luci-mod-system-mounts', 'scope': scope, 'pairs': pairs}]}
+
 def assess_setblock(*, selection, envelope_raw, policy_raw, corpus_raw, profile_raw, inputs):
-    """Check the historical typed observation; never approve its policy scope.
+    """Assess the historical observation against the selected bounded policy.
 
     ``inputs`` maps the names in ``_REAL_INPUTS`` to their raw bytes. Missing
-    evidence is unknown. Package provenance and policy authority are not yet
-    independently reviewed. A Linux modeled gate allow is source-level only;
-    the real policy assessment remains unassessed.
+    evidence is unknown. A Linux modeled gate allow is source-level only;
+    hashes bind bytes but do not authenticate provenance.
     """
     from . import oracle, setblock_table
     import sys
@@ -327,31 +353,43 @@ def assess_setblock(*, selection, envelope_raw, policy_raw, corpus_raw, profile_
     if not isinstance(envelope, dict) or set(envelope) != {'kind', 'version', 'context', 'reference', 'verdict'}:
         raise ResolutionError('invalid v2 envelope')
     validate_context(context, {k: envelope[k] for k in ('kind', 'version', 'context')})
-    # No real scope/authority approval exists. Submitting an assessed reference
-    # here is unsupported, even if a caller supplies a matching policy.
-    if envelope['reference'] is not None or envelope['verdict'] is not None:
-        raise ResolutionError('real assessed references are unsupported')
-    policy = resolve(scope=scope, pairs=selection['pairs'], authorities=parse_json(policy_raw))
+    assessed = envelope['reference'] is not None or envelope['verdict'] is not None
+    if assessed:
+        if context['policy'] != _REAL_POLICY:
+            raise ResolutionError('unsupported real assessed policy')
+        authorities = _project_real_policy(policy_raw, scope, selection['pairs'])
+    else:
+        authorities = (_project_real_policy(policy_raw, scope, selection['pairs'])
+                       if context['policy'] == _REAL_POLICY else parse_json(policy_raw))
+    policy = resolve(scope=scope, pairs=selection['pairs'], authorities=authorities,
+                     reference=envelope['reference'], verdict=envelope['verdict'])
     if not isinstance(inputs, dict) or set(inputs) - set(_REAL_INPUTS):
         raise ResolutionError('invalid evidence inputs')
     if any(not isinstance(v, bytes) or _digest(v) != _REAL_INPUTS[k] for k, v in inputs.items()):
         raise ResolutionError('evidence byte identity mismatch')
     result = {'gate': 'unknown', 'policy': policy, 'observation': 'unknown', 'modeled_gate': 'unknown',
               'limits': ['allow describes the pinned source model, not a built or installed package',
-                         'real scope authority is not independently reviewed',
+                         'selected policy is a bounded consumer expectation, not authenticated provenance',
                          'model assumes the ubus default script ran with no prior prefix and the plugin is present',
                          'modeled object lookup assumes luci exists; live registration is not established',
-                         'archived evidence does not establish live execution']}
+                         'archived evidence does not establish live execution',
+                         'ucode string-form system uses a shell; the fixed command includes redirection']}
     if set(inputs) != set(_REAL_INPUTS):
+        if policy['status'] == 'matched':
+            result['policy'] = {'status': 'unassessed'}
         return result
     _validate_source_model(inputs, profile)
     _validate_source_archive(inputs['source-archive'], inputs['source'])
     _validate_archive(inputs)
-    setblock_table.validate_typed_records(parse_json(inputs['typed']), inputs['source'],
-                                          lock, context['corpus'])
+    typed = parse_json(inputs['typed'])
+    setblock_table.validate_typed_records(typed, inputs['source'], lock, context['corpus'])
+    result['typed_unknowns'] = list(typed[0]['unknowns'])
+    result['typed_assumptions'] = list(typed[0]['assumptions'])
     result['observation'] = 'archived-neutral-observation'
     if sys.platform != 'linux':
         result['limits'].append('Linux libc evaluator unavailable on this platform')
+        if policy['status'] == 'matched':
+            result['policy'] = {'status': 'unassessed'}
         return result
     logins = {x.username: x for x in oracle.parse_rpcd_logins(inputs['login'].decode('utf-8'))}
     acl = parse_json(inputs['acl'])
@@ -372,6 +410,10 @@ def assess_setblock(*, selection, envelope_raw, policy_raw, corpus_raw, profile_
             and evaluated.matched.function == 'setBlockDetect'):
         result['modeled_gate'] = 'allow'
         result['gate'] = 'allow'
+        if policy['status'] == 'matched':
+            result['policy'] = dict(policy, status='assessed')
+    if result['policy']['status'] == 'matched':
+        result['policy'] = {'status': 'unassessed'}
     return result
 
 

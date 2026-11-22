@@ -127,7 +127,8 @@ class StatusBoundaryTests(unittest.TestCase):
         self.assertEqual(self.run_adapter(), {'gate': 'unknown', 'policy': {'status': 'conflict'}})
 
 
-class SetblockBoundaryTests(unittest.TestCase):
+class SetblockFixture:
+
     def setUp(self):
         from pathlib import Path
         import io
@@ -172,6 +173,8 @@ class SetblockBoundaryTests(unittest.TestCase):
                                policy_raw=self.policy, corpus_raw=self.corpus,
                                profile_raw=self.profile, inputs=self.inputs)
 
+
+class SetblockBoundaryTests(SetblockFixture, unittest.TestCase):
     def test_archive_observation_remains_unassessed(self):
         import sys
         result = self.run_adapter()
@@ -196,12 +199,181 @@ class SetblockBoundaryTests(unittest.TestCase):
     def test_no_real_assessment_and_scope_change(self):
         self.envelope['reference'] = {'authority': 'selected', 'id': 'status'}
         self.envelope['verdict'] = 'intended_access'
-        with self.assertRaisesRegex(ResolutionError, 'unsupported'):
+        with self.assertRaisesRegex(ResolutionError, 'unsupported|missing reference'):
             self.run_adapter()
         self.envelope['reference'] = self.envelope['verdict'] = None
         self.scope['caller'] = 'root'
         with self.assertRaisesRegex(ResolutionError, 'scope'):
             self.run_adapter()
+
+
+class AssessedSetblockTests(SetblockFixture, unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[2]
+        self.policy = (root / 'corpus/profiles/luci-ssl-25.12/expected-capabilities.json').read_bytes()
+        self.context['policy'] = digest(self.policy)
+        self.envelope['context'] = copy.deepcopy(self.context)
+        self.envelope['reference'] = {'authority': 'openwrt-consumer:luci-ssl-25.12',
+                                      'id': 'luci-mod-system-mounts'}
+        self.envelope['verdict'] = 'intended_access'
+
+    def test_selected_snapshot_and_unknown_propagation(self):
+        import sys
+        result = self.run_adapter()
+        self.assertEqual(result['policy']['status'], 'assessed' if sys.platform == 'linux' else 'unassessed')
+        typed = json.loads(self.inputs['typed'])[0]
+        self.assertEqual(result['typed_unknowns'], typed['unknowns'])
+        self.assertEqual(result['typed_assumptions'], typed['assumptions'])
+        for name in list(self.inputs):
+            with self.subTest(name=name):
+                saved = self.inputs.pop(name)
+                self.assertEqual(self.run_adapter()['policy']['status'], 'unassessed')
+                self.inputs[name] = saved
+
+    def test_original_bytes_required_and_bad_reference_rejected(self):
+        with self.subTest('projection cannot replace original'):
+            self.policy = raw({'openwrt-consumer:luci-ssl-25.12': [{'id': 'luci-mod-system-mounts',
+                                'scope': self.scope, 'pairs': self.pairs}]})
+            self.context['policy'] = digest(self.policy)
+            self.envelope['context'] = copy.deepcopy(self.context)
+            with self.assertRaisesRegex(ResolutionError, 'unsupported real assessed policy'):
+                self.run_adapter()
+        self.setUp()
+        for field, value in [('authority', 'other'), ('id', 'root')]:
+            with self.subTest(field=field):
+                original = self.envelope['reference'][field]
+                self.envelope['reference'][field] = value
+                with self.assertRaises(ResolutionError):
+                    self.run_adapter()
+                self.envelope['reference'][field] = original
+        self.envelope['verdict'] = 'authorization_violation'
+        with self.assertRaisesRegex(ResolutionError, 'unsupported verdict'):
+            self.run_adapter()
+
+    def test_projection_validates_entire_registry_and_helper(self):
+        from policy.v2_adapter import _project_real_policy
+        registry = json.loads(self.policy)
+        entry = next(e for e in registry['expectations'] if e['expectation_id'] == 'luci-mod-system-mounts')
+        for mutation in ('duplicate', 'profile', 'helper', 'command', 'examples_string', 'invoke'):
+            changed = copy.deepcopy(registry)
+            selected = next(e for e in changed['expectations'] if e['expectation_id'] == entry['expectation_id'])
+            if mutation == 'duplicate':
+                changed['expectations'].append(copy.deepcopy(changed['expectations'][0]))
+            elif mutation == 'profile':
+                changed['profile'] = 'other'
+            elif mutation == 'helper':
+                selected['allowed_helper_effects'][1]['sink_kind'] = 'popen'
+            elif mutation == 'command':
+                selected['allowed_helper_effects'][1]['examples'] = ['/sbin/block detect']
+            elif mutation == 'examples_string':
+                selected['allowed_helper_effects'][1]['examples'] = '/sbin/block detect > /etc/config/fstab'
+            else:
+                selected['intended_access'][1]['op'] = 'read'
+            with self.subTest(mutation=mutation), self.assertRaises(ResolutionError):
+                _project_real_policy(raw(changed), self.scope, self.pairs)
+        # The unrelated permission is not a prerequisite for this projection.
+        entry['intended_access'].pop(0)
+        self.assertIn('openwrt-consumer:luci-ssl-25.12',
+                      _project_real_policy(raw(registry), self.scope, self.pairs))
+
+    @unittest.skipUnless(__import__('sys').platform == 'linux', 'requires Linux libc oracle')
+    def test_real_oracle_gate_negatives_and_matched_conjunction(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from policy import oracle
+        evaluate = oracle.evaluate_call
+        for mutation in ('write_group', 'acl_method', 'matched_group'):
+            observed = []
+            def modified(**kwargs):
+                sid = oracle.MOUNTS_FIXTURE_SID
+                original = kwargs['sessions'][sid]
+                if mutation == 'write_group':
+                    login = replace(original.login, write=[])
+                    session = replace(original, login=login,
+                                      acls=oracle.session_acls(login, original.acls))
+                    kwargs['sessions'] = dict(kwargs['sessions'], **{sid: session})
+                elif mutation == 'acl_method':
+                    acls = [a for a in original.acls if not (
+                        a.group == 'luci-mod-system-mounts' and a.perm == 'write'
+                        and a.object == 'luci' and a.function == 'setBlockDetect')]
+                    kwargs['sessions'] = dict(kwargs['sessions'], **{sid: replace(original, acls=acls)})
+                evaluated = evaluate(**kwargs)
+                observed.append(evaluated.outcome)
+                if mutation == 'matched_group':
+                    self.assertEqual(evaluated.outcome, 'allow')
+                    evaluated = replace(evaluated, matched=replace(evaluated.matched, group='other'))
+                return evaluated
+            with self.subTest(mutation=mutation), patch.object(oracle, 'evaluate_call', side_effect=modified):
+                result = self.run_adapter()
+                self.assertEqual(observed, ['allow' if mutation == 'matched_group' else 'deny'])
+                self.assertEqual(result['gate'], 'unknown')
+                self.assertEqual(result['modeled_gate'], 'unknown')
+                self.assertEqual(result['policy']['status'], 'unassessed')
+
+    def test_assessed_api_does_not_open_files(self):
+        from unittest.mock import patch
+        before = retained_inventory()
+        self.run_adapter()  # Initialize Linux libc before forbidding file opens.
+        with patch('builtins.open', side_effect=AssertionError('unexpected open')), \
+             patch('os.open', side_effect=AssertionError('unexpected os.open')):
+            self.run_adapter()
+            self.envelope['reference']['id'] = 'other'
+            with self.assertRaises(ResolutionError):
+                self.run_adapter()
+        self.assertEqual(before, retained_inventory())
+
+    def test_assessed_cli_read_only_and_invalid_verdict(self):
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            values = {'selection': raw(self.selection), 'envelope': raw(self.envelope),
+                      'policy': self.policy, 'corpus': self.corpus, 'profile': self.profile}
+            for name, value in values.items():
+                (base / name).write_bytes(value)
+            for name, value in self.inputs.items():
+                (base / ('evidence-' + name)).write_bytes(value)
+            command = [sys.executable, '-B', '-m', 'policy.v2_adapter', '--family', 'setblock']
+            for name in values:
+                command.extend(['--' + name, str(base / name)])
+            for name in self.inputs:
+                command.extend(['--evidence', name + '=' + str(base / ('evidence-' + name))])
+            inventory = lambda: {p.name: digest(p.read_bytes()) for p in base.iterdir()}
+            before, retained = inventory(), retained_inventory()
+            result = subprocess.run(command, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)['policy']['status'],
+                             'assessed' if sys.platform == 'linux' else 'unassessed')
+            self.assertEqual(inventory(), before)
+            self.assertEqual(retained_inventory(), retained)
+            self.envelope['verdict'] = 'authorization_violation'
+            (base / 'envelope').write_bytes(raw(self.envelope))
+            before = inventory()
+            result = subprocess.run(command, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.stdout, b'')
+            self.assertIn(b'unsupported verdict', result.stderr)
+            self.assertEqual(inventory(), before)
+            self.assertEqual(retained_inventory(), retained)
+
+    def test_scope_and_operations_are_exact(self):
+        for field, value in [('caller', 'root'), ('ingress', 'ubus'),
+                             ('entrypoint', 'ubus_http:luci.getBlockDevices')]:
+            saved = self.scope[field]
+            self.scope[field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ResolutionError, 'scope'):
+                self.run_adapter()
+            self.scope[field] = saved
+        for field, value in [('target', 'ubus:luci.getBlockDevices'), ('operation', 'exec')]:
+            saved = self.pairs[0][field]
+            self.pairs[0][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ResolutionError, 'scope'):
+                self.run_adapter()
+            self.pairs[0][field] = saved
 
 
 class ReadOnlyTests(StatusBoundaryTests):
