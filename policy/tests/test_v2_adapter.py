@@ -312,6 +312,90 @@ class AssessedSetblockTests(SetblockFixture, unittest.TestCase):
                 self.assertEqual(result['modeled_gate'], 'unknown')
                 self.assertEqual(result['policy']['status'], 'unassessed')
 
+    @unittest.skipUnless(__import__('sys').platform == 'linux', 'requires Linux libc oracle')
+    def test_root_support_is_independent_of_delegated_assessment(self):
+        from unittest.mock import patch
+        from policy import oracle
+
+        before = retained_inventory()
+        baseline = self.run_adapter()
+        self.assertEqual((baseline['gate'], baseline['policy']['status']), ('allow', 'assessed'))
+        evaluate = oracle.evaluate_call
+        observed = []
+
+        def with_root(**kwargs):
+            mounts = kwargs['sessions'][oracle.MOUNTS_FIXTURE_SID]
+            logins = {login.username: login for login in
+                      oracle.parse_rpcd_logins(self.inputs['login'].decode())}
+            root_login = logins['root']
+            root = oracle.Session(session_class='root', sid=oracle.ROOT_FIXTURE_SID,
+                                  login=root_login, acls=oracle.session_acls(root_login, mounts.acls))
+            kwargs['sessions'] = dict(kwargs['sessions'], **{oracle.ROOT_FIXTURE_SID: root})
+            root_result = evaluate(**dict(kwargs, session_class='root', sid=oracle.ROOT_FIXTURE_SID))
+            self.assertIsNotNone(root_result.matched)
+            observed.append((root_result.outcome, root_result.matched.group, root_result.matched.perm,
+                             root_result.matched.object, root_result.matched.function, root_result.matched.source))
+            return evaluate(**kwargs)
+
+        with patch.object(oracle, 'evaluate_call', side_effect=with_root):
+            self.assertEqual(self.run_adapter(), baseline)
+        self.assertEqual(observed, [('allow', 'luci-mod-system-mounts', 'write', 'luci',
+                                     'setBlockDetect', 'luci-mod-system.json')])
+        self.assertEqual(self.run_adapter(), baseline)  # Remove supplementary root again.
+
+        def root_without_primary(**kwargs):
+            mounts = kwargs['sessions'][oracle.MOUNTS_FIXTURE_SID]
+            root_login = next(login for login in oracle.parse_rpcd_logins(
+                self.inputs['login'].decode()) if login.username == 'root')
+            root = oracle.Session(session_class='root', sid=oracle.ROOT_FIXTURE_SID,
+                                  login=root_login, acls=oracle.session_acls(root_login, mounts.acls))
+            # Root can access the operation, but a missing mounts SID cannot borrow it.
+            self.assertEqual(evaluate(**dict(kwargs, session_class='root', sid=oracle.ROOT_FIXTURE_SID,
+                                             sessions={oracle.ROOT_FIXTURE_SID: root})).outcome, 'allow')
+            result = evaluate(**dict(kwargs, sessions={oracle.ROOT_FIXTURE_SID: root}))
+            self.assertEqual(result.outcome, 'deny')
+            return result
+
+        with patch.object(oracle, 'evaluate_call', side_effect=root_without_primary):
+            result = self.run_adapter()
+        self.assertEqual((result['gate'], result['policy']['status']), ('unknown', 'unassessed'))
+        self.assertEqual(before, retained_inventory())
+
+    @unittest.skipUnless(__import__('sys').platform == 'linux', 'requires Linux libc oracle')
+    def test_acl_growth_does_not_expand_selected_real_policy(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from policy import oracle
+
+        before = retained_inventory()
+        baseline = self.run_adapter()
+        self.assertEqual((baseline['gate'], baseline['policy']['status']), ('allow', 'assessed'))
+        evaluate = oracle.evaluate_call
+        observed = []
+
+        def expanded(**kwargs):
+            sid = oracle.MOUNTS_FIXTURE_SID
+            session = kwargs['sessions'][sid]
+            self.assertEqual(evaluate(**dict(kwargs, function='extraOperation')).outcome, 'deny')
+            extra = oracle.AclEntry('luci-mod-system-mounts', 'write', 'ubus', 'luci',
+                                    'extraOperation', 'in-memory-control')
+            kwargs['sessions'] = {sid: replace(session, acls=session.acls + [extra])}
+            observed.append(evaluate(**dict(kwargs, function='extraOperation')).outcome)
+            return evaluate(**kwargs)
+
+        with patch.object(oracle, 'evaluate_call', side_effect=expanded):
+            self.assertEqual(self.run_adapter(), baseline)
+            # The same supported real query remains allowed without an applicable
+            # selected expectation; expanded ACL facts do not supply intent.
+            self.policy = raw({'selected': []})
+            self.context['policy'] = digest(self.policy)
+            self.envelope['context'] = copy.deepcopy(self.context)
+            self.envelope['reference'] = self.envelope['verdict'] = None
+            result = self.run_adapter()
+            self.assertEqual((result['gate'], result['policy']['status']), ('allow', 'unassessed'))
+        self.assertEqual(observed, ['allow', 'allow'])
+        self.assertEqual(before, retained_inventory())
+
     def test_assessed_api_does_not_open_files(self):
         from unittest.mock import patch
         before = retained_inventory()
