@@ -83,6 +83,13 @@ class StatusBoundaryTests(unittest.TestCase):
         self.assertEqual(self.run_adapter()['gate'], 'allow')
         self.assertEqual(self.run_adapter()['policy']['status'], 'assessed')
 
+    def test_unsupported_assessed_verdict_rejected_at_api_boundary(self):
+        before = retained_inventory()
+        self.envelope['verdict'] = 'authorization_violation'
+        with self.assertRaisesRegex(ResolutionError, 'unsupported verdict'):
+            self.run_adapter()
+        self.assertEqual(before, retained_inventory())
+
     def test_missing_conjuncts_are_unknown(self):
         for key in ('permission_raw', 'resource_raw'):
             with self.subTest(key=key):
@@ -234,6 +241,17 @@ class ReadOnlyTests(StatusBoundaryTests):
             self.assertEqual(json.loads(success.stdout)['gate'], 'allow')
             self.assertEqual(before, {p.name: digest(p.read_bytes()) for p in base.iterdir()})
             self.assertEqual(retained, retained_inventory())
+            self.envelope['verdict'] = 'authorization_violation'
+            (base / 'envelope').write_bytes(raw(self.envelope))
+            before = {p.name: digest(p.read_bytes()) for p in base.iterdir()}
+            retained = retained_inventory()
+            unsupported = subprocess.run(command, capture_output=True, check=False)
+            self.assertEqual(unsupported.returncode, 2)
+            self.assertEqual(unsupported.stdout, b'')
+            self.assertIn(b'unsupported verdict', unsupported.stderr)
+            self.assertEqual(before, {p.name: digest(p.read_bytes()) for p in base.iterdir()})
+            self.assertEqual(retained, retained_inventory())
+            self.envelope['verdict'] = 'intended_access'
             self.envelope['version'] = 1
             (base / 'envelope').write_bytes(raw(self.envelope))
             before = {p.name: digest(p.read_bytes()) for p in base.iterdir()}
