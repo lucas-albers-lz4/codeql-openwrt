@@ -48,6 +48,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     require(digest(context_file.read_bytes()) == expected_context, 'context digest')
     require(digest(oracle_file.read_bytes()) == expected_oracle, 'oracle digest')
     context, oracle = read_json(context_file), read_json(oracle_file)
+    require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs'}, 'context fields')
     family_check(context, oracle)
     require(context['oracle_sha256'] == expected_oracle, 'oracle binding')
     require((packet/'context.json').read_bytes() == context_file.read_bytes(), 'packet context')
@@ -56,6 +57,9 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     receipts = []
     for stage in STAGES:
         rec = read_json(packet / (stage + '.receipt.json')); cfg = context['commands'][stage]
+        require(set(rec) == {'stage','context_sha256','argv','cwd','environment','exit_code','start_ns','end_ns','before','after','stdout_sha256','stderr_sha256'}, 'receipt fields: '+stage)
+        require(set(cfg) == {'argv','cwd','env'} and type(cfg['argv']) is list and bool(cfg['argv']) and all(type(x) is str for x in cfg['argv']) and type(cfg['cwd']) is str and type(cfg['env']) is dict and all(type(k) is str and type(v) is str for k,v in cfg['env'].items()), 'command fields: '+stage)
+        require(set(rec['before']) == set(context['inputs']) | set(context['outputs']) and set(rec['after']) == set(rec['before']), 'inventory roles: '+stage)
         require(rec['stage'] == stage and rec['context_sha256'] == expected_context, 'receipt identity: '+stage)
         require(rec['argv'] == cfg['argv'] and rec['cwd'] == cfg['cwd'] and rec['environment'] == cfg['env'], 'command: '+stage)
         require(type(rec['exit_code']) is int and rec['exit_code'] == 0, 'exit: '+stage)
