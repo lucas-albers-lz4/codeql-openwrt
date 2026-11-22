@@ -70,6 +70,15 @@ def validate(manifest, stage, source, receipt, extracted, errors):
         raise ValueError('extraction errors present')
 
 
+def reject_duplicate_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f'duplicate JSON object key: {key!r}')
+        result[key] = value
+    return result
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--source', type=Path, required=True)
@@ -78,7 +87,7 @@ def main():
     p.add_argument('--extracted', type=Path, default=HERE / 'extracted.json')
     p.add_argument('--errors', type=Path, default=HERE / 'errors.json')
     args = p.parse_args()
-    load = lambda path: json.loads(path.read_text())
+    load = lambda path: json.loads(path.read_text(), object_pairs_hook=reject_duplicate_keys)
     validate(load(HERE / 'manifest.json'), args.stage, args.source,
              load(args.receipt), load(args.extracted), load(args.errors))
     print('12 selected source and staged identities, receipt and diagnostics verified')

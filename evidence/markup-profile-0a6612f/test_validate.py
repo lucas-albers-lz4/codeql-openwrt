@@ -1,6 +1,9 @@
 import copy
 import importlib.util
 import json
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 import tempfile
 import unittest
@@ -107,6 +110,65 @@ class ValidationControls(unittest.TestCase):
         external.write_bytes(data)
         target.symlink_to(external)
         with self.assertRaises(ValueError): self.check()
+
+
+class CliJsonControls(unittest.TestCase):
+    def setUp(self):
+        ValidationControls.setUp(self)
+        self.cli_dir = Path(self.tmp.name) / 'cli'
+        self.cli_dir.mkdir()
+        shutil.copy(HERE / 'validate.py', self.cli_dir / 'validate.py')
+        self.inputs = {
+            'manifest': self.manifest, 'receipt': self.receipt,
+            'extracted': self.extracted, 'errors': self.errors,
+        }
+        self.paths = {name: self.cli_dir / (name + '.json') for name in self.inputs}
+        for name, data in self.inputs.items():
+            self.paths[name].write_text(json.dumps(data))
+
+    def run_cli(self):
+        return subprocess.run([
+            sys.executable, str(self.cli_dir / 'validate.py'),
+            '--source', str(self.source), '--stage', str(self.stage),
+            '--receipt', str(self.paths['receipt']),
+            '--extracted', str(self.paths['extracted']),
+            '--errors', str(self.paths['errors']),
+        ], text=True, capture_output=True)
+
+    def test_cli_accepts_valid_json(self):
+        result = self.run_cli()
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_cli_rejects_duplicate_keys_in_every_input(self):
+        # Place a duplicate before the valid value: ordinary json.loads keeps the
+        # last value, so even contradictory input otherwise passes validation.
+        for name, key in (('manifest', 'installed'), ('receipt', 'input_count'),
+                          ('extracted', '#select'), ('errors', '#select')):
+            for equal in (False, True):
+                with self.subTest(input=name, equal=equal):
+                    path = self.paths[name]
+                    original = path.read_text()
+                    obj = self.inputs[name][0] if name == 'manifest' else self.inputs[name]
+                    value = obj[key] if equal else None
+                    token = json.dumps(key) + ':'
+                    self.assertIn(token, original)
+                    path.write_text(original.replace(token, token + ' ' + json.dumps(value) + ', ' + token, 1))
+                    try:
+                        result = self.run_cli()
+                        self.assertNotEqual(result.returncode, 0, result.stdout)
+                        self.assertIn('duplicate JSON object key', result.stderr)
+                    finally:
+                        path.write_text(original)
+
+    def test_cli_rejects_nested_duplicate_key(self):
+        path = self.paths['extracted']
+        original = path.read_text()
+        token = '"startLine":'
+        self.assertIn(token, original)
+        path.write_text(original.replace(token, token + ' 1, ' + token, 1))
+        result = self.run_cli()
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn('duplicate JSON object key', result.stderr)
 
 
 if __name__ == '__main__':

@@ -20,3 +20,5 @@ jobs:
         run: python3 -m unittest discover -s policy/tests -t . -v
       - name: JavaScript extraction gate offline checks
         run: python3 -m unittest discover -s ql-js -p 'test_*.py' -v
+      - name: Markup assessment validator checks
+        run: python3 -m unittest discover -s evidence/markup-profile-0a6612f -p 'test_validate.py' -v
