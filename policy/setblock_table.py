@@ -133,11 +133,21 @@ def validate_typed(path: Path, source_root: Path, repo_root: Path) -> dict:
     lock = read_json(repo_root / "corpus/lock.json")
     if lock["repos"]["luci"]["sha"] != LUCISHA:
         raise ValueError("luci lock revision is not the supported source pin")
-    if hashlib.sha256((source_root / SOURCE_PATH).read_bytes()).hexdigest() != SOURCE_SHA256:
+    source_bytes = (source_root / SOURCE_PATH).read_bytes()
+    if hashlib.sha256(source_bytes).hexdigest() != SOURCE_SHA256:
+        raise ValueError("source bytes do not match pinned luci")
+    return validate_typed_records(records, source_bytes, lock, corpus_revision(repo_root))
+
+
+def validate_typed_records(records, source_bytes, lock, selected_corpus):
+    """Validate already-parsed neutral records and source bytes without writes."""
+    if lock["repos"]["luci"]["sha"] != LUCISHA:
+        raise ValueError("luci lock revision is not the supported source pin")
+    if hashlib.sha256(source_bytes).hexdigest() != SOURCE_SHA256:
         raise ValueError("source bytes do not match pinned luci")
     expected = {
         "record_type": "handler_effect", "evidence_status": "fact", "producer": "step3",
-        "record_id": EFFECT_ID, "corpus_revision": corpus_revision(repo_root), "profile": PROFILE,
+        "record_id": EFFECT_ID, "corpus_revision": selected_corpus, "profile": PROFILE,
         "analysis_revision": TYPED_REVISION, "ingress": "ubus_http",
         "entrypoint_id": "ubus_http:luci.setBlockDetect", "ubus_object": "luci",
         "method": "setBlockDetect", "effect_id": EFFECT_NAME, "target_id": "command:block-detect",
