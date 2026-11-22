@@ -44,7 +44,7 @@ class ValidationControls(unittest.TestCase):
         self.check()
 
     def test_rejects_diagnostic_and_identity_failures(self):
-        for kind in ('missing', 'unexpected', 'duplicate', 'error', 'receipt'):
+        for kind in ('missing', 'unexpected', 'duplicate', 'error', 'receipt', 'reason', 'success_columns', 'error_columns', 'success_tuple', 'location'):
             with self.subTest(kind=kind):
                 original = copy.deepcopy((self.receipt, self.extracted, self.errors))
                 rows = self.extracted['#select']['tuples']
@@ -53,6 +53,11 @@ class ValidationControls(unittest.TestCase):
                 if kind == 'duplicate': rows[-1] = copy.deepcopy(rows[0])
                 if kind == 'error': self.errors['#select']['tuples'].append(['error'])
                 if kind == 'receipt': self.receipt['decisions'][0]['status'] = 'success'
+                if kind == 'reason': self.receipt['decisions'][0]['reason'] = 'wrong'
+                if kind == 'success_columns': self.extracted['#select']['columns'].pop()
+                if kind == 'error_columns': self.errors['#select']['columns'].pop()
+                if kind == 'success_tuple': rows[0].pop()
+                if kind == 'location': rows[0][0]['url']['startLine'] = 1
                 with self.assertRaises(ValueError): self.check()
                 self.receipt, self.extracted, self.errors = original
 
@@ -62,6 +67,20 @@ class ValidationControls(unittest.TestCase):
         with self.assertRaises(ValueError): self.check()
         p.write_bytes(b'0')
         (self.stage / 'extra.ut').write_text('extra')
+        with self.assertRaises(ValueError): self.check()
+
+    def test_rejects_extra_symlink_to_selected_file(self):
+        target = self.stage / self.manifest[0]['installed'].lstrip('/')
+        (self.stage / 'extra.ut').symlink_to(target)
+        with self.assertRaises(ValueError): self.check()
+
+    def test_rejects_symlinked_selected_file(self):
+        target = self.stage / self.manifest[0]['installed'].lstrip('/')
+        data = target.read_bytes()
+        target.unlink()
+        external = Path(self.tmp.name) / 'external'
+        external.write_bytes(data)
+        target.symlink_to(external)
         with self.assertRaises(ValueError): self.check()
 
 

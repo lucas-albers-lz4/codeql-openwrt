@@ -1,5 +1,6 @@
 """Validate this assessment's exact selected bytes and diagnostic identities."""
 import argparse
+from collections import Counter
 import hashlib
 import json
 from pathlib import Path
@@ -18,7 +19,10 @@ def validate(manifest, stage, source, receipt, extracted, errors):
         relative = Path(installed.lstrip('/'))
         if '..' in relative.parts or '..' in Path(row['source']).parts:
             raise ValueError('invalid source path')
-        target = (stage / relative).resolve(strict=True)
+        lexical = stage / relative
+        if any(p.is_symlink() for p in (lexical, *lexical.parents) if p != stage.parent):
+            raise ValueError('symlink in staged input path')
+        target = lexical.resolve(strict=True)
         if not target.is_relative_to(stage.resolve()):
             raise ValueError('stage escape')
         src = (source / row['source']).resolve(strict=True)
@@ -28,8 +32,11 @@ def validate(manifest, stage, source, receipt, extracted, errors):
         if src_bytes != dst_bytes or hashlib.sha256(src_bytes).hexdigest() != row['sha256']:
             raise ValueError('source or staged bytes differ from manifest')
         expected[str(target)] = installed.lstrip('/')
-    staged_files = {str(p.resolve()) for p in stage.rglob('*') if p.is_file()}
-    if staged_files != set(expected):
+    entries = list(stage.rglob('*'))
+    if stage.is_symlink() or any(p.is_symlink() for p in entries):
+        raise ValueError('symlink in stage')
+    staged_files = {p.relative_to(stage).as_posix() for p in entries if p.is_file()}
+    if staged_files != set(expected.values()):
         raise ValueError('stage has missing or unexpected files')
     if any(receipt.get(k) != v for k, v in {'input_count':12, 'plain_count':0,
            'markup_count':12, 'markup_inconclusive_count':12, 'uncertain_count':0,
@@ -40,15 +47,28 @@ def validate(manifest, stage, source, receipt, extracted, errors):
         raise ValueError('routing identities differ')
     for d in decisions:
         if (d['installed_path'] != expected[d['path']] or d['classification'] != 'markup'
-            or d['status'] != 'inconclusive' or d['inconclusive_reason'] != 'markup_not_modeled'):
+            or d['status'] != 'inconclusive' or d['inconclusive_reason'] != 'markup_not_modeled'
+            or d['reason'] != ('markup_tag_content' if d['installed_path'].endswith('/uhttpd.uc')
+                               else 'ut_markup_extension')):
             raise ValueError('routing decision differs')
-    rows = extracted['#select']['tuples']
-    if len(rows) != 12 or {r[0]['label'] for r in rows} != set(expected):
-        raise ValueError('extracted identities differ')
-    for row in rows:
-        if row[0]['url']['uri'] != Path(row[0]['label']).as_uri():
-            raise ValueError('extracted URL differs')
-    if errors['#select']['tuples'] != []:
+    def diagnostic_rows(data, columns):
+        if not isinstance(data, dict) or set(data) != {'#select'}:
+            raise ValueError('invalid diagnostic envelope')
+        table = data['#select']
+        if (not isinstance(table, dict) or set(table) != {'columns', 'tuples'}
+                or table['columns'] != columns or not isinstance(table['tuples'], list)):
+            raise ValueError('invalid diagnostic schema')
+        return table['tuples']
+
+    rows = diagnostic_rows(extracted, [{'name': 'f', 'kind': 'Entity'}, {'kind': 'String'}])
+    error_rows = diagnostic_rows(errors, [{'name': 'error', 'kind': 'Entity'},
+                                          {'kind': 'String'}, {'kind': 'Integer'}])
+    wanted = [[{'label': path, 'url': {'uri': Path(path).as_uri(), 'startLine': 0,
+                 'startColumn': 0, 'endLine': 0, 'endColumn': 0}}, ''] for path in expected]
+    encode = lambda row: json.dumps(row, sort_keys=True, separators=(',', ':'))
+    if Counter(map(encode, rows)) != Counter(map(encode, wanted)):
+        raise ValueError('extracted tuples differ')
+    if error_rows:
         raise ValueError('extraction errors present')
 
 
