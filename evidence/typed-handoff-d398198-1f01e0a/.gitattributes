@@ -1,0 +1,2 @@
+# Preserve the pinned upstream source byte-for-byte, including its existing trailing space.
+source/usr/share/rpcd/ucode/luci -whitespace
