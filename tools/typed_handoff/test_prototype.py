@@ -33,6 +33,12 @@ class Prototype(unittest.TestCase):
             p = subprocess.run(env, capture_output=True, text=True); self.assertEqual(p.returncode,0,p.stderr)
             cmd = [sys.executable,str(HERE/'verify.py'),str(run),str(context),str(oracle),sha(context),sha(oracle)]
             p = subprocess.run(cmd,capture_output=True,text=True); self.assertEqual(p.returncode,0,p.stderr)
+            repeated = subprocess.run(env,capture_output=True,text=True)
+            self.assertNotEqual(repeated.returncode,0); self.assertIn('fresh and absolute',repeated.stderr)
+            altered_stream = root/'altered-stream'; shutil.copytree(run, altered_stream)
+            (altered_stream/'errors_decode.stdout').write_text('corrupt')
+            stream_cmd = [*cmd]; stream_cmd[2] = str(altered_stream)
+            p = subprocess.run(stream_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('stream: errors_decode',p.stderr)
             altered = root/'altered'; shutil.copytree(run, altered)
             for index, stage in enumerate(STAGES):
                 path = altered/(stage+'.receipt.json'); rec = json.loads(path.read_text())

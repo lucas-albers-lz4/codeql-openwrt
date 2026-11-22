@@ -15,6 +15,9 @@ STAGES = ('init', 'index', 'finalize', 'extracted_query', 'extracted_decode',
           'errors_query', 'errors_decode', 'effects_query', 'effects_decode',
           'export', 'import', 'reimport')
 
+def same(a, b):
+    return json.dumps(a, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(b, sort_keys=True, separators=(',', ':'), allow_nan=False)
+
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -101,7 +104,7 @@ def main(context_file, oracle_file, approval):
                 if (name != 'consumer' or stage != 'import') and current[name] != initial[name]: fail('input drift: ' + name)
         if stage == 'export':
             for name in ('extracted', 'errors', 'effects'): exact(name, name + '_rows')
-        if stage == 'import' and load(paths['typed']) != oracle['neutral_typed_payload']:
+        if stage == 'import' and not same(load(paths['typed']), oracle['neutral_typed_payload']):
             fail('typed payload mismatch')
         before = snapshot(); start = time.time_ns()
         stdout = run / (stage + '.stdout'); stderr = run / (stage + '.stderr')

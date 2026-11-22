@@ -11,6 +11,9 @@ import sys
 
 STAGES = ('init','index','finalize','extracted_query','extracted_decode',
           'errors_query','errors_decode','effects_query','effects_decode','export','import','reimport')
+def same(a, b):
+    return json.dumps(a, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(b, sort_keys=True, separators=(',', ':'), allow_nan=False)
+
 def digest(data): return hashlib.sha256(data).hexdigest()
 def read_json(path):
     def pairs(items):
@@ -58,7 +61,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     for name in ('extracted','errors','effects'):
         with (packet/context['outputs'][name]).open(newline='') as f: rows = list(csv.reader(f))
         require(rows == oracle[name+'_rows'], 'rows: '+name)
-    require(read_json(packet/context['outputs']['typed']) == oracle['neutral_typed_payload'], 'typed')
+    require(same(read_json(packet/context['outputs']['typed']), oracle['neutral_typed_payload']), 'typed')
     imp = receipts[STAGES.index('import')]; replay = receipts[-1]
     require(all(r[edge]['consumer'] == initial['consumer'] for r in receipts[:STAGES.index('import')] for edge in ('before','after')), 'early consumer change')
     for name in ('extracted', 'errors', 'effects', 'typed'):
@@ -80,7 +83,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         positions = [[i for i,x in enumerate(row) if x.get('record_id') == 'm4:effect:luci-setBlockDetect-system'] for row in rows]
         require(positions[0] == positions[1] == positions[2] == [oracle['prestate_provenance'][name]['target_index']], 'target position: '+name)
         i = positions[0][0]
-        require(rows[1][i] == oracle['expected_complete_targets'][name][0], 'target: '+name)
+        require(same(rows[1][i], oracle['expected_complete_targets'][name][0]), 'target: '+name)
         require(rows[0][:i]+rows[0][i+1:] == rows[1][:i]+rows[1][i+1:], 'other rows: '+name)
     print('Packet checks passed; execution is not authenticated.')
 if __name__ == '__main__':
