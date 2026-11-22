@@ -12,9 +12,9 @@ Its status tests use synthetic package,
 permission, and resource fixtures; its setBlockDetect test reads the archived
 neutral observation and pinned source evidence. On Linux the modeled mounts
 gate is `allow`; on Darwin and other non-Linux platforms it is `unknown`
-because the evaluator depends on Linux libc behavior. The result stays
-unassessed on every platform. This is a unit test, not a new runtime or CodeQL
-run. The separate historical typed handoff evidence is archived in [the issue
+because the evaluator depends on Linux libc behavior. An assessed result requires
+the independently selected policy and every pinned input, as described below.
+This is a unit test, not a new runtime or CodeQL run. The separate historical typed handoff evidence is archived in [the issue
 #89 evidence record](../evidence/issue89-typed-ae946190-7f532ac/README.md); its
 scope and limitations are recorded there and in its reproduction guide.
 
@@ -41,10 +41,29 @@ default, init and config bytes support that conditional model. On Linux, the
 bounded gate is allow only when the exact pinned
 mounts fixture matches the evaluator. The evaluator assumes the `luci` object
 exists; live registration is not established. This is a source-model result,
-not proof of a package build, installation, or live runtime. Missing evidence stays unknown. No real assessed reference is accepted until an
-independent review approves the exact scope and policy authority. Archived
-hashes and diagnostics do not authenticate producer origin, prove live
-registration or execution, or establish complete extraction.
+not proof of a package build, installation, or live runtime. Missing evidence stays unknown, and a matched reference remains unassessed unless
+all evidence and the modeled gate support it.
+
+The independently reviewed selection binds the full original consumer profile
+expectations file by SHA-256
+`8192803552814c47cb39b99712c033d0aa5a6631a6d32e05315bd9666630881c`,
+under the pilot namespace `openwrt-consumer:luci-ssl-25.12` and ID
+`luci-mod-system-mounts`. The adapter checks the original registry's profile
+and unique IDs before projecting only the synthetic mounts caller,
+`ubus_http:luci.setBlockDetect` entrypoint and `ubus:luci.setBlockDetect` /
+`invoke` pair. The separately checked helper is the literal string-form
+`system('/sbin/block detect > /etc/config/fstab')`, which runs through a shell.
+The other registry permission is not required. The selected snapshot is consumer
+policy intent, not an ACL-derived grant or authenticated producer identity.
+An assessed reference must name that exact namespace and ID and use the supported
+`intended_access` verdict. Without a reference the result remains unassessed;
+an invalid asserted reference is an error. On a supported Linux modeled allow
+with all pinned evidence, that reference produces a bounded assessed result.
+
+The result carries the archived typed observation's unknowns and assumptions,
+including its historical wording, and separately states the shell and model
+limits. Archived hashes and diagnostics do not authenticate producer origin,
+prove live registration or execution, or establish complete extraction.
 
 The API returns results in memory and the CLI prints JSON. Neither calls the
 legacy writer or changes historical reports. The old typed and CSV entry points
