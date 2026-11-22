@@ -7,6 +7,17 @@ context; it cannot select or authenticate policy. All JSON enters as raw UTF-8,
 with duplicate keys and non-finite numbers rejected. A matching digest binds
 bytes to the selection, but is not authentication of their origin.
 
+For a local demonstration, run `python3 -B -m unittest policy.tests.test_v2_adapter -v`.
+Its status tests use synthetic package,
+permission, and resource fixtures; its setBlockDetect test reads the archived
+neutral observation and pinned source evidence. On Linux the modeled mounts
+gate is `allow`; on Darwin and other non-Linux platforms it is `unknown`
+because the evaluator depends on Linux libc behavior. The result stays
+unassessed on every platform. This is a unit test, not a new runtime or CodeQL
+run. The separate historical typed handoff evidence is archived in [the issue
+#89 evidence record](../evidence/issue89-typed-ae946190-7f532ac/README.md); its
+scope and limitations are recorded there and in its reproduction guide.
+
 The status family is entirely synthetic. Its only supported target/operation
 pairs are `status`/`read` and `status-metadata`/`inspect`; the read pair is
 required. Selected caller and provider manifests have distinct roles, feed,
