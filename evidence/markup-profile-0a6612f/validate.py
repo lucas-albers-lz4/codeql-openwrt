@@ -20,8 +20,6 @@ def validate(manifest, stage, source, receipt, extracted, errors):
         if '..' in relative.parts or '..' in Path(row['source']).parts:
             raise ValueError('invalid source path')
         lexical = stage / relative
-        if any(p.is_symlink() for p in (lexical, *lexical.parents) if p != stage.parent):
-            raise ValueError('symlink in staged input path')
         target = lexical.resolve(strict=True)
         if not target.is_relative_to(stage.resolve()):
             raise ValueError('stage escape')

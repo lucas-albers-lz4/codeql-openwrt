@@ -69,6 +69,20 @@ class ValidationControls(unittest.TestCase):
         (self.stage / 'extra.ut').write_text('extra')
         with self.assertRaises(ValueError): self.check()
 
+    def test_accepts_external_ancestor_alias(self):
+        alias = Path(self.tmp.name).parent / (Path(self.tmp.name).name + '-alias')
+        alias.symlink_to(Path(self.tmp.name), target_is_directory=True)
+        self.addCleanup(alias.unlink)
+        self.stage = alias / 'stage'
+        # Receipt and decoded diagnostic identities are canonical, as produced by CodeQL.
+        self.check()
+
+    def test_rejects_symlinked_stage_root(self):
+        alias = Path(self.tmp.name) / 'stage-alias'
+        alias.symlink_to(self.stage, target_is_directory=True)
+        self.stage = alias
+        with self.assertRaises(ValueError): self.check()
+
     def test_rejects_extra_symlink_to_selected_file(self):
         target = self.stage / self.manifest[0]['installed'].lstrip('/')
         (self.stage / 'extra.ut').symlink_to(target)
