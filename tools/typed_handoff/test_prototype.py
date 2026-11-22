@@ -23,7 +23,7 @@ class Prototype(unittest.TestCase):
             after = [{'record_id':'m4:effect:luci-setBlockDetect-system','value':'after'}, {'record_id':'keep'}]
             dump(report, before)
             script = root/'stage.py'
-            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s.endswith("_decode"): (r/(s[:-7]+".csv")).write_text("name\\nvalue\\n")\nif s=="export": (r/"typed.json").write_text(json.dumps({"neutral":True}))\nif s=="import": (c/"report.json").write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
+            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s.endswith("_decode"): print("name\\nvalue")\nif s=="export": print(json.dumps({"neutral":True}))\nif s=="import": (c/"report.json").write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
             run = root/'run'; oracle = root/'oracle.json'; context = root/'context.json'
             dump(oracle, {'extracted_rows':[['name'],['value']], 'errors_rows':[['name'],['value']], 'effects_rows':[['name'],['value']], 'neutral_typed_payload':{'neutral':True}, 'expected_effects':['report.json'], 'prestate_provenance':{'report.json':{'target_index':0}}, 'expected_complete_targets':{'report.json':[after[0]]}})
             commands = {s:{'argv':[sys.executable,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer)}} for s in STAGES}

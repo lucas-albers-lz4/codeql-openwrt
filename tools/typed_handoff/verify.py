@@ -66,7 +66,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         rec = receipts[STAGES.index(stage)]
         output = packet / context['outputs'][name]
         require(rec['before'][name] is None, 'output not absent at stage: '+name)
-        require(rec['after'][name]['sha256'] == digest(output.read_bytes()), 'output binding: '+name)
+        require(rec['after'][name]['sha256'] == digest(output.read_bytes()) == rec['stdout_sha256'], 'output binding: '+name)
         require(all(r[edge][name] == rec['after'][name] for r in receipts[STAGES.index(stage)+1:] for edge in ('before','after')), 'output drift: '+name)
     before, after = imp['before']['consumer'], imp['after']['consumer']
     require(imp['after']['consumer'] == replay['before']['consumer'] == replay['after']['consumer'], 'replay inventory')

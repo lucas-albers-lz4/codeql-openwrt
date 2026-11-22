@@ -92,6 +92,7 @@ def main(context_file, oracle_file, approval):
         with paths[name].open(newline='') as stream:
             if list(csv.reader(stream)) != oracle[key]: fail('oracle mismatch: ' + name)
     initial = snapshot()
+    imported = None
     for stage in STAGES:
         cfg = context['commands'][stage]
         if stage != 'reimport':
@@ -106,6 +107,9 @@ def main(context_file, oracle_file, approval):
         stdout = run / (stage + '.stdout'); stderr = run / (stage + '.stderr')
         with stdout.open('xb') as out, stderr.open('xb') as err:
             result = subprocess.run(cfg['argv'], cwd=cfg['cwd'], env=cfg['env'], stdout=out, stderr=err, check=False)
+        if stage in ('extracted_decode','errors_decode','effects_decode','export'):
+            name = stage.removesuffix('_decode') if stage != 'export' else 'typed'
+            with paths[name].open('xb') as target: target.write(stdout.read_bytes())
         after = snapshot(); end = time.time_ns()
         for name in roots:
             if (name != 'consumer' or stage in ('init','index','finalize','extracted_query','extracted_decode','errors_query','errors_decode','effects_query','effects_decode','export')) and after[name] != initial[name]: fail('input drift: ' + name)
@@ -115,6 +119,15 @@ def main(context_file, oracle_file, approval):
                    'stdout_sha256': sha(stdout), 'stderr_sha256': sha(stderr)}
         with (run / (stage + '.receipt.json')).open('x') as f: json.dump(receipt, f, sort_keys=True)
         if result.returncode: fail('stage failed: ' + stage)
+        if stage == 'import':
+            before_consumer, after_consumer = before['consumer'], after['consumer']
+            changed = sorted(k for k in set(before_consumer) | set(after_consumer) if before_consumer.get(k) != after_consumer.get(k))
+            if changed != sorted(oracle['expected_effects']): fail('unexpected consumer changes')
+            if before['typed'] != after['typed']: fail('typed input changed')
+            imported = after
+        if stage == 'reimport':
+            if imported is None or before != imported or after['consumer'] != imported['consumer'] or after['typed'] != imported['typed']:
+                fail('replay changed consumer or typed input')
         if stage in ('init', 'import', 'reimport'):
             consumer = roots['consumer']
             for name in oracle['expected_effects']:
