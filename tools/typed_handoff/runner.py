@@ -38,6 +38,7 @@ def inventory(path):
     if path.is_symlink():
         raise ValueError('symlink inventory root')
     if path.is_file():
+        if path.stat().st_nlink != 1: raise ValueError('hardlinked file: ' + str(path))
         return {'sha256': sha(path), 'size': path.stat().st_size}
     result = {}
     for directory, dirs, files in os.walk(path, followlinks=False):
@@ -84,7 +85,8 @@ def main(context_file, oracle_file, approval):
     (run / 'context.json').write_bytes(context_file.read_bytes())
     (run / 'oracle.json').write_bytes(oracle_file.read_bytes())
     paths = {**roots, **{k: run / v for k, v in context['outputs'].items()}}
-    if len(set(paths.values())) != len(paths): fail('duplicate inventory paths')
+    output_paths = [paths[k] for k in context['outputs']]
+    if any(a == b or a in b.parents or b in a.parents for i,a in enumerate(output_paths) for b in output_paths[i+1:]): fail('overlapping output paths')
     for name, relative in context['outputs'].items():
         p = Path(relative)
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
@@ -98,6 +100,7 @@ def main(context_file, oracle_file, approval):
     imported = None
     for stage in STAGES:
         cfg = context['commands'][stage]
+        if set(cfg) != {'argv','cwd','env'} or not isinstance(cfg['argv'], list) or not cfg['argv'] or not all(type(x) is str for x in cfg['argv']) or type(cfg['cwd']) is not str or type(cfg['env']) is not dict or not all(type(k) is str and type(v) is str for k,v in cfg['env'].items()): fail('invalid command: ' + stage)
         if stage != 'reimport':
             current = snapshot()
             for name in roots:
