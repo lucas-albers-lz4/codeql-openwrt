@@ -10,7 +10,7 @@ def run(case):
   if case=='stage': mutate_json(r/'init.receipt.json',lambda x:x.update(stage='index'))
   if case=='inverted': mutate_json(r/'init.receipt.json',lambda x:x.update(start_epoch=x['end_epoch']+1))
   if case=='nonfinite': mutate_json(r/'init.receipt.json',lambda x:x.update(end_epoch=float('nan')))
-  if case=='bqrs': (r/'effects.bqrs').write_bytes(b'replaced')
+  if case in ('bqrs','optimized'): (r/'effects.bqrs').write_bytes(b'replaced')
   if case=='timing': mutate_json(r/'index.receipt.json',lambda x:x.update(start_epoch=0))
   if case=='stream': mutate_json(r/'import.receipt.json',lambda x:x['stderr'].update(path=x['stderr']['path'].replace('import.stderr','export.stderr')))
   if case=='typed': mutate_json(r/'reimport.receipt.json',lambda x:x['before']['typed'].update(sha256='0'*64))
