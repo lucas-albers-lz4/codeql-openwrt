@@ -24,6 +24,8 @@ def family_check(context, oracle):
         data = json.dumps(oracle[name], sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
         if hashlib.sha256(data).hexdigest() != wanted: raise ValueError('family oracle: ' + name)
     if oracle['source'] != source or oracle['source_sha256'] != '6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e' or oracle['lock_sha256'] != 'b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a': raise ValueError('family source or lock')
+    if context['initial']['consumer']['corpus/lock.json']['sha256'] != oracle['lock_sha256']: raise ValueError('consumer lock')
+    if sorted(oracle['expected_effects']) != ['reports/handler_effects.json','reports/m4-block-device-exec.json']: raise ValueError('family reports')
     files = context['initial']['source']
     if set(files) != {source} or files[source]['sha256'] != oracle['source_sha256']: raise ValueError('source inventory')
     expected_rows = [['f','col1'], [str(Path(context['inputs']['source']) / source), '']]

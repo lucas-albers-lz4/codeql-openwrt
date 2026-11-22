@@ -23,16 +23,19 @@ class Prototype(unittest.TestCase):
             source_file = source/'usr/share/rpcd/ucode/luci'; source_file.parent.mkdir(parents=True)
             shutil.copyfile(original/'source/usr/share/rpcd/ucode/luci', source_file)
             family = json.loads((original/'oracle-expanded.json').read_text())
-            report = consumer/'report.json'
+            lock = consumer/'corpus/lock.json'; lock.parent.mkdir(); shutil.copyfile(HERE.parent.parent/'corpus/lock.json',lock)
+            reports = ['reports/handler_effects.json','reports/m4-block-device-exec.json']
+            report = consumer/reports[0]; report.parent.mkdir()
             before = [{'record_id':'m4:effect:luci-setBlockDetect-system','value':'before'}, {'record_id':'keep'}]
             after = [{'record_id':'m4:effect:luci-setBlockDetect-system','value':'after'}, {'record_id':'keep'}]
             dump(report, before)
+            second = consumer/reports[1]; dump(second, before)
             script = root/'stage.py'
-            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s=="init": (r/"db").write_text("database")\nif s.endswith("_query"): (r/(s[:-6]+".bqrs")).write_text("bqrs")\nif s.endswith("_decode"):\n import csv\n csv.writer(sys.stdout,lineterminator="\\n").writerows(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())[s[:-7]+"_rows"])\nif s=="export": print(json.dumps(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())["neutral_typed_payload"]))\nif s=="import": (c/"report.json").write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
+            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s=="init": (r/"db").write_text("database")\nif s.endswith("_query"): (r/(s[:-6]+".bqrs")).write_text("bqrs")\nif s.endswith("_decode"):\n import csv\n csv.writer(sys.stdout,lineterminator="\\n").writerows(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())[s[:-7]+"_rows"])\nif s=="export": print(json.dumps(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())["neutral_typed_payload"]))\nif s=="import":\n for name in ["reports/handler_effects.json","reports/m4-block-device-exec.json"]: (c/name).write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
             run = root/'run'; oracle = root/'oracle.json'; context = root/'context.json'
-            dump(oracle, {'source':'usr/share/rpcd/ucode/luci', 'source_sha256':family['source_sha256'], 'lock_sha256':family['lock_sha256'], 'extracted_rows':[['f','col1'],[str(source_file),'']], 'errors_rows':family['errors_rows'], 'effects_rows':family['effects_rows'], 'neutral_typed_payload':family['neutral_typed_payload'], 'expected_effects':['report.json'], 'prestate_provenance':{'report.json':{'target_index':0}}, 'expected_complete_targets':{'report.json':[after[0]]}})
+            dump(oracle, {'source':'usr/share/rpcd/ucode/luci', 'source_sha256':family['source_sha256'], 'lock_sha256':family['lock_sha256'], 'extracted_rows':[['f','col1'],[str(source_file),'']], 'errors_rows':family['errors_rows'], 'effects_rows':family['effects_rows'], 'neutral_typed_payload':family['neutral_typed_payload'], 'expected_effects':reports, 'prestate_provenance':{name:{'target_index':0} for name in reports}, 'expected_complete_targets':{name:[after[0]] for name in reports}})
             commands = {s:{'argv':[sys.executable,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer),'ORACLE':str(oracle)}} for s in STAGES}
-            initial = {'report.json':{'sha256':sha(report),'size':report.stat().st_size}}
+            initial = {name:{'sha256':sha(consumer/name),'size':(consumer/name).stat().st_size} for name in reports} | {'corpus/lock.json':{'sha256':sha(lock),'size':lock.stat().st_size}}
             dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer),'source':str(source)},'run':str(run),'initial':{'consumer':initial,'source':{'usr/share/rpcd/ucode/luci':{'sha256':sha(source_file),'size':source_file.stat().st_size}}},'git':{},'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
             env = [sys.executable, str(HERE/'runner.py'), '--synthetic-only', str(context),str(oracle),sha(context)]
             p = subprocess.run(env, capture_output=True, text=True); self.assertEqual(p.returncode,0,p.stderr)
