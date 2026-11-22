@@ -60,6 +60,14 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         require(rows == oracle[name+'_rows'], 'rows: '+name)
     require(read_json(packet/context['outputs']['typed']) == oracle['neutral_typed_payload'], 'typed')
     imp = receipts[STAGES.index('import')]; replay = receipts[-1]
+    require(all(r[edge]['consumer'] == initial['consumer'] for r in receipts[:STAGES.index('import')] for edge in ('before','after')), 'early consumer change')
+    for name in ('extracted', 'errors', 'effects', 'typed'):
+        stage = name + '_decode' if name != 'typed' else 'export'
+        rec = receipts[STAGES.index(stage)]
+        output = packet / context['outputs'][name]
+        require(rec['before'][name] is None, 'output not absent at stage: '+name)
+        require(rec['after'][name]['sha256'] == digest(output.read_bytes()), 'output binding: '+name)
+        require(all(r[edge][name] == rec['after'][name] for r in receipts[STAGES.index(stage)+1:] for edge in ('before','after')), 'output drift: '+name)
     before, after = imp['before']['consumer'], imp['after']['consumer']
     require(imp['after']['consumer'] == replay['before']['consumer'] == replay['after']['consumer'], 'replay inventory')
     changed = sorted(k for k in set(before)|set(after) if before.get(k) != after.get(k))

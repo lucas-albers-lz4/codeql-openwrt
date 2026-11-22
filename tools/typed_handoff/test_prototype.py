@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -32,6 +33,15 @@ class Prototype(unittest.TestCase):
             p = subprocess.run(env, capture_output=True, text=True); self.assertEqual(p.returncode,0,p.stderr)
             cmd = [sys.executable,str(HERE/'verify.py'),str(run),str(context),str(oracle),sha(context),sha(oracle)]
             p = subprocess.run(cmd,capture_output=True,text=True); self.assertEqual(p.returncode,0,p.stderr)
+            altered = root/'altered'; shutil.copytree(run, altered)
+            for index, stage in enumerate(STAGES):
+                path = altered/(stage+'.receipt.json'); rec = json.loads(path.read_text())
+                for edge in ('before','after'):
+                    if index > 0 or edge == 'after':
+                        rec[edge]['consumer']['injected'] = {'sha256':'0'*64, 'size':1}
+                dump(path, rec)
+            altered_cmd = [*cmd]; altered_cmd[2] = str(altered)
+            p = subprocess.run(altered_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('early consumer change',p.stderr)
             (run/'effects.csv').write_text('name\nwrong\n')
             p = subprocess.run(cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('rows: effects',p.stderr)
             p = subprocess.run([sys.executable,'-O',*cmd[1:]],capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('rows: effects',p.stderr)

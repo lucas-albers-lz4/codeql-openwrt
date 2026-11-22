@@ -44,6 +44,7 @@ def inventory(path):
             if p.is_symlink():
                 raise ValueError('symlink in inventory: ' + str(p))
             if p.is_file():
+                if p.stat().st_nlink != 1: raise ValueError('hardlinked input: ' + str(p))
                 result[str(p.relative_to(path))] = {'sha256': sha(p), 'size': p.stat().st_size}
     return result
 
@@ -58,13 +59,17 @@ def main(context_file, oracle_file, approval):
     if approval != sha(context_file): fail('reviewed context digest mismatch')
     if context['oracle_sha256'] != sha(oracle_file): fail('oracle mismatch')
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
+    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs'}: fail('context fields')
+    if set(context['outputs']) != {'extracted','errors','effects','typed'}: fail('output roles')
+    if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
+    if any(Path(v).is_symlink() for v in context['inputs'].values()): fail('symlink input root')
     roots = {k: Path(v).resolve(strict=True) for k, v in context['inputs'].items()}
     run = Path(context['run'])
     if not run.is_absolute() or run.exists(): fail('run directory must be fresh and absolute')
     run = run.parent.resolve(strict=True) / run.name
     if any(run == p or run in p.parents or p in run.parents for p in roots.values()):
         fail('run overlaps an input')
-    if len(set(roots.values())) != len(roots): fail('input roots must be distinct')
+    if any(a == b or a in b.parents or b in a.parents for i,a in enumerate(roots.values()) for b in list(roots.values())[i+1:]): fail('input roots must be distinct and disjoint')
     for name, root in roots.items():
         if inventory(root) != context['initial'][name]: fail('input inventory mismatch: ' + name)
     for role, pin in context['git'].items():
@@ -86,8 +91,13 @@ def main(context_file, oracle_file, approval):
         import csv
         with paths[name].open(newline='') as stream:
             if list(csv.reader(stream)) != oracle[key]: fail('oracle mismatch: ' + name)
+    initial = snapshot()
     for stage in STAGES:
         cfg = context['commands'][stage]
+        if stage != 'reimport':
+            current = snapshot()
+            for name in roots:
+                if (name != 'consumer' or stage != 'import') and current[name] != initial[name]: fail('input drift: ' + name)
         if stage == 'export':
             for name in ('extracted', 'errors', 'effects'): exact(name, name + '_rows')
         if stage == 'import' and load(paths['typed']) != oracle['neutral_typed_payload']:
@@ -97,6 +107,8 @@ def main(context_file, oracle_file, approval):
         with stdout.open('xb') as out, stderr.open('xb') as err:
             result = subprocess.run(cfg['argv'], cwd=cfg['cwd'], env=cfg['env'], stdout=out, stderr=err, check=False)
         after = snapshot(); end = time.time_ns()
+        for name in roots:
+            if (name != 'consumer' or stage in ('init','index','finalize','extracted_query','extracted_decode','errors_query','errors_decode','effects_query','effects_decode','export')) and after[name] != initial[name]: fail('input drift: ' + name)
         receipt = {'stage': stage, 'context_sha256': approval, 'argv': cfg['argv'],
                    'cwd': cfg['cwd'], 'environment': cfg['env'], 'exit_code': result.returncode,
                    'start_ns': start, 'end_ns': end, 'before': before, 'after': after,
