@@ -1,0 +1,9 @@
+Running pre-finalize script /Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor-pack/tools/pre-finalize.sh in /Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/src.
+Running command in /Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/src: [/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor-pack/tools/pre-finalize.sh]
+Pre-finalize script /Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor-pack/tools/pre-finalize.sh completed in 494 ms.
+Running TRAP import for CodeQL database at /Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/db...
+Importing TRAP files
+Merging relations
+Finished writing database (relations: 79.79 KiB; string pool: 2.05 MiB).
+TRAP import complete (294ms).
+Finished zipping source archive (4.90 KiB).

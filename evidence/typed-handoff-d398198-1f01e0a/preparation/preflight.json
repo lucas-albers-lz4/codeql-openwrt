@@ -1,0 +1,11 @@
+{
+  "frozen_context": "56e0a7fdf6f23ff5a38ad61942e687d8c720e4d5772fd72c35b53b93c9f2a995",
+  "oracle": "cc978a8068a5a2cc0d8ae9f9a2460b6e95f03b4742a550eee4af05961abe311b",
+  "runner": "296d7b28def67b7bb80d27912b285ebdf9eefa42294eb6115fe21f4ea7ec161f",
+  "exporter": "a970c5c3350677ada8cfb5a342050f214e6e5eb5678313f01efd38115192ccd6",
+  "python": "fe4fd6c475964c108a2f4b105dcb46f849f4fc2c84d1b46f37443b0eb492fc38",
+  "framework": "e766fd8c1b7cd2340cc831bed162076129ba147f6ec742b51c7e4d7bb3cd2831",
+  "roots_clean": true,
+  "inventories_match": true,
+  "database_absent": true
+}

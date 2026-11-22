@@ -1,0 +1,179 @@
+{
+  "steps" : [
+    {
+      "type" : "by-name",
+      "scans" : [
+        {
+          "paths" : [ ],
+          "found" : { },
+          "hidden" : { },
+          "ambiguous" : { }
+        }
+      ],
+      "description" : "Searching directories specified by `--additional-packs`. All directories have equal priority."
+    },
+    {
+      "type" : "by-name",
+      "scans" : [
+        {
+          "paths" : [
+            "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor-pack"
+          ],
+          "found" : {
+            "codeql/ucode-downgrades" : {
+              "version" : "0.0.0",
+              "kind" : "library",
+              "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor-pack/downgrades/qlpack.yml"
+            }
+          },
+          "hidden" : { },
+          "ambiguous" : { }
+        },
+        {
+          "paths" : [
+            "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/lib"
+          ],
+          "found" : {
+            "lucas-albers-lz4/ucode-all" : {
+              "version" : "0.1.0",
+              "kind" : "library",
+              "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/lib/qlpack.yml"
+            }
+          },
+          "hidden" : { },
+          "ambiguous" : { }
+        },
+        {
+          "paths" : [
+            "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/src"
+          ],
+          "found" : {
+            "lucas-albers-lz4/ucode-queries" : {
+              "version" : "0.1.0",
+              "kind" : "query",
+              "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/src/qlpack.yml"
+            }
+          },
+          "hidden" : { },
+          "ambiguous" : { }
+        }
+      ],
+      "description" : "Searching directories specified by `--search-path`. Directories are searched in order."
+    },
+    {
+      "type" : "by-name",
+      "scans" : [
+        {
+          "paths" : [
+            "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql"
+          ],
+          "found" : {
+            "legacy-upgrades" : {
+              "version" : "0.0.0",
+              "kind" : "query",
+              "path" : "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/legacy-upgrades/qlpack.yml"
+            }
+          },
+          "hidden" : { },
+          "ambiguous" : { }
+        }
+      ],
+      "description" : "Searching the root of the CodeQL distribution."
+    },
+    {
+      "type" : "by-name",
+      "scans" : [
+        {
+          "paths" : [
+            "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4"
+          ],
+          "found" : { },
+          "hidden" : {
+            "legacy-upgrades" : {
+              "found" : [
+                {
+                  "version" : "0.0.0",
+                  "kind" : "query",
+                  "path" : "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/legacy-upgrades/qlpack.yml"
+                }
+              ],
+              "hidden-by" : [
+                {
+                  "version" : "0.0.0",
+                  "kind" : "query",
+                  "path" : "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/legacy-upgrades/qlpack.yml"
+                }
+              ]
+            }
+          },
+          "ambiguous" : { }
+        }
+      ],
+      "description" : "Searching the parent directory of the CodeQL distribution."
+    },
+    {
+      "type" : "by-name-and-version",
+      "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages",
+      "description" : "Searching the local pack cache. This only applies when searching for a particular version of a pack specified in a lock file.",
+      "found" : {
+        "codeql/controlflow" : {
+          "1.0.12" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/controlflow/1.0.12/qlpack.yml"
+          }
+        },
+        "codeql/dataflow" : {
+          "1.1.6" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/dataflow/1.1.6/qlpack.yml"
+          }
+        },
+        "codeql/regex" : {
+          "1.0.12" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/regex/1.0.12/qlpack.yml"
+          }
+        },
+        "codeql/ssa" : {
+          "1.0.12" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/ssa/1.0.12/qlpack.yml"
+          }
+        },
+        "codeql/threat-models" : {
+          "1.1.1" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/threat-models/1.1.1/qlpack.yml"
+          },
+          "1.1.2" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/threat-models/1.1.2/qlpack.yml"
+          }
+        },
+        "codeql/typetracking" : {
+          "1.0.12" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/typetracking/1.0.12/qlpack.yml"
+          }
+        },
+        "codeql/util" : {
+          "1.0.12" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/util/1.0.12/qlpack.yml"
+          }
+        },
+        "codeql/yaml" : {
+          "1.0.61" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/yaml/1.0.61/qlpack.yml"
+          },
+          "1.0.62" : {
+            "kind" : "library",
+            "path" : "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/home/.codeql/packages/codeql/yaml/1.0.62/qlpack.yml"
+          }
+        }
+      },
+      "hidden" : { }
+    }
+  ]
+}

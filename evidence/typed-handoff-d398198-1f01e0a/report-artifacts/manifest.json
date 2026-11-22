@@ -1,0 +1,50 @@
+{
+  "producer": "d3981986ac685d6fcbb78a3b369aa4ed526c1e4b",
+  "consumer": "1f01e0a1529b5edf0f9b2e7d6215712bf87e994a",
+  "files": [
+    {
+      "stage": "before",
+      "source": "pinned consumer Git blob",
+      "path": "before/reports/m4-block-device-exec.json",
+      "sha256": "f81718031bdfe53fdde5ee0641683a7dc564329d2c655f85fc5c8eb629b95373",
+      "receipt_expected_sha256": "f81718031bdfe53fdde5ee0641683a7dc564329d2c655f85fc5c8eb629b95373"
+    },
+    {
+      "stage": "before",
+      "source": "pinned consumer Git blob",
+      "path": "before/reports/handler_effects.json",
+      "sha256": "2644d1187afaaf126afa71572cc980afbecd3f22592057809951491f90a436a0",
+      "receipt_expected_sha256": "2644d1187afaaf126afa71572cc980afbecd3f22592057809951491f90a436a0"
+    },
+    {
+      "stage": "after",
+      "source": "consumer worktree after reimport; import receipt confirms identical after bytes",
+      "path": "after/reports/m4-block-device-exec.json",
+      "sha256": "660e12712928a99b22e0a8c80247bcd63b54967e465ed3fa9b28354593045a6e",
+      "receipt_expected_sha256": "660e12712928a99b22e0a8c80247bcd63b54967e465ed3fa9b28354593045a6e"
+    },
+    {
+      "stage": "after",
+      "source": "consumer worktree after reimport; import receipt confirms identical after bytes",
+      "path": "after/reports/handler_effects.json",
+      "sha256": "d55e0a799e916f8728b9bb34a9689b81f070dbe25eceddd2db9c0cc3b4417fab",
+      "receipt_expected_sha256": "d55e0a799e916f8728b9bb34a9689b81f070dbe25eceddd2db9c0cc3b4417fab"
+    },
+    {
+      "stage": "replay",
+      "source": "consumer worktree after reimport; import receipt confirms identical after bytes",
+      "path": "replay/reports/m4-block-device-exec.json",
+      "sha256": "660e12712928a99b22e0a8c80247bcd63b54967e465ed3fa9b28354593045a6e",
+      "receipt_expected_sha256": "660e12712928a99b22e0a8c80247bcd63b54967e465ed3fa9b28354593045a6e"
+    },
+    {
+      "stage": "replay",
+      "source": "consumer worktree after reimport; import receipt confirms identical after bytes",
+      "path": "replay/reports/handler_effects.json",
+      "sha256": "d55e0a799e916f8728b9bb34a9689b81f070dbe25eceddd2db9c0cc3b4417fab",
+      "receipt_expected_sha256": "d55e0a799e916f8728b9bb34a9689b81f070dbe25eceddd2db9c0cc3b4417fab"
+    }
+  ],
+  "after_retention_note": "After bytes were copied from reimport state after independent full-inventory identity check against import receipt; they were not separately captured immediately after first import.",
+  "ci_evidence": "Existing exact-pinned Ubuntu CI, separate from observed local handoff: consumer M2 45045825427; producer cargo 45051501115 and QL 45051501144. Logs in preparation/consumer-ubuntu-ci.log and related producer CI logs. Darwin consumer suite failed on platform fnmatch mismatch."
+}

@@ -1,0 +1,109 @@
++ CARGO=cargo
++ [[ darwin24 == \l\i\n\u\x\-\g\n\u* ]]
++ [[ darwin24 == \d\a\r\w\i\n* ]]
++ platform=osx64
++ which codeql
++ CODEQL_BINARY=codeql
++ cargo build --release
+   Compiling libc v0.2.191
+   Compiling find-msvc-tools v0.1.15
+   Compiling shlex v2.0.1
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling memchr v2.8.3
+   Compiling zmij v1.0.23
+   Compiling regex-syntax v0.8.11
+   Compiling pkg-config v0.3.34
+   Compiling tree-sitter-language v0.1.9
+   Compiling crossbeam-utils v0.8.23
+   Compiling encoding_index_tests v0.1.4
+   Compiling serde_core v1.0.229
+   Compiling aho-corasick v1.1.5
+   Compiling crossbeam-epoch v0.9.21
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling serde_json v1.0.154
+   Compiling indexmap v2.14.2
+   Compiling regex-automata v0.4.18
+   Compiling jobserver v0.1.35
+   Compiling once_cell v1.21.4
+   Compiling cc v1.11.1
+   Compiling itoa v1.0.19
+   Compiling crossbeam-deque v0.8.8
+   Compiling foldhash v0.2.0
+   Compiling syn v3.0.10
+   Compiling cfg-if v1.0.5
+   Compiling autocfg v1.5.1
+   Compiling syn v2.0.119
+   Compiling num-traits v0.2.19
+   Compiling tracing-core v0.1.36
+   Compiling utf8parse v0.2.2
+   Compiling log v0.4.35
+   Compiling zstd-safe v7.4.0
+   Compiling rayon-core v1.13.0
+   Compiling zstd-sys v2.1.2+zstd.1.5.7
+   Compiling serde v1.0.229
+   Compiling crc32fast v1.5.5
+   Compiling anstyle-parse v1.0.0
+   Compiling anstyle-query v1.1.5
+   Compiling colorchoice v1.0.5
+   Compiling tree-sitter v0.26.8
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling pin-project-lite v0.2.17
+   Compiling adler2 v2.0.1
+   Compiling simd-adler32 v0.3.10
+   Compiling core-foundation-sys v0.8.7
+   Compiling anstyle v1.0.14
+   Compiling lazy_static v1.5.1
+   Compiling sharded-slab v0.1.7
+   Compiling iana-time-zone v0.1.65
+   Compiling anstream v1.0.0
+   Compiling miniz_oxide v0.9.1
+   Compiling serde_derive v1.0.229
+   Compiling matchers v0.2.0
+   Compiling regex v1.13.1
+   Compiling tracing-attributes v0.1.31
+   Compiling tree-sitter-ucode v0.9.0 (/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor/tree-sitter)
+   Compiling tracing-log v0.2.0
+   Compiling thread_local v1.1.10
+   Compiling bstr v1.13.1
+   Compiling encoding-index-japanese v1.20141219.5
+   Compiling encoding-index-korean v1.20141219.5
+   Compiling tracing v0.1.44
+   Compiling encoding-index-simpchinese v1.20141219.5
+   Compiling encoding-index-singlebyte v1.20141219.5
+   Compiling encoding-index-tradchinese v1.20141219.5
+   Compiling strsim v0.11.1
+   Compiling clap_lex v1.1.1
+   Compiling heck v0.5.0
+   Compiling nu-ansi-term v0.50.3
+   Compiling smallvec v1.16.5
+   Compiling either v1.19.0
+   Compiling streaming-iterator v0.1.9
+   Compiling clap_derive v4.6.7
+   Compiling rayon v1.12.0
+   Compiling tracing-subscriber v0.3.23
+   Compiling clap_builder v4.6.7
+   Compiling encoding v0.2.33
+   Compiling chrono v0.4.45
+   Compiling globset v0.4.21
+   Compiling flate2 v1.1.11
+   Compiling num_cpus v1.17.0
+   Compiling clap v4.6.7
+   Compiling zstd v0.13.4
+   Compiling codeql-extractor v0.2.0 (https://github.com/github/codeql?rev=ce29d8a59af0d25517c622469db17aad826b8d7f#ce29d8a5)
+   Compiling codeql-extractor-ucode v0.1.0 (/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor)
+    Finished `release` profile [optimized] target(s) in 12.15s
++ mkdir -p ql/lib/codeql/ucode/ast/internal/
++ cargo run --release --bin codeql-extractor-ucode -- generate --dbscheme ql/lib/ucode.dbscheme --library ql/lib/codeql/ucode/ast/internal/TreeSitter.qll
+    Finished `release` profile [optimized] target(s) in 0.26s
+     Running `target/release/codeql-extractor-ucode generate --dbscheme ql/lib/ucode.dbscheme --library ql/lib/codeql/ucode/ast/internal/TreeSitter.qll`
++ codeql query format -i ql/lib/codeql/ucode/ast/internal/TreeSitter.qll
++ echo 'Create extractor pack for osx64'
++ rm -rf extractor-pack
++ mkdir -p extractor-pack
++ cp -r codeql-extractor.yml downgrades tools ql/lib/ucode.dbscheme ql/lib/ucode.dbscheme.stats extractor-pack/
++ mkdir -p extractor-pack/tools/osx64
++ cp target/release/codeql-extractor-ucode extractor-pack/tools/osx64/extractor
++ chmod +x extractor-pack/tools/autobuild.sh extractor-pack/tools/index-files.sh extractor-pack/tools/pre-finalize.sh extractor-pack/tools/qltest.sh

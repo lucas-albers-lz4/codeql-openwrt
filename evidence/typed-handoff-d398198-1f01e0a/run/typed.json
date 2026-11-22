@@ -1,0 +1,48 @@
+[
+  {
+    "analysis_revision": "step3:setblock-typed-v1",
+    "assessment": "unassessed",
+    "assumptions": [
+      "Source observation in the pinned callback body; not a taint path",
+      "The supplied CSV and typed JSON are not authenticated as CodeQL output",
+      "Fixed argv; this is not luci.sys and not request.args interpolation",
+      "shellquote and basename are not sanitizers; they are not present on this sink"
+    ],
+    "conditions": [
+      "setBlockDetect.call body",
+      "builtin system of literal /sbin/block detect",
+      "call takes no request.args"
+    ],
+    "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "effect_id": "setBlockDetect.block-detect.system",
+    "entrypoint_id": "ubus_http:luci.setBlockDetect",
+    "evidence_refs": [
+      "luci@b2e0be4b modules/luci-base/root/usr/share/rpcd/ucode/luci setBlockDetect.call system('/sbin/block detect > /etc/config/fstab')",
+      "ql/src/m4/SetBlockDetectEffectTable.ql",
+      "openwrt/luci@b2e0be4b46ec0fd43394c081fa7c50657af14011 modules/luci-base/root/usr/share/rpcd/ucode/luci:532"
+    ],
+    "evidence_status": "fact",
+    "ingress": "ubus_http",
+    "method": "setBlockDetect",
+    "op": "exec",
+    "producer": "step3",
+    "profile": "luci-ssl-25.12",
+    "record_id": "m4:effect:luci-setBlockDetect-system",
+    "record_type": "handler_effect",
+    "sink_kind": "system",
+    "source_location": {
+      "end_column": 68,
+      "end_line": 532,
+      "path": "usr/share/rpcd/ucode/luci",
+      "start_column": 21,
+      "start_line": 532
+    },
+    "target_id": "command:block-detect",
+    "ubus_object": "luci",
+    "unknowns": [
+      "live uhttpd/rpcd not executed",
+      "Callback registration, actual execution and live uhttpd/rpcd are not established by the table",
+      "Lexical shadowing and unmodeled call shapes are not resolved by the table"
+    ]
+  }
+]
