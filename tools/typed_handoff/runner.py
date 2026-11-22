@@ -17,6 +17,7 @@ STAGES = ('init', 'index', 'finalize', 'extracted_query', 'extracted_decode',
 
 def family_check(context, oracle):
     source = 'usr/share/rpcd/ucode/luci'
+    if set(context['git']) != {'producer','consumer'} or not all(type(v) is str and len(v) == 40 and all(c in '0123456789abcdef' for c in v) for v in context['git'].values()): raise ValueError('git pins')
     expected = {'effects_rows':'534c56fb839086b13015a79dee7a6e6037490c8e245012ffade21e6a2d214949',
                 'errors_rows':'da8d8575723b6f72f2bf8bffc2ea5b27156d34a16465409667d24dc96ffccd95',
                 'neutral_typed_payload':'d95f8db3493aa677b19a3e78b875eb0a064ff74341837d2f5c1a8b586c24aec4'}
