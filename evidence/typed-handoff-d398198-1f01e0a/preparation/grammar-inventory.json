@@ -1,0 +1,893 @@
+{
+  "files": {
+    ".editorconfig": {
+      "sha256": "1344c6c1f4907a6c0439185a239cef4f108d3d5de026a8b1d531de02644cb819",
+      "size": 384
+    },
+    ".git/FETCH_HEAD": {
+      "sha256": "6a4e1ac77e03b8b54efa93b363bf5ce9102d24c30a60f2e5aea635372739c598",
+      "size": 132
+    },
+    ".git/HEAD": {
+      "sha256": "ab12547410d6f91ed71864839a5f58cd31024469f012771e585211382c8efa64",
+      "size": 41
+    },
+    ".git/config": {
+      "sha256": "a03d2076d80d85090e3fde85dc9669434d8e7f7cc6389edf035914a3fa11004c",
+      "size": 319
+    },
+    ".git/description": {
+      "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee",
+      "size": 73
+    },
+    ".git/hooks/applypatch-msg.sample": {
+      "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7",
+      "size": 478
+    },
+    ".git/hooks/commit-msg.sample": {
+      "sha256": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b",
+      "size": 1972
+    },
+    ".git/hooks/fsmonitor-watchman.sample": {
+      "sha256": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0",
+      "size": 4611
+    },
+    ".git/hooks/post-update.sample": {
+      "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5",
+      "size": 189
+    },
+    ".git/hooks/pre-applypatch.sample": {
+      "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475",
+      "size": 424
+    },
+    ".git/hooks/pre-commit.sample": {
+      "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b",
+      "size": 1649
+    },
+    ".git/hooks/pre-merge-commit.sample": {
+      "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53",
+      "size": 416
+    },
+    ".git/hooks/pre-push.sample": {
+      "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a",
+      "size": 1374
+    },
+    ".git/hooks/pre-rebase.sample": {
+      "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3",
+      "size": 4898
+    },
+    ".git/hooks/pre-receive.sample": {
+      "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989",
+      "size": 544
+    },
+    ".git/hooks/prepare-commit-msg.sample": {
+      "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619",
+      "size": 1492
+    },
+    ".git/hooks/push-to-checkout.sample": {
+      "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f",
+      "size": 2783
+    },
+    ".git/hooks/sendemail-validate.sample": {
+      "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92",
+      "size": 2308
+    },
+    ".git/hooks/update.sample": {
+      "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106",
+      "size": 3650
+    },
+    ".git/index": {
+      "sha256": "7090f1e8484af45f6523bb158e18e64cb6373a42cc7268c5212ca4ed886c229a",
+      "size": 19535
+    },
+    ".git/info/exclude": {
+      "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1",
+      "size": 240
+    },
+    ".git/logs/HEAD": {
+      "sha256": "7354160a61104756a48d8733c2435f84f753b843bbfa2c8a22a296ececd8eb4b",
+      "size": 425
+    },
+    ".git/logs/refs/heads/main": {
+      "sha256": "8f3e08998f42d2850fd9dc5fd47ebee861f57d4b647a59bdf987ffdbbbef2a53",
+      "size": 207
+    },
+    ".git/logs/refs/remotes/origin/HEAD": {
+      "sha256": "8f3e08998f42d2850fd9dc5fd47ebee861f57d4b647a59bdf987ffdbbbef2a53",
+      "size": 207
+    },
+    ".git/objects/4a/243af329fae2f4ff01e0fc80133cbab8314600": {
+      "sha256": "afcd9fc34b2b027182dcaa7c45b1c83da231a684db6942f5269531e5b0a0cc10",
+      "size": 232
+    },
+    ".git/objects/4f/c3d6ed3eb480134b532910208fe5c163c82e31": {
+      "sha256": "d68ff2721c9615e42540cde4fb76429503c3a3ab0a3889b8bd5b394488103ed9",
+      "size": 935
+    },
+    ".git/objects/7d/9ed644f7b99b7035224b4bdebbae050232011b": {
+      "sha256": "8a05891b6339b891412cd15a3966b84ea2ef0c5be700b41cfff13f33047a6129",
+      "size": 758
+    },
+    ".git/objects/99/19f660fd2a572826b5a8bb3fb6de508ca5882b": {
+      "sha256": "5ba93c57235b5bf6c3b10f2193ab216472b35e986b92718349e54a80f2a2ee1c",
+      "size": 1423
+    },
+    ".git/objects/9f/ce8799e936bb96923fa0bcf268bebe5a498996": {
+      "sha256": "0447325d7afbdb93a4daf6f203f6e1b63e0cfa966839a972f4d62c6b3f7165e4",
+      "size": 262
+    },
+    ".git/objects/f8/c652609f2277daca08f626115440c5fef60c37": {
+      "sha256": "531b798d81c9b4f8aa748364be09dc2e95f2162206454f9099e53b490cb067d2",
+      "size": 797
+    },
+    ".git/objects/pack/pack-eb076e5822bd8ae9fde3938a5418479646b2df9d.idx": {
+      "sha256": "878d776447d06da0679a5e16e05f80a4a528fe310910bb04d511242719333da8",
+      "size": 7484
+    },
+    ".git/objects/pack/pack-eb076e5822bd8ae9fde3938a5418479646b2df9d.pack": {
+      "sha256": "06a6c5b374dbdbf8378fb3046317abf74b0ecad71c390e66c5ddb02a643213e1",
+      "size": 378935
+    },
+    ".git/objects/pack/pack-eb076e5822bd8ae9fde3938a5418479646b2df9d.rev": {
+      "sha256": "15f868fed294d862eeb1a20ec0260bf8ba5b3f0390f49a271cb7e637f00f36ce",
+      "size": 968
+    },
+    ".git/packed-refs": {
+      "sha256": "76c70b26b6f54820b0c9be2b1f431c7bf2441bf24f6132c65229ab356b573b05",
+      "size": 112
+    },
+    ".git/refs/heads/main": {
+      "sha256": "17bb5598e62c3d6eb711d98283ffe6876a1bbd1b30560704a1dd9834cdfeaf67",
+      "size": 41
+    },
+    ".git/refs/remotes/origin/HEAD": {
+      "sha256": "2bb6a24aa0fc6c484100f5d51a29bbad841cd2c755f5d93faa204e5dbb4eb2b4",
+      "size": 30
+    },
+    ".git/shallow": {
+      "sha256": "53e6a68066027aa5f1a9ed58cae5af046dc68b1e279335d4e3536d75be811b5e",
+      "size": 82
+    },
+    ".gitattributes": {
+      "sha256": "93e82051f9295b42ee510a269c4120161d39b8013b90b16baa5f3db645b14dd6",
+      "size": 417
+    },
+    ".github/dependabot.yml": {
+      "sha256": "017c780d6a2c79e14d30eca2a716d815d245456855daecef9ff46e5dbef5b413",
+      "size": 369
+    },
+    ".github/workflows/ci.yml": {
+      "sha256": "21cfed4df5803c6232c7547b03f38eba73589fb6bef6dae7e2a8fb2bb09df93a",
+      "size": 16530
+    },
+    ".github/workflows/docs.yml": {
+      "sha256": "c3e58685d2697100690c42e46c8f41ccda804ceaff04f3049ee7ac2cba2df357",
+      "size": 1800
+    },
+    ".github/workflows/fuzz.yml": {
+      "sha256": "a2787c4149d33ac001ced10e15039d7d16da1b244aeb9f9a3e043ca2f344f13a",
+      "size": 1024
+    },
+    ".gitignore": {
+      "sha256": "523eab9167e6981059359774fff7a12d73ab03102f3c4aa664d2657f37721dba",
+      "size": 451
+    },
+    "CMakeLists.txt": {
+      "sha256": "8ef1e7afa24094532172c39d48fa8f5b234d79020f111fb459bbd07e2861535e",
+      "size": 3039
+    },
+    "Cargo.lock": {
+      "sha256": "58e8b45d33806e44559606ed2eb1362a1a34a711588c415e3bed6e0e3aa60dc3",
+      "size": 5811
+    },
+    "Cargo.toml": {
+      "sha256": "60d7bc5b7b772df404050dbc458082a03dfc457fda2eef50b7e1de037ce78d4e",
+      "size": 1068
+    },
+    "LICENSE": {
+      "sha256": "6fead6bca7d9598e6599355437a4997666d73d26c5bc09c35cf6a5390f370d6e",
+      "size": 1070
+    },
+    "Makefile": {
+      "sha256": "1968c07f5fe5727183769d39527c9016171667173966f042b0b43a777ecc079b",
+      "size": 5258
+    },
+    "Package.swift": {
+      "sha256": "6b80ec06acafc804dbbcf513714a79e879ec3d21b0d63cec39e7b1f97026a6ff",
+      "size": 2056
+    },
+    "README.md": {
+      "sha256": "8cbf28144907187c315de50e63cdf123d6730f0625bd6d64f657a71191742825",
+      "size": 394
+    },
+    "binding.gyp": {
+      "sha256": "79db7cc3193f6cd145a7e5b55091febbfbe54dc2112b7d81f851105f715cbd06",
+      "size": 742
+    },
+    "bindings/c/test.c": {
+      "sha256": "5c95ad689b3b95212f4d5890c500acba66c78649124f5ef5890aec1097594a6b",
+      "size": 3255
+    },
+    "bindings/c/tree-sitter-ucdocs.pc.in": {
+      "sha256": "63a2b998d7a6091b42f3540f54bc8df8ac6276df3c982bf2f0e0db0b79bbe936",
+      "size": 327
+    },
+    "bindings/c/tree-sitter-ucode-markup.pc.in": {
+      "sha256": "65ed87e16fb0c669d151350ae39d6eb25fb2efa0e91b5bd80588fd35c9ae2b32",
+      "size": 327
+    },
+    "bindings/c/tree-sitter-ucode.pc.in": {
+      "sha256": "4d1726773c25c24790bbbe6f1dbf5529948979498ae3d17a16f08003ceebccd1",
+      "size": 313
+    },
+    "bindings/c/tree_sitter/tree-sitter-ucdocs.h": {
+      "sha256": "b5223db6fba5c960a96f8eea6872423c63a71a2b20fc7d2ef99f629f20152db1",
+      "size": 246
+    },
+    "bindings/c/tree_sitter/tree-sitter-ucode-markup.h": {
+      "sha256": "b72558afa153972db61ab8bf9fa4895fc013cb5cda5d39d848eef20ff6300f81",
+      "size": 270
+    },
+    "bindings/c/tree_sitter/tree-sitter-ucode.h": {
+      "sha256": "37347afdc4ed2e237582ee0e7594b0941fa338452573a8da906af7c057c5c5bd",
+      "size": 242
+    },
+    "bindings/go/binding_test.go": {
+      "sha256": "b88ee2339de0e31350366edcd01ea3c89036ba5d3ff44b4ed20eb1a751993eab",
+      "size": 1758
+    },
+    "bindings/go/ucdocs.go": {
+      "sha256": "00d770d9c442783dc9cda9d62e7ff77fa84fad05d3dd2a53f0409436b09f0d28",
+      "size": 529
+    },
+    "bindings/go/ucode.go": {
+      "sha256": "92f27178be0e3075a4c275a3c1c23e845858dcd706b7ae10e2b3cb8f5403c94a",
+      "size": 505
+    },
+    "bindings/go/ucode_markup.go": {
+      "sha256": "3a1e4053bdc38f1d95bba0696bd9248e3f46ed4b27ff1d89bcf685ef06edfda0",
+      "size": 587
+    },
+    "bindings/node/binding.cc": {
+      "sha256": "e53c0cfd88bc1681278cd5939643d52b6ac21ff4ea82d1609d8074bad71b2f05",
+      "size": 1198
+    },
+    "bindings/node/binding_test.js": {
+      "sha256": "32bd84b7c552e38ab9107e75d4a229b04bbf56a885cadb4bcae89f19b9418ef1",
+      "size": 1633
+    },
+    "bindings/node/index.d.ts": {
+      "sha256": "dcb842670fc510957d71e31f568705105522e2799dbdf4aacd3f4c30ac2649b0",
+      "size": 699
+    },
+    "bindings/node/index.js": {
+      "sha256": "408bb74e81b7bcdc89b9c3b71248edcc0b7ba657e768d2605722dcf39de82bc6",
+      "size": 577
+    },
+    "bindings/python/tests/test_binding.py": {
+      "sha256": "a94fd0f77d49e7241a1e3a95ffc8c5738ddb2468d36f986a1856d803f27d15ec",
+      "size": 1465
+    },
+    "bindings/python/tree_sitter_ucode/__init__.py": {
+      "sha256": "8ed561a4faab950ad5406a1c2ea33070d826d9bae117cbe96041108b6b73dc5b",
+      "size": 1833
+    },
+    "bindings/python/tree_sitter_ucode/__init__.pyi": {
+      "sha256": "802596e30405402454dad1bc55a21aeb272a18de437ec54e8eaab77b2e513855",
+      "size": 1452
+    },
+    "bindings/python/tree_sitter_ucode/binding.c": {
+      "sha256": "162dacdec580e9de81c10d3054452f3669538318a0f03401ac489c8dcf240c7d",
+      "size": 1564
+    },
+    "bindings/python/tree_sitter_ucode/py.typed": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "bindings/rust/build.rs": {
+      "sha256": "401ea585478f41f8b5f41811713e21112b54cb72e7308f182e052ca18f41e6f9",
+      "size": 988
+    },
+    "bindings/rust/lib.rs": {
+      "sha256": "f3c0c28ae17aa26ba9f6b1d6d5b6dcca7fc08e332a8413eae5f00cd18873063f",
+      "size": 5516
+    },
+    "bindings/swift/TreeSitterUcodeTests/TreeSitterUcodeTests.swift": {
+      "sha256": "741182f98edc37e2058f4ac27e5fe82f906019ea64c93cec2d08070b630344c3",
+      "size": 3140
+    },
+    "bindings/swift/ucdocs/TreeSitterUcdocs/ucdocs.h": {
+      "sha256": "b5223db6fba5c960a96f8eea6872423c63a71a2b20fc7d2ef99f629f20152db1",
+      "size": 246
+    },
+    "bindings/swift/ucode/TreeSitterUcode/ucode.h": {
+      "sha256": "37347afdc4ed2e237582ee0e7594b0941fa338452573a8da906af7c057c5c5bd",
+      "size": 242
+    },
+    "bindings/swift/ucode_markup/TreeSitterUcodeMarkup/ucode_markup.h": {
+      "sha256": "b72558afa153972db61ab8bf9fa4895fc013cb5cda5d39d848eef20ff6300f81",
+      "size": 270
+    },
+    "common/define-grammar.js": {
+      "sha256": "074738b684ec00e151befa12ae1a3c396abacf938453e222f61896a43bf4ef34",
+      "size": 27384
+    },
+    "common/scanner.h": {
+      "sha256": "509a8db20caf90589259435b79e9db1854e2b71ad577222402f37c8459697790",
+      "size": 26469
+    },
+    "docs/changelog.md": {
+      "sha256": "0a2111d55dead6f6378c9d6e40d339be1672696d409e538ecf3b846588a1d056",
+      "size": 14343
+    },
+    "docs/explanation/architecture.md": {
+      "sha256": "bf1f5ce2e183512b53f8a2f6893b6864616a15faf6665d3eb3ba2964ba5d7220",
+      "size": 4257
+    },
+    "docs/explanation/asi.md": {
+      "sha256": "9c6beee24a5876d627b099123a4ef176eff07753e264cfc69210fdbd903fab7a",
+      "size": 3322
+    },
+    "docs/explanation/doc-comments.md": {
+      "sha256": "fe28fe85b763ce2f0bc9e7b19ac36dfc3ff08197c5900e554bd23ca20d8c9eb9",
+      "size": 3989
+    },
+    "docs/explanation/editor-queries.md": {
+      "sha256": "01600d2b847ae7244ba3e6c357c1d55fc0f65d85739b3bb7f8b23c390a9ab752",
+      "size": 3494
+    },
+    "docs/explanation/error-recovery.md": {
+      "sha256": "e08fb12ca0a9ffcab0a3775e4c8b83dd75b18138b9b232a0edab3b83f76ed304",
+      "size": 4881
+    },
+    "docs/explanation/index.md": {
+      "sha256": "b522878017609e55ddcf46a127651f30d7c04263e2ee180db9d858d0456e6fb9",
+      "size": 1215
+    },
+    "docs/explanation/public-api.md": {
+      "sha256": "595ec64370e5e7799b800040a6d2c860678ffffc65686a8bf3115d78d1b0e4c5",
+      "size": 4325
+    },
+    "docs/explanation/scanner.md": {
+      "sha256": "1b00ecbaf570df37154291c6ba63198011748337f6f5b990d22b5d4753f6a820",
+      "size": 6675
+    },
+    "docs/explanation/targeted-version.md": {
+      "sha256": "c02991f99b31b1073c7bded26a3b45cbeea1552fdb208117d173a567e346a2f7",
+      "size": 2000
+    },
+    "docs/explanation/templates.md": {
+      "sha256": "863d1153c26349e2d85ed04f7d9e1c183577fe496a44691ea7b7afa90bb8922b",
+      "size": 3932
+    },
+    "docs/how-to/add-corpus-test.md": {
+      "sha256": "3939574732d9b6ec1f33a5594a7b7b870604921cbb67c5b97675edfaccdfe0bd",
+      "size": 2530
+    },
+    "docs/how-to/bump-version.md": {
+      "sha256": "302e30d0fedec1eb00b61eb9baec7b458c9bb63614eb1baeaa7591f4fb34813f",
+      "size": 1449
+    },
+    "docs/how-to/change-grammar.md": {
+      "sha256": "b3cecb67f4015a139d23f8ad8e83f6bce074d075b7060067af76bb57e07aeecf",
+      "size": 2192
+    },
+    "docs/how-to/change-queries.md": {
+      "sha256": "d36db44d445b89c153cb7a27badc6b78b91cf49cfc8e7857e15f7d0fd128cb75",
+      "size": 2187
+    },
+    "docs/how-to/check-editor-queries.md": {
+      "sha256": "8c6f57c6d65db78b84b26785a9b2315b752e9dfada4fffe3f0209781e5d98596",
+      "size": 2008
+    },
+    "docs/how-to/choose-query-set.md": {
+      "sha256": "22f812246ffaf96c262899bd5eff1a772321fcb497b78e02d1731618e9d38785",
+      "size": 2837
+    },
+    "docs/how-to/cut-release.md": {
+      "sha256": "c438a6652fb5c576aeef80f331d090dace52afd15346860af5e7b653c95cedb5",
+      "size": 1537
+    },
+    "docs/how-to/handle-errors.md": {
+      "sha256": "d12edfdad98c9634836d0b29fa3b59f0d1fb27ae55aab1cfb46f28bb7771d08e",
+      "size": 3219
+    },
+    "docs/how-to/index.md": {
+      "sha256": "af84d8fd3f79529942eec7665bf8dbf6bc6cb43a3cd206a2073e5a28ca9d1109",
+      "size": 1341
+    },
+    "docs/how-to/prepare-pull-request.md": {
+      "sha256": "70d53bbce65cc856d35f4b06efe83a05b5ceb5ad3f44e43aeed5d32cae8461da",
+      "size": 974
+    },
+    "docs/how-to/publish-docs.md": {
+      "sha256": "292a1979dc38a4a2c851de33b9676d5b75b94d9235f6e9af11ecb96bfb686dae",
+      "size": 1333
+    },
+    "docs/how-to/register-helix.md": {
+      "sha256": "e4871a5ee499cd4564d3e6d07cb88d725a7dd76e000671a3a77b0a3446e41b51",
+      "size": 3634
+    },
+    "docs/how-to/register-neovim.md": {
+      "sha256": "12f10ee77e413cb61639d74446b5f7dcb0e85f7a0451077581f2eea8c5d6279d",
+      "size": 4254
+    },
+    "docs/how-to/retarget-ucode.md": {
+      "sha256": "3b73e39962e9c1572b9e69d79ddc3dec81a144392d2005ac9920f6d9a243a4b3",
+      "size": 1536
+    },
+    "docs/how-to/run-tests.md": {
+      "sha256": "850587a439a30fd71e516c2fc0c37d40555fa3d7e6913e5d58abb9781470f4d3",
+      "size": 2731
+    },
+    "docs/how-to/set-up-injections.md": {
+      "sha256": "a9a094ea256b2a0a0fc2d74641465cfe78784c6834190640226e0d88682ff955",
+      "size": 2975
+    },
+    "docs/how-to/set-up.md": {
+      "sha256": "2596773f099c671ff8dc3245e7b7a9b8e6369f0284155fc2bf109418b4823671",
+      "size": 1052
+    },
+    "docs/how-to/update-actions.md": {
+      "sha256": "5a2f75461c205b0f2eeddf27c0dcf5eb8fdcf17fb27e810850f79792f6d1c1f7",
+      "size": 855
+    },
+    "docs/how-to/use-bindings.md": {
+      "sha256": "70c38742efc68c621c9a07f3ab13e12ecc3db309816ab998ae3cee3c775155bf",
+      "size": 4386
+    },
+    "docs/how-to/use-wasm.md": {
+      "sha256": "e7293dbb9c793e296eafa1bbb71892571d4d7d87859c046a7070ffe700456815",
+      "size": 2722
+    },
+    "docs/how-to/validate-real-code.md": {
+      "sha256": "79df5d4aababb68993b9f5036efe31e8c4fabcbc6fabe6542916cc0e85b12aa0",
+      "size": 1745
+    },
+    "docs/index.md": {
+      "sha256": "645c77dee9663ebce7f59a9e72c37abac7d08252b764110d950ebe93ec98e665",
+      "size": 3044
+    },
+    "docs/reference/bindings.md": {
+      "sha256": "98a0b891e341b775dc294f0f4597b33885378dec2a093e33ee8c1d694904ebb0",
+      "size": 3985
+    },
+    "docs/reference/ci.md": {
+      "sha256": "4d16a174f3bf64f7097524e288e9b60126463fd52171c427ed3dff91ac128686",
+      "size": 2868
+    },
+    "docs/reference/compatibility.md": {
+      "sha256": "1274428cb0f21d5f53d9a5a74df2bf8835ec12302028e3d2eee1acba5314bc1b",
+      "size": 2776
+    },
+    "docs/reference/deviations.md": {
+      "sha256": "82c96594778066e272d484fb503a84613829cbc88703dcf5e37f33e9d25d004a",
+      "size": 3505
+    },
+    "docs/reference/external-tokens.md": {
+      "sha256": "2203d72537ae1e061b774fe43b5639363068ba11676f1bff49f490f0143213c8",
+      "size": 6498
+    },
+    "docs/reference/grammars.md": {
+      "sha256": "736ba39ab843a0eb740e681464f0004841a8109b206372e70b3ba37e676ad69c",
+      "size": 4569
+    },
+    "docs/reference/index.md": {
+      "sha256": "14de04e59090c9bfd16007d48d132c3ec47e18379bfbc6d4885b7022a562d747",
+      "size": 1075
+    },
+    "docs/reference/nodes-ucdocs.md": {
+      "sha256": "4188357b2fcd15ee6928613a68a7b9111eb40f947f52cba42bbfa146faf585ce",
+      "size": 12132
+    },
+    "docs/reference/nodes-ucode-markup.md": {
+      "sha256": "38d2a82739c14cad02a864fe6370b3441120c2857f41ab725eac2dbed89e314e",
+      "size": 4206
+    },
+    "docs/reference/nodes-ucode.md": {
+      "sha256": "2dd5e5c76387d27a63cf17ecc8a84b49eda3348edba04d0175236206846efb26",
+      "size": 15590
+    },
+    "docs/reference/project-layout.md": {
+      "sha256": "d2a0b4bf29f1f3b1de44d34c98acfe88a3114a9e5e29c2b44af4e432a0a4b42e",
+      "size": 3408
+    },
+    "docs/reference/queries.md": {
+      "sha256": "a23edc8adfc995d78d06a5e0cc52dd19b1f6e1dfa2c654dc5df02613e1fd1b43",
+      "size": 10008
+    },
+    "docs/reference/scripts.md": {
+      "sha256": "11790b6a0873ce243f9ce18ffb810a97a751bd50accd680aca6931918f834e83",
+      "size": 5752
+    },
+    "docs/reference/test-suites.md": {
+      "sha256": "00fd76c5bd8495f04b21247b8f4d9c1ac3d238c7d47bcfcfb4efe2efe8fcf5b8",
+      "size": 4771
+    },
+    "docs/reference/ucode-vs-javascript.md": {
+      "sha256": "3fac1a91e621f37a70d4d26a6ec2cffbc03e08b3546d4a019ed6b78531189d12",
+      "size": 2573
+    },
+    "docs/reference/versions.md": {
+      "sha256": "2033903f7365956fbd22b343bb3cc5a6cdbc0629e220bdd412086848db2f32d0",
+      "size": 1245
+    },
+    "docs/requirements.txt": {
+      "sha256": "1a7bb96ceecf77fdd2396d81aa08f0b090d085b88689776df32585e156ca3de7",
+      "size": 37
+    },
+    "docs/tutorials/build-on-the-grammars.md": {
+      "sha256": "a5ac21330eefd5152e20f8e78df08b76eb7bcbf5bce2c955ead8d56e2eca0ad8",
+      "size": 9293
+    },
+    "docs/tutorials/first-grammar-change.md": {
+      "sha256": "2acbfc1a66bd63fce8771ec43fa84333e6c3f6eea56dbfe4acfc490a36a88eac",
+      "size": 7650
+    },
+    "docs/tutorials/index.md": {
+      "sha256": "91e9d2e1241dac4e362c13030116648b85e27b5ec16f387fffd5c7d371d4f49c",
+      "size": 587
+    },
+    "editors/helix/queries/ucdocs/highlights.scm": {
+      "sha256": "026ada1b4c0c4c6d63f4a606d25c0a5d0f179c27ee5237c7940d648943d29c5d",
+      "size": 3668
+    },
+    "editors/helix/queries/ucdocs/tags.scm": {
+      "sha256": "86ae97357229dc5f423f5b54e323c17652f00d6816d96a9cfb59d105b63cb4ce",
+      "size": 278
+    },
+    "editors/helix/queries/ucode-markup/highlights.scm": {
+      "sha256": "e760a3ce0b528957effcdf202f214f9f24eb68ee387bb1c11b51605fd9184897",
+      "size": 4863
+    },
+    "editors/helix/queries/ucode-markup/indents.scm": {
+      "sha256": "0cc3ba44c2d4d545aa36bdc2ca53aa936af45dec29b1c000fb67b1bc79f31678",
+      "size": 2378
+    },
+    "editors/helix/queries/ucode-markup/injections.scm": {
+      "sha256": "c1e5953ddbe09851e011bd0a48cd912f947c1372561ca714312888c33e5f7216",
+      "size": 602
+    },
+    "editors/helix/queries/ucode-markup/locals.scm": {
+      "sha256": "9aeb9f23b4e36b0b3e1ed46af63d6ba436eb6db1e174cf74f9b0dbdfd2e221b4",
+      "size": 2575
+    },
+    "editors/helix/queries/ucode-markup/tags.scm": {
+      "sha256": "4ae129a8cca78549b848cee9558d33a971b4e0b17ef5fb8156a9e05870695620",
+      "size": 3796
+    },
+    "editors/helix/queries/ucode-markup/textobjects.scm": {
+      "sha256": "5f992df2e2960df03d40433d48960469ed1d528ae5524b2160419192b94b6a75",
+      "size": 695
+    },
+    "editors/helix/queries/ucode/highlights.scm": {
+      "sha256": "85cad6b9cbeff5f388299d9117348369efaa158b4177f41adcee6c1d1ab46cb3",
+      "size": 4541
+    },
+    "editors/helix/queries/ucode/indents.scm": {
+      "sha256": "0cc3ba44c2d4d545aa36bdc2ca53aa936af45dec29b1c000fb67b1bc79f31678",
+      "size": 2378
+    },
+    "editors/helix/queries/ucode/injections.scm": {
+      "sha256": "ebc1296801d35ca50890bbcb62e16e0b5d56666c8ff7ac539a0ed6bd1a2c58c1",
+      "size": 595
+    },
+    "editors/helix/queries/ucode/locals.scm": {
+      "sha256": "2047dce2b8b68b31b53e4fa78c877a13c008c02244535dbe0a338190eca335f7",
+      "size": 2569
+    },
+    "editors/helix/queries/ucode/tags.scm": {
+      "sha256": "6f5abb436e9893ea04c0858563cfdc84fd3f5b6283bb52e44c46c174fba9ee20",
+      "size": 3098
+    },
+    "editors/helix/queries/ucode/textobjects.scm": {
+      "sha256": "5f992df2e2960df03d40433d48960469ed1d528ae5524b2160419192b94b6a75",
+      "size": 695
+    },
+    "go.mod": {
+      "sha256": "bf473742eb448fd872863e1f45d035014a19d532d32315e9d3e6f173ebab6748",
+      "size": 163
+    },
+    "go.sum": {
+      "sha256": "389719ce6ae31542443726bfd9ebda42d4628b0eefd092bf03d3ed060a87db9e",
+      "size": 3460
+    },
+    "mkdocs.yml": {
+      "sha256": "1a2c5be23a8c2a5b1550660f686a6ae9e8902d47ae5cca1afbee5570d39c57e9",
+      "size": 4168
+    },
+    "package-lock.json": {
+      "sha256": "57aad774d0d6cb3095d98986bf8425724347b475082604bfb1ab1d32eb7cae4f",
+      "size": 12858
+    },
+    "package.json": {
+      "sha256": "b09d31a9ab68e203f500f312e757419657be0ce7ceee6382c6a9354c563bfe05",
+      "size": 2351
+    },
+    "pyproject.toml": {
+      "sha256": "caa959ea0af2cedddc21080f27a72fbda8f92699a9eccb80ab765f8701317952",
+      "size": 871
+    },
+    "scripts/check-helix-indents.sh": {
+      "sha256": "e8c5a99035990d2728cf2ec086baad1d46a57bda1643d1c9b0234734cdf5220f",
+      "size": 4860
+    },
+    "scripts/check-nvim-queries.lua": {
+      "sha256": "b90c61701413064937e2bccb7716894d93d5b4043a3b1659b498b1e5f564c467",
+      "size": 9809
+    },
+    "scripts/checks.js": {
+      "sha256": "f318bbe8737bbe86442b3f806a6510d6292784f832690a99efc5006999d41f2b",
+      "size": 9545
+    },
+    "scripts/generate-helix-queries.js": {
+      "sha256": "9f3bb44ca5e82fa76e03f3ea062a3ceee5373eb96646dc987c14549c104557be",
+      "size": 9732
+    },
+    "scripts/generate-markup-queries.js": {
+      "sha256": "e102804117b7d4bb72735f2378c8fce39822f494558a85a71b91c16699273d25",
+      "size": 3497
+    },
+    "scripts/parsers.js": {
+      "sha256": "143cc13ce9848823cb24e7d8707468a2a7be73484d7b8de46c8d37cc710630e6",
+      "size": 384
+    },
+    "scripts/run-tests.js": {
+      "sha256": "052aed719f95065656e1ef3592a521a48d75d004b95f4d48bb11798b6fe26e7d",
+      "size": 6680
+    },
+    "scripts/tree-sitter-cli.js": {
+      "sha256": "9d44f328f1dde30b0153bf9b105aff1a53e8e7724572b2f27fc6f55f906542e1",
+      "size": 476
+    },
+    "scripts/validate-corpus.js": {
+      "sha256": "89d2016dcba4e02b4d4f7ee13007aad8f87ec0dc50acad31a11222c504f523a1",
+      "size": 11813
+    },
+    "scripts/validate-docs.js": {
+      "sha256": "fd2dbd139870424c367ca4081276c4114b6b30b09ad5842f37c4693f6917d60a",
+      "size": 3187
+    },
+    "setup.py": {
+      "sha256": "092a40f3aba2a869708f97baa8c53ae032676a207b0e9211b65df62b285273b7",
+      "size": 2678
+    },
+    "test/highlight/script.uc": {
+      "sha256": "80f5899cae8af6c2337f046bce32fdba57f5af0d79c30b6998ba9c0588009086",
+      "size": 859
+    },
+    "test/highlight/template.ut": {
+      "sha256": "afab430f2c2f37ec43365b68202a4dd7e84f6c531052f94a1778f59d7dd2b7e9",
+      "size": 764
+    },
+    "test/tags/script.uc": {
+      "sha256": "f7c193d0b14338d9a9366503007efb765a6e5e0041497cd1c689f64ed97062f4",
+      "size": 356
+    },
+    "tree-sitter.json": {
+      "sha256": "bd77fe3ab417652480b68dec9ac0ae530e703d5c39915765032e2b27fa428f9c",
+      "size": 2080
+    },
+    "ucdocs/grammar.js": {
+      "sha256": "ab87e918d31778813fdbce50f626394ac885f48d62ccc6e2a7ae606c1f0b056e",
+      "size": 10085
+    },
+    "ucdocs/queries/highlights.scm": {
+      "sha256": "0e2447db76c3264a7a1a2874bca41e9e6c2b92623ea98ce5a4931567d43ca361",
+      "size": 3585
+    },
+    "ucdocs/queries/indents.scm": {
+      "sha256": "1fb3a27d5ff28bbf7d0092ebfc457e23972790ba519166cf04c2da103ec77093",
+      "size": 98
+    },
+    "ucdocs/queries/tags.scm": {
+      "sha256": "1612a0bb7bbe7b74f72073e2e90d2456a2bd9fdf4d37593e4f6811e2d3118374",
+      "size": 172
+    },
+    "ucdocs/src/grammar.json": {
+      "sha256": "e2d2bfd941fc702c928f0f52ca4945522d380f79fb3fb8b536f9927b1dc413f2",
+      "size": 46316
+    },
+    "ucdocs/src/node-types.json": {
+      "sha256": "b0fc150102b8cf7e1d77d331a8b285fc8388171b6da424c75ccc3c37bc74146b",
+      "size": 33665
+    },
+    "ucdocs/src/parser.c": {
+      "sha256": "0270d27b2ad8553ce34be1a77a9669f70b1bf23bdc16bf4ef174c5f089d69480",
+      "size": 377235
+    },
+    "ucdocs/src/scanner.c": {
+      "sha256": "c7cac2ea1e02eb4be735bcaf42d8ff5584aef74f02e02e3af8761b70bd060f1a",
+      "size": 1974
+    },
+    "ucdocs/src/tree_sitter/alloc.h": {
+      "sha256": "b29c1c9fb7cc82f58c84b376df1297d6e2737a1d655fd356db0859e3c29c2fea",
+      "size": 985
+    },
+    "ucdocs/src/tree_sitter/array.h": {
+      "sha256": "20e6ba85abb9d5b7e2e6dedf675c9424a057a06feee03aa3e2dd48a1cb4bf8a2",
+      "size": 13453
+    },
+    "ucdocs/src/tree_sitter/parser.h": {
+      "sha256": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
+      "size": 7624
+    },
+    "ucdocs/test/corpus/tags.txt": {
+      "sha256": "eec729cac7e97c36d6aae37008829bbc5b4cd8121132b33b4a4f2f01a34ca85f",
+      "size": 44030
+    },
+    "ucdocs/test/corpus/types.txt": {
+      "sha256": "d8aa4ae5b2db9949bc203d28e299fefa8272a212478b55fe24d1e45c0b060b4e",
+      "size": 26065
+    },
+    "ucode/grammar.js": {
+      "sha256": "4632148e7877e30fca967dd1b4f0afee878a2a617067e41f39d0bc174b0efb7c",
+      "size": 63
+    },
+    "ucode/queries/folds.scm": {
+      "sha256": "74f4d136e49da6e35eaa9a86808af5d70d1b1ab6fd0cb8544be638404d989e65",
+      "size": 550
+    },
+    "ucode/queries/highlights.scm": {
+      "sha256": "a4208e30d36422938ce9758829ea7f341fa1473d135ee467854ce08beaabb3a7",
+      "size": 4305
+    },
+    "ucode/queries/indents.scm": {
+      "sha256": "f659a429bb8d643c638ae12fb2f7763cb4f43ea0e4f017d2642b90e1bb3c0d15",
+      "size": 2667
+    },
+    "ucode/queries/injections.scm": {
+      "sha256": "ceed93296b15dcac31345df4f1211af097192f4436063fcda4daede34b2ef75b",
+      "size": 484
+    },
+    "ucode/queries/locals.scm": {
+      "sha256": "a14a357817cfabd4c9eed954526d84912f72116559c8949ae0c05241a9b22b82",
+      "size": 2787
+    },
+    "ucode/queries/tags.scm": {
+      "sha256": "d0b21275a9d08752b7d99cf52077461776e6968198be097ca9e79227a2650f6c",
+      "size": 2993
+    },
+    "ucode/queries/textobjects.scm": {
+      "sha256": "de043b9f48f601bfdc68674c2ff9dee4adb8fa7596c0c8e5fa687d73317bb9ea",
+      "size": 4239
+    },
+    "ucode/src/grammar.json": {
+      "sha256": "91b584cb1dac53d18ac3601db22bd97cdc3493a3c8fed2b8bb3b763ccad49a11",
+      "size": 128814
+    },
+    "ucode/src/node-types.json": {
+      "sha256": "3ee7a18e40287c5c317bdd6e05e64f81cd521174cb9ee131685c45fe1bc02fa3",
+      "size": 51192
+    },
+    "ucode/src/parser.c": {
+      "sha256": "e08c9fd48f3f89a852a2ceab8f8d94d1f1f06eeedf7fc6ff73643f5a7a3da938",
+      "size": 1282051
+    },
+    "ucode/src/scanner.c": {
+      "sha256": "e26a1ba5949f54a840cc7c10c5d04b2ad4e0ac3ccfccd5cbcef3b3e7fa932d7a",
+      "size": 919
+    },
+    "ucode/src/tree_sitter/alloc.h": {
+      "sha256": "b29c1c9fb7cc82f58c84b376df1297d6e2737a1d655fd356db0859e3c29c2fea",
+      "size": 985
+    },
+    "ucode/src/tree_sitter/array.h": {
+      "sha256": "20e6ba85abb9d5b7e2e6dedf675c9424a057a06feee03aa3e2dd48a1cb4bf8a2",
+      "size": 13453
+    },
+    "ucode/src/tree_sitter/parser.h": {
+      "sha256": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
+      "size": 7624
+    },
+    "ucode/test/corpus/control_flow.txt": {
+      "sha256": "527e712bcd123e476e545eeed534360404c0e96d8ceffa372c6e525cfd54f16e",
+      "size": 13505
+    },
+    "ucode/test/corpus/crlf.txt": {
+      "sha256": "59c305f4548a4e6b3743a33efd901814dda1a4aeba4df0c8ad38c38b9815a904",
+      "size": 938
+    },
+    "ucode/test/corpus/expressions.txt": {
+      "sha256": "26df5733206f64ecbdc14d088967eac9aa1d32e490a94dbf190aea16c5d1b30a",
+      "size": 18936
+    },
+    "ucode/test/corpus/functions.txt": {
+      "sha256": "722da4fe9c17dbb9089d366bb67feb6df9335f4c759a4ebe81cccc23d4985a1e",
+      "size": 6784
+    },
+    "ucode/test/corpus/js_differences.txt": {
+      "sha256": "edc98e13c86b93db63655753cbb7a9cc28e09cae28572fbec65e96871fc8c5a8",
+      "size": 36778
+    },
+    "ucode/test/corpus/literals.txt": {
+      "sha256": "c4e446116a7f00373e02f3e98fa3599cbab1cd4d3874b3784e7ece46d61374f0",
+      "size": 16882
+    },
+    "ucode/test/corpus/modules.txt": {
+      "sha256": "e9ce9cd23cb1e29b73921e2522f1ca2232750962ca42af254a596f60bd8ef073",
+      "size": 9011
+    },
+    "ucode/test/corpus/statements.txt": {
+      "sha256": "510eafe5010b0c475e663932830d32a666caf8f4f937d0e05e4339d46949bdfe",
+      "size": 17207
+    },
+    "ucode_markup/grammar.js": {
+      "sha256": "4a3acab4c59677b7ef8c0d704d370b1808763e9b4ba1013aecd5c143e940313f",
+      "size": 70
+    },
+    "ucode_markup/queries/folds.scm": {
+      "sha256": "991c3953e7bd01763f647456f9c974470956025bc8f3c38ff4605614b9be7661",
+      "size": 657
+    },
+    "ucode_markup/queries/highlights.scm": {
+      "sha256": "a9241455620ca16c591b76ee3a12f86574cd4c8439cef60a0736ff7de743197a",
+      "size": 4732
+    },
+    "ucode_markup/queries/indents.scm": {
+      "sha256": "a5d0e165cedbc709decbde925f9d93b2c05aa928181bda712617d8a05c902648",
+      "size": 3148
+    },
+    "ucode_markup/queries/injections.scm": {
+      "sha256": "53e9c15d554b9bcab4802bb60a1561a0f3046cf2a69f97bb9d8d9907c99eb935",
+      "size": 596
+    },
+    "ucode_markup/queries/locals.scm": {
+      "sha256": "1bb3c5d343d47be138b72b1be691b7fc95e0bc8067e2a3a4e354ee4856bc8e46",
+      "size": 2894
+    },
+    "ucode_markup/queries/tags.scm": {
+      "sha256": "22947aa77820cc59f115f651388edd0c0606e8bc69663ede03240fdba54130eb",
+      "size": 3790
+    },
+    "ucode_markup/queries/textobjects.scm": {
+      "sha256": "1aa76000eca51fb3077a9138510deb40432ef59a3b6bfd3e5815fb64c1ee7996",
+      "size": 4352
+    },
+    "ucode_markup/src/grammar.json": {
+      "sha256": "f5437a7f5198132f3c3cd12461f823c7c7a538bb43231e5e8f35e0810391eb5c",
+      "size": 134174
+    },
+    "ucode_markup/src/node-types.json": {
+      "sha256": "3f5e696aea408a014f82da9b68acf82b4851c9cab53c7dbe47bea1c95941cbe8",
+      "size": 55362
+    },
+    "ucode_markup/src/parser.c": {
+      "sha256": "7796b26660ff47735231204fb7e0c7520e712f7f2102872bd632a59764b60921",
+      "size": 1549385
+    },
+    "ucode_markup/src/scanner.c": {
+      "sha256": "a533ae0c1329daec4fb4cdf43be208e844dfe0e7cef5080000a051b1cb57b437",
+      "size": 982
+    },
+    "ucode_markup/src/tree_sitter/alloc.h": {
+      "sha256": "b29c1c9fb7cc82f58c84b376df1297d6e2737a1d655fd356db0859e3c29c2fea",
+      "size": 985
+    },
+    "ucode_markup/src/tree_sitter/array.h": {
+      "sha256": "20e6ba85abb9d5b7e2e6dedf675c9424a057a06feee03aa3e2dd48a1cb4bf8a2",
+      "size": 13453
+    },
+    "ucode_markup/src/tree_sitter/parser.h": {
+      "sha256": "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2",
+      "size": 7624
+    },
+    "ucode_markup/test/corpus/crlf.txt": {
+      "sha256": "4d2f856f9cfafb2669a6ec74573867828ee09b7fe046bbf64d9fc1d2b6b96c53",
+      "size": 1012
+    },
+    "ucode_markup/test/corpus/markup.txt": {
+      "sha256": "456a0536a2a54eebbb6d4624f9a0f564a58ad1f6305e6f4bd813203f0a8250f4",
+      "size": 57227
+    },
+    "ucode_markup/test/tag-docs/doc-attachment.ut": {
+      "sha256": "95325f21ac6fbdcfecf1aec65f3b4ef58345d95ea5a5a37643f92555714f295f",
+      "size": 520
+    },
+    "ucode_markup/test/tag-docs/doc-attachment.ut.expected": {
+      "sha256": "239f74ff62fcd6e2367eaa90208219bb7ff6bccbcd349ced72f768ec7b1a1715",
+      "size": 321
+    }
+  },
+  "root": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor/tree-sitter"
+}

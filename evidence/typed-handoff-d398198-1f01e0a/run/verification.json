@@ -1,0 +1,69 @@
+{
+  "producer": "d3981986ac685d6fcbb78a3b369aa4ed526c1e4b",
+  "consumer": "1f01e0a1529b5edf0f9b2e7d6215712bf87e994a",
+  "stages": {
+    "init": {
+      "exit_code": 0,
+      "receipt_sha256": "be296a816324f606e1807d6f815cd87d8e3fb0866a53ce401c2e813203853f87"
+    },
+    "index": {
+      "exit_code": 0,
+      "receipt_sha256": "31b2884e4ed76aa1ea07e759e259f9eaf49631d80dde3b3c3b4495b18d298aaa"
+    },
+    "finalize": {
+      "exit_code": 0,
+      "receipt_sha256": "d1ad8aeeceba6425cb73c8b7dbd5a3ec12c1f6b4cc761d66f73c1c5653d00fbc"
+    },
+    "extracted_query": {
+      "exit_code": 0,
+      "receipt_sha256": "45c35a9e116d5947b74966f7f59186a32363a8a283bac918621e1e1f3e5702df"
+    },
+    "extracted_decode": {
+      "exit_code": 0,
+      "receipt_sha256": "755c80fe6b59dbef108cdfdf9db83b83ddc25cdfb9fa10fab00746772138a4ec"
+    },
+    "errors_query": {
+      "exit_code": 0,
+      "receipt_sha256": "32f8a6545cb2989fca8da14b646c6fb05a0e0d06a592ee52f350e741287b92cb"
+    },
+    "errors_decode": {
+      "exit_code": 0,
+      "receipt_sha256": "bc907f6c339bdb05964f7903784f3657e10a394f9377f30b55b171bef3ee337f"
+    },
+    "effects_query": {
+      "exit_code": 0,
+      "receipt_sha256": "238e8fe7afd5525c6ab14c485eb1855ae0dcf623d047618239b507923c83468a"
+    },
+    "effects_decode": {
+      "exit_code": 0,
+      "receipt_sha256": "05e788609d8c061d5272c6203e4393dd1cd95ac353cd8376949dc1b244efc879"
+    },
+    "export": {
+      "exit_code": 0,
+      "receipt_sha256": "ae983e02df5ce969c85d5975884213abfa614357b6ec00227e89184dff9645bb"
+    },
+    "import": {
+      "exit_code": 0,
+      "receipt_sha256": "966e0190cc2d728bb8c295e78de9e661588293c0e959aa7facac46ebce11efe0"
+    },
+    "reimport": {
+      "exit_code": 0,
+      "receipt_sha256": "ffecd0621ecac19217e13c91a5e76bca9ccbf53b6497485614e7b6c400bb91a4"
+    }
+  },
+  "exact_csv_rows": "matched reviewed oracle before export",
+  "typed_record": "complete reviewed oracle matched before import",
+  "changed_consumer_files": [
+    "reports/handler_effects.json",
+    "reports/m4-block-device-exec.json"
+  ],
+  "target_rows": "complete reviewed targets and original positions matched",
+  "other_rows": "preserved in order",
+  "other_consumer_files": "byte-identical",
+  "reimport": "whole consumer inventory byte-identical",
+  "source_and_query_inputs": "byte-identical across stages",
+  "typed_input": "byte-identical at import and reimport",
+  "pycache_prefix_absent": true,
+  "coverage": "partial",
+  "limits": "Observed local run; not trusted execution, runtime, reachability, broad coverage, or policy correctness."
+}

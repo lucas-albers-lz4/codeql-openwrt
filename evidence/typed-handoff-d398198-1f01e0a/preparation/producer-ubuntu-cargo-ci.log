@@ -1,0 +1,667 @@
+cargo-test	UNKNOWN STEP	﻿2026-11-22T17:48:33.5265456Z Current runner version: '2.338.2'
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5294157Z ##[group]Runner Image Provisioner
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5295695Z Hosted Compute Agent
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5296490Z Version: 20261111.635
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5297282Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5298309Z Build Date: 2026-11-11T01:49:01Z
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5299143Z Worker ID: {10a4f986-ff73-4f6f-9cae-36cf6f68977d}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5300126Z Region: eastus
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5301035Z Cloud: Azure
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5301704Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5303796Z ##[group]Operating System
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5304574Z Ubuntu
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5305231Z 26.04.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5305965Z LTS
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5306725Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5307431Z ##[group]Runner Image
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5308192Z Image: ubuntu-26.04
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5308875Z Version: 20261116.202.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5310697Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261116.202/images/ubuntu/Ubuntu2604-Readme.md
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5312864Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261116.202
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5314110Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5315719Z ##[group]GITHUB_TOKEN Permissions
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5318064Z Contents: read
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5318763Z Metadata: read
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5319545Z Packages: read
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5320460Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5322739Z Secret source: Actions
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5323942Z Cache mode: write
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5325392Z Prepare workflow directory
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5707005Z Prepare all required actions
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.5765374Z Getting action download info
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.7442889Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:33.8297118Z Download action repository 'dtolnay/rust-toolchain@stable' (SHA:39008827e6b4319a349e9a42dfc90579dd25f1ca)
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.0313439Z Complete job name: cargo-test
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1012567Z ##[group]Run actions/checkout@v4
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1013230Z with:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1013606Z   repository: lucas-albers-lz4/codeql-ucode
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1016936Z   token: ***
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1017289Z   ssh-strict: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1017647Z   ssh-user: git
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1018011Z   persist-credentials: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1018404Z   clean: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1018783Z   sparse-checkout-cone-mode: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1019194Z   fetch-depth: 1
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1019540Z   fetch-tags: false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1019903Z   show-progress: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1020398Z   lfs: false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1020735Z   submodules: false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1021088Z   set-safe-directory: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1021503Z   allow-unsafe-pr-checkout: false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.1022069Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.2963761Z Syncing repository: lucas-albers-lz4/codeql-ucode
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.2965614Z ##[group]Getting Git version info
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.2966649Z Working directory is '/home/runner/work/codeql-ucode/codeql-ucode'
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.2968196Z [command]/usr/bin/git version
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.2990778Z git version 2.56.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3006702Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3020375Z Temporarily overriding HOME='/home/runner/work/_temp/5a57ca49-3bd0-4c8e-b4ef-f567e7ec4ad5' before making global git config changes
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3022493Z Adding repository directory to the temporary git global config as a safe directory
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3025181Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/codeql-ucode/codeql-ucode
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3080521Z Deleting the contents of '/home/runner/work/codeql-ucode/codeql-ucode'
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3085230Z ##[group]Initializing the repository
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3089887Z [command]/usr/bin/git init /home/runner/work/codeql-ucode/codeql-ucode
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3171899Z hint: Using 'master' as the name for the initial branch. This default branch name
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3174154Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3175668Z hint: to use in all of your new repositories, which will suppress this warning,
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3176886Z hint: call:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3177661Z hint:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3178556Z hint: 	git config --global init.defaultBranch <name>
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3179571Z hint:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3180710Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3182332Z hint: 'development'. The just-created branch can be renamed via this command:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3183539Z hint:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3184271Z hint: 	git branch -m <name>
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3185086Z hint:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3186446Z hint: Disable this message with "git config set advice.defaultBranchName false"
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3189392Z Initialized empty Git repository in /home/runner/work/codeql-ucode/codeql-ucode/.git/
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3193049Z [command]/usr/bin/git remote add origin https://github.com/lucas-albers-lz4/codeql-ucode
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3236276Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3237403Z ##[group]Disabling automatic garbage collection
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3239576Z [command]/usr/bin/git config --local gc.auto 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3272553Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3273626Z ##[group]Setting up auth
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3279512Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3311315Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3688941Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3722869Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3966184Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.3997532Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.4241889Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.4278722Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.4279575Z ##[group]Fetching the repository
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.4286807Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d3981986ac685d6fcbb78a3b369aa4ed526c1e4b:refs/remotes/origin/main
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7085953Z From https://github.com/lucas-albers-lz4/codeql-ucode
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7087058Z  * [new ref]         d3981986ac685d6fcbb78a3b369aa4ed526c1e4b -> origin/main
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7091369Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7092235Z ##[group]Determining the checkout info
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7103460Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7111971Z [command]/usr/bin/git sparse-checkout disable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7160409Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7195535Z ##[group]Checking out the ref
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7201514Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7724527Z Switched to a new branch 'main'
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7728196Z branch 'main' set up to track 'origin/main'.
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7735645Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7784258Z [command]/usr/bin/git log -1 --format=%H
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.7811740Z d3981986ac685d6fcbb78a3b369aa4ed526c1e4b
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8370837Z ##[group]Run dtolnay/rust-toolchain@stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8371512Z with:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8371948Z   toolchain: stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8372486Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8438454Z ##[start-action display=Parse toolchain version;id=__dtolnay_rust-toolchain.parse]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8497698Z ##[group]Run if [[ -z $toolchain ]]; then
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8498458Z ^[[36;1mif [[ -z $toolchain ]]; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8499561Z ^[[36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8500859Z ^[[36;1m  echo "'toolchain' is a required input" >&2^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8501500Z ^[[36;1m  exit 1^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8502182Z ^[[36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8503070Z ^[[36;1m  if [[ Linux == macOS ]]; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8504163Z ^[[36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8505208Z ^[[36;1m  else^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8506098Z ^[[36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8507035Z ^[[36;1m  fi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8507670Z ^[[36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8508726Z ^[[36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8509656Z ^[[36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8510831Z ^[[36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8511870Z ^[[36;1melse^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8512315Z ^[[36;1m  delimiter=EOF^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8512972Z ^[[36;1m  while [[ $toolchain == *$delimiter* ]]; do delimiter+=_; done^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8514000Z ^[[36;1m  printf 'toolchain<<%s\n%s\n%s\n' "$delimiter" "$toolchain" "$delimiter" >> $GITHUB_OUTPUT^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8514857Z ^[[36;1mfi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8549744Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8550598Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8551048Z   toolchain: stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8551498Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8661680Z ##[end-action id=__dtolnay_rust-toolchain.parse;outcome=success;conclusion=success;duration_ms=22]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8667287Z ##[start-action display=Set $CARGO_HOME;id=__dtolnay_rust-toolchain.__run]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8705927Z ##[group]Run echo CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8706851Z ^[[36;1mecho CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8737256Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8737922Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8801458Z ##[end-action id=__dtolnay_rust-toolchain.__run;outcome=success;conclusion=success;duration_ms=13]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8805275Z ##[start-action display=Install rustup if needed;id=__dtolnay_rust-toolchain.__run_2]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8840028Z ##[group]Run if ! command -v rustup &>/dev/null; then
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8840918Z ^[[36;1mif ! command -v rustup &>/dev/null; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8842353Z ^[[36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8843740Z ^[[36;1m  echo "$CARGO_HOME/bin" >> $GITHUB_PATH^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8844326Z ^[[36;1mfi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8873426Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8874097Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8874510Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8875016Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8940442Z ##[end-action id=__dtolnay_rust-toolchain.__run_2;outcome=success;conclusion=success;duration_ms=13]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8944767Z ##[start-action display=Install rustup if needed on windows;id=__dtolnay_rust-toolchain.__run_3]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8955906Z ##[end-action id=__dtolnay_rust-toolchain.__run_3;outcome=skipped;conclusion=skipped;duration_ms=0]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8970515Z ##[start-action display=rustup toolchain install stable;id=__dtolnay_rust-toolchain.__run_4]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8997374Z ##[group]Run set -f  # split targets and components on commas and whitespace, without glob expansion
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8998610Z ^[[36;1mset -f  # split targets and components on commas and whitespace, without glob expansion^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.8999465Z ^[[36;1mflags=()^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9000008Z ^[[36;1mfor t in ${targets//,/ }; do flags+=(--target "$t"); done^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9000991Z ^[[36;1mfor c in ${components//,/ }; do flags+=(--component "$c"); done^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9001939Z ^[[36;1mif [[ $toolchain == nightly && -n $components ]]; then flags+=(--allow-downgrade); fi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9002782Z ^[[36;1mlog=$(mktemp)^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9003255Z ^[[36;1mtrap 'rm -f "$log"' EXIT^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9003781Z ^[[36;1mfor attempt in 1 2 3 4 5; do^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9004843Z ^[[36;1m  if rustup toolchain install "$toolchain" "${flags[@]}" --profile minimal --no-self-update --force-non-host 2>&1 | tee "$log"; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9006011Z ^[[36;1m    break^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9006430Z ^[[36;1m  else^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9006846Z ^[[36;1m    status=$?^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9007288Z ^[[36;1m  fi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9007845Z ^[[36;1m  if [[ $attempt == 5 ]] || ! grep -Fq 'checksum failed for ' "$log" \^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9008882Z ^[[36;1m      || ! grep -Fq 'this is likely due to an ongoing update of the official release server' "$log"; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9009771Z ^[[36;1m    exit "$status"^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9010368Z ^[[36;1m  fi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9011067Z ^[[36;1m  echo "Retrying rustup toolchain install in 30 seconds (retry $attempt of 4)" >&2^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9011898Z ^[[36;1m  sleep 30^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9012322Z ^[[36;1mdone^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9042641Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9043293Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9043704Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9044216Z   toolchain: stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9044652Z   targets: 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9045042Z   components: 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9045492Z   RUSTUP_PERMIT_COPY_RENAME: 1
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:34.9045979Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.0402424Z info: syncing channel updates for stable-x86_64-unknown-linux-gnu
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.1913496Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.1992491Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.100.0 (0ef1bc386 2026-11-09)
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.1993359Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2060424Z ##[end-action id=__dtolnay_rust-toolchain.__run_4;outcome=success;conclusion=success;duration_ms=308]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2071316Z ##[start-action display=rustup default stable;id=__dtolnay_rust-toolchain.__run_5]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2100888Z ##[group]Run rustup default "$toolchain" --force-non-host
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2101854Z ^[[36;1mrustup default "$toolchain" --force-non-host^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2132720Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2133562Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2134030Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2134627Z   toolchain: stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2135110Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2232778Z info: using existing install for stable-x86_64-unknown-linux-gnu
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2242147Z info: default toolchain set to stable-x86_64-unknown-linux-gnu
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2242994Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2316255Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.100.0 (0ef1bc386 2026-11-09)
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2317280Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2339412Z ##[end-action id=__dtolnay_rust-toolchain.__run_5;outcome=success;conclusion=success;duration_ms=26]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2345970Z ##[start-action display=Create cachekey;id=__dtolnay_rust-toolchain.rustc-version]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2376807Z ##[group]Run DATE=$(rustc +"$toolchain" --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2379208Z ^[[36;1mDATE=$(rustc +"$toolchain" --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2381988Z ^[[36;1mHASH=$(rustc +"$toolchain" --version --verbose | sed -ne 's/^commit-hash: //p')^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2383395Z ^[[36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2414641Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2415465Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2415991Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2416611Z   toolchain: stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2417084Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2775496Z ##[end-action id=__dtolnay_rust-toolchain.rustc-version;outcome=success;conclusion=success;duration_ms=42]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2780916Z ##[start-action display=Disable incremental compilation;id=__dtolnay_rust-toolchain.__run_6]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2811913Z ##[group]Run if [ -z "${CARGO_INCREMENTAL+set}" ]; then
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2812822Z ^[[36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2813664Z ^[[36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2814413Z ^[[36;1mfi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2845511Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2846373Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2846838Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2847440Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2917005Z ##[end-action id=__dtolnay_rust-toolchain.__run_6;outcome=success;conclusion=success;duration_ms=13]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2921873Z ##[start-action display=Enable colors in Cargo output;id=__dtolnay_rust-toolchain.__run_7]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2951229Z ##[group]Run if [ -z "${CARGO_TERM_COLOR+set}" ]; then
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2952107Z ^[[36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2952931Z ^[[36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.2953663Z ^[[36;1mfi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3003243Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3004068Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3004512Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3005135Z   CARGO_INCREMENTAL: 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3005639Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3072640Z ##[end-action id=__dtolnay_rust-toolchain.__run_7;outcome=success;conclusion=success;duration_ms=14]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3078483Z ##[start-action display=Enable Cargo sparse registry;id=__dtolnay_rust-toolchain.__run_8]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3111449Z ##[group]Run # implemented in 1.66, stabilized in 1.68, made default in 1.70
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3112695Z ^[[36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3114566Z ^[[36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol ]; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3116570Z ^[[36;1m  if rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.6[89]\.'; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3118098Z ^[[36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3119559Z ^[[36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3121130Z ^[[36;1m  elif rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.6[67]\.'; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3122690Z ^[[36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3124083Z ^[[36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3124988Z ^[[36;1m  fi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3125421Z ^[[36;1mfi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3154812Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3155622Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3156235Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3156849Z   CARGO_INCREMENTAL: 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3157364Z   CARGO_TERM_COLOR: always
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3157902Z   toolchain: stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3158369Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3467219Z ##[end-action id=__dtolnay_rust-toolchain.__run_8;outcome=success;conclusion=success;duration_ms=38]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3474035Z ##[start-action display=Work around spurious network errors in curl 8.0;id=__dtolnay_rust-toolchain.__run_9]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3504686Z ##[group]Run # https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3506568Z ^[[36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3508207Z ^[[36;1mif rustc +"$toolchain" --version --verbose | grep -q '^release: 1\.7[01]\.'; then^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3509421Z ^[[36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3510327Z ^[[36;1mfi^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3540158Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3541182Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3541618Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3542261Z   CARGO_INCREMENTAL: 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3542772Z   CARGO_TERM_COLOR: always
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3543316Z   toolchain: stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3543786Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3728491Z ##[end-action id=__dtolnay_rust-toolchain.__run_9;outcome=success;conclusion=success;duration_ms=25]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3735751Z ##[start-action display=rustc +stable --version --verbose;id=__dtolnay_rust-toolchain.__run_10]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3765101Z ##[group]Run rustc +"$toolchain" --version --verbose
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3765964Z ^[[36;1mrustc +"$toolchain" --version --verbose^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3796428Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3797232Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3797664Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3798289Z   CARGO_INCREMENTAL: 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3798803Z   CARGO_TERM_COLOR: always
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3799345Z   toolchain: stable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3799804Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3958397Z rustc 1.100.0 (0ef1bc386 2026-11-09)
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3959577Z binary: rustc
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3960615Z commit-hash: 0ef1bc386059596dada8fb65b50425aab2ea637a
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3961599Z commit-date: 2026-11-09
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3962223Z host: x86_64-unknown-linux-gnu
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3962896Z release: 1.100.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3963455Z LLVM version: 23.1.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.3984972Z ##[end-action id=__dtolnay_rust-toolchain.__run_10;outcome=success;conclusion=success;duration_ms=24]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4061233Z ##[group]Run python3 -m unittest discover -s tests -p test_clone_grammar.py -v
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4062555Z ^[[36;1mpython3 -m unittest discover -s tests -p test_clone_grammar.py -v^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4094462Z shell: /usr/bin/bash -e {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4095025Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4095458Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4096053Z   CARGO_INCREMENTAL: 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4096559Z   CARGO_TERM_COLOR: always
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4097077Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4856200Z test_dependency_rewrite_and_idempotence (test_clone_grammar.CloneGrammarTest.test_dependency_rewrite_and_idempotence) ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4858085Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4858432Z ----------------------------------------------------------------------
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4859258Z Ran 1 test in 0.027s
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4859564Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.4859733Z OK
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5081458Z ##[group]Run actions/checkout@v4
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5082036Z with:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5082518Z   repository: lucas-albers-lz4/codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5083262Z   ref: ed6ec314d9796621bbcc98c43824189a44c9a0c2
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5083942Z   path: codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5090982Z   token: ***
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5091416Z   ssh-strict: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5091866Z   ssh-user: git
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5092323Z   persist-credentials: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5092848Z   clean: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5093308Z   sparse-checkout-cone-mode: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5093887Z   fetch-depth: 1
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5094331Z   fetch-tags: false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5094799Z   show-progress: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5095434Z   lfs: false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5095855Z   submodules: false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5096322Z   set-safe-directory: true
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5096876Z   allow-unsafe-pr-checkout: false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5097445Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5097883Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5098456Z   CARGO_INCREMENTAL: 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5098944Z   CARGO_TERM_COLOR: always
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5099438Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5852465Z Syncing repository: lucas-albers-lz4/codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5854210Z ##[group]Getting Git version info
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5855776Z Working directory is '/home/runner/work/codeql-ucode/codeql-ucode/codeql-openwrt'
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5880800Z [command]/usr/bin/git version
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5921154Z git version 2.56.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5938114Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5951811Z Temporarily overriding HOME='/home/runner/work/_temp/4f4106cb-5eeb-479d-b613-7a06ccae3f8c' before making global git config changes
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5954709Z Adding repository directory to the temporary git global config as a safe directory
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5957530Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/codeql-ucode/codeql-ucode/codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.5996567Z ##[group]Initializing the repository
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6001491Z [command]/usr/bin/git init /home/runner/work/codeql-ucode/codeql-ucode/codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6051704Z hint: Using 'master' as the name for the initial branch. This default branch name
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6054229Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6056590Z hint: to use in all of your new repositories, which will suppress this warning,
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6058414Z hint: call:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6059402Z hint:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6060430Z hint: 	git config --global init.defaultBranch <name>
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6061564Z hint:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6062639Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6064605Z hint: 'development'. The just-created branch can be renamed via this command:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6066045Z hint:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6066722Z hint: 	git branch -m <name>
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6067557Z hint:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6068769Z hint: Disable this message with "git config set advice.defaultBranchName false"
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6071330Z Initialized empty Git repository in /home/runner/work/codeql-ucode/codeql-ucode/codeql-openwrt/.git/
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6075190Z [command]/usr/bin/git remote add origin https://github.com/lucas-albers-lz4/codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6120889Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6122892Z ##[group]Disabling automatic garbage collection
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6124559Z [command]/usr/bin/git config --local gc.auto 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6182073Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6183669Z ##[group]Setting up auth
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6189823Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6269706Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6683121Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6717577Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.6966115Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.7001212Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.7249095Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.7425225Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.7428060Z ##[group]Fetching the repository
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:35.7436216Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin ed6ec314d9796621bbcc98c43824189a44c9a0c2
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1270146Z From https://github.com/lucas-albers-lz4/codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1271971Z  * branch            ed6ec314d9796621bbcc98c43824189a44c9a0c2 -> FETCH_HEAD
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1275461Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1276961Z ##[group]Determining the checkout info
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1278636Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1284145Z [command]/usr/bin/git sparse-checkout disable
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1323950Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1354264Z ##[group]Checking out the ref
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1355737Z [command]/usr/bin/git checkout --progress --force ed6ec314d9796621bbcc98c43824189a44c9a0c2
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1554000Z Note: switching to 'ed6ec314d9796621bbcc98c43824189a44c9a0c2'.
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1555009Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1555680Z You are in 'detached HEAD' state. You can look around, make experimental
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1557313Z changes and commit them, and you can discard any commits you make in this
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1558955Z state without impacting any branches by switching back to a branch.
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1559987Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1560797Z If you want to create a new branch to retain commits you create, you may
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1562319Z do so (now or later) by using -c with the switch command. Example:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1563155Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1563577Z   git switch -c <new-branch-name>
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1564176Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1564566Z Or undo this operation with:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1565143Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1565506Z   git switch -
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1565975Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1566677Z Turn off this advice by setting config variable advice.detachedHead to false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1567649Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1568396Z HEAD is now at ed6ec31 Import bounded getBlockDevices source observations (#78)
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1572441Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1599273Z [command]/usr/bin/git log -1 --format=%H
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1622203Z ed6ec314d9796621bbcc98c43824189a44c9a0c2
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1832021Z ##[group]Run bash scripts/clone-grammar.sh
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1833080Z ^[[36;1mbash scripts/clone-grammar.sh^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1864128Z shell: /usr/bin/bash -e {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1864962Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1865663Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1866546Z   CARGO_INCREMENTAL: 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1867315Z   CARGO_TERM_COLOR: always
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1868094Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.1991240Z Cloning into '/home/runner/work/codeql-ucode/codeql-ucode/extractor/tree-sitter'...
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.7540054Z From https://github.com/m00qek/tree-sitter-ucode
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.7541876Z  * branch            4a243af329fae2f4ff01e0fc80133cbab8314600 -> FETCH_HEAD
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8011781Z Note: switching to '4a243af329fae2f4ff01e0fc80133cbab8314600'.
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8013386Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8014663Z You are in 'detached HEAD' state. You can look around, make experimental
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8016984Z changes and commit them, and you can discard any commits you make in this
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8019175Z state without impacting any branches by switching back to a branch.
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8020881Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8021789Z If you want to create a new branch to retain commits you create, you may
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8023823Z do so (now or later) by using -c with the switch command. Example:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8025022Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8025508Z   git switch -c <new-branch-name>
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8026371Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8026863Z Or undo this operation with:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8027635Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8028102Z   git switch -
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8028658Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8029629Z Turn off this advice by setting config variable advice.detachedHead to false
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8031565Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8032291Z HEAD is now at 4a243af fix: regenerate the parsers for 0.9.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8123346Z grammar 4a243af329fae2f4ff01e0fc80133cbab8314600 ready at /home/runner/work/codeql-ucode/codeql-ucode/extractor/tree-sitter (ucode/src/node-types.json visible)
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8189370Z ##[group]Run cargo test -p codeql-extractor-ucode -- --nocapture
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8190837Z ^[[36;1mcargo test -p codeql-extractor-ucode -- --nocapture^[[0m
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8222241Z shell: /usr/bin/bash -e {0}
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8223039Z env:
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8223711Z   CARGO_HOME: /home/runner/.cargo
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8224552Z   CARGO_INCREMENTAL: 0
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8225304Z   CARGO_TERM_COLOR: always
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8226466Z   CODEQL_OPENWRT_ROOT: /home/runner/work/codeql-ucode/codeql-ucode/codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.8227780Z ##[endgroup]
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.9098065Z ^[[1m^[[92m    Updating^[[0m crates.io index
+cargo-test	UNKNOWN STEP	2026-11-22T17:48:36.9132253Z ^[[1m^[[92m    Updating^[[0m git repository `https://github.com/github/codeql`
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:23.8752125Z ^[[1m^[[92m Downloading^[[0m crates ...
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:23.9804521Z ^[[1m^[[92m  Downloaded^[[0m cfg-if v1.0.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:23.9832520Z ^[[1m^[[92m  Downloaded^[[0m utf8parse v0.2.2
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:23.9892282Z ^[[1m^[[92m  Downloaded^[[0m thread_local v1.1.10
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:23.9907892Z ^[[1m^[[92m  Downloaded^[[0m crossbeam-utils v0.8.23
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:23.9955800Z ^[[1m^[[92m  Downloaded^[[0m serde_core v1.0.229
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:23.9973900Z ^[[1m^[[92m  Downloaded^[[0m encoding v0.2.33
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0000560Z ^[[1m^[[92m  Downloaded^[[0m encoding-index-korean v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0014415Z ^[[1m^[[92m  Downloaded^[[0m aho-corasick v1.1.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0064390Z ^[[1m^[[92m  Downloaded^[[0m rayon v1.12.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0141080Z ^[[1m^[[92m  Downloaded^[[0m serde_json v1.0.154
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0202076Z ^[[1m^[[92m  Downloaded^[[0m find-msvc-tools v0.1.15
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0215556Z ^[[1m^[[92m  Downloaded^[[0m regex-automata v0.4.18
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0343853Z ^[[1m^[[92m  Downloaded^[[0m strsim v0.11.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0353004Z ^[[1m^[[92m  Downloaded^[[0m zstd-sys v2.1.2+zstd.1.5.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0525872Z ^[[1m^[[92m  Downloaded^[[0m colorchoice v1.0.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0541096Z ^[[1m^[[92m  Downloaded^[[0m clap_derive v4.6.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0553501Z ^[[1m^[[92m  Downloaded^[[0m crossbeam-deque v0.8.8
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0566347Z ^[[1m^[[92m  Downloaded^[[0m crossbeam-epoch v0.9.21
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0587618Z ^[[1m^[[92m  Downloaded^[[0m clap_builder v4.6.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0653992Z ^[[1m^[[92m  Downloaded^[[0m rayon-core v1.13.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0688641Z ^[[1m^[[92m  Downloaded^[[0m clap_lex v1.1.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0698760Z ^[[1m^[[92m  Downloaded^[[0m crc32fast v1.5.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0731170Z ^[[1m^[[92m  Downloaded^[[0m regex v1.13.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0767367Z ^[[1m^[[92m  Downloaded^[[0m tracing-attributes v0.1.31
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0792246Z ^[[1m^[[92m  Downloaded^[[0m tree-sitter-language v0.1.9
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0808472Z ^[[1m^[[92m  Downloaded^[[0m zmij v1.0.23
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0826168Z ^[[1m^[[92m  Downloaded^[[0m matchers v0.2.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0843815Z ^[[1m^[[92m  Downloaded^[[0m pkg-config v0.3.34
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0848908Z ^[[1m^[[92m  Downloaded^[[0m tracing-log v0.2.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0871206Z ^[[1m^[[92m  Downloaded^[[0m heck v0.5.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0891307Z ^[[1m^[[92m  Downloaded^[[0m simd-adler32 v0.3.10
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0892286Z ^[[1m^[[92m  Downloaded^[[0m streaming-iterator v0.1.9
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0894654Z ^[[1m^[[92m  Downloaded^[[0m autocfg v1.5.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0909951Z ^[[1m^[[92m  Downloaded^[[0m foldhash v0.2.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0919133Z ^[[1m^[[92m  Downloaded^[[0m jobserver v0.1.35
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0935223Z ^[[1m^[[92m  Downloaded^[[0m zstd-safe v7.4.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0946923Z ^[[1m^[[92m  Downloaded^[[0m iana-time-zone v0.1.65
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0971273Z ^[[1m^[[92m  Downloaded^[[0m serde_derive v1.0.229
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.0996802Z ^[[1m^[[92m  Downloaded^[[0m encoding-index-japanese v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1010054Z ^[[1m^[[92m  Downloaded^[[0m globset v0.4.21
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1024242Z ^[[1m^[[92m  Downloaded^[[0m tracing-core v0.1.36
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1044895Z ^[[1m^[[92m  Downloaded^[[0m num-traits v0.2.19
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1065988Z ^[[1m^[[92m  Downloaded^[[0m adler2 v2.0.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1075046Z ^[[1m^[[92m  Downloaded^[[0m bstr v1.13.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1137769Z ^[[1m^[[92m  Downloaded^[[0m encoding_index_tests v0.1.4
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1140868Z ^[[1m^[[92m  Downloaded^[[0m anstream v1.0.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1156723Z ^[[1m^[[92m  Downloaded^[[0m lazy_static v1.5.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1169378Z ^[[1m^[[92m  Downloaded^[[0m sharded-slab v0.1.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1194875Z ^[[1m^[[92m  Downloaded^[[0m quote v1.0.47
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1215559Z ^[[1m^[[92m  Downloaded^[[0m indexmap v2.14.2
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1248604Z ^[[1m^[[92m  Downloaded^[[0m tracing v0.1.44
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1375920Z ^[[1m^[[92m  Downloaded^[[0m num_cpus v1.17.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1399229Z ^[[1m^[[92m  Downloaded^[[0m shlex v2.0.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1408806Z ^[[1m^[[92m  Downloaded^[[0m chrono v0.4.45
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1460553Z ^[[1m^[[92m  Downloaded^[[0m log v0.4.35
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1480049Z ^[[1m^[[92m  Downloaded^[[0m cc v1.11.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1512391Z ^[[1m^[[92m  Downloaded^[[0m either v1.19.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1523446Z ^[[1m^[[92m  Downloaded^[[0m miniz_oxide v0.9.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1542403Z ^[[1m^[[92m  Downloaded^[[0m syn v3.0.10
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1626279Z ^[[1m^[[92m  Downloaded^[[0m libc v0.2.191
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.1992810Z ^[[1m^[[92m  Downloaded^[[0m nu-ansi-term v0.50.3
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2009883Z ^[[1m^[[92m  Downloaded^[[0m unicode-ident v1.0.27
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2030861Z ^[[1m^[[92m  Downloaded^[[0m is_terminal_polyfill v1.70.2
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2037572Z ^[[1m^[[92m  Downloaded^[[0m proc-macro2 v1.0.107
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2059835Z ^[[1m^[[92m  Downloaded^[[0m encoding-index-simpchinese v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2074719Z ^[[1m^[[92m  Downloaded^[[0m itoa v1.0.19
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2086724Z ^[[1m^[[92m  Downloaded^[[0m tree-sitter v0.26.8
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2134227Z ^[[1m^[[92m  Downloaded^[[0m pin-project-lite v0.2.17
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2178554Z ^[[1m^[[92m  Downloaded^[[0m clap v4.6.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2251952Z ^[[1m^[[92m  Downloaded^[[0m anstyle v1.0.14
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2262602Z ^[[1m^[[92m  Downloaded^[[0m memchr v2.8.3
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2304911Z ^[[1m^[[92m  Downloaded^[[0m tracing-subscriber v0.3.23
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2369385Z ^[[1m^[[92m  Downloaded^[[0m syn v2.0.119
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2453264Z ^[[1m^[[92m  Downloaded^[[0m flate2 v1.1.11
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2493846Z ^[[1m^[[92m  Downloaded^[[0m serde v1.0.229
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2520443Z ^[[1m^[[92m  Downloaded^[[0m equivalent v1.0.3
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2527678Z ^[[1m^[[92m  Downloaded^[[0m zlib-rs v0.6.8
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2569951Z ^[[1m^[[92m  Downloaded^[[0m encoding-index-tradchinese v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2586271Z ^[[1m^[[92m  Downloaded^[[0m smallvec v1.16.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2597470Z ^[[1m^[[92m  Downloaded^[[0m zstd v0.13.4
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2623228Z ^[[1m^[[92m  Downloaded^[[0m encoding-index-singlebyte v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2639254Z ^[[1m^[[92m  Downloaded^[[0m once_cell v1.21.4
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2658493Z ^[[1m^[[92m  Downloaded^[[0m regex-syntax v0.8.11
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2712523Z ^[[1m^[[92m  Downloaded^[[0m hashbrown v0.17.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2753454Z ^[[1m^[[92m  Downloaded^[[0m anstyle-query v1.1.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.2962821Z ^[[1m^[[92m  Downloaded^[[0m anstyle-parse v1.0.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.3426288Z ^[[1m^[[92m   Compiling^[[0m libc v0.2.191
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.3427080Z ^[[1m^[[92m   Compiling^[[0m find-msvc-tools v0.1.15
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.3427698Z ^[[1m^[[92m   Compiling^[[0m shlex v2.0.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.3428224Z ^[[1m^[[92m   Compiling^[[0m proc-macro2 v1.0.107
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.6262265Z ^[[1m^[[92m   Compiling^[[0m quote v1.0.47
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.6382223Z ^[[1m^[[92m   Compiling^[[0m unicode-ident v1.0.27
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.6957405Z ^[[1m^[[92m   Compiling^[[0m memchr v2.8.3
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.7732078Z ^[[1m^[[92m   Compiling^[[0m zmij v1.0.23
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:24.9051706Z ^[[1m^[[92m   Compiling^[[0m pkg-config v0.3.34
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:25.2997502Z ^[[1m^[[92m   Compiling^[[0m aho-corasick v1.1.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:25.3831649Z ^[[1m^[[92m   Compiling^[[0m tree-sitter-language v0.1.9
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:25.4892050Z ^[[1m^[[92m   Compiling^[[0m encoding_index_tests v0.1.4
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:25.4962748Z ^[[1m^[[92m   Compiling^[[0m crossbeam-utils v0.8.23
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:25.5201524Z ^[[1m^[[92m   Compiling^[[0m regex-syntax v0.8.11
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:25.6546999Z ^[[1m^[[92m   Compiling^[[0m serde_core v1.0.229
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:25.7611738Z ^[[1m^[[92m   Compiling^[[0m jobserver v0.1.35
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:25.8651759Z ^[[1m^[[92m   Compiling^[[0m syn v3.0.10
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:26.0031640Z ^[[1m^[[92m   Compiling^[[0m cc v1.11.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:27.1901680Z ^[[1m^[[92m   Compiling^[[0m regex-automata v0.4.18
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:27.6332490Z ^[[1m^[[92m   Compiling^[[0m zstd-sys v2.1.2+zstd.1.5.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:28.0901755Z ^[[1m^[[92m   Compiling^[[0m itoa v1.0.19
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:28.1201702Z ^[[1m^[[92m   Compiling^[[0m hashbrown v0.17.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:28.1951848Z ^[[1m^[[92m   Compiling^[[0m serde_json v1.0.154
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:28.2899061Z ^[[1m^[[92m   Compiling^[[0m equivalent v1.0.3
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:28.3346567Z ^[[1m^[[92m   Compiling^[[0m crossbeam-epoch v0.9.21
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:28.5825303Z ^[[1m^[[92m   Compiling^[[0m indexmap v2.14.2
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:29.5631741Z ^[[1m^[[92m   Compiling^[[0m autocfg v1.5.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:29.8071658Z ^[[1m^[[92m   Compiling^[[0m foldhash v0.2.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:29.9071586Z ^[[1m^[[92m   Compiling^[[0m once_cell v1.21.4
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:30.0468950Z ^[[1m^[[92m   Compiling^[[0m crossbeam-deque v0.8.8
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:30.1761484Z ^[[1m^[[92m   Compiling^[[0m cfg-if v1.0.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:30.2216933Z ^[[1m^[[92m   Compiling^[[0m tracing-core v0.1.36
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:30.7061661Z ^[[1m^[[92m   Compiling^[[0m num-traits v0.2.19
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:31.9639421Z ^[[1m^[[92m   Compiling^[[0m syn v2.0.119
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:32.0401625Z ^[[1m^[[92m   Compiling^[[0m log v0.4.35
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:32.1741702Z ^[[1m^[[92m   Compiling^[[0m serde v1.0.229
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:32.3241140Z ^[[1m^[[92m   Compiling^[[0m zstd-safe v7.4.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:32.4251777Z ^[[1m^[[92m   Compiling^[[0m utf8parse v0.2.2
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:32.4891744Z ^[[1m^[[92m   Compiling^[[0m rayon-core v1.13.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:32.5862713Z ^[[1m^[[92m   Compiling^[[0m crc32fast v1.5.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:32.7481755Z ^[[1m^[[92m   Compiling^[[0m anstyle-parse v1.0.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:32.8714239Z ^[[1m^[[92m   Compiling^[[0m tree-sitter v0.26.8
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.1385805Z ^[[1m^[[92m   Compiling^[[0m serde_derive v1.0.229
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.2245862Z ^[[1m^[[92m   Compiling^[[0m lazy_static v1.5.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.2742014Z ^[[1m^[[92m   Compiling^[[0m anstyle-query v1.1.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.3221633Z ^[[1m^[[92m   Compiling^[[0m adler2 v2.0.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.5150051Z ^[[1m^[[92m   Compiling^[[0m simd-adler32 v0.3.10
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.6682457Z ^[[1m^[[92m   Compiling^[[0m is_terminal_polyfill v1.70.2
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.7171729Z ^[[1m^[[92m   Compiling^[[0m pin-project-lite v0.2.17
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.7581957Z ^[[1m^[[92m   Compiling^[[0m anstyle v1.0.14
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.9091896Z ^[[1m^[[92m   Compiling^[[0m colorchoice v1.0.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:33.9611739Z ^[[1m^[[92m   Compiling^[[0m anstream v1.0.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:34.1691711Z ^[[1m^[[92m   Compiling^[[0m miniz_oxide v0.9.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:34.8259996Z ^[[1m^[[92m   Compiling^[[0m sharded-slab v0.1.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:36.0335757Z ^[[1m^[[92m   Compiling^[[0m tracing-attributes v0.1.31
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:36.7778069Z ^[[1m^[[92m   Compiling^[[0m tracing-log v0.2.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:36.9251656Z ^[[1m^[[92m   Compiling^[[0m tracing v0.1.44
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:36.9521703Z ^[[1m^[[92m   Compiling^[[0m thread_local v1.1.10
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.0733933Z ^[[1m^[[92m   Compiling^[[0m regex v1.13.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.0927530Z ^[[1m^[[92m   Compiling^[[0m matchers v0.2.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.1574877Z ^[[1m^[[92m   Compiling^[[0m tree-sitter-ucode v0.9.0 (/home/runner/work/codeql-ucode/codeql-ucode/extractor/tree-sitter)
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.2809727Z ^[[1m^[[92m   Compiling^[[0m encoding-index-simpchinese v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.4042560Z ^[[1m^[[92m   Compiling^[[0m encoding-index-korean v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.4135373Z ^[[1m^[[92m   Compiling^[[0m encoding-index-tradchinese v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.5404328Z ^[[1m^[[92m   Compiling^[[0m encoding-index-japanese v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.5456554Z ^[[1m^[[92m   Compiling^[[0m encoding-index-singlebyte v1.20141219.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.6482129Z ^[[1m^[[92m   Compiling^[[0m bstr v1.13.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.6751801Z ^[[1m^[[92m   Compiling^[[0m strsim v0.11.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.8052136Z ^[[1m^[[92m   Compiling^[[0m nu-ansi-term v0.50.3
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:37.9362036Z ^[[1m^[[92m   Compiling^[[0m either v1.19.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.0291413Z ^[[1m^[[92m   Compiling^[[0m heck v0.5.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.0445991Z ^[[1m^[[92m   Compiling^[[0m clap_lex v1.1.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.0601657Z ^[[1m^[[92m   Compiling^[[0m iana-time-zone v0.1.65
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.1502196Z ^[[1m^[[92m   Compiling^[[0m streaming-iterator v0.1.9
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.1901763Z ^[[1m^[[92m   Compiling^[[0m smallvec v1.16.5
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.2011865Z ^[[1m^[[92m   Compiling^[[0m zstd v0.13.4
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.2541713Z ^[[1m^[[92m   Compiling^[[0m clap_derive v4.6.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.3411915Z ^[[1m^[[92m   Compiling^[[0m tracing-subscriber v0.3.23
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:38.4081730Z ^[[1m^[[92m   Compiling^[[0m chrono v0.4.45
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:39.0059738Z ^[[1m^[[92m   Compiling^[[0m clap_builder v4.6.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:39.6239127Z ^[[1m^[[92m   Compiling^[[0m rayon v1.12.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:39.8481604Z ^[[1m^[[92m   Compiling^[[0m globset v0.4.21
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:40.4491756Z ^[[1m^[[92m   Compiling^[[0m encoding v0.2.33
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:41.0962175Z ^[[1m^[[92m   Compiling^[[0m flate2 v1.1.11
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:41.4791720Z ^[[1m^[[92m   Compiling^[[0m num_cpus v1.17.0
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:41.7411857Z ^[[1m^[[92m   Compiling^[[0m clap v4.6.7
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:42.0553302Z ^[[1m^[[92m   Compiling^[[0m codeql-extractor v0.2.0 (https://github.com/github/codeql?rev=ce29d8a59af0d25517c622469db17aad826b8d7f#ce29d8a5)
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.2199907Z ^[[1m^[[92m   Compiling^[[0m codeql-extractor-ucode v0.1.0 (/home/runner/work/codeql-ucode/codeql-ucode/extractor)
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8683177Z ^[[1m^[[92m    Finished^[[0m `test` profile [unoptimized + debuginfo] target(s) in 1m 07s
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8902993Z ^[[1m^[[92m     Running^[[0m unittests src/main.rs (target/debug/build/codeql-extractor-ucode/cd90dd795328f7d9/out/codeql_extractor_ucode-cd90dd795328f7d9)
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8916839Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8916974Z running 12 tests
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8928618Z real: (markup (statement_tag_open) (import_statement clause: (import_clause default: (identifier)) source: (string (string_fragment))) (import_statement clause: (import_clause default: (identifier)) source: (string (string_fragment))) (expression_statement (assignment_expression left: (member_expression object: (identifier) property: (property_identifier)) right: (function_expression parameters: (formal_parameters (identifier)) body: (statement_block (lexical_declaration (variable_declarator name: (identifier) value: (call_expression function: (identifier) arguments: (arguments (identifier) (member_expression object: (identifier) property: (property_identifier)) (member_expression object: (identifier) property: (property_identifier)))))) (expression_statement (call_expression function: (identifier) arguments: (arguments (identifier)))) (expression_statement (call_expression function: (member_expression object: (identifier) property: (property_identifier)) arguments: (arguments)))))))) error=false
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8938134Z test extractor::staged_root_tests::env_root_is_transported_as_exact_os_string ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8943952Z mixed: (markup (raw_text) (expression_tag open: (expression_tag_open) (identifier) close: (expression_tag_close)) (raw_text) (statement_tag_open) (lexical_declaration (variable_declarator name: (identifier) value: (number))) (text_statement (statement_tag_close) (raw_text) (expression_tag open: (expression_tag_open) (identifier) close: (expression_tag_close)) (raw_text))) error=false
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8946200Z test extractor::markup_parser_tests::markup_tag_heuristic_requires_line_start ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8947308Z test extractor::staged_root_tests::env_root_preserves_non_unicode_os_bytes ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8948692Z malformed: (markup (raw_text) (expression_tag open: (expression_tag_open) (MISSING identifier) close: (expression_tag_close)) (raw_text)) error=true
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8956970Z test extractor::staged_root_tests::env_root_requires_present_nonempty_value_and_rejects_conflict ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8958041Z test extractor::staged_root_tests::flagless_ignores_injected_environment_and_keeps_explicit_root ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8959001Z test extractor::markup_parser_tests::inspect_markup_controls ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.8996953Z warning: could not resolve input path "/tmp/ucode-stale-input-3912/missing.uc": No such file or directory (os error 2); skipping
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9022610Z test extractor::stale_input_tests::unresolved_input_is_reported_and_later_input_is_extracted ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9023855Z test extractor::tests::routing_uses_full_path_not_basename ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9031552Z test extractor::tests::shebang_detection_requires_a_ucode_interpreter ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9037799Z warning: could not resolve input path "/tmp/ucode-stale-output-error-3912/missing.uc": No such file or directory (os error 2); skipping
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9045689Z test extractor::stale_input_tests::output_directory_errors_are_not_skipped ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9149269Z test extractor::tests::routing_gate_matches_file_routing_rules_with_synthetic_paths ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9362253Z test extractor::tests::matches_pinned_openwrt_frozen_routing_inventory ... ok
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9362713Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9362992Z test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9363459Z 
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:43.9626330Z Post job cleanup.
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0356854Z [command]/usr/bin/git version
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0395150Z git version 2.56.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0424728Z Temporarily overriding HOME='/home/runner/work/_temp/3a7678c4-190f-40c0-8a1e-132caa206cae' before making global git config changes
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0425855Z Adding repository directory to the temporary git global config as a safe directory
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0428990Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/codeql-ucode/codeql-ucode/codeql-openwrt
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0470601Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0505084Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0776008Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0799677Z http.https://github.com/.extraheader
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0814447Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.0851178Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.1157370Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.1193443Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.1627342Z Post job cleanup.
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2390396Z [command]/usr/bin/git version
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2427548Z git version 2.56.1
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2462794Z Temporarily overriding HOME='/home/runner/work/_temp/75c0e45d-d6db-4ebb-8ff8-4fc9201bf382' before making global git config changes
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2463750Z Adding repository directory to the temporary git global config as a safe directory
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2468193Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/codeql-ucode/codeql-ucode
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2506232Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2542836Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2816910Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2843072Z http.https://github.com/.extraheader
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2855133Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.2893711Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.3168556Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.3200776Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.3580768Z Cleaning up orphan processes
+cargo-test	UNKNOWN STEP	2026-11-22T17:49:44.3922058Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
