@@ -18,17 +18,22 @@ class Prototype(unittest.TestCase):
     def test_synthetic_transition_and_mutation(self):
         with tempfile.TemporaryDirectory() as t:
             root = Path(t); consumer = root/'consumer'; consumer.mkdir()
+            source = root/'source'; source.mkdir()
+            original = HERE.parent.parent/'evidence/typed-handoff-d398198-1f01e0a'
+            source_file = source/'usr/share/rpcd/ucode/luci'; source_file.parent.mkdir(parents=True)
+            shutil.copyfile(original/'source/usr/share/rpcd/ucode/luci', source_file)
+            family = json.loads((original/'oracle-expanded.json').read_text())
             report = consumer/'report.json'
             before = [{'record_id':'m4:effect:luci-setBlockDetect-system','value':'before'}, {'record_id':'keep'}]
             after = [{'record_id':'m4:effect:luci-setBlockDetect-system','value':'after'}, {'record_id':'keep'}]
             dump(report, before)
             script = root/'stage.py'
-            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s=="init": (r/"db").write_text("database")\nif s.endswith("_query"): (r/(s[:-6]+".bqrs")).write_text("bqrs")\nif s.endswith("_decode"): print("name\\nvalue")\nif s=="export": print(json.dumps({"neutral":True}))\nif s=="import": (c/"report.json").write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
+            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s=="init": (r/"db").write_text("database")\nif s.endswith("_query"): (r/(s[:-6]+".bqrs")).write_text("bqrs")\nif s.endswith("_decode"):\n import csv\n csv.writer(sys.stdout,lineterminator="\\n").writerows(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())[s[:-7]+"_rows"])\nif s=="export": print(json.dumps(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())["neutral_typed_payload"]))\nif s=="import": (c/"report.json").write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
             run = root/'run'; oracle = root/'oracle.json'; context = root/'context.json'
-            dump(oracle, {'extracted_rows':[['name'],['value']], 'errors_rows':[['name'],['value']], 'effects_rows':[['name'],['value']], 'neutral_typed_payload':{'neutral':True}, 'expected_effects':['report.json'], 'prestate_provenance':{'report.json':{'target_index':0}}, 'expected_complete_targets':{'report.json':[after[0]]}})
-            commands = {s:{'argv':[sys.executable,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer)}} for s in STAGES}
+            dump(oracle, {'source':'usr/share/rpcd/ucode/luci', 'source_sha256':family['source_sha256'], 'lock_sha256':family['lock_sha256'], 'extracted_rows':[['f','col1'],[str(source_file),'']], 'errors_rows':family['errors_rows'], 'effects_rows':family['effects_rows'], 'neutral_typed_payload':family['neutral_typed_payload'], 'expected_effects':['report.json'], 'prestate_provenance':{'report.json':{'target_index':0}}, 'expected_complete_targets':{'report.json':[after[0]]}})
+            commands = {s:{'argv':[sys.executable,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer),'ORACLE':str(oracle)}} for s in STAGES}
             initial = {'report.json':{'sha256':sha(report),'size':report.stat().st_size}}
-            dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer)},'run':str(run),'initial':{'consumer':initial},'git':{},'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
+            dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer),'source':str(source)},'run':str(run),'initial':{'consumer':initial,'source':{'usr/share/rpcd/ucode/luci':{'sha256':sha(source_file),'size':source_file.stat().st_size}}},'git':{},'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
             env = [sys.executable, str(HERE/'runner.py'), '--synthetic-only', str(context),str(oracle),sha(context)]
             p = subprocess.run(env, capture_output=True, text=True); self.assertEqual(p.returncode,0,p.stderr)
             cmd = [sys.executable,str(HERE/'verify.py'),str(run),str(context),str(oracle),sha(context),sha(oracle)]

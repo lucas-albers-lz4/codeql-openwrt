@@ -15,6 +15,20 @@ STAGES = ('init', 'index', 'finalize', 'extracted_query', 'extracted_decode',
           'errors_query', 'errors_decode', 'effects_query', 'effects_decode',
           'export', 'import', 'reimport')
 
+def family_check(context, oracle):
+    source = 'usr/share/rpcd/ucode/luci'
+    expected = {'effects_rows':'534c56fb839086b13015a79dee7a6e6037490c8e245012ffade21e6a2d214949',
+                'errors_rows':'da8d8575723b6f72f2bf8bffc2ea5b27156d34a16465409667d24dc96ffccd95',
+                'neutral_typed_payload':'d95f8db3493aa677b19a3e78b875eb0a064ff74341837d2f5c1a8b586c24aec4'}
+    for name, wanted in expected.items():
+        data = json.dumps(oracle[name], sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
+        if hashlib.sha256(data).hexdigest() != wanted: raise ValueError('family oracle: ' + name)
+    if oracle['source'] != source or oracle['source_sha256'] != '6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e' or oracle['lock_sha256'] != 'b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a': raise ValueError('family source or lock')
+    files = context['initial']['source']
+    if set(files) != {source} or files[source]['sha256'] != oracle['source_sha256']: raise ValueError('source inventory')
+    expected_rows = [['f','col1'], [str(Path(context['inputs']['source']) / source), '']]
+    if oracle['extracted_rows'] != expected_rows: raise ValueError('extracted identity')
+
 def same(a, b):
     return json.dumps(a, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(b, sort_keys=True, separators=(',', ':'), allow_nan=False)
 
@@ -59,6 +73,7 @@ def main(context_file, oracle_file, approval):
     context_file = Path(context_file).resolve(strict=True)
     oracle_file = Path(oracle_file).resolve(strict=True)
     context = load(context_file); oracle = load(oracle_file)
+    family_check(context, oracle)
     # Approval is an external reviewer's context digest, not an authentication mechanism.
     if approval != sha(context_file): fail('reviewed context digest mismatch')
     if context['oracle_sha256'] != sha(oracle_file): fail('oracle mismatch')
