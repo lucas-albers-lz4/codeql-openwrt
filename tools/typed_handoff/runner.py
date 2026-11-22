@@ -63,7 +63,7 @@ def main(context_file, oracle_file, approval):
     if context['oracle_sha256'] != sha(oracle_file): fail('oracle mismatch')
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
     if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs'}: fail('context fields')
-    if set(context['outputs']) != {'extracted','errors','effects','typed'}: fail('output roles')
+    if set(context['outputs']) != {'database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
     if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
     if any(Path(v).is_symlink() for v in context['inputs'].values()): fail('symlink input root')
     roots = {k: Path(v).resolve(strict=True) for k, v in context['inputs'].items()}
@@ -106,7 +106,10 @@ def main(context_file, oracle_file, approval):
             for name in ('extracted', 'errors', 'effects'): exact(name, name + '_rows')
         if stage == 'import' and not same(load(paths['typed']), oracle['neutral_typed_payload']):
             fail('typed payload mismatch')
-        before = snapshot(); start = time.time_ns()
+        before = snapshot()
+        created = {'init':'database', 'extracted_query':'extracted_bqrs', 'errors_query':'errors_bqrs', 'effects_query':'effects_bqrs', 'extracted_decode':'extracted', 'errors_decode':'errors', 'effects_decode':'effects', 'export':'typed'}.get(stage)
+        if created and before[created] is not None: fail('output not absent: ' + created)
+        start = time.time_ns()
         stdout = run / (stage + '.stdout'); stderr = run / (stage + '.stderr')
         with stdout.open('xb') as out, stderr.open('xb') as err:
             result = subprocess.run(cfg['argv'], cwd=cfg['cwd'], env=cfg['env'], stdout=out, stderr=err, check=False)
@@ -114,6 +117,9 @@ def main(context_file, oracle_file, approval):
             name = stage.removesuffix('_decode') if stage != 'export' else 'typed'
             with paths[name].open('xb') as target: target.write(stdout.read_bytes())
         after = snapshot(); end = time.time_ns()
+        if created and after[created] is None: fail('output not created: ' + created)
+        for name in context['outputs']:
+            if name != created and not (name == 'database' and stage in ('index','finalize')) and before[name] != after[name]: fail('unexpected output transition: ' + name)
         for name in roots:
             if (name != 'consumer' or stage in ('init','index','finalize','extracted_query','extracted_decode','errors_query','errors_decode','effects_query','effects_decode','export')) and after[name] != initial[name]: fail('input drift: ' + name)
         receipt = {'stage': stage, 'context_sha256': approval, 'argv': cfg['argv'],

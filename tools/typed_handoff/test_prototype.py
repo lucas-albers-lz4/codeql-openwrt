@@ -23,12 +23,12 @@ class Prototype(unittest.TestCase):
             after = [{'record_id':'m4:effect:luci-setBlockDetect-system','value':'after'}, {'record_id':'keep'}]
             dump(report, before)
             script = root/'stage.py'
-            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s.endswith("_decode"): print("name\\nvalue")\nif s=="export": print(json.dumps({"neutral":True}))\nif s=="import": (c/"report.json").write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
+            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s=="init": (r/"db").write_text("database")\nif s.endswith("_query"): (r/(s[:-6]+".bqrs")).write_text("bqrs")\nif s.endswith("_decode"): print("name\\nvalue")\nif s=="export": print(json.dumps({"neutral":True}))\nif s=="import": (c/"report.json").write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
             run = root/'run'; oracle = root/'oracle.json'; context = root/'context.json'
             dump(oracle, {'extracted_rows':[['name'],['value']], 'errors_rows':[['name'],['value']], 'effects_rows':[['name'],['value']], 'neutral_typed_payload':{'neutral':True}, 'expected_effects':['report.json'], 'prestate_provenance':{'report.json':{'target_index':0}}, 'expected_complete_targets':{'report.json':[after[0]]}})
             commands = {s:{'argv':[sys.executable,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer)}} for s in STAGES}
             initial = {'report.json':{'sha256':sha(report),'size':report.stat().st_size}}
-            dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer)},'run':str(run),'initial':{'consumer':initial},'git':{},'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json'}})
+            dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer)},'run':str(run),'initial':{'consumer':initial},'git':{},'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
             env = [sys.executable, str(HERE/'runner.py'), '--synthetic-only', str(context),str(oracle),sha(context)]
             p = subprocess.run(env, capture_output=True, text=True); self.assertEqual(p.returncode,0,p.stderr)
             cmd = [sys.executable,str(HERE/'verify.py'),str(run),str(context),str(oracle),sha(context),sha(oracle)]
@@ -48,6 +48,24 @@ class Prototype(unittest.TestCase):
                 dump(path, rec)
             altered_cmd = [*cmd]; altered_cmd[2] = str(altered)
             p = subprocess.run(altered_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('early consumer change',p.stderr)
+            altered_bqrs = root/'altered-bqrs'; shutil.copytree(run, altered_bqrs)
+            (altered_bqrs/'effects.bqrs').write_bytes(b'wrong')
+            bqrs_cmd = [*cmd]; bqrs_cmd[2] = str(altered_bqrs)
+            p = subprocess.run(bqrs_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('bqrs: effects',p.stderr)
+            coherent = root/'coherent'; shutil.copytree(run, coherent)
+            wrong = b'name\nwrong\n'
+            (coherent/'effects.csv').write_bytes(wrong)
+            (coherent/'effects_decode.stdout').write_bytes(wrong)
+            wrong_hash = hashlib.sha256(wrong).hexdigest()
+            for index, stage in enumerate(STAGES):
+                path = coherent/(stage+'.receipt.json'); rec = json.loads(path.read_text())
+                if stage == 'effects_decode': rec['stdout_sha256'] = wrong_hash
+                for edge in ('before','after'):
+                    if index > STAGES.index('effects_decode') or (stage == 'effects_decode' and edge == 'after'):
+                        rec[edge]['effects'] = {'sha256':wrong_hash,'size':len(wrong)}
+                dump(path, rec)
+            coherent_cmd = [*cmd]; coherent_cmd[2] = str(coherent)
+            p = subprocess.run(coherent_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('rows: effects',p.stderr)
             (run/'effects.csv').write_text('name\nwrong\n')
             p = subprocess.run(cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('rows: effects',p.stderr)
             p = subprocess.run([sys.executable,'-O',*cmd[1:]],capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('rows: effects',p.stderr)

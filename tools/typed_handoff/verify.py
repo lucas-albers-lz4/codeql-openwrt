@@ -58,7 +58,18 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         require(initial[name] is None, 'output not absent: '+name)
         p = Path(rel)
         require(not p.is_absolute() and '..' not in p.parts, 'output path')
+    require(set(context['outputs']) == {'database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}, 'output roles')
+    creates = {'init':'database', 'extracted_query':'extracted_bqrs', 'errors_query':'errors_bqrs', 'effects_query':'effects_bqrs', 'extracted_decode':'extracted', 'errors_decode':'errors', 'effects_decode':'effects', 'export':'typed'}
+    for stage, rec in zip(STAGES, receipts):
+        created = creates.get(stage)
+        if created:
+            require(rec['before'][created] is None and rec['after'][created] is not None, 'creation: '+stage)
+        for name in context['outputs']:
+            if name != created and not (name == 'database' and stage in ('index','finalize')):
+                require(rec['before'][name] == rec['after'][name], 'output transition: '+stage+'/'+name)
     for name in ('extracted','errors','effects'):
+        bqrs = name+'_bqrs'; raw = (packet/context['outputs'][bqrs]).read_bytes()
+        require(receipts[STAGES.index(name+'_query')]['after'][bqrs]['sha256'] == digest(raw), 'bqrs: '+name)
         with (packet/context['outputs'][name]).open(newline='') as f: rows = list(csv.reader(f))
         require(rows == oracle[name+'_rows'], 'rows: '+name)
     require(same(read_json(packet/context['outputs']['typed']), oracle['neutral_typed_payload']), 'typed')
