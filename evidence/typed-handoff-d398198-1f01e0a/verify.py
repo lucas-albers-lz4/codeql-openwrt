@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Check packaged bytes and bounded claims; does not authenticate execution."""
-import csv,hashlib,json,pathlib
+import csv,hashlib,json,pathlib,math,sys
+if sys.flags.optimize:
+ raise SystemExit("Verification requires Python without optimization; assertions must be enabled.")
 p=pathlib.Path(__file__).resolve().parent
 sha=lambda b:hashlib.sha256(b).hexdigest()
 for line in (p/'SHA256SUMS').read_text().splitlines():
  digest,name=line.split('  ',1); assert sha((p/name).read_bytes())==digest,name
 ctx=json.loads((p/'context-frozen.json').read_text()); oracle=json.loads((p/'oracle-expanded.json').read_text()); run=p/'run'; stages=['init','index','finalize','extracted_query','extracted_decode','errors_query','errors_decode','effects_query','effects_decode','export','import','reimport']; receipts={s:json.loads((run/(s+'.receipt.json')).read_text()) for s in stages}
 for s,rec in receipts.items():
+ assert rec['stage']==s and math.isfinite(rec['start_epoch']) and math.isfinite(rec['end_epoch']) and rec['start_epoch'] < rec['end_epoch'],s
  assert rec['exit_code']==0 and rec['context_sha256']==sha((p/'context-frozen.json').read_bytes())
  assert rec['argv']==ctx['commands'][s]['argv'] and rec['cwd']==ctx['commands'][s]['cwd'] and rec['environment']==ctx['commands'][s]['env']
  for stream in ['stdout','stderr']:
@@ -34,6 +37,8 @@ for stage in stages:
  assert summary["stages"][stage]["receipt_sha256"]==sha((run/(stage+".receipt.json")).read_bytes()),stage
 for name in ["effects","extracted","errors"]:
  raw=(run/(name+".bqrs")).read_bytes(); digest=sha(raw)
+ assert receipts[name+"_query"]["before"][name+"_bqrs"] is None
+ assert receipts[name+"_decode"]["before"][name+"_bqrs"]==receipts[name+"_decode"]["after"][name+"_bqrs"]
  assert receipts[name+"_query"]["after"][name+"_bqrs"]["sha256"]==digest
  assert receipts[name+"_decode"]["before"][name+"_bqrs"]["sha256"]==digest
  assert receipts[name+"_decode"]["stdout"]["sha256"]==sha((run/(name+".csv")).read_bytes())

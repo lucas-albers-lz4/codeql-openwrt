@@ -7,6 +7,9 @@ def mutate_json(path,fn):
 def run(case):
  with tempfile.TemporaryDirectory() as temp:
   p=pathlib.Path(temp)/'packet'; shutil.copytree(source,p); r=p/'run'
+  if case=='stage': mutate_json(r/'init.receipt.json',lambda x:x.update(stage='index'))
+  if case=='inverted': mutate_json(r/'init.receipt.json',lambda x:x.update(start_epoch=x['end_epoch']+1))
+  if case=='nonfinite': mutate_json(r/'init.receipt.json',lambda x:x.update(end_epoch=float('nan')))
   if case=='bqrs': (r/'effects.bqrs').write_bytes(b'replaced')
   if case=='timing': mutate_json(r/'index.receipt.json',lambda x:x.update(start_epoch=0))
   if case=='stream': mutate_json(r/'import.receipt.json',lambda x:x['stderr'].update(path=x['stderr']['path'].replace('import.stderr','export.stderr')))
@@ -22,7 +25,7 @@ def run(case):
   for stage,record in summary['stages'].items(): record['receipt_sha256']=hashlib.sha256((r/(stage+'.receipt.json')).read_bytes()).hexdigest()
   if case!='summary': (r/'verification.json').write_text(json.dumps(summary,indent=2)+'\n')
   (p/'SHA256SUMS').write_text(''.join(hashlib.sha256(f.read_bytes()).hexdigest()+'  '+str(f.relative_to(p))+'\n' for f in sorted(p.rglob('*')) if f.is_file() and f.name!='SHA256SUMS'))
-  result=subprocess.run([sys.executable,'-B',str(p/'verify.py')],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  result=subprocess.run([sys.executable,*(['-O'] if case=='optimized' else []),'-B',str(p/'verify.py')],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
   assert result.returncode!=0,case
-for case in ['bqrs','timing','stream','typed','summary','source']:
+for case in ['bqrs','timing','stream','typed','summary','source','stage','inverted','nonfinite','optimized']:
  run(case); print(case,'rejected')
