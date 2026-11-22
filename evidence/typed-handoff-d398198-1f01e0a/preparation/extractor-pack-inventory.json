@@ -1,0 +1,61 @@
+{
+  "files": {
+    "codeql-extractor.yml": {
+      "sha256": "350977db453446af1081fa844e0cbdefb9fc3de7bd51b14e57938063c83b42c4",
+      "size": 511
+    },
+    "downgrades/qlpack.yml": {
+      "sha256": "52302981ad5f13e5344cbd3927037b3546939d7ce93b8b450c59a22cbaff15bf",
+      "size": 96
+    },
+    "tools/autobuild.cmd": {
+      "sha256": "f93d73fcc4669fab57cfa3391f2f42e19028d2576503a93ca673f23322dd7272",
+      "size": 120
+    },
+    "tools/autobuild.sh": {
+      "sha256": "190d821560f9be595a1ba0a10361d3071168f4e7e6db985478fe79ee8fc522d3",
+      "size": 93
+    },
+    "tools/export_setblock_detect.py": {
+      "sha256": "a970c5c3350677ada8cfb5a342050f214e6e5eb5678313f01efd38115192ccd6",
+      "size": 4543
+    },
+    "tools/index-files.cmd": {
+      "sha256": "1867afda8666ae3871bc534ad1a80c117f68219dadf54e6df022ce17b29f004d",
+      "size": 626
+    },
+    "tools/index-files.sh": {
+      "sha256": "1fc6de73c0ea285d944d0e9ab11beec34342808198a5716ce2d51e5c29fd995e",
+      "size": 381
+    },
+    "tools/osx64/extractor": {
+      "sha256": "c438c5eac4080b9e00ace18d95875eac70a3b58236934e809d14533bfb071229",
+      "size": 4486128
+    },
+    "tools/pre-finalize.cmd": {
+      "sha256": "9142cc3503e20cc507536c6c132be55d98fdd6d2b7bb19e84d5eb651fb7b6903",
+      "size": 300
+    },
+    "tools/pre-finalize.sh": {
+      "sha256": "0636921f55488cbf1934543fe8ea113ea240817d15a0cda56e6e16a00743c4b6",
+      "size": 303
+    },
+    "tools/qltest.cmd": {
+      "sha256": "6c9e02e6ad51155bf7512d338f1643be7a7388fc417e52c8b71710ce47d749dd",
+      "size": 293
+    },
+    "tools/qltest.sh": {
+      "sha256": "ffda5bdd6df90e343e431b801cee093d38aaece142d5c1a519b0b6f41d9e8924",
+      "size": 518
+    },
+    "ucode.dbscheme": {
+      "sha256": "a32b8f63d4545439bc632b4afd0d58ad64aa2a634736bcd341fba68b7690ad2b",
+      "size": 67919
+    },
+    "ucode.dbscheme.stats": {
+      "sha256": "90d6939a021bb0cb71fd491117d1ecb4c7968fb5a80262ddc44975a75bd97767",
+      "size": 68
+    }
+  },
+  "root": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor-pack"
+}

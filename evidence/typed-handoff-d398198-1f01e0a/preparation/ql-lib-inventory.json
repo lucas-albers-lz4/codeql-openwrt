@@ -1,0 +1,625 @@
+{
+  "files": {
+    "codeql-pack.lock.yml": {
+      "sha256": "bce2891940f09fcac3337b250707047ba9fd06d307abdbc7cb42c2ed193751a3",
+      "size": 359
+    },
+    "codeql/IDEContextual.qll": {
+      "sha256": "09d89636ea6e4911ee751dcc4fc69787c872eb269f3569024a1b9eeff0c0250f",
+      "size": 474
+    },
+    "codeql/Locations.qll": {
+      "sha256": "407445127e6a28d24f327a089c15ba2a7bb436afe5c88bd129c04c6da4342dce",
+      "size": 2195
+    },
+    "codeql/files/FileSystem.qll": {
+      "sha256": "d2ba4849c3a5911b8b858d35cc625dc4f3357f88fade12e37acf2758617cda3c",
+      "size": 6502
+    },
+    "codeql/ucode/AST.qll": {
+      "sha256": "6aff4273d83998eae79db40bf1d50007123d2b1c894b3189893649eba56b0388",
+      "size": 144
+    },
+    "codeql/ucode/CFG.qll": {
+      "sha256": "7c7080f8fae8a928579ea5e91918bc97966399d1363cc70ada7a8cd69e54e48b",
+      "size": 193
+    },
+    "codeql/ucode/Concepts.qll": {
+      "sha256": "61ab9658af273f60a93d2239b8adb111582cd049f7d644e83864a8c8113c50fe",
+      "size": 3112
+    },
+    "codeql/ucode/DataFlow.qll": {
+      "sha256": "dfa4a192fe36de7aa504d4233100c66db7aca9c7cd94665129b413d6fc194992",
+      "size": 45
+    },
+    "codeql/ucode/Diagnostics.qll": {
+      "sha256": "cdc30a2a1ddd0c8eb0ce9f9781093ab4e1916e2cfb5a77247c8615211579b9ef",
+      "size": 1491
+    },
+    "codeql/ucode/Frameworks.qll": {
+      "sha256": "8792b05fd303600e2646234bbfb15fdda0e0dc5fd41c91d2ac1b72e9f1bb6984",
+      "size": 867
+    },
+    "codeql/ucode/Markup.qll": {
+      "sha256": "4f099d18247ac0a170db7607bd566d9f4e91fe1cda317c359d37cd6f1b113657",
+      "size": 146
+    },
+    "codeql/ucode/MarkupCFG.qll": {
+      "sha256": "5c65800cdc98c2c6aba5d71420b4f7fbfc330f0eb65ac2a603819a5d5d15b79a",
+      "size": 5634
+    },
+    "codeql/ucode/MarkupCreationCFG.qll": {
+      "sha256": "e0ef7e94c471a195e26a1d5f35ede472bd78ca4da480d6767c6de762d3302fd9",
+      "size": 9005
+    },
+    "codeql/ucode/ast/AstNodes.qll": {
+      "sha256": "2b6f23f164ec3069125eea6c3014654f5bd20ba1f8814ba81dd6369082fb4cc6",
+      "size": 3009
+    },
+    "codeql/ucode/ast/Calls.qll": {
+      "sha256": "c5fb0f50b7a7a6ad3f1c243154518d642a0650ec9e16513d3f56d5de775d43be",
+      "size": 2568
+    },
+    "codeql/ucode/ast/Expr.qll": {
+      "sha256": "c89eecb5aa18491f11151273e3a35f9f33b65cb2d4bcddf1641bb38a68f3bb48",
+      "size": 2812
+    },
+    "codeql/ucode/ast/Idents.qll": {
+      "sha256": "20b354f5626f967b8184bf96818d5f75731efa0e1c701aa7152eaddce1c41c00",
+      "size": 823
+    },
+    "codeql/ucode/ast/Literals.qll": {
+      "sha256": "2e2a7a5fa822f1c14fcfa163c68665c96968f1f58b45cd85acdf558b7aeb83c1",
+      "size": 988
+    },
+    "codeql/ucode/ast/Loops.qll": {
+      "sha256": "f4c72f388e66fbee36b72249a39544958d006569ff7def55559fc00b65da6ce1",
+      "size": 3059
+    },
+    "codeql/ucode/ast/Misc.qll": {
+      "sha256": "2eed00f1a5d208ca5fa5365a1925d1ea1bb2fb6c3e69a3d55708cb1f2b31f708",
+      "size": 5002
+    },
+    "codeql/ucode/ast/Stmts.qll": {
+      "sha256": "ef9a7fe1e30bf01bc42b0cb7ffc2887bbcf80737cb306831537150debeffd126",
+      "size": 3333
+    },
+    "codeql/ucode/ast/Variables.qll": {
+      "sha256": "e18665456e4ff02a6673383897d2d94489d929d3a76be1b7036aa146d64b213a",
+      "size": 12028
+    },
+    "codeql/ucode/ast/internal/Arguments.qll": {
+      "sha256": "4d73e71b0822efc4960db1a0ed1e9283a75905516bdf8121324642140b6d183b",
+      "size": 489
+    },
+    "codeql/ucode/ast/internal/Array.qll": {
+      "sha256": "b061cf4eadf1194793433603af6eaabfc3c311d518a6ac9a31f9efba30940b62",
+      "size": 457
+    },
+    "codeql/ucode/ast/internal/ArrowFunction.qll": {
+      "sha256": "b4c67d0084b81085997e0407dc4b010c321eacccbbf8f33bf920e04d2717ac22",
+      "size": 521
+    },
+    "codeql/ucode/ast/internal/AssignmentExpression.qll": {
+      "sha256": "20dd5bb1338065a8f1af23cf555064edfb31a6e87863aa3b6345f9ffb4d5050a",
+      "size": 557
+    },
+    "codeql/ucode/ast/internal/AstNodes.qll": {
+      "sha256": "6cd762e2dce8b65df6a13ab8e2573b07edf1a6b7cfa9ba9ad54206c5414434fb",
+      "size": 8446
+    },
+    "codeql/ucode/ast/internal/AugmentedAssignmentExpression.qll": {
+      "sha256": "9d89e1c180f0a9b994b12bfdf35345f4af374732700f6dd7247f382d9278342e",
+      "size": 629
+    },
+    "codeql/ucode/ast/internal/BinaryExpression.qll": {
+      "sha256": "207785e13975b4077d9e3a60fd608858d8dddb392590ac096ad240f9f349be0f",
+      "size": 525
+    },
+    "codeql/ucode/ast/internal/BreakStatement.qll": {
+      "sha256": "a029e6f8851f7a97810a7db09bd3ef3994b72e779ccddeb825a56ab7960726e1",
+      "size": 511
+    },
+    "codeql/ucode/ast/internal/CallExpression.qll": {
+      "sha256": "5b57287abebdc5455cb949d0197f01f0cfc164100d9ba54d6139332a09ca07c8",
+      "size": 1572
+    },
+    "codeql/ucode/ast/internal/Calls.qll": {
+      "sha256": "6ab27adbb9365bf8df2c2a256152ba3a8f22585457a543d7e9acb1fddb896955",
+      "size": 497
+    },
+    "codeql/ucode/ast/internal/CatchClause.qll": {
+      "sha256": "ea0a2c23bdd10720b9d5ef0ba4383ec2fa982f9bb2e88feb495bb5c2aee1581d",
+      "size": 505
+    },
+    "codeql/ucode/ast/internal/Comment.qll": {
+      "sha256": "259eeab88c1e509a3e69528c2fa784eb37c31cba399ccc13d5393c6ec6c579ba",
+      "size": 459
+    },
+    "codeql/ucode/ast/internal/ComputedPropertyName.qll": {
+      "sha256": "866d3e13d96442065a22d98dab2039ec4b3f41feb6fe75f42d343c16d9defbf1",
+      "size": 577
+    },
+    "codeql/ucode/ast/internal/Conditionals.qll": {
+      "sha256": "b08f86270a5165846646d9cf9496846c9f23a1b591fcddd7e59793bebc21e15a",
+      "size": 345
+    },
+    "codeql/ucode/ast/internal/ContinueStatement.qll": {
+      "sha256": "e56f537a47b19fb72ccc1311242b0d3fe8eb28c64f5f7d94f71effef1c7b2647",
+      "size": 535
+    },
+    "codeql/ucode/ast/internal/Declaration.qll": {
+      "sha256": "f99778fe9ea2c21ffdc3536857fc0219ddf5675f0a15f09acf4b9318859c69ae",
+      "size": 487
+    },
+    "codeql/ucode/ast/internal/Default.qll": {
+      "sha256": "1771fa40d37bb4737acbbe37bf818a043f42003e9fbf0ab80a471e42b4301b62",
+      "size": 576
+    },
+    "codeql/ucode/ast/internal/DeleteExpression.qll": {
+      "sha256": "e66c711ab9735a933f46cd2f5b091b09a8bf3c7b382649cf99516f95adf86868",
+      "size": 525
+    },
+    "codeql/ucode/ast/internal/DocComment.qll": {
+      "sha256": "520258f82224a3060b1b85cfa6022bb8662a51fc48bd475c2e0819cfb386a3b1",
+      "size": 660
+    },
+    "codeql/ucode/ast/internal/ElifClause.qll": {
+      "sha256": "4a91666ffe88ff506a2662f4afd2a4b79be366696fef199438c2821793297e02",
+      "size": 497
+    },
+    "codeql/ucode/ast/internal/ElseAltClause.qll": {
+      "sha256": "081789061534201caa2b13433d70b72381b2a94c4f2a8889eaf1d2d17f3de514",
+      "size": 624
+    },
+    "codeql/ucode/ast/internal/ElseClause.qll": {
+      "sha256": "0368d0353fadcff694007bb1ef7372d74fb2838beaddd581a13d368bf3504c27",
+      "size": 600
+    },
+    "codeql/ucode/ast/internal/EmptyStatement.qll": {
+      "sha256": "507a7e35711c40794ff76609f194549ea2fc9f9faed403e81c49521a268456a5",
+      "size": 511
+    },
+    "codeql/ucode/ast/internal/EscapeSequence.qll": {
+      "sha256": "be0f4da577113b28500454158d97f577f782ed97325d18d8a52984cf4f0e65f0",
+      "size": 529
+    },
+    "codeql/ucode/ast/internal/ExportClause.qll": {
+      "sha256": "5129353185951ba07bd80c18008a487c51bc3ae2a33f772adbc0218a7ca173fc",
+      "size": 513
+    },
+    "codeql/ucode/ast/internal/ExportSpecifier.qll": {
+      "sha256": "bb21ca772ec996093b2a56be85b58d400750abb42e23f05e8b282f8448a53fb0",
+      "size": 537
+    },
+    "codeql/ucode/ast/internal/ExportStatement.qll": {
+      "sha256": "ad13bb34ef23820c36023a317795219d9caba446d514d127c3d17614e00b3093",
+      "size": 519
+    },
+    "codeql/ucode/ast/internal/Expr.qll": {
+      "sha256": "7ecdc409d64f0dae7cdf8f1c5712f17c449ce4ba3fff4dbb8180e6192ff6ae98",
+      "size": 224
+    },
+    "codeql/ucode/ast/internal/Expression.qll": {
+      "sha256": "fa5376298f70e038a83230138b88e915a944c876f9e98dc9b79e4485b1b3ce55",
+      "size": 477
+    },
+    "codeql/ucode/ast/internal/ExpressionStatement.qll": {
+      "sha256": "9e4ece8b9eee2b1f81d25f0f9af431baedb8cdd81398de793b8140a36673eed6",
+      "size": 551
+    },
+    "codeql/ucode/ast/internal/False.qll": {
+      "sha256": "a369f6b1786624c9c7766970db73cb02a75f8ce843b48f8ca8c4a59b8681b16a",
+      "size": 542
+    },
+    "codeql/ucode/ast/internal/ForAltStatement.qll": {
+      "sha256": "703e4041e96fe13823b8b6de29b02e5c206bc19d46fc18cb15e226594998eabf",
+      "size": 519
+    },
+    "codeql/ucode/ast/internal/ForInAltStatement.qll": {
+      "sha256": "71915a6be3970663fcf4e975c939f7f9bceaa90791a360e2564f2aa7f6666210",
+      "size": 535
+    },
+    "codeql/ucode/ast/internal/ForInStatement.qll": {
+      "sha256": "f9e0c56d482678adb4a110018089578b8abf18aab6469346eafec6e33ca097e8",
+      "size": 511
+    },
+    "codeql/ucode/ast/internal/ForStatement.qll": {
+      "sha256": "04f63418ebd668d1a0988304d576af16f74395c3b429c4aa0b68c90f7b16932b",
+      "size": 495
+    },
+    "codeql/ucode/ast/internal/FormalParameters.qll": {
+      "sha256": "2e7e37ab251e596463a175ebaa24c0dd890f8fff34b25c115f968489f4b6f10a",
+      "size": 708
+    },
+    "codeql/ucode/ast/internal/FunctionDeclaration.qll": {
+      "sha256": "298e8ec98c24e58265237faa4a9b808efb864edd55ea2a6b7991929b81bb1190",
+      "size": 551
+    },
+    "codeql/ucode/ast/internal/FunctionExpression.qll": {
+      "sha256": "aeb2914b3b314469244fff69bbd3a18ad079330afc024826fb57fa0bdc0838a9",
+      "size": 541
+    },
+    "codeql/ucode/ast/internal/HashBangLine.qll": {
+      "sha256": "f34ca03264ae59f6d4f862a7d6845e36f9a88cc99962c6dfd8abf9e1ceee142a",
+      "size": 513
+    },
+    "codeql/ucode/ast/internal/Identifier.qll": {
+      "sha256": "b9f0445d6b27c22bc7ba25540c4c3457087328dda64be256670a2faf2736f847",
+      "size": 572
+    },
+    "codeql/ucode/ast/internal/Idents.qll": {
+      "sha256": "119feafc1b4be635e26517c741fa02570b150c07a8470ceec483611bb3c3fbc2",
+      "size": 283
+    },
+    "codeql/ucode/ast/internal/IfAltStatement.qll": {
+      "sha256": "6d32860b3b16859a73b28a21e6399e8ca65b813ff6ed6e65a187325d841a9c59",
+      "size": 511
+    },
+    "codeql/ucode/ast/internal/IfStatement.qll": {
+      "sha256": "76982043dc314d93b0f6425697b1ceae9ea072dac33794673fe59235d9ed3ae7",
+      "size": 487
+    },
+    "codeql/ucode/ast/internal/ImportClause.qll": {
+      "sha256": "f935f48e9481de23c89c82611743efb16f0e1c5331052ae667c08436502504b8",
+      "size": 513
+    },
+    "codeql/ucode/ast/internal/ImportSpecifier.qll": {
+      "sha256": "9b47a013c436acd51ca4584e0c4ff4a85662832e83f59674e27a5f0ed6815dc8",
+      "size": 537
+    },
+    "codeql/ucode/ast/internal/ImportStatement.qll": {
+      "sha256": "302f1c01c297b43971616a7c43a4b22c396bc3177476fb0f1242bf1966f7bf53",
+      "size": 519
+    },
+    "codeql/ucode/ast/internal/LexicalDeclaration.qll": {
+      "sha256": "c3d890e07b0352b33200af68244e26e7ef24fd915441bf57b4a5c360ab8956a8",
+      "size": 543
+    },
+    "codeql/ucode/ast/internal/Literals.qll": {
+      "sha256": "b15264aafef84e0a0b4de5d37aa59eab4c38ad3d26e4723cb85e32b1c77f7d29",
+      "size": 305
+    },
+    "codeql/ucode/ast/internal/Loops.qll": {
+      "sha256": "9dae69a733cf624b598e096b038e0749d61515d2be91e77ea89aa81b44ee6304",
+      "size": 562
+    },
+    "codeql/ucode/ast/internal/MemberExpression.qll": {
+      "sha256": "19564dfb126794a85c741a5862264e9d23967522cf0fb265cf127647b759ec48",
+      "size": 525
+    },
+    "codeql/ucode/ast/internal/NamedImports.qll": {
+      "sha256": "484c81d3282108b103b76ce2abc62d2a556ea79afe6cd4a2bdd671aa1874fd20",
+      "size": 513
+    },
+    "codeql/ucode/ast/internal/NamespaceImport.qll": {
+      "sha256": "d4ed774444b1159e5723d54f9d740506e348368daeb02c29ce87e32c7a3c2f87",
+      "size": 537
+    },
+    "codeql/ucode/ast/internal/Null.qll": {
+      "sha256": "15655966d76850e93d8258c68992885f73ebcbbe010fc080dfe70ef28ba42e1d",
+      "size": 496
+    },
+    "codeql/ucode/ast/internal/Number.qll": {
+      "sha256": "b84e15abff52d19bf70aca4e926a44ed919e60e81dd793166678b83176f5e4e9",
+      "size": 469
+    },
+    "codeql/ucode/ast/internal/Object.qll": {
+      "sha256": "2e7d5ca19bce0df3ff63758427cc6dc2232abbcc69ca61a1cd235326decc5c2e",
+      "size": 465
+    },
+    "codeql/ucode/ast/internal/OptionalChain.qll": {
+      "sha256": "1ed6658bdb8cea7a6e1f900c246d9cb63809c0ba3d25ca79e2b2d35fbb05f7cb",
+      "size": 521
+    },
+    "codeql/ucode/ast/internal/Pair.qll": {
+      "sha256": "6517c1ec947eada6db96a04d00a5702189c0e0074ad6e5270e9b3666b72fffb9",
+      "size": 449
+    },
+    "codeql/ucode/ast/internal/ParenthesizedExpression.qll": {
+      "sha256": "c84bc8fb282e16672d8e16d6773bec31e666c078349164ece5adf4747a0aa77b",
+      "size": 581
+    },
+    "codeql/ucode/ast/internal/PrimaryExpression.qll": {
+      "sha256": "869ee27a9369488074599d5f7237a4587e0c4abce0b6c243cdb93e6f129d1652",
+      "size": 533
+    },
+    "codeql/ucode/ast/internal/Program.qll": {
+      "sha256": "4b924e872bf42b8538364f1827a95be4bd71250b50be5db5a562e28dd34838b8",
+      "size": 730
+    },
+    "codeql/ucode/ast/internal/PropertyIdentifier.qll": {
+      "sha256": "8a5cf687610e562a8f0d34667364339aaa49ec90042bbbfbd9c66ce0c80dd97c",
+      "size": 636
+    },
+    "codeql/ucode/ast/internal/Regex.qll": {
+      "sha256": "632ad177483d562a54ff91d4d25d037850db265c7e66496e54472e85301e7a32",
+      "size": 457
+    },
+    "codeql/ucode/ast/internal/RegexFlags.qll": {
+      "sha256": "ebaee7ed4e78fbdd430af91e9d39ccc9043d4e26aba09c8e82931db2c36dcc18",
+      "size": 497
+    },
+    "codeql/ucode/ast/internal/RegexPattern.qll": {
+      "sha256": "defd60e1fe305677ecb6de7dec230980250b60ef79406ae756f4b49805688d0a",
+      "size": 513
+    },
+    "codeql/ucode/ast/internal/ReservedWord.qll": {
+      "sha256": "c4cc91143c2a7acac0f6643d4c3c8c91bf39f66139deb629e13574f180beea9b",
+      "size": 513
+    },
+    "codeql/ucode/ast/internal/RestElement.qll": {
+      "sha256": "33df9762ad551a1338867b2e1ffba4c6bf84ee2743bbadeac0164410dd2169ff",
+      "size": 505
+    },
+    "codeql/ucode/ast/internal/ReturnStatement.qll": {
+      "sha256": "59dc42dba9ea265aa933e5cb0566ee493368f4c537272dd8d8b2a472fa42f309",
+      "size": 519
+    },
+    "codeql/ucode/ast/internal/SequenceExpression.qll": {
+      "sha256": "52b84f08ca0232b86cd98f45ef8614fc7c7fa4cb5626b4bbd5b80d0802adfc5e",
+      "size": 541
+    },
+    "codeql/ucode/ast/internal/ShorthandPropertyIdentifier.qll": {
+      "sha256": "ae29d5be009bda637c3a6397d20afc2626760490ad08271ebc2b4b3538a04eac",
+      "size": 708
+    },
+    "codeql/ucode/ast/internal/SpreadElement.qll": {
+      "sha256": "655bbcc262d1b3c02cfa100860ac6bd2e08ed882731e9c35362fff2dfb4f5fd0",
+      "size": 521
+    },
+    "codeql/ucode/ast/internal/Statement.qll": {
+      "sha256": "1765c43f9f0ada628ae294858241ea2fa01215dcc7f10a8e96e0b714034cbfbc",
+      "size": 471
+    },
+    "codeql/ucode/ast/internal/StatementBlock.qll": {
+      "sha256": "679ff968704d3ff685b6e857103bec99e0b97022d503f32bdaf6761149f67f7b",
+      "size": 787
+    },
+    "codeql/ucode/ast/internal/StatementList.qll": {
+      "sha256": "cb7ffaa7ce680df3a9bf550559587471a780e99ce26b116c0072071702689962",
+      "size": 503
+    },
+    "codeql/ucode/ast/internal/StmtSequence.qll": {
+      "sha256": "745d1368a391ccfa5d04960ed1d52ae5d7f09d1e542575855f07590f7a5c699c",
+      "size": 359
+    },
+    "codeql/ucode/ast/internal/Stmts.qll": {
+      "sha256": "2796a7879b2053ef330e24208689f95d7e4442a67fd396228e73d15028cee91a",
+      "size": 267
+    },
+    "codeql/ucode/ast/internal/String.qll": {
+      "sha256": "83d2529657ff42d8edf83e3aa01b54d122d792acc933a3c1cf79af3415eef198",
+      "size": 633
+    },
+    "codeql/ucode/ast/internal/StringFragment.qll": {
+      "sha256": "2fca83a0b3990c7bd32527a2fb6c04e965db905bfb58ebf43d6e3b322ca820bc",
+      "size": 576
+    },
+    "codeql/ucode/ast/internal/SubscriptExpression.qll": {
+      "sha256": "a7492a3b94fff181353d4a780f0f888de1f7aed73529667703ce450e470dbd34",
+      "size": 549
+    },
+    "codeql/ucode/ast/internal/SwitchBody.qll": {
+      "sha256": "9cde587944cb3c695c0ced1feafbe110e737c2de9fbf44f4ec86dc7ce6e44e92",
+      "size": 600
+    },
+    "codeql/ucode/ast/internal/SwitchCase.qll": {
+      "sha256": "1c7661ee66bc1d7ec71753fbbc6b9b10c28f192b5c6e5c908d7539b5fd9a4065",
+      "size": 600
+    },
+    "codeql/ucode/ast/internal/SwitchDefault.qll": {
+      "sha256": "5e6b4c6ff298efbef2fce07e99fd7ed175f921b1c0dc9936db5a459e47ef9515",
+      "size": 624
+    },
+    "codeql/ucode/ast/internal/SwitchStatement.qll": {
+      "sha256": "d1c0b88b55bd54e39f919a40a8ea516049eb9136d54e8f7e482ac9e00242fdbf",
+      "size": 519
+    },
+    "codeql/ucode/ast/internal/TemplateString.qll": {
+      "sha256": "a3cfcd69ec23ad26b3d0fd2ab69759a79f0ae2424e612d705ec72bf51f4ce49a",
+      "size": 529
+    },
+    "codeql/ucode/ast/internal/TemplateSubstitution.qll": {
+      "sha256": "5abbe4d2863b831d0f4e8398486a074ed3f3f95941d77a8864d43f3d71b5dafb",
+      "size": 729
+    },
+    "codeql/ucode/ast/internal/TernaryExpression.qll": {
+      "sha256": "753aeee0ef077bb77e5def3ace845195c3e514690c01bd663a0a502f29abddfc",
+      "size": 533
+    },
+    "codeql/ucode/ast/internal/This.qll": {
+      "sha256": "17aa99f971f2f2a7a973e39faebc41c28b3965fddb8a82a145c6bc1686bb24d8",
+      "size": 449
+    },
+    "codeql/ucode/ast/internal/TreeSitter.qll": {
+      "sha256": "3cf12b0e732b9be41cb3575f870ddc001ad245b3158ef294ef7dbe5f5f4ad350",
+      "size": 118269
+    },
+    "codeql/ucode/ast/internal/True.qll": {
+      "sha256": "c0031ab5a95e49f91f0007c3708170369cf760e9a5b41b65fb17bbd99dab300a",
+      "size": 534
+    },
+    "codeql/ucode/ast/internal/TryStatement.qll": {
+      "sha256": "655c2c69b0ca989ca46f5ecba6a4c4167b3792463e2c028295fbff98d0555177",
+      "size": 495
+    },
+    "codeql/ucode/ast/internal/UnaryExpression.qll": {
+      "sha256": "2c31dfc0b8ccdde7e1bb638569b94c578177c68fbdf034be61f66b9188d41e25",
+      "size": 517
+    },
+    "codeql/ucode/ast/internal/UpdateExpression.qll": {
+      "sha256": "e8134f587b1aafe01f203597115ce624273f70b2d9c11afdfe245be3c04a0186",
+      "size": 525
+    },
+    "codeql/ucode/ast/internal/VariableDeclarator.qll": {
+      "sha256": "fc85d6d6199907766e0c378d899ab10846561a337a589cb2a6cfdc0baf96ce76",
+      "size": 561
+    },
+    "codeql/ucode/ast/internal/WhileAltStatement.qll": {
+      "sha256": "493e448b04cd277e5ad6320b4354c8e3f5f45390372b89885d7acd0a3501fc69",
+      "size": 535
+    },
+    "codeql/ucode/ast/internal/WhileStatement.qll": {
+      "sha256": "932699a7c56e30ef7ce0d6c0893f3ce3ae7e0253128c2e94a18235de3b057557",
+      "size": 511
+    },
+    "codeql/ucode/controlflow/BasicBlocks.qll": {
+      "sha256": "8efafeb0a6384a3e8df378310e71ff314d457e6132f041a901ce1d3422dd29e8",
+      "size": 5732
+    },
+    "codeql/ucode/controlflow/CfgNodes.qll": {
+      "sha256": "a5ebda68d317fd55cd6c988e4bdf546387c17f06d3ab9b564b46ed793e7edf36",
+      "size": 996
+    },
+    "codeql/ucode/controlflow/ControlFlowGraph.qll": {
+      "sha256": "23891b2c04f4fc60154b3869fb82cda351019331ff39703cbc97519af9dc9427",
+      "size": 2106
+    },
+    "codeql/ucode/controlflow/internal/Completion.qll": {
+      "sha256": "e507754bbc2709b7aaf344553f2f559e0b684f2b53617cb11c1116920a075a14",
+      "size": 3771
+    },
+    "codeql/ucode/controlflow/internal/ControlFlowGraphImpl.qll": {
+      "sha256": "e94f9c2d97ab696bd12eb779d07ceccb6da98009ff31f9fa72423fc5af6f1eb8",
+      "size": 30718
+    },
+    "codeql/ucode/controlflow/internal/Scope.qll": {
+      "sha256": "2fd60819da6456ca1984f977a442fa2d033f4c0dabb932f147744a765c0e7e04",
+      "size": 5123
+    },
+    "codeql/ucode/controlflow/internal/Splitting.qll": {
+      "sha256": "ffb0aeba99db30a76b2cd66dafa8c8b2aee01cad4f16fff64978dfc883e62dd7",
+      "size": 371
+    },
+    "codeql/ucode/controlflow/internal/SuccessorType.qll": {
+      "sha256": "59d35142805a90cd44b8ee701a0dc15ab3454ed001843a67e950d424677f898b",
+      "size": 1768
+    },
+    "codeql/ucode/dataflow/DataFlow.qll": {
+      "sha256": "e271bca1e2371e7cd4a6f207018952ff102c715a627e462b86301191251a8f90",
+      "size": 316
+    },
+    "codeql/ucode/dataflow/FlowSink.qll": {
+      "sha256": "46a3cef3ab0b6ae3c07258d128711420316a3635d0dca120072797e78a46bdc7",
+      "size": 1188
+    },
+    "codeql/ucode/dataflow/FlowSource.qll": {
+      "sha256": "833df0ddc208632da76e4457b38dcf158f92eef2fea9e5c64d7c4112d079aa5a",
+      "size": 1217
+    },
+    "codeql/ucode/dataflow/FlowSummary.qll": {
+      "sha256": "b85e22b96ece425bab63cca45db66680394eb888bf75e892f57d55a2e3edd8fb",
+      "size": 1441
+    },
+    "codeql/ucode/dataflow/Ssa.qll": {
+      "sha256": "d02ebcb872ea4ce3efc6c6b488eee8db14df56bd594ff3aff29d6252b00449ee",
+      "size": 1366
+    },
+    "codeql/ucode/dataflow/TaintTracking.qll": {
+      "sha256": "af0cbd4f828bb8d665a45209411526368a5786285b0c377d67a6bdec2cd97a2e",
+      "size": 570
+    },
+    "codeql/ucode/dataflow/internal/DataFlowDispatch.qll": {
+      "sha256": "676f51e6851d7a830ec2f85106c4fec3c194cf55ba8df717ba5b8a1889d75b34",
+      "size": 16639
+    },
+    "codeql/ucode/dataflow/internal/DataFlowImpl.qll": {
+      "sha256": "c98a6ea44e028bafdca7ed35c34a9367b770c3a4fcb3b23fe99782cb1c599867",
+      "size": 162
+    },
+    "codeql/ucode/dataflow/internal/DataFlowImplCommon.qll": {
+      "sha256": "7abd819477a89eafc0802238dc02ce7897d6af23f747229049b0c946b5cae78f",
+      "size": 163
+    },
+    "codeql/ucode/dataflow/internal/DataFlowImplSpecific.qll": {
+      "sha256": "973b544aac539f0b61952589d95802d1ec8a8aa5910dc6669d7bd2c52bd46a0e",
+      "size": 600
+    },
+    "codeql/ucode/dataflow/internal/DataFlowPrivate.qll": {
+      "sha256": "b79ddb23dc75e2bd0362578d39ab9227318f6d84f951acdf56c508e10c4c94b0",
+      "size": 32115
+    },
+    "codeql/ucode/dataflow/internal/DataFlowPublic.qll": {
+      "sha256": "60d7694b1710b02b5b254d85549afb86dd7f815b308827b0c6792ba86bf31f61",
+      "size": 9287
+    },
+    "codeql/ucode/dataflow/internal/FlowSummaryImpl.qll": {
+      "sha256": "5e0ea8fb00b27abbca3e57a1fb4fea041e6821d5d0f3be212f1de3adc8fcd448",
+      "size": 4209
+    },
+    "codeql/ucode/dataflow/internal/ModelsAsData.qll": {
+      "sha256": "61d0fdff341fc8b1e1b9f2398152483973c27652f6c7ae1232edbfe05a66f866",
+      "size": 3680
+    },
+    "codeql/ucode/dataflow/internal/SsaImpl.qll": {
+      "sha256": "8683717c0d414082cd5d61a2c2fc78b967419ae311c6ab04a2e89c64701faf96",
+      "size": 5135
+    },
+    "codeql/ucode/dataflow/internal/TaintTrackingImpl.qll": {
+      "sha256": "aac74f3c64cc2a80a68228da86be4770aea592a2d177b9a2684a8191b7fbcd95",
+      "size": 283
+    },
+    "codeql/ucode/dataflow/internal/TaintTrackingImplSpecific.qll": {
+      "sha256": "778e6b2fcce27615f8d282c1c0472b67b033262eaeb6e6e38dfea4ce7d4cf94f",
+      "size": 306
+    },
+    "codeql/ucode/dataflow/internal/TaintTrackingPrivate.qll": {
+      "sha256": "7751b5dc306682aab8e0d17d395695abc63a722574fea0b7cf9c31d82f1cbdf3",
+      "size": 1877
+    },
+    "codeql/ucode/dataflow/internal/TaintTrackingPublic.qll": {
+      "sha256": "9783b07bcd487930f95a009a30545095f7ef395bc70cdb7a49760b5238dbd419",
+      "size": 622
+    },
+    "codeql/ucode/ideContextual/IDEContextual.qll": {
+      "sha256": "7ea02931cfa8e0ba0d9ba376a9a5be130427b85f9a34cc48d55998b96666c1a1",
+      "size": 841
+    },
+    "codeql/ucode/ideContextual/printAstAst.qll": {
+      "sha256": "0ee3b8c666759db0098105245c44cf403ee76f93071d6293bc139c17476b925a",
+      "size": 2921
+    },
+    "codeql/ucode/ideContextual/printAstGenerated.qll": {
+      "sha256": "5e6e41e31bf818f6b1208836d2f4049fea89587b16ed48d00fa6ea2e5c329e53",
+      "size": 2986
+    },
+    "codeql/ucode/internal/SourceDeclaredFs.qll": {
+      "sha256": "c0d014e2f0a22d75f9f99831024365519508a5a3ec563b1de36d6bd4301c82d4",
+      "size": 3277
+    },
+    "codeql/ucode/m3/Models.qll": {
+      "sha256": "a24ea29d142a80c005daccb28f91da3850feb719953ca0de640ea0ab6f67563c",
+      "size": 18216
+    },
+    "codeql/ucode/m4/SetLocaltimeConstruction.qll": {
+      "sha256": "c7d4c388f64286067e02be3f6bb2495b6dc66cc68f9998619aeafad1551724d1",
+      "size": 8383
+    },
+    "ide-contextual-queries/printAst.ql": {
+      "sha256": "6ebca77f90c3b9164ef54751ac95e235e549349171f4db117ad322be75cc31f4",
+      "size": 498
+    },
+    "ide-contextual-queries/printCfg.ql": {
+      "sha256": "c77b45a3cedf848b46e91093fccad10e8cde3983a7565ff7348ac6be34b77bed",
+      "size": 1261
+    },
+    "qlpack.yml": {
+      "sha256": "f33e8f2ddd53de4094c4f9c4ff9d04e1e2e42341eaa0e2fd75591b091852d550",
+      "size": 371
+    },
+    "ucode.dbscheme": {
+      "sha256": "a32b8f63d4545439bc632b4afd0d58ad64aa2a634736bcd341fba68b7690ad2b",
+      "size": 67919
+    },
+    "ucode.dbscheme.stats": {
+      "sha256": "90d6939a021bb0cb71fd491117d1ecb4c7968fb5a80262ddc44975a75bd97767",
+      "size": 68
+    },
+    "ucode.qll": {
+      "sha256": "399b6f96bd40c830a8d98dbe81e86152065c94c71775dd5b0e94bf09239026aa",
+      "size": 1021
+    }
+  },
+  "root": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/lib"
+}

@@ -1,0 +1,11 @@
+Resolving data extensions.
+Finished resolving data extensions.
+WARNING: Failed to retrieve qlpack commit hash from Git repository
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1256 MB.
+Compiling query plan for /Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql.
+[1/1 comp 430ms] Compiled /Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/diagnostics/SuccessfullyExtractedFiles.ql.
+[1/1 eval 27ms] Evaluation done; writing results to /Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/extracted.bqrs.
+Shutting down query evaluator.

@@ -1,0 +1,9 @@
+{
+  "files": {
+    "usr/share/rpcd/ucode/luci": {
+      "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+      "size": 16161
+    }
+  },
+  "root": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/run/src"
+}

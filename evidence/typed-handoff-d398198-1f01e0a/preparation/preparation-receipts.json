@@ -1,0 +1,91 @@
+{
+  "build": {
+    "argv": [
+      "/bin/bash",
+      "scripts/create-extractor-pack.sh"
+    ],
+    "cwd": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer",
+    "environment": {
+      "CARGO_HOME": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/../run/cargo",
+      "CARGO_NET_OFFLINE": "true",
+      "HOME": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/../run/home",
+      "PATH": "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql:/Users/lalbers/.cargo/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    },
+    "exit": 0,
+    "stderr": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/build.stderr",
+    "stderr_sha256": "d13b122b35c68c168c5753d957d026170f60a482c81b74fb71519ddc13ef2cb0",
+    "stdout": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/build.stdout",
+    "stdout_sha256": "15c4444db8dd9266b76d411c5645f63c5aabb9e9f7099523be5c2c8db2e896b6"
+  },
+  "grammar": {
+    "argv": [
+      "/bin/bash",
+      "scripts/clone-grammar.sh"
+    ],
+    "cwd": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer",
+    "environment": {
+      "HOME": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/../run/home",
+      "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    },
+    "exit": 0,
+    "stderr": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/grammar.stderr",
+    "stderr_sha256": "e75631bee26b7873856148c0f77d6df3e8774ed8f3a3b406753529e55456e8c2",
+    "stdout": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/grammar.stdout",
+    "stdout_sha256": "d59ddf7f3979f964dd5c4a6bfeec3f3cb09c6a59ecdc4c60085f19b57cf09f98"
+  },
+  "install-lib": {
+    "argv": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "pack",
+      "install",
+      "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/lib"
+    ],
+    "cwd": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer",
+    "environment": {
+      "HOME": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/../run/home",
+      "PATH": "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    },
+    "exit": 0,
+    "stderr": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/install-lib.stderr",
+    "stderr_sha256": "eeae3b4aa9ac8f7fad93a350f0379a1b3c9025043691df1e93f3c82ee4232e9d",
+    "stdout": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/install-lib.stdout",
+    "stdout_sha256": "6538912c35f6a314ed5250444d4151b4d7a5aadb8eeb236a03fc6f4b542740c8"
+  },
+  "install-src": {
+    "argv": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "pack",
+      "install",
+      "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/src"
+    ],
+    "cwd": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer",
+    "environment": {
+      "HOME": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/../run/home",
+      "PATH": "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    },
+    "exit": 0,
+    "stderr": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/install-src.stderr",
+    "stderr_sha256": "eeae3b4aa9ac8f7fad93a350f0379a1b3c9025043691df1e93f3c82ee4232e9d",
+    "stdout": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/install-src.stdout",
+    "stdout_sha256": "6538912c35f6a314ed5250444d4151b4d7a5aadb8eeb236a03fc6f4b542740c8"
+  },
+  "resolve-packs": {
+    "argv": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "resolve",
+      "packs",
+      "--format=json",
+      "--search-path=/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/extractor-pack:/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/lib:/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/ql/src"
+    ],
+    "cwd": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer",
+    "environment": {
+      "HOME": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/producer/../run/home",
+      "PATH": "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    },
+    "exit": 0,
+    "stderr": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/resolve-packs.stderr",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout": "/Users/lalbers/gitroot/ucode/wave-experiments/typed-handoff-20261122/preparation/resolve-packs.stdout",
+    "stdout_sha256": "611ee787e8e5b07b2feb8ebbe40f79f203012bf4dabdd64579c78adc7945d02e"
+  }
+}
