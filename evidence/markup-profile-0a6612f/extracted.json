@@ -1,0 +1,17 @@
+{"#select":{"columns":[
+   {"name":"f","kind":"Entity"}
+  ,{"kind":"String"}]
+ ,"tuples":[
+   [{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/admin_status/index.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/admin_status/index.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/csrftoken.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/csrftoken.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/error404.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/error404.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/error500.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/error500.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/footer.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/footer.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/header.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/header.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/sysauth.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/sysauth.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/themes/bootstrap/footer.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/themes/bootstrap/footer.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/themes/bootstrap/header.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/themes/bootstrap/header.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/themes/bootstrap/sysauth.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/themes/bootstrap/sysauth.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/template/view.ut","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/template/view.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"label":"/private/tmp/openwrt68-stage/usr/share/ucode/luci/uhttpd.uc","url":{"uri":"file:///private/tmp/openwrt68-stage/usr/share/ucode/luci/uhttpd.uc","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]]
+ }}
