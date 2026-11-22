@@ -24,7 +24,7 @@ Expected consumer negatives: unknown or dynamic config, mismatched corpus revisi
 
 ## Existing verification and limits
 
-The producer PR's `docs/issue-53-uci-inventory.md` records the pinned controller's fresh single-file extraction at producer revision `8375887`, with exact call-pair observations and zero extraction errors. The paired positive/negative controls were added and recorded separately in the later producer work. The report explicitly limits the result to a syntactic source observation: it is not interprocedural data flow, proof of runtime value preservation, or proof of execution.
+The producer PR's `docs/issue-53-uci-inventory.md` records a fresh single-file extraction of the pinned controller at producer revision `8375887`. That extraction observed argument nodes at positions 0, 1, and 2 at the `uci.commit` site and helper forwarding site, and reported zero extraction errors; it did not establish an exact call-pair association. The later bounded observer established the call-pair association, and the later producer work separately recorded paired positive/negative controls. These are syntactic source observations, not interprocedural data flow, proof of runtime value preservation, or proof of execution.
 
 The existing consumer test `policy/tests/test_uci_consumers.py` checks catalog rows against the six known assets, checks artifact schema and exact join-key behavior, and independently exercises synthetic UCI and direct-file gates. Its `test_bounded_system_option_expectation` also distinguishes an intended operation from the ACL's broader config-level grant. These tests validate the consumer contract but do not validate producer-to-consumer config identity, since the producer observation has no such identity.
 
