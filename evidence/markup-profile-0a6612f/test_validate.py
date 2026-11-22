@@ -73,7 +73,18 @@ class ValidationControls(unittest.TestCase):
         alias = Path(self.tmp.name).parent / (Path(self.tmp.name).name + '-alias')
         alias.symlink_to(Path(self.tmp.name), target_is_directory=True)
         self.addCleanup(alias.unlink)
-        self.stage = alias / 'stage'
+        nested = Path(self.tmp.name) / 'nested'
+        nested.mkdir()
+        original_stage = self.stage
+        original_stage.rename(nested / 'stage')
+        self.stage = alias / 'nested' / 'stage'
+        for d in self.receipt['decisions']:
+            d['path'] = str((nested / 'stage' / d['installed_path']).resolve())
+        for row in self.extracted['#select']['tuples']:
+            suffix = row[0]['label'].split('/usr/share/ucode/luci/', 1)[1]
+            path = (nested / 'stage' / 'usr/share/ucode/luci' / suffix).resolve()
+            row[0]['label'] = str(path)
+            row[0]['url']['uri'] = path.as_uri()
         # Receipt and decoded diagnostic identities are canonical, as produced by CodeQL.
         self.check()
 
