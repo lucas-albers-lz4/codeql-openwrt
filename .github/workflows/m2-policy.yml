@@ -22,3 +22,26 @@ jobs:
         run: python3 -m unittest discover -s ql-js -p 'test_*.py' -v
       - name: Markup assessment validator checks
         run: python3 -m unittest discover -s evidence/markup-profile-0a6612f -p 'test_validate.py' -v
+
+  typed-handoff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Synthetic controls
+        run: |
+          python3 -B tools/typed_handoff/test_prototype.py
+          python3 -O -B tools/typed_handoff/test_prototype.py
+      - name: Verify retained handoff packet
+        run: |
+          repo_dir=$(pwd -P)
+          packet_dir=$(mktemp -d)
+          (cd "$repo_dir/evidence/typed-handoff-repeat-20261123" && sha256sum -c SHA256SUMS)
+          tar -xzf "$repo_dir/evidence/typed-handoff-repeat-20261123/retry-packet.tar.gz" -C "$packet_dir"
+          python3 -B "$repo_dir/tools/typed_handoff/verify.py" "$packet_dir/retry-run" \
+            "$repo_dir/evidence/typed-handoff-repeat-20261123/context.json" \
+            "$repo_dir/evidence/typed-handoff-repeat-20261123/oracle.json" \
+            012ba54c704780c95d6b0fdacc208b4bfe0300f26cba5098104e96a79c95fb1c \
+            9b05e02fcad136c9794d80c19ac0ceb4d1702debe8d80b391abfb1f9b1506574
