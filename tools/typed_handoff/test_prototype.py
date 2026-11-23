@@ -17,7 +17,7 @@ def dump(p, obj): p.write_text(json.dumps(obj))
 class Prototype(unittest.TestCase):
     def test_synthetic_transition_and_mutation(self):
         with tempfile.TemporaryDirectory() as t:
-            root = Path(t); consumer = root/'consumer'; consumer.mkdir()
+            root = Path(t).resolve(); consumer = root/'consumer'; consumer.mkdir()
             source = root/'source'; source.mkdir()
             original = HERE.parent.parent/'evidence/typed-handoff-d398198-1f01e0a'
             source_file = source/'usr/share/rpcd/ucode/luci'; source_file.parent.mkdir(parents=True)
@@ -55,6 +55,15 @@ class Prototype(unittest.TestCase):
             link = root/'source-hardlink'; os.link(source_file,link)
             result = subprocess.run([sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(context),str(oracle),sha(context)],capture_output=True,text=True)
             self.assertNotEqual(result.returncode,0); self.assertIn('hardlinked input',result.stderr); link.unlink()
+            source_link = root/'source-link'; source_link.symlink_to(source, target_is_directory=True)
+            symlinked = json.loads(context.read_text()); symlinked['inputs']['source'] = str(source_link)
+            linked_oracle = json.loads(oracle.read_text()); linked_oracle['extracted_rows'][1][0] = str(source_link/'usr/share/rpcd/ucode/luci'); dump(bad_oracle,linked_oracle)
+            symlinked['oracle_sha256'] = sha(bad_oracle); dump(bad_context,symlinked)
+            link_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(bad_oracle),sha(bad_context)]
+            result = subprocess.run(link_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('symlink path component',result.stderr)
+            aliased = json.loads(context.read_text()); aliased['run'] = str(root/'alias-run'); aliased['outputs']['errors'] = aliased['outputs']['effects']; dump(bad_context,aliased)
+            alias_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
+            result = subprocess.run(alias_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('overlapping output paths',result.stderr)
             failed = json.loads(context.read_text()); failed['run'] = str(root/'failed-run'); failed['commands']['init']['argv'] = [str(root/'missing-executable')]; dump(bad_context,failed)
             failed_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(failed_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('stage failed: init',result.stderr)

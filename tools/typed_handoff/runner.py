@@ -72,7 +72,15 @@ def inventory(path):
 def fail(message):
     raise ValueError(message)
 
+def no_symlink_components(path):
+    path = Path(path)
+    if not path.is_absolute() or '..' in path.parts: fail('path must be absolute and normalized')
+    for part in (path, *path.parents):
+        if part.is_symlink(): fail('symlink path component: ' + str(part))
+
+
 def main(context_file, oracle_file, approval):
+    no_symlink_components(context_file); no_symlink_components(oracle_file)
     context_file = Path(context_file).resolve(strict=True)
     oracle_file = Path(oracle_file).resolve(strict=True)
     context = load(context_file); oracle = load(oracle_file)
@@ -84,7 +92,8 @@ def main(context_file, oracle_file, approval):
     if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs'}: fail('context fields')
     if set(context['outputs']) != {'database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
     if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
-    if any(Path(v).is_symlink() for v in context['inputs'].values()): fail('symlink input root')
+    for value in context['inputs'].values(): no_symlink_components(value)
+    no_symlink_components(context['run'])
     roots = {k: Path(v).resolve(strict=True) for k, v in context['inputs'].items()}
     run = Path(context['run'])
     if not run.is_absolute() or run.exists(): fail('run directory must be fresh and absolute')
