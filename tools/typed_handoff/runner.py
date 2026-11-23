@@ -180,6 +180,7 @@ def main(context_file, oracle_file, approval):
         with (run / (stage + '.receipt.json')).open('x') as f: json.dump(receipt, f, sort_keys=True)
         if exit_code: fail('stage failed: ' + stage)
         if created and after[created] is None: fail('output not created: ' + created)
+        if stage == 'init' and not paths['database'].is_dir(): fail('database must be a directory')
         for name in context['outputs']:
             if name != created and before[name] != after[name]:
                 permitted_db = name == 'database' and (stage in ('index','finalize') or (stage.endswith('_query') and log_only(before[name], after[name])))

@@ -103,6 +103,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         receipts.append(rec)
     require(digest((packet/'inputs/source').read_bytes()) == oracle['source_sha256'], 'retained source')
     require(digest((packet/'inputs/lock.json').read_bytes()) == oracle['lock_sha256'], 'retained lock')
+    require((packet/context['outputs']['database']).is_dir(), 'database directory')
     require(inventory(packet/context['outputs']['database']) == receipts[-1]['after']['database'], 'database inventory')
     expected_files = {'context.json','oracle.json','inputs/source','inputs/lock.json'}
     expected_files.update(stage+suffix for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json'))

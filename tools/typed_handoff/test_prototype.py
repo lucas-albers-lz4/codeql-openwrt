@@ -105,6 +105,16 @@ class Prototype(unittest.TestCase):
             (altered_bqrs/'effects.bqrs').write_bytes(b'wrong')
             bqrs_cmd = [*cmd]; bqrs_cmd[2] = str(altered_bqrs)
             p = subprocess.run(bqrs_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('bqrs: effects',p.stderr)
+            duplicate = root/'duplicate'; shutil.copytree(run,duplicate)
+            duplicate_bytes = b'[{"record_id":"m4:effect:luci-setBlockDetect-system","record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]'
+            for phase in ('import','reimport'): (duplicate/'reports'/phase/reports[0]).write_bytes(duplicate_bytes)
+            for stage in ('import','reimport'):
+                path = duplicate/(stage+'.receipt.json'); rec = json.loads(path.read_text())
+                for edge in (('after',) if stage == 'import' else ('before','after')):
+                    rec[edge]['consumer'][reports[0]] = {'sha256':hashlib.sha256(duplicate_bytes).hexdigest(),'size':len(duplicate_bytes)}
+                dump(path,rec)
+            duplicate_cmd = [*cmd]; duplicate_cmd[2] = str(duplicate)
+            p = subprocess.run(duplicate_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('duplicate key',p.stderr)
             db_mutation = root/'db-mutation'; shutil.copytree(run, db_mutation)
             (db_mutation/'db/data').write_text('corrupted')
             mutated_db_hash = sha(db_mutation/'db/data')
