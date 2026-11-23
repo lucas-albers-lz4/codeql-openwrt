@@ -48,9 +48,12 @@ def _validate_context(context):
 
 
 def _assess_claim(claim, selection, observation_id):
-    required = {'key', 'family', 'scope', 'context', 'pairs', 'authorities', 'reference',
-                'verdict', 'gate', 'effect', 'supplementary'}
-    if not isinstance(claim, dict) or set(claim) != required:
+    required = {'key', 'family', 'scope', 'context', 'pairs', 'authorities',
+                'gate', 'effect', 'supplementary'}
+    optional = {'reference', 'verdict'}
+    if (not isinstance(claim, dict) or not required <= set(claim)
+            or set(claim) - required - optional
+            or (('reference' in claim) != ('verdict' in claim))):
         raise ResolutionError('invalid claim shape')
     key = claim['key']
     if not isinstance(key, str) or not key.strip() or key != key.strip():
@@ -58,10 +61,17 @@ def _assess_claim(claim, selection, observation_id):
     if claim['family'] != 'synthetic_access':
         raise ResolutionError('unsupported family')
     selected_fields = {'key', 'family', 'scope', 'context', 'pairs', 'authorities',
-                       'reference', 'verdict'}
+                       'reference', 'verdict', 'gate', 'effect'}
     if (not isinstance(selection, dict) or set(selection) != selected_fields
-            or any(claim.get(k) != selection[k] for k in selected_fields)):
+            or any(claim.get(k) != selection[k] for k in
+                   selected_fields - {'reference', 'verdict'})):
         raise ResolutionError('claim differs from independent selection')
+    if (selection['reference'] is None) != (selection['verdict'] is None):
+        raise ResolutionError('selected reference and verdict required together')
+    asserted = 'reference' in claim
+    if asserted and (claim['reference'] != selection['reference']
+                     or claim['verdict'] != selection['verdict']):
+        raise ResolutionError('claim differs from independently selected reference')
     scope, context, pairs = selection['scope'], selection['context'], selection['pairs']
     _validate_context(context)
     if (not isinstance(scope, dict)
@@ -71,10 +81,16 @@ def _assess_claim(claim, selection, observation_id):
         raise ResolutionError('invalid caller/provider roles')
     if context['profile'] != scope['profile']:
         raise ResolutionError('scope/context profile mismatch')
+    # Validate the independently selected candidate reference even when this
+    # claim elects to leave its judgment unassessed.
+    if selection['reference'] is not None:
+        resolve(scope=scope, pairs=pairs, authorities=selection['authorities'],
+                reference=selection['reference'], verdict=selection['verdict'])
     policy = resolve(scope=scope, pairs=pairs, authorities=selection['authorities'],
-                     reference=selection['reference'], verdict=selection['verdict'])
+                     reference=claim.get('reference') if asserted else None,
+                     verdict=claim.get('verdict') if asserted else None)
     binding = _binding(key, observation_id, scope, context, pairs)
-    gate_record, effect_record = claim['gate'], claim['effect']
+    gate_record, effect_record = selection['gate'], selection['effect']
     gate_ok = (isinstance(gate_record, dict)
                and set(gate_record) == set(binding) | {'allowed'}
                and all(gate_record.get(k) == v for k, v in binding.items())
@@ -117,29 +133,37 @@ def assess(observation, selections, claims, *, selected_observation):
 
     selected_by_key = keyed(selections, 'selection')
     claims_by_key = keyed(claims, 'claim')
-    if set(selected_by_key) != set(claims_by_key):
-        raise ResolutionError('selection/claim keys mismatch')
     def freeze(value):
         if isinstance(value, dict):
-            return tuple(sorted((k, freeze(v)) for k, v in value.items() if k != 'key'))
+            return tuple(sorted((k, freeze(v)) for k, v in value.items()))
         if isinstance(value, list):
             items = [freeze(v) for v in value]
             return tuple(sorted(items, key=repr))
         return value
 
-    semantic = [freeze({k: row.get(k) for k in
-                        ('family', 'scope', 'context', 'pairs')}) for row in selections]
-    if len(set(semantic)) != len(semantic):
-        raise ResolutionError('duplicate semantic primary claim')
     observation_id = selected_observation
     results = []
-    # Preserve selected order while looking up each claim by its validated key.
-    for selection in selections:
-        claim = claims_by_key[selection['key']]
+    semantic = []
+    # Process claims by their unique keys. A missing independently selected
+    # input is local to that claim; a malformed B cannot suppress valid A.
+    for claim in claims:
+        selection = selected_by_key.get(claim['key'])
+        if selection is None:
+            results.append({'key': claim['key'], 'state': 'contract_error',
+                            'gate': 'unknown', 'effect': 'unknown',
+                            'error': 'missing independent selection'})
+            continue
         try:
             results.append(_assess_claim(claim, selection, observation_id))
+            semantic.append(freeze({k: selection.get(k) for k in
+                                    ('family', 'scope', 'context', 'pairs')}))
         except ResolutionError as exc:
             results.append({'key': claim['key'], 'state': 'contract_error',
                             'gate': 'unknown', 'effect': 'unknown',
                             'error': str(exc)})
+    for key in selected_by_key.keys() - claims_by_key.keys():
+        results.append({'key': key, 'state': 'contract_error', 'gate': 'unknown',
+                        'effect': 'unknown', 'error': 'missing claim envelope'})
+    if len(set(semantic)) != len(semantic):
+        raise ResolutionError('duplicate semantic primary claim')
     return results

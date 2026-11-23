@@ -50,7 +50,7 @@ class MultiPrimaryTests(unittest.TestCase):
     def selection(claim):
         return {k: copy.deepcopy(claim[k]) for k in
                 ('key', 'family', 'scope', 'context', 'pairs', 'authorities',
-                 'reference', 'verdict')}
+                 'reference', 'verdict', 'gate', 'effect')}
 
     def test_independent_callers_assess_separately(self):
         self.assertEqual([r['state'] for r in self.run_claims(self.a, self.b)],
@@ -86,7 +86,17 @@ class MultiPrimaryTests(unittest.TestCase):
         result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
                         selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
         self.assertEqual(result['state'], 'contract_error')
-        self.assertEqual(result['error'], 'claim differs from independent selection')
+        self.assertEqual(result['error'], 'claim differs from independently selected reference')
+
+    def test_unasserted_claim_stays_unassessed_with_selected_candidate_reference(self):
+        b = copy.deepcopy(self.b)
+        selected = self.selection(b)
+        b.pop('reference')
+        b.pop('verdict')
+        result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
+                        selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+        self.assertEqual(result['state'], 'allow_unassessed')
+        self.assertEqual(result['policy'], 'unassessed')
 
     def test_missing_gate_or_effect_stays_unknown_even_with_reference(self):
         for field in ('gate', 'effect'):
@@ -202,6 +212,30 @@ class MultiPrimaryTests(unittest.TestCase):
                 self.assertEqual(result['gate'], 'unknown' if field == 'gate' else 'allow')
                 self.assertEqual(result['effect'], 'unknown' if field == 'effect' else 'available')
 
+    def test_gate_and_effect_scope_bypass_mutations_fail_independently(self):
+        for field in ('gate', 'effect'):
+            with self.subTest(field=field):
+                b = copy.deepcopy(self.b)
+                b[field]['scope'] = dict(b[field]['scope'], caller='other-caller')
+                result = self.run_claims(b)[0]
+                self.assertEqual(result['state'], 'unknown')
+                self.assertEqual(result[field], 'unknown')
+
+    def test_selected_evidence_is_validated_and_envelope_must_repeat_it(self):
+        b = copy.deepcopy(self.b)
+        selection = self.selection(b)
+        selection['gate']['allowed'] = False
+        b['gate'] = copy.deepcopy(selection['gate'])
+        result = assess(copy.deepcopy(OBSERVATION), [selection], [b],
+                        selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+        self.assertEqual(result['state'], 'unknown')
+        self.assertEqual(result['gate'], 'unknown')
+
+        b['gate']['allowed'] = True  # Envelope-only mutation cannot override selection.
+        result = assess(copy.deepcopy(OBSERVATION), [selection], [b],
+                        selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+        self.assertEqual(result['state'], 'contract_error')
+
     def test_shared_observation_identity_is_bound_and_swap_is_structural(self):
         alternate = {'kind': 'synthetic-observation', 'version': 1,
                      'identity': {'id': 'other-observation', 'source': 'fixture.uc',
@@ -239,6 +273,10 @@ class MultiPrimaryTests(unittest.TestCase):
             assess(copy.deepcopy(OBSERVATION), [self.selection(self.a), self.selection(self.b)],
                    [self.a, duplicate],
                    selected_observation=copy.deepcopy(OBSERVATION['identity']))
+        results = assess(copy.deepcopy(OBSERVATION), [self.selection(self.a)],
+                         [self.a, self.b],
+                         selected_observation=copy.deepcopy(OBSERVATION['identity']))
+        self.assertEqual([r['state'] for r in results], ['assessed', 'contract_error'])
         alias = copy.deepcopy(self.a)
         alias['key'] = 'claim-a-alias'
         alias['gate']['claim_key'] = alias['key']
@@ -250,6 +288,11 @@ class MultiPrimaryTests(unittest.TestCase):
         with self.assertRaisesRegex(ResolutionError, 'invalid shared observation'):
             assess(bad_observation, [self.selection(self.a), self.selection(self.b)],
                    [self.a, self.b],
+                   selected_observation=copy.deepcopy(OBSERVATION['identity']))
+        bool_span = copy.deepcopy(OBSERVATION)
+        bool_span['identity']['start'] = False
+        with self.assertRaisesRegex(ResolutionError, 'invalid shared observation'):
+            assess(bool_span, [self.selection(self.a)], [self.a],
                    selected_observation=copy.deepcopy(OBSERVATION['identity']))
 
     def test_unsupported_verdict_and_no_reference_are_explicit(self):
@@ -281,6 +324,22 @@ class MultiPrimaryTests(unittest.TestCase):
         b['scope']['packages'] = 1
         result = self.run_claims(self.a, b)
         self.assertEqual([r['state'] for r in result], ['assessed', 'contract_error'])
+
+    def test_malformed_nested_selection_does_not_suppress_peer_and_nested_key_is_significant(self):
+        b = copy.deepcopy(self.b)
+        b['context']['inputs'][1] = 'invalid-non-string-key'
+        result = self.run_claims(self.a, b)
+        self.assertEqual([r['state'] for r in result], ['assessed', 'contract_error'])
+
+        a = copy.deepcopy(self.a)
+        alias = copy.deepcopy(self.a)
+        alias['key'] = 'claim-a-alias'
+        alias['context']['inputs']['key'] = 'different-context-key-value'
+        for record in (alias['gate'], alias['effect']):
+            record['claim_key'] = alias['key']
+            record['context'] = copy.deepcopy(alias['context'])
+        self.assertEqual([r['state'] for r in self.run_claims(a, alias)],
+                         ['assessed', 'assessed'])
 
 
 if __name__ == '__main__':
