@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import socket
 import tempfile
 import unittest
 from unittest import mock
@@ -65,9 +66,50 @@ class HistoricalTest(unittest.TestCase):
         (self.bundle/'errors.json').write_text('{}')
         self.assertEqual(self.attempt(), 'rejected')
     def test_reference_strict_and_independent(self):
-        for mutation in [b'{"version":1,"version":1}', b'{"version":true}', self.refpath.read_bytes().replace(b'0a6612fe0e66351a0ccda43ad5b51f5ef5a2724e', b'97cc776e0e66351a0ccda43ad5b51f5ef5a2724e')]:
-            self.refpath.write_bytes(mutation)
+        original = self.refpath.read_bytes()
+        duplicate = original.replace(b'"version": 1,', b'"version": 1, "version": 1,', 1)
+        with self.assertRaisesRegex(v.Rejected, 'duplicate JSON key'):
+            v.strict_json(duplicate)
+        for version in (True, False, 2, '1'):
+            fixture = copy.deepcopy(self.ref)
+            fixture['version'] = version
+            with self.subTest(version=version), self.assertRaisesRegex(v.Rejected, 'unsupported reference version'):
+                v.check_reference_version(fixture)
+        for field, value in [('producer', '97cc776f605dc007b6b85c4704b2caded1aa7023'),
+                             ('bundle_commit', '0' * 40), ('extra', 'unexpected')]:
+            fixture = copy.deepcopy(self.ref)
+            fixture[field] = value
+            self.refpath.write_text(json.dumps(fixture))
+            self.assertEqual(self.attempt(), 'rejected', field)
+        fixture = copy.deepcopy(self.ref)
+        fixture['artifacts']['errors.json'] = '0' * 64
+        self.refpath.write_text(json.dumps(fixture))
+        self.assertEqual(self.attempt(), 'rejected')
+        self.refpath.write_bytes(duplicate)
+        self.assertEqual(self.attempt(), 'rejected')
+        fixture = copy.deepcopy(self.ref)
+        fixture['version'] = True
+        self.refpath.write_text(json.dumps(fixture))
+        self.assertEqual(self.attempt(), 'rejected')
+    def test_public_api_rejects_invalid_file_types(self):
+        target = self.bundle / 'errors.json'
+        target.unlink()
+        target.symlink_to('errors.json')
+        self.assertEqual(self.attempt(), 'rejected')
+        target.unlink()
+        target.mkdir()
+        self.assertEqual(self.attempt(), 'rejected')
+        target.rmdir()
+        os.mkfifo(target)
+        self.assertEqual(self.attempt(), 'rejected')
+        target.unlink()
+        with socket.socket(socket.AF_UNIX) as sock:
+            sock.bind(str(target))
             self.assertEqual(self.attempt(), 'rejected')
+        target.unlink()
+        target.symlink_to(self.root / 'outside')
+        with self.assertRaises(v.Rejected): v.confined(self.bundle, 'errors.json')
+        self.assertEqual(self.attempt(), 'rejected')
     def test_confined_paths(self):
         with self.assertRaises(v.Rejected): v.confined(self.bundle, '../outside')
         (self.bundle/'escape').symlink_to(self.root/'outside')

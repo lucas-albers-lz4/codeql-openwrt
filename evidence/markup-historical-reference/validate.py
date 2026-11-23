@@ -2,12 +2,14 @@
 import argparse
 from collections import Counter
 import csv
+import errno
 import hashlib
 import io
 import json
 import os
 from pathlib import Path
 import subprocess
+import stat
 
 ROOT = Path(__file__).resolve().parents[2]
 REFERENCE_SHA256 = 'c4e0c735ec41c09c40032e489e2ffc5147bf6376a76f70bc4ef6e84459044fc2'
@@ -24,19 +26,41 @@ def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 def read(path):
+    # O_NONBLOCK prevents opening a FIFO from waiting for a writer. Inspect the
+    # opened descriptor before reading, so non-regular inputs are rejected.
     try:
-        return path.read_bytes()
-    except FileNotFoundError as exc:
-        raise Incomplete(f'missing {path}') from exc
+        if not stat.S_ISREG(os.stat(path).st_mode):
+            raise Rejected(f'not a regular file: {path}')
+        fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+    except OSError as exc:
+        if exc.errno in (errno.ELOOP, errno.ENOTDIR, errno.ENXIO):
+            raise Rejected(f'invalid path: {path}') from exc
+        raise Incomplete(f'unavailable {path}: {exc}') from exc
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise Rejected(f'not a regular file: {path}')
+        with os.fdopen(fd, 'rb') as stream:
+            fd = None
+            return stream.read()
     except OSError as exc:
         raise Incomplete(f'unavailable {path}: {exc}') from exc
+    finally:
+        if fd is not None:
+            os.close(fd)
 
 def confined(root, name):
     p = Path(name)
     if p.is_absolute() or '..' in p.parts or not p.parts:
         raise Rejected('invalid evidence path')
-    resolved_root = root.resolve()
-    target = (root / p).resolve()
+    try:
+        resolved_root = root.resolve()
+        target = (root / p).resolve()
+    except RuntimeError as exc:  # pathlib symlink loops on Python 3.12
+        raise Rejected('invalid evidence path') from exc
+    except OSError as exc:
+        if exc.errno in (errno.ELOOP, errno.ENOTDIR):
+            raise Rejected('invalid evidence path') from exc
+        raise Incomplete(f'evidence path unavailable: {exc}') from exc
     if not target.is_relative_to(resolved_root):
         raise Rejected('evidence path escapes root')
     return target
@@ -113,11 +137,16 @@ def semantics(manifest, routing, extracted, errors, ast, inventory, ref):
         raise Rejected('AST retained tuples differ')
     return paths
 
+def check_reference_version(ref):
+    if not isinstance(ref, dict) or type(ref.get('version')) is not int or ref['version'] != 1:
+        raise Rejected('unsupported reference version')
+
 def validate(reference, evidence_root, source, requested_profile, lock, inventory):
     try:
         raw = read(reference)
         ref = strict_json(raw)
-        if not isinstance(ref, dict) or type(ref.get('version')) is not int or ref['version'] != 1 or digest(raw) != REFERENCE_SHA256:
+        check_reference_version(ref)
+        if digest(raw) != REFERENCE_SHA256:
             raise Rejected('reference differs from independent authority')
         if requested_profile != ref['profile']:
             raise Rejected('requested profile differs')

@@ -26,7 +26,8 @@ projection checked semantically. The remaining projections and parent index
 are retained bytes, not an independent node-identity or completeness oracle.
 Only `uhttpd.uc` is in the AST query scope; the other rows are outside scope.
 
-The stage from the original run is no longer available. Source/stage equality
+The original stage was untracked and is outside the verified artifacts. Current
+stage bytes are not authenticated as the original stage; source/stage equality
 is a historical report, not revalidated by this reference. The source-relative
 success query and empty error query are bounded observations, not a universal
 diagnostic audit. Routing remains inconclusive / markup_not_modeled. No
