@@ -182,7 +182,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     for stage, rec in zip(STAGES, receipts):
         created = creates.get(stage)
         allowed = context['runtime_transitions'][stage]
-        require(type(allowed) is list and all(type(p) is str and p and not Path(p).is_absolute() and '..' not in Path(p).parts for p in allowed), 'runtime allowlist')
+        require(type(allowed) is list and len(set(allowed)) == len(allowed) and all(type(p) is str and p and p != '.' and p == str(Path(p)) and not Path(p).is_absolute() and '..' not in Path(p).parts for p in allowed), 'runtime allowlist')
         changed_runtime = {k for k in set(rec['before']['runtime']) | set(rec['after']['runtime']) if rec['before']['runtime'].get(k) != rec['after']['runtime'].get(k)}
         require(all(any(k == prefix or k.startswith(prefix+'/') for prefix in allowed) for k in changed_runtime), 'runtime transition: '+stage)
         if stage.endswith('_query'): require(log_only(rec['before']['database'],rec['after']['database']), 'query log transition: '+stage)

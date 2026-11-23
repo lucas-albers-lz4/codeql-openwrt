@@ -146,6 +146,8 @@ def main(context_file, oracle_file, approval):
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
         if paths[name].exists(): fail('output already exists')
     if type(context['runtime_transitions']) is not dict or list(context['runtime_transitions']) != list(STAGES): fail('runtime transition stages')
+    for allowed in context['runtime_transitions'].values():
+        if type(allowed) is not list or len(set(allowed)) != len(allowed) or any(type(p) is not str or not p or p == '.' or p != str(Path(p)) or Path(p).is_absolute() or '..' in Path(p).parts for p in allowed): fail('invalid runtime allowlist')
     if type(context['required_absent']) is not list or not context['required_absent'] or any(type(v) is not str or Path(v).is_absolute() or '..' in Path(v).parts or paths['runtime'] not in (run/v).parents for v in context['required_absent']) or len(set(context['required_absent'])) != len(context['required_absent']): fail('invalid required absence paths')
     reserved = [run/'context.json', run/'oracle.json', run/'git-preflight.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json','.failure.json')]
     if any(a == b or a in b.parents or b in a.parents for a in output_paths for b in reserved): fail('output collides with reserved packet path')
@@ -193,6 +195,7 @@ def main(context_file, oracle_file, approval):
                 if not same(before_report[:target]+before_report[target+1:],after_report[:target]+after_report[target+1:]): fail('other report rows changed')
 
         before = snapshot()
+        if not paths['runtime'].is_dir(): fail('runtime is not a directory')
         if stage == 'reimport' and before != imported: fail('pre-reimport state changed')
         created = {'init':'database', 'extracted_query':'extracted_bqrs', 'errors_query':'errors_bqrs', 'effects_query':'effects_bqrs', 'extracted_decode':'extracted', 'errors_decode':'errors', 'effects_decode':'effects', 'export':'typed'}.get(stage)
         if created and before[created] is not None: fail('output not absent: ' + created)
@@ -226,6 +229,7 @@ def main(context_file, oracle_file, approval):
         if exit_code: fail('stage failed: ' + stage)
         if created and after[created] is None: fail('output not created: ' + created)
         if stage == 'init' and not paths['database'].is_dir(): fail('database must be a directory')
+        if not paths['runtime'].is_dir(): fail('runtime is not a directory')
         if stage.endswith('_query') and not log_only(before['database'],after['database']): fail('query log transition')
         allowed = context['runtime_transitions'][stage]
         if type(allowed) is not list or any(type(p) is not str or not p or Path(p).is_absolute() or '..' in Path(p).parts for p in allowed): fail('invalid runtime allowlist')
