@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 PY = str(Path(sys.executable).resolve()); GIT = str(Path(shutil.which('git')).resolve())
@@ -37,6 +38,27 @@ class Prototype(unittest.TestCase):
                 if mutation == 'old_removed': del changed[old_log]
                 if mutation == 'third_log': changed['log/query-run-extra.log'] = {'sha256':'0'*64,'size':1}
                 self.assertFalse(module.query_transition(before,changed,'extracted_query'), (module_name,mutation))
+    def test_historical_packet_and_tampered_verifier(self):
+        evidence = HERE.parent.parent/'evidence/typed-handoff-repeat-20261123'
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp).resolve()
+            subprocess.run(['tar','-xzf',str(evidence/'retry-packet.tar.gz'),'-C',str(root)],check=True)
+            packet = root/'retry-run'
+            cmd = [sys.executable,'-B',str(HERE/'verify.py'),str(packet),str(evidence/'context.json'),str(evidence/'oracle.json'), '012ba54c704780c95d6b0fdacc208b4bfe0300f26cba5098104e96a79c95fb1c','9b05e02fcad136c9794d80c19ac0ceb4d1702debe8d80b391abfb1f9b1506574']
+            result = subprocess.run(cmd,capture_output=True,text=True); self.assertEqual(result.returncode,0,result.stderr)
+            changed_context = root/'changed-context.json'; changed = json.loads((evidence/'context.json').read_text()); changed['run'] += '-different'; dump(changed_context,changed)
+            changed_cmd = [*cmd]; changed_cmd[4] = str(changed_context); changed_cmd[6] = sha(changed_context)
+            result = subprocess.run(changed_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('verifier digest',result.stderr)
+            verifier = packet/'implementation/verify.py'; verifier.write_bytes(verifier.read_bytes()+b'\n# tampered\n')
+            result = subprocess.run(cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('verifier digest',result.stderr)
+    def test_prestate_requires_unique_target_identity(self):
+        spec = importlib.util.spec_from_file_location('runner_identity',HERE/'runner.py')
+        runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
+        for rows, index, expected in [([{'record_id':'m4:effect:luci-setBlockDetect-system'}],0,True), ([{'record_id':'other'}],0,False), (['malformed'],0,False), ([{'record_id':'m4:effect:luci-setBlockDetect-system'}]*2,0,False), ([{'record_id':'other'},{'record_id':'m4:effect:luci-setBlockDetect-system'}],0,False)]:
+            raw = json.dumps(rows).encode(); provenance = {'target_index':index,'row_count':len(rows),'prestate_sha256':hashlib.sha256(raw).hexdigest(),'prestate_target':rows[index]}
+            if expected: runner.validate_prestate(raw,provenance,'test')
+            else:
+                with self.assertRaisesRegex(ValueError,'prestate provenance'): runner.validate_prestate(raw,provenance,'test')
     def test_synthetic_transition_and_mutation(self):
         with tempfile.TemporaryDirectory() as t:
             root = Path(t).resolve(); consumer = root/'consumer'; consumer.mkdir()
@@ -63,7 +85,7 @@ class Prototype(unittest.TestCase):
             script = root/'stage.py'
             script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s=="init":\n (r/"db/log").mkdir(parents=True)\n (r/"db/data").write_text("database")\n (r/"db/db-ucode/default/cache").mkdir(parents=True)\n (r/"runtime/approved").mkdir()\n (r/"runtime/approved/data").write_text("cache")\nif s=="extracted_query":\n for name in ["pages","predicates","relations"]: (r/("db/db-ucode/default/cache/"+name)).mkdir()\nif s.endswith("_query"):\n (r/(s[:-6]+".bqrs")).write_text("bqrs")\n (r/("db/log/query-run-"+s+".log")).write_text("query log")\n (r/("db/log/execute-queries-"+s+".log")).write_text("query log")\nif s.endswith("_decode"):\n import csv\n csv.writer(sys.stdout,lineterminator="\\n").writerows(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())[s[:-7]+"_rows"])\nif s=="export": print(json.dumps(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())["neutral_typed_payload"]))\nif s=="import":\n for name in ["reports/handler_effects.json","reports/m4-block-device-exec.json"]: (c/name).write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
             run = root/'run'; oracle = root/'oracle.json'; context = root/'context.json'
-            dump(oracle, {'source':'usr/share/rpcd/ucode/luci', 'source_sha256':family['source_sha256'], 'lock_sha256':family['lock_sha256'], 'extracted_rows':[['f','col1'],[str(source_file),'']], 'errors_rows':family['errors_rows'], 'effects_rows':family['effects_rows'], 'neutral_typed_payload':family['neutral_typed_payload'], 'expected_effects':reports, 'prestate_provenance':{name:{'target_index':0} for name in reports}, 'expected_complete_targets':{name:[after[0]] for name in reports}})
+            dump(oracle, {'source':'usr/share/rpcd/ucode/luci', 'source_sha256':family['source_sha256'], 'lock_sha256':family['lock_sha256'], 'extracted_rows':[['f','col1'],[str(source_file),'']], 'errors_rows':family['errors_rows'], 'effects_rows':family['effects_rows'], 'neutral_typed_payload':family['neutral_typed_payload'], 'expected_effects':reports, 'prestate_provenance':{name:{'target_index':0,'row_count':len(before),'prestate_sha256':sha(consumer/name),'prestate_target':before[0]} for name in reports}, 'expected_complete_targets':{name:[after[0]] for name in reports}})
             commands = {s:{'argv':[PY,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer),'ORACLE':str(oracle)}} for s in STAGES}
             initial = {'reports':{'directory':True}, 'corpus':{'directory':True}, '.git':{'sha256':sha(consumer/'.git'),'size':(consumer/'.git').stat().st_size}} | {name:{'sha256':sha(consumer/name),'size':(consumer/name).stat().st_size} for name in reports} | {'corpus/lock.json':{'sha256':sha(lock),'size':lock.stat().st_size}}
             dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer),'producer':str(producer),'source':str(source)},'run':str(run),'initial':{'consumer':initial,'producer':{name:{'sha256':sha(producer/name),'size':(producer/name).stat().st_size} for name in ('.git','marker')},'source':{**{d:{'directory':True} for d in ('usr','usr/share','usr/share/rpcd','usr/share/rpcd/ucode')},'usr/share/rpcd/ucode/luci':{'sha256':sha(source_file),'size':source_file.stat().st_size}}},'git':pins,'runtime_directories':['home','tmp'],'runtime_transitions':{s:(['approved'] if s=='init' else []) for s in STAGES},'required_absent':['runtime/empty-pycache'],'git_executable':GIT,'git_env':{'PATH':'/usr/bin:/bin','LC_ALL':'C','GIT_CONFIG_GLOBAL':'/dev/null','GIT_CONFIG_SYSTEM':'/dev/null'},'runner_sha256':sha(HERE/'runner.py'),'verifier_sha256':sha(HERE/'verify.py'),'executables':{PY:sha(Path(PY)),GIT:sha(Path(GIT))},'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db','runtime':'runtime'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
@@ -94,6 +116,19 @@ class Prototype(unittest.TestCase):
             aliased = json.loads(context.read_text()); aliased['run'] = str(root/'alias-run'); aliased['outputs']['errors'] = aliased['outputs']['effects']; dump(bad_context,aliased)
             alias_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(alias_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('overlapping output paths',result.stderr)
+            collision = json.loads(context.read_text()); collision['inputs']['typed'] = str(root/'extra-input'); (root/'extra-input').mkdir(); collision['initial']['typed'] = {}; collision['run'] = str(root/'collision'); dump(bad_context,collision)
+            collision_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
+            result = subprocess.run(collision_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('input roles',result.stderr); self.assertFalse((root/'collision').exists())
+            for case in ('reports', 'nested'):
+                outside = root/('outside-'+case); outside.mkdir()
+                hostile = json.loads(context.read_text()); hostile['run'] = str(root/('hostile-'+case))
+                hostile['commands']['init']['env']['RUN'] = hostile['run']
+                if case == 'nested': hostile['outputs']['extracted'] = 'nested/extracted.csv'
+                target = 'reports' if case == 'reports' else 'nested'
+                hostile['commands']['init']['argv'] = [PY,'-c', "import os,pathlib; p=pathlib.Path(os.environ['RUN']); (p/'db').mkdir(); (p/%r).symlink_to(%r, target_is_directory=True)" % (target,str(outside))]
+                dump(bad_context,hostile)
+                hostile_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
+                result = subprocess.run(hostile_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('symlink path component',result.stderr if case == 'reports' else (root/('hostile-'+case)/'init.failure.json').read_text()); self.assertEqual(list(outside.iterdir()),[])
             failed = json.loads(context.read_text()); failed['run'] = str(root/'failed-run'); failed['commands']['init']['argv'] = [PY, '-c', 'raise SystemExit(7)']; dump(bad_context,failed)
             failed_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(failed_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('stage failed: init',result.stderr)
@@ -114,6 +149,28 @@ class Prototype(unittest.TestCase):
             dump(bad_context,failed); failure_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(failure_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('stage artifact or snapshot failed: init',result.stderr)
             self.assertIn('symlink',json.loads((root/'snapshot-failure/init.failure.json').read_text())['snapshot_error'])
+            for field, value in [('prestate_sha256','0'*64), ('row_count', 999), ('prestate_target', {'record_id':'wrong'})]:
+                wrong = json.loads(oracle.read_text()); wrong['prestate_provenance'][reports[0]][field] = value; dump(bad_oracle,wrong)
+                trial = json.loads(context.read_text()); trial['oracle_sha256'] = sha(bad_oracle); trial['run'] = str(root/('prestate-'+field))
+                for cfg in trial['commands'].values(): cfg['env']['RUN'] = trial['run']; cfg['env']['ORACLE'] = str(bad_oracle)
+                dump(bad_context,trial)
+                trial_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(bad_oracle),sha(bad_context)]
+                result = subprocess.run(trial_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('prestate provenance',result.stderr); self.assertFalse((Path(trial['run'])/'import.receipt.json').exists())
+                self.assertEqual(json.loads(report.read_text()),before)
+            # Mutate between the early import inventory and the command's final snapshot.
+            trial = json.loads(context.read_text()); trial['run'] = str(root/'preimport-drift')
+            for cfg in trial['commands'].values(): cfg['env']['RUN'] = trial['run']
+            dump(bad_context,trial)
+            spec = importlib.util.spec_from_file_location('runner_drift',HERE/'runner.py'); runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
+            original_inventory = runner.inventory; import_snapshots = [0]
+            def drift_inventory(path):
+                if path == consumer and (Path(trial['run'])/'export.receipt.json').exists():
+                    import_snapshots[0] += 1
+                    if import_snapshots[0] == 2: report.write_text('[]')
+                return original_inventory(path)
+            with mock.patch.object(runner,'inventory',side_effect=drift_inventory):
+                with self.assertRaisesRegex(ValueError,'input drift: consumer'): runner.main(str(bad_context),str(oracle),sha(bad_context))
+            self.assertEqual(import_snapshots[0],2); self.assertFalse((Path(trial['run'])/'import.stdout').exists()); dump(report,before)
             bad_target = json.loads(oracle.read_text()); bad_target['expected_complete_targets'][reports[0]][0]['value'] = 'wrong'; dump(bad_oracle,bad_target)
             target_context = json.loads(context.read_text()); target_context['oracle_sha256'] = sha(bad_oracle); target_context['run'] = str(root/'target-run')
             for cfg in target_context['commands'].values(): cfg['env']['RUN'] = target_context['run']; cfg['env']['ORACLE'] = str(bad_oracle)
@@ -130,6 +187,18 @@ class Prototype(unittest.TestCase):
             p = subprocess.run(env, capture_output=True, text=True); self.assertEqual(p.returncode,0,p.stderr)
             cmd = [sys.executable,str(HERE/'verify.py'),str(run),str(context),str(oracle),sha(context),sha(oracle)]
             p = subprocess.run(cmd,capture_output=True,text=True); self.assertEqual(p.returncode,0,p.stderr)
+            collision_verify = json.loads(context.read_text()); collision_verify['inputs']['typed'] = str(root/'extra-input'); collision_verify['initial']['typed'] = {}; dump(bad_context,collision_verify)
+            collision_verify_cmd = [sys.executable,str(HERE/'verify.py'),str(run),str(bad_context),str(oracle),sha(bad_context),sha(oracle)]
+            result = subprocess.run(collision_verify_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('input roles',result.stderr)
+            for field, value in [('prestate_sha256','0'*64), ('row_count', 999), ('prestate_target', {'record_id':'wrong'})]:
+                forged = root/('forged-'+field); shutil.copytree(run,forged)
+                wrong = json.loads(oracle.read_text()); wrong['prestate_provenance'][reports[0]][field] = value; dump(bad_oracle,wrong)
+                revised = json.loads(context.read_text()); revised['oracle_sha256'] = sha(bad_oracle); dump(bad_context,revised)
+                shutil.copyfile(bad_context,forged/'context.json'); shutil.copyfile(bad_oracle,forged/'oracle.json')
+                for stage in STAGES:
+                    receipt = forged/(stage+'.receipt.json'); rec = json.loads(receipt.read_text()); rec['context_sha256'] = sha(bad_context); dump(receipt,rec)
+                forged_cmd = [sys.executable,str(HERE/'verify.py'),str(forged),str(bad_context),str(bad_oracle),sha(bad_context),sha(bad_oracle)]
+                result = subprocess.run(forged_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('prestate provenance',result.stderr)
             repeated = subprocess.run(env,capture_output=True,text=True)
             self.assertNotEqual(repeated.returncode,0); self.assertIn('fresh and absolute',repeated.stderr)
             runtime_file = root/'runtime-file'; shutil.copytree(run,runtime_file)

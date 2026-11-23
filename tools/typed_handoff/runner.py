@@ -34,6 +34,12 @@ def family_check(context, oracle):
     expected_rows = [['f','col1'], [str(Path(context['inputs']['source']) / source), '']]
     if oracle['extracted_rows'] != expected_rows: raise ValueError('extracted identity')
 
+def validate_prestate(raw, provenance, name):
+    rows = parse(raw); index = provenance['target_index']
+    if type(rows) is not list or any(type(row) is not dict for row in rows): fail('prestate provenance: '+name)
+    positions = [i for i, row in enumerate(rows) if row.get('record_id') == 'm4:effect:luci-setBlockDetect-system']
+    if type(index) is not int or index < 0 or positions != [index] or type(provenance['row_count']) is not int or len(rows) != provenance['row_count'] or hashlib.sha256(raw).hexdigest() != provenance['prestate_sha256'] or not same(rows[index], provenance['prestate_target']): fail('prestate provenance: '+name)
+
 def query_transition(before, after, stage):
     if type(before) is not dict or type(after) is not dict: return False
     added = set(after) - set(before)
@@ -117,7 +123,7 @@ def main(context_file, oracle_file, approval):
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
     if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent','runtime_transitions','runtime_directories'}: fail('context fields')
     if set(context['outputs']) != {'runtime','database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
-    if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
+    if set(context['initial']) != set(context['inputs']) or not {'consumer','producer','source'} <= set(context['inputs']) or set(context['inputs']) & set(context['outputs']): fail('input roles')
     for value in context['inputs'].values(): no_symlink_components(value)
     no_symlink_components(context['run'])
     roots = {k: Path(v).resolve(strict=True) for k, v in context['inputs'].items()}
@@ -168,7 +174,9 @@ def main(context_file, oracle_file, approval):
     shutil.copyfile(roots['consumer']/'corpus/lock.json', run/'inputs/lock.json')
     paths['runtime'].mkdir(parents=True)
     for rel in context['runtime_directories']: (paths['runtime']/rel).mkdir(parents=True, exist_ok=True)
-    def snapshot(): return {k: inventory(v) for k, v in paths.items()}
+    def snapshot():
+        for path in paths.values(): no_symlink_components(path)
+        return {k: inventory(v) for k, v in paths.items()}
     def exact(name, key):
         import csv
         with paths[name].open(newline='') as stream:
@@ -182,9 +190,13 @@ def main(context_file, oracle_file, approval):
         if stage != 'reimport':
             current = snapshot()
             for name in roots:
-                if (name != 'consumer' or stage != 'import') and current[name] != initial[name]: fail('input drift: ' + name)
+                if current[name] != initial[name]: fail('input drift: ' + name)
         if stage == 'export':
             for name in ('extracted', 'errors', 'effects'): exact(name, name + '_rows')
+        if stage == 'import':
+            for name in oracle['expected_effects']:
+                raw = (run/'reports'/'init'/name).read_bytes()
+                validate_prestate(raw, oracle['prestate_provenance'][name], name)
         if stage == 'import' and not same(load(paths['typed']), oracle['neutral_typed_payload']):
             fail('typed payload mismatch')
         if stage == 'reimport':
@@ -201,6 +213,7 @@ def main(context_file, oracle_file, approval):
                 if not same(before_report[:target]+before_report[target+1:],after_report[:target]+after_report[target+1:]): fail('other report rows changed')
 
         before = snapshot()
+        if stage == 'import' and before['consumer'] != initial['consumer']: fail('input drift: consumer')
         if not paths['runtime'].is_dir(): fail('runtime is not a directory')
         if stage != 'init' and not paths['database'].is_dir(): fail('database must remain a directory')
         if stage == 'reimport' and before != imported: fail('pre-reimport state changed')
@@ -216,12 +229,15 @@ def main(context_file, oracle_file, approval):
                 err.write(('execution error: ' + str(exc) + '\n').encode())
                 exit_code = 127
         try:
+            no_symlink_components(run)
             if exit_code == 0 and stage in ('extracted_decode','errors_decode','effects_decode','export'):
                 name = stage.removesuffix('_decode') if stage != 'export' else 'typed'
+                no_symlink_components(paths[name])
                 with paths[name].open('xb') as target: target.write(stdout.read_bytes())
             after = snapshot(); end = time.time_ns()
             if any((run/rel).exists() or (run/rel).is_symlink() for rel in context['required_absent']): fail('required path exists')
         except (OSError, ValueError) as exc:
+            no_symlink_components(run)
             failure = {'stage':stage, 'context_sha256':approval, 'argv':cfg['argv'], 'cwd':cfg['cwd'],
                        'environment':cfg['env'], 'exit_code':exit_code, 'start_ns':start,
                        'end_ns':time.time_ns(), 'before':before, 'snapshot_error':str(exc),
@@ -232,6 +248,7 @@ def main(context_file, oracle_file, approval):
                    'cwd': cfg['cwd'], 'environment': cfg['env'], 'exit_code': exit_code,
                    'start_ns': start, 'end_ns': end, 'before': before, 'after': after,
                    'stdout_sha256': sha(stdout), 'stderr_sha256': sha(stderr)}
+        no_symlink_components(run / (stage + '.receipt.json'))
         with (run / (stage + '.receipt.json')).open('x') as f: json.dump(receipt, f, sort_keys=True)
         if exit_code: fail('stage failed: ' + stage)
         if created and after[created] is None: fail('output not created: ' + created)
@@ -261,6 +278,7 @@ def main(context_file, oracle_file, approval):
             consumer = roots['consumer']
             for name in oracle['expected_effects']:
                 target = run / 'reports' / stage / name
+                no_symlink_components(target)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 with target.open('xb') as f: f.write((consumer / name).read_bytes())
     print('Stages completed; independent verification still required.')
