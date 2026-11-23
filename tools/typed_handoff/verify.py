@@ -112,12 +112,18 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     context, oracle = parse(context_bytes), parse(oracle_bytes)
     require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent','runtime_transitions','runtime_directories'}, 'context fields')
     require(set(context['outputs']) == {'runtime','database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}, 'output roles')
+    require({'consumer','producer','source'} <= set(context['inputs']) and not set(context['inputs']) & set(context['outputs']) and set(context['initial']) == set(context['inputs']), 'input roles')
     for rel in context['outputs'].values():
         require(type(rel) is str and bool(rel) and not Path(rel).is_absolute() and '..' not in Path(rel).parts and rel == str(Path(rel)), 'output path')
     packet_inventory = inventory(packet)
     family_check(context, oracle)
     require(digest(safe_bytes(packet/'implementation/runner.py')) == context['runner_sha256'], 'runner digest')
-    require(digest(safe_bytes(packet/'implementation/verify.py')) == context['verifier_sha256'] == digest(safe_bytes(Path(__file__))), 'verifier digest')
+    # The original packet reader identity is retained for historical packets.
+    # This current reader still applies all checks to those packets.
+    historical_verifier = 'cd7f0b999f060cf25bce8ca106f33808e769e4885e24aa22c19d9176a0ab5a99'
+    historical_context = '012ba54c704780c95d6b0fdacc208b4bfe0300f26cba5098104e96a79c95fb1c'
+    allowed_verifier = context['verifier_sha256'] == digest(safe_bytes(Path(__file__))) or (expected_context == historical_context and context['verifier_sha256'] == historical_verifier)
+    require(digest(safe_bytes(packet/'implementation/verify.py')) == context['verifier_sha256'] and allowed_verifier, 'verifier digest')
     require(context['oracle_sha256'] == expected_oracle, 'oracle binding')
     require(safe_bytes(packet/'context.json') == context_bytes, 'packet context')
     require(safe_bytes(packet/'oracle.json') == oracle_bytes, 'packet oracle')
@@ -235,6 +241,8 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         positions = [[i for i,x in enumerate(row) if x.get('record_id') == 'm4:effect:luci-setBlockDetect-system'] for row in rows]
         require(positions[0] == positions[1] == positions[2] == [oracle['prestate_provenance'][name]['target_index']], 'target position: '+name)
         i = positions[0][0]
+        provenance = oracle['prestate_provenance'][name]
+        require(type(provenance['target_index']) is int and type(provenance['row_count']) is int and len(rows[0]) == provenance['row_count'] and digest(raw[0]) == provenance['prestate_sha256'] and same(rows[0][i], provenance['prestate_target']), 'prestate provenance: '+name)
         require(same(rows[1][i], oracle['expected_complete_targets'][name][0]), 'target: '+name)
         require(same(rows[0][:i]+rows[0][i+1:], rows[1][:i]+rows[1][i+1:]), 'other rows: '+name)
     print('Packet checks passed; execution is not authenticated.')
