@@ -81,7 +81,7 @@ class Prototype(unittest.TestCase):
             self.assertNotEqual(repeated.returncode,0); self.assertIn('fresh and absolute',repeated.stderr)
             missing_db = root/'missing-db'; shutil.copytree(run, missing_db); shutil.rmtree(missing_db/'db')
             missing_cmd = [*cmd]; missing_cmd[2] = str(missing_db)
-            p = subprocess.run(missing_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('missing:',p.stderr)
+            p = subprocess.run(missing_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('database directory',p.stderr)
             extra = root/'extra'; shutil.copytree(run,extra); (extra/'unexpected').write_text('x')
             extra_cmd = [*cmd]; extra_cmd[2] = str(extra)
             p = subprocess.run(extra_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('packet inventory',p.stderr)
