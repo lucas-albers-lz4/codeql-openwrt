@@ -104,8 +104,12 @@ def main(context_file, oracle_file, approval):
     # Approval is an external reviewer's context digest, not an authentication mechanism.
     if approval != hashlib.sha256(context_bytes).hexdigest(): fail('reviewed context digest mismatch')
     if context['oracle_sha256'] != hashlib.sha256(oracle_bytes).hexdigest(): fail('oracle mismatch')
+    if sha(Path(__file__)) != context['runner_sha256'] or sha(Path(__file__).with_name('verify.py')) != context['verifier_sha256']: fail('implementation digest mismatch')
+    for command in context['commands'].values():
+        exe = command['argv'][0]
+        if exe not in context['executables'] or sha(Path(exe)) != context['executables'][exe]: fail('executable digest mismatch')
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
-    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs'}: fail('context fields')
+    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256'}: fail('context fields')
     if set(context['outputs']) != {'database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
     if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
     for value in context['inputs'].values(): no_symlink_components(value)
@@ -131,11 +135,14 @@ def main(context_file, oracle_file, approval):
         p = Path(relative)
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
         if paths[name].exists(): fail('output already exists')
-    reserved = [run/'context.json', run/'oracle.json', run/'reports', run/'inputs'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json')]
+    reserved = [run/'context.json', run/'oracle.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json')]
     if any(a == b or a in b.parents or b in a.parents for a in output_paths for b in reserved): fail('output collides with reserved packet path')
     run.mkdir(mode=0o700)
     (run / 'context.json').write_bytes(context_bytes)
     (run / 'oracle.json').write_bytes(oracle_bytes)
+    (run / 'implementation').mkdir()
+    shutil.copyfile(Path(__file__), run/'implementation/runner.py')
+    shutil.copyfile(Path(__file__).with_name('verify.py'), run/'implementation/verify.py')
     (run / 'inputs').mkdir()
     shutil.copyfile(roots['source']/oracle['source'], run/'inputs/source')
     shutil.copyfile(roots['consumer']/'corpus/lock.json', run/'inputs/lock.json')
@@ -148,6 +155,7 @@ def main(context_file, oracle_file, approval):
     imported = None
     for stage in STAGES:
         cfg = context['commands'][stage]
+        if sha(Path(cfg['argv'][0])) != context['executables'][cfg['argv'][0]]: fail('executable drift: ' + stage)
         if set(cfg) != {'argv','cwd','env'} or not isinstance(cfg['argv'], list) or not cfg['argv'] or not all(type(x) is str for x in cfg['argv']) or type(cfg['cwd']) is not str or type(cfg['env']) is not dict or not all(type(k) is str and type(v) is str for k,v in cfg['env'].items()): fail('invalid command: ' + stage)
         if stage != 'reimport':
             current = snapshot()
