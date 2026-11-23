@@ -91,7 +91,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     require(digest(context_bytes) == expected_context, 'context digest')
     require(digest(oracle_bytes) == expected_oracle, 'oracle digest')
     context, oracle = parse(context_bytes), parse(oracle_bytes)
-    require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256'}, 'context fields')
+    require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env'}, 'context fields')
     family_check(context, oracle)
     require(digest((packet/'implementation/runner.py').read_bytes()) == context['runner_sha256'], 'runner digest')
     require(digest((packet/'implementation/verify.py').read_bytes()) == context['verifier_sha256'] == digest(Path(__file__).read_bytes()), 'verifier digest')
@@ -121,7 +121,12 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     require(digest((packet/'inputs/lock.json').read_bytes()) == oracle['lock_sha256'], 'retained lock')
     require((packet/context['outputs']['database']).is_dir(), 'database directory')
     require(inventory(packet/context['outputs']['database']) == receipts[-1]['after']['database'], 'database inventory')
-    expected_files = {'context.json','oracle.json','inputs/source','inputs/lock.json','implementation/runner.py','implementation/verify.py'}
+    git_receipts = read_json(packet/'git-preflight.json')
+    require(set(git_receipts) == {'producer','consumer'}, 'git preflight roles')
+    for role, pin in context['git'].items():
+        record = git_receipts[role]; exe = context['git_executable']
+        require(record == {'cwd':context['inputs'][role], 'env':context['git_env'], 'head_argv':[exe,'rev-parse','HEAD'], 'head_stdout':pin+'\n', 'status_argv':[exe,'status','--porcelain','--untracked-files=all'], 'status_stdout':''}, 'git preflight: '+role)
+    expected_files = {'context.json','oracle.json','git-preflight.json','inputs/source','inputs/lock.json','implementation/runner.py','implementation/verify.py'}
     expected_files.update(stage+suffix for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json'))
     for name, rel in context['outputs'].items():
         if name == 'database':

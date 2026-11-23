@@ -109,7 +109,7 @@ def main(context_file, oracle_file, approval):
         exe = command['argv'][0]
         if exe not in context['executables'] or sha(Path(exe)) != context['executables'][exe]: fail('executable digest mismatch')
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
-    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256'}: fail('context fields')
+    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env'}: fail('context fields')
     if set(context['outputs']) != {'database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
     if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
     for value in context['inputs'].values(): no_symlink_components(value)
@@ -123,11 +123,16 @@ def main(context_file, oracle_file, approval):
     if any(a == b or a in b.parents or b in a.parents for i,a in enumerate(roots.values()) for b in list(roots.values())[i+1:]): fail('input roots must be distinct and disjoint')
     for name, root in roots.items():
         if inventory(root) != context['initial'][name]: fail('input inventory mismatch: ' + name)
+    git_exe, git_env = context['git_executable'], context['git_env']
+    if git_exe not in context['executables'] or sha(Path(git_exe)) != context['executables'][git_exe]: fail('git executable digest mismatch')
+    git_receipts = {}
     for role, pin in context['git'].items():
         root = roots[role]
-        head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
-        status = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=all'], cwd=root, text=True)
-        if head != pin or status: fail('unclean or wrong git input: ' + role)
+        head_argv = [git_exe, 'rev-parse', 'HEAD']; status_argv = [git_exe, 'status', '--porcelain', '--untracked-files=all']
+        head = subprocess.check_output(head_argv, cwd=root, env=git_env, text=True)
+        status = subprocess.check_output(status_argv, cwd=root, env=git_env, text=True)
+        if head.strip() != pin or status: fail('unclean or wrong git input: ' + role)
+        git_receipts[role] = {'cwd':str(root),'env':git_env,'head_argv':head_argv,'head_stdout':head,'status_argv':status_argv,'status_stdout':status}
     paths = {**roots, **{k: run / v for k, v in context['outputs'].items()}}
     output_paths = [paths[k] for k in context['outputs']]
     if any(a == b or a in b.parents or b in a.parents for i,a in enumerate(output_paths) for b in output_paths[i+1:]): fail('overlapping output paths')
@@ -135,11 +140,12 @@ def main(context_file, oracle_file, approval):
         p = Path(relative)
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
         if paths[name].exists(): fail('output already exists')
-    reserved = [run/'context.json', run/'oracle.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json')]
+    reserved = [run/'context.json', run/'oracle.json', run/'git-preflight.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json')]
     if any(a == b or a in b.parents or b in a.parents for a in output_paths for b in reserved): fail('output collides with reserved packet path')
     run.mkdir(mode=0o700)
     (run / 'context.json').write_bytes(context_bytes)
     (run / 'oracle.json').write_bytes(oracle_bytes)
+    with (run/'git-preflight.json').open('x') as f: json.dump(git_receipts, f, sort_keys=True)
     (run / 'implementation').mkdir()
     shutil.copyfile(Path(__file__), run/'implementation/runner.py')
     shutil.copyfile(Path(__file__).with_name('verify.py'), run/'implementation/verify.py')
