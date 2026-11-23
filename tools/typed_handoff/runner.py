@@ -133,22 +133,27 @@ def main(context_file, oracle_file, approval):
         start = time.time_ns()
         stdout = run / (stage + '.stdout'); stderr = run / (stage + '.stderr')
         with stdout.open('xb') as out, stderr.open('xb') as err:
-            result = subprocess.run(cfg['argv'], cwd=cfg['cwd'], env=cfg['env'], stdout=out, stderr=err, check=False)
-        if stage in ('extracted_decode','errors_decode','effects_decode','export'):
+            try:
+                result = subprocess.run(cfg['argv'], cwd=cfg['cwd'], env=cfg['env'], stdout=out, stderr=err, check=False)
+                exit_code = result.returncode
+            except OSError as exc:
+                err.write(('execution error: ' + str(exc) + '\n').encode())
+                exit_code = 127
+        if exit_code == 0 and stage in ('extracted_decode','errors_decode','effects_decode','export'):
             name = stage.removesuffix('_decode') if stage != 'export' else 'typed'
             with paths[name].open('xb') as target: target.write(stdout.read_bytes())
         after = snapshot(); end = time.time_ns()
+        receipt = {'stage': stage, 'context_sha256': approval, 'argv': cfg['argv'],
+                   'cwd': cfg['cwd'], 'environment': cfg['env'], 'exit_code': exit_code,
+                   'start_ns': start, 'end_ns': end, 'before': before, 'after': after,
+                   'stdout_sha256': sha(stdout), 'stderr_sha256': sha(stderr)}
+        with (run / (stage + '.receipt.json')).open('x') as f: json.dump(receipt, f, sort_keys=True)
+        if exit_code: fail('stage failed: ' + stage)
         if created and after[created] is None: fail('output not created: ' + created)
         for name in context['outputs']:
             if name != created and not (name == 'database' and stage in ('index','finalize')) and before[name] != after[name]: fail('unexpected output transition: ' + name)
         for name in roots:
             if (name != 'consumer' or stage in ('init','index','finalize','extracted_query','extracted_decode','errors_query','errors_decode','effects_query','effects_decode','export')) and after[name] != initial[name]: fail('input drift: ' + name)
-        receipt = {'stage': stage, 'context_sha256': approval, 'argv': cfg['argv'],
-                   'cwd': cfg['cwd'], 'environment': cfg['env'], 'exit_code': result.returncode,
-                   'start_ns': start, 'end_ns': end, 'before': before, 'after': after,
-                   'stdout_sha256': sha(stdout), 'stderr_sha256': sha(stderr)}
-        with (run / (stage + '.receipt.json')).open('x') as f: json.dump(receipt, f, sort_keys=True)
-        if result.returncode: fail('stage failed: ' + stage)
         if stage == 'import':
             before_consumer, after_consumer = before['consumer'], after['consumer']
             changed = sorted(k for k in set(before_consumer) | set(after_consumer) if before_consumer.get(k) != after_consumer.get(k))

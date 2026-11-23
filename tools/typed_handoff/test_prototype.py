@@ -55,6 +55,11 @@ class Prototype(unittest.TestCase):
             link = root/'source-hardlink'; os.link(source_file,link)
             result = subprocess.run([sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(context),str(oracle),sha(context)],capture_output=True,text=True)
             self.assertNotEqual(result.returncode,0); self.assertIn('hardlinked input',result.stderr); link.unlink()
+            failed = json.loads(context.read_text()); failed['run'] = str(root/'failed-run'); failed['commands']['init']['argv'] = [str(root/'missing-executable')]; dump(bad_context,failed)
+            failed_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
+            result = subprocess.run(failed_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('stage failed: init',result.stderr)
+            self.assertEqual(json.loads((root/'failed-run/init.receipt.json').read_text())['exit_code'],127)
+            self.assertFalse((root/'failed-run/index.receipt.json').exists())
             marker = producer/'marker'; marker.write_text('changed')
             clean_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(context),str(oracle),sha(context)]
             result = subprocess.run(clean_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('input inventory mismatch: producer',result.stderr)
