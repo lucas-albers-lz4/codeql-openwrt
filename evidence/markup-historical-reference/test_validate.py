@@ -65,6 +65,16 @@ class HistoricalTest(unittest.TestCase):
     def test_contradictory_artifact(self):
         (self.bundle/'errors.json').write_text('{}')
         self.assertEqual(self.attempt(), 'rejected')
+    def test_semantically_equal_artifact_still_requires_pinned_bytes(self):
+        path = self.bundle / 'errors.json'
+        original = path.read_bytes()
+        rewritten = json.dumps(json.loads(original), indent=2).encode() + b'\n'
+        self.assertNotEqual(rewritten, original)
+        self.assertEqual(v.strict_json(rewritten), v.strict_json(original))
+        path.write_bytes(rewritten)
+        result = v.validate(self.refpath, self.bundle, self.source, 'luci-ssl-25.12', v.ROOT/'corpus/lock.json', v.ROOT/'reports/m4-luci-ssl-files.json')
+        self.assertEqual(result['status'], 'rejected')
+        self.assertEqual(result['reason'], 'artifact differs: errors.json')
     def test_reference_strict_and_independent(self):
         original = self.refpath.read_bytes()
         duplicate = original.replace(b'"version": 1,', b'"version": 1, "version": 1,', 1)
