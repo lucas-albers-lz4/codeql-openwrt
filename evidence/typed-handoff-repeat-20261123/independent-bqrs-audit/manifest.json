@@ -1,0 +1,68 @@
+{
+  "extracted": {
+    "argv": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "bqrs",
+      "decode",
+      "--format=csv",
+      "/private/tmp/openwrt-typed-handoff-live-20261123/retry-run/extracted.bqrs"
+    ],
+    "cwd": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+    "env": {
+      "PATH": "/usr/bin:/bin",
+      "HOME": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+      "TMPDIR": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+      "LANG": "C",
+      "LC_ALL": "C"
+    },
+    "exit": 0,
+    "input_sha256": "ed2cdf5e917c71797d9dbbfaa9da20a50d0d06d6a902c33a9610d371e96cd22b",
+    "stdout_sha256": "4d347981f7519c3e96d65a9d08403309f802bc64342a3fd9d14833d8515af249",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected": "/private/tmp/openwrt-typed-handoff-live-20261123/retry-run/extracted.csv"
+  },
+  "errors": {
+    "argv": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "bqrs",
+      "decode",
+      "--format=csv",
+      "/private/tmp/openwrt-typed-handoff-live-20261123/retry-run/errors.bqrs"
+    ],
+    "cwd": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+    "env": {
+      "PATH": "/usr/bin:/bin",
+      "HOME": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+      "TMPDIR": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+      "LANG": "C",
+      "LC_ALL": "C"
+    },
+    "exit": 0,
+    "input_sha256": "f28fd39d7e38e2385a0a04f42688ae82747cb57d298cdb0d644c87723549a9d1",
+    "stdout_sha256": "0bb9068729a2970f4b125b6893565812fdd2d1fc6510626f214f3d055b4f94f5",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected": "/private/tmp/openwrt-typed-handoff-live-20261123/retry-run/errors.csv"
+  },
+  "effects": {
+    "argv": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "bqrs",
+      "decode",
+      "--format=csv",
+      "/private/tmp/openwrt-typed-handoff-live-20261123/retry-run/effects.bqrs"
+    ],
+    "cwd": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+    "env": {
+      "PATH": "/usr/bin:/bin",
+      "HOME": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+      "TMPDIR": "/private/tmp/typed-bqrs-audit-retain-6z1rem0l",
+      "LANG": "C",
+      "LC_ALL": "C"
+    },
+    "exit": 0,
+    "input_sha256": "e41689679638b9e84ae5c39248e2aacc0aa8833612a9379d47659618681ad5b7",
+    "stdout_sha256": "9d9a1a7178e7f5fbd3cb772122fe172354004fac09ce00e91647d6b35ba9d0a0",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected": "/private/tmp/openwrt-typed-handoff-live-20261123/retry-run/effects.csv"
+  }
+}
