@@ -199,6 +199,7 @@ def main(context_file, oracle_file, approval):
 
         before = snapshot()
         if not paths['runtime'].is_dir(): fail('runtime is not a directory')
+        if stage != 'init' and not paths['database'].is_dir(): fail('database must remain a directory')
         if stage == 'reimport' and before != imported: fail('pre-reimport state changed')
         created = {'init':'database', 'extracted_query':'extracted_bqrs', 'errors_query':'errors_bqrs', 'effects_query':'effects_bqrs', 'extracted_decode':'extracted', 'errors_decode':'errors', 'effects_decode':'effects', 'export':'typed'}.get(stage)
         if created and before[created] is not None: fail('output not absent: ' + created)
@@ -231,7 +232,7 @@ def main(context_file, oracle_file, approval):
         with (run / (stage + '.receipt.json')).open('x') as f: json.dump(receipt, f, sort_keys=True)
         if exit_code: fail('stage failed: ' + stage)
         if created and after[created] is None: fail('output not created: ' + created)
-        if stage == 'init' and not paths['database'].is_dir(): fail('database must be a directory')
+        if not paths['database'].is_dir(): fail('database must remain a directory')
         if not paths['runtime'].is_dir(): fail('runtime is not a directory')
         if stage.endswith('_query') and not log_only(before['database'],after['database']): fail('query log transition')
         allowed = context['runtime_transitions'][stage]
