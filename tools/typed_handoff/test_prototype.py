@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Synthetic smoke only; not evidence of a CodeQL or policy execution."""
 import hashlib
+import copy
+import importlib.util
 import json
 import os
 import shutil
@@ -16,6 +18,25 @@ STAGES = ('init','index','finalize','extracted_query','extracted_decode','errors
 def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def dump(p, obj): p.write_text(json.dumps(obj))
 class Prototype(unittest.TestCase):
+    def test_observed_query_transition_policy(self):
+        observed = json.loads((HERE/'query-transition-observed.json').read_text())
+        before, after = observed['before'], observed['after']
+        marker = 'db-ucode/default/cache/pages'
+        old_log = next(k for k in before if k.startswith('log/') and k.endswith('.log'))
+        for module_name in ('runner','verify'):
+            spec = importlib.util.spec_from_file_location('test_'+module_name,HERE/(module_name+'.py'))
+            module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+            self.assertTrue(module.query_transition(before,after,'extracted_query'))
+            self.assertFalse(module.query_transition(before,after,'errors_query'))
+            for mutation in ('missing','file','child','old_modified','old_removed','third_log'):
+                changed = copy.deepcopy(after)
+                if mutation == 'missing': del changed[marker]
+                if mutation == 'file': changed[marker] = {'sha256':'0'*64,'size':1}
+                if mutation == 'child': changed[marker+'/child'] = {'sha256':'0'*64,'size':1}
+                if mutation == 'old_modified': changed[old_log] = {'sha256':'0'*64,'size':1}
+                if mutation == 'old_removed': del changed[old_log]
+                if mutation == 'third_log': changed['log/query-run-extra.log'] = {'sha256':'0'*64,'size':1}
+                self.assertFalse(module.query_transition(before,changed,'extracted_query'), (module_name,mutation))
     def test_synthetic_transition_and_mutation(self):
         with tempfile.TemporaryDirectory() as t:
             root = Path(t).resolve(); consumer = root/'consumer'; consumer.mkdir()
