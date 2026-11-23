@@ -264,8 +264,8 @@ def main(context_file, oracle_file, approval):
 
 if __name__ == '__main__':
     try:
-        if len(sys.argv) != 5 or sys.argv[1] != '--synthetic-only':
-            fail('prototype requires --synthetic-only; real runs are not supported')
+        if len(sys.argv) != 5 or sys.argv[1] not in ('--synthetic-only','--reviewed-context'):
+            fail('usage: runner.py (--synthetic-only|--reviewed-context) CONTEXT ORACLE REVIEWED_CONTEXT_SHA256')
         main(*sys.argv[2:])
     except (ValueError, KeyError, TypeError, IndexError, OSError, subprocess.SubprocessError) as exc:
         print('handoff failed:', exc, file=sys.stderr); sys.exit(1)
