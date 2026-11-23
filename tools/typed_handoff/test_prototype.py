@@ -108,6 +108,11 @@ class Prototype(unittest.TestCase):
             p = subprocess.run(cmd,capture_output=True,text=True); self.assertEqual(p.returncode,0,p.stderr)
             repeated = subprocess.run(env,capture_output=True,text=True)
             self.assertNotEqual(repeated.returncode,0); self.assertIn('fresh and absolute',repeated.stderr)
+            runtime_file = root/'runtime-file'; shutil.copytree(run,runtime_file)
+            for stage, edge in [('errors_query','after'),('errors_decode','before')]:
+                path = runtime_file/(stage+'.receipt.json'); rec = json.loads(path.read_text()); rec[edge]['runtime'] = {'sha256':'0'*64,'size':1}; dump(path,rec)
+            runtime_file_cmd = [*cmd]; runtime_file_cmd[2] = str(runtime_file)
+            p = subprocess.run(runtime_file_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('runtime directory state: errors_query',p.stderr)
             boolean = root/'boolean'; shutil.copytree(run,boolean); path = boolean/'init.receipt.json'; rec = json.loads(path.read_text()); rec['before']['consumer'][reports[0]]['size'] = True; dump(path,rec)
             boolean_cmd = [*cmd]; boolean_cmd[2] = str(boolean)
             p = subprocess.run(boolean_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('inventory schema: init',p.stderr)
