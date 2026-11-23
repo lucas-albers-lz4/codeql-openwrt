@@ -48,6 +48,13 @@ class Prototype(unittest.TestCase):
             bad_context = root/'bad-context.json'; bad = json.loads(context.read_text()); bad['git']['producer'] = '0'*40; dump(bad_context,bad)
             bad_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(bad_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('unclean or wrong git input: producer',result.stderr)
+            bad_oracle = root/'bad-oracle.json'; wrong_family = json.loads(oracle.read_text()); wrong_family['effects_rows'][1][3] = 'other'; dump(bad_oracle,wrong_family)
+            bad = json.loads(context.read_text()); bad['oracle_sha256'] = sha(bad_oracle); dump(bad_context,bad)
+            bad_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(bad_oracle),sha(bad_context)]
+            result = subprocess.run(bad_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('family oracle: effects_rows',result.stderr)
+            link = root/'source-hardlink'; os.link(source_file,link)
+            result = subprocess.run([sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(context),str(oracle),sha(context)],capture_output=True,text=True)
+            self.assertNotEqual(result.returncode,0); self.assertIn('hardlinked input',result.stderr); link.unlink()
             marker = producer/'marker'; marker.write_text('changed')
             clean_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(context),str(oracle),sha(context)]
             result = subprocess.run(clean_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('input inventory mismatch: producer',result.stderr)
