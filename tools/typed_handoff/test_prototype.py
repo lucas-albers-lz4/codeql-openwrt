@@ -74,6 +74,11 @@ class Prototype(unittest.TestCase):
             result = subprocess.run(failed_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('stage failed: init',result.stderr)
             self.assertEqual(json.loads((root/'failed-run/init.receipt.json').read_text())['exit_code'],7)
             self.assertFalse((root/'failed-run/index.receipt.json').exists())
+            failed = json.loads(context.read_text()); failed['run'] = str(root/'snapshot-failure'); failed['commands']['init']['env']['RUN'] = failed['run']
+            failed['commands']['init']['argv'] = [sys.executable,'-c',"import os,pathlib; p=pathlib.Path(os.environ['RUN'])/'db'; p.mkdir(); (p/'link').symlink_to('/dev/null')"]
+            dump(bad_context,failed); failure_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
+            result = subprocess.run(failure_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('stage artifact or snapshot failed: init',result.stderr)
+            self.assertIn('symlink',json.loads((root/'snapshot-failure/init.failure.json').read_text())['snapshot_error'])
             marker = producer/'marker'; marker.write_text('changed')
             clean_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(context),str(oracle),sha(context)]
             result = subprocess.run(clean_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('input inventory mismatch: producer',result.stderr)

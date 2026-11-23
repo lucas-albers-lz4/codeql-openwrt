@@ -140,7 +140,7 @@ def main(context_file, oracle_file, approval):
         p = Path(relative)
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
         if paths[name].exists(): fail('output already exists')
-    reserved = [run/'context.json', run/'oracle.json', run/'git-preflight.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json')]
+    reserved = [run/'context.json', run/'oracle.json', run/'git-preflight.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json','.failure.json')]
     if any(a == b or a in b.parents or b in a.parents for a in output_paths for b in reserved): fail('output collides with reserved packet path')
     run.mkdir(mode=0o700)
     (run / 'context.json').write_bytes(context_bytes)
@@ -183,10 +183,18 @@ def main(context_file, oracle_file, approval):
             except OSError as exc:
                 err.write(('execution error: ' + str(exc) + '\n').encode())
                 exit_code = 127
-        if exit_code == 0 and stage in ('extracted_decode','errors_decode','effects_decode','export'):
-            name = stage.removesuffix('_decode') if stage != 'export' else 'typed'
-            with paths[name].open('xb') as target: target.write(stdout.read_bytes())
-        after = snapshot(); end = time.time_ns()
+        try:
+            if exit_code == 0 and stage in ('extracted_decode','errors_decode','effects_decode','export'):
+                name = stage.removesuffix('_decode') if stage != 'export' else 'typed'
+                with paths[name].open('xb') as target: target.write(stdout.read_bytes())
+            after = snapshot(); end = time.time_ns()
+        except (OSError, ValueError) as exc:
+            failure = {'stage':stage, 'context_sha256':approval, 'argv':cfg['argv'], 'cwd':cfg['cwd'],
+                       'environment':cfg['env'], 'exit_code':exit_code, 'start_ns':start,
+                       'end_ns':time.time_ns(), 'before':before, 'snapshot_error':str(exc),
+                       'stdout_sha256':sha(stdout), 'stderr_sha256':sha(stderr)}
+            with (run/(stage+'.failure.json')).open('x') as f: json.dump(failure, f, sort_keys=True)
+            fail('stage artifact or snapshot failed: '+stage)
         receipt = {'stage': stage, 'context_sha256': approval, 'argv': cfg['argv'],
                    'cwd': cfg['cwd'], 'environment': cfg['env'], 'exit_code': exit_code,
                    'start_ns': start, 'end_ns': end, 'before': before, 'after': after,
@@ -223,5 +231,5 @@ if __name__ == '__main__':
         if len(sys.argv) != 5 or sys.argv[1] != '--synthetic-only':
             fail('prototype requires --synthetic-only; real runs are not supported')
         main(*sys.argv[2:])
-    except (ValueError, KeyError, OSError, subprocess.SubprocessError) as exc:
+    except (ValueError, KeyError, TypeError, IndexError, OSError, subprocess.SubprocessError) as exc:
         print('handoff failed:', exc, file=sys.stderr); sys.exit(1)
