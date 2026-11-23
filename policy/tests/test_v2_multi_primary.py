@@ -27,7 +27,8 @@ def fixture_claim(key, caller, tag):
             'scope': scope, 'context': context, 'pairs': pairs,
             'authorities': {authority: [definition]}, 'reference': ref,
             'verdict': 'intended_access',
-            'gate': dict(binding, allowed=True), 'effect': dict(binding, available=True),
+            'gate': dict(copy.deepcopy(binding), allowed=True),
+            'effect': dict(copy.deepcopy(binding), available=True),
             'supplementary': []}
 
 
@@ -89,14 +90,31 @@ class MultiPrimaryTests(unittest.TestCase):
         self.assertEqual(result['error'], 'claim differs from independently selected reference')
 
     def test_unasserted_claim_stays_unassessed_with_selected_candidate_reference(self):
-        b = copy.deepcopy(self.b)
-        selected = self.selection(b)
-        b.pop('reference')
-        b.pop('verdict')
-        result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
-                        selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
-        self.assertEqual(result['state'], 'allow_unassessed')
-        self.assertEqual(result['policy'], 'unassessed')
+        selected = self.selection(self.b)
+        for explicit_nulls in (False, True):
+            with self.subTest(explicit_nulls=explicit_nulls):
+                b = copy.deepcopy(self.b)
+                if explicit_nulls:
+                    b.update(reference=None, verdict=None)
+                else:
+                    b.pop('reference')
+                    b.pop('verdict')
+                result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
+                                selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+                self.assertEqual(result['state'], 'allow_unassessed')
+                self.assertEqual(result['policy'], 'unassessed')
+
+    def test_partial_null_reference_assertions_are_claim_local_errors(self):
+        for changes in ({'reference': None, 'verdict': 'intended_access'},
+                        {'reference': copy.deepcopy(self.b['reference']), 'verdict': None}):
+            with self.subTest(changes=changes):
+                b = copy.deepcopy(self.b)
+                selected = self.selection(self.b)
+                b.update(changes)
+                result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
+                                selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+                self.assertEqual(result['state'], 'contract_error')
+                self.assertEqual(result['error'], 'claim reference and verdict required together')
 
     def test_missing_gate_or_effect_stays_unknown_even_with_reference(self):
         for field in ('gate', 'effect'):
@@ -277,6 +295,30 @@ class MultiPrimaryTests(unittest.TestCase):
                 bool_field = 'allowed' if field == 'gate' else 'available'
                 selected[field][bool_field] = 1
                 b[field] = copy.deepcopy(selected[field])
+                result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
+                                selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+                self.assertEqual(result['state'], 'unknown')
+                self.assertEqual(result[field], 'unknown')
+
+    def test_envelope_evidence_matching_rejects_bool_int_substitution(self):
+        for field in ('gate', 'effect'):
+            with self.subTest(field=field):
+                b = copy.deepcopy(self.b)
+                selected = self.selection(b)
+                bool_field = 'allowed' if field == 'gate' else 'available'
+                b[field][bool_field] = 1
+                result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
+                                selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+                self.assertEqual(result['state'], 'contract_error')
+                self.assertIn('selected ' + field + ' evidence', result['error'])
+
+    def test_evidence_observation_matching_rejects_bool_int_substitution(self):
+        for field in ('gate', 'effect'):
+            with self.subTest(field=field):
+                b = copy.deepcopy(self.b)
+                selected = self.selection(b)
+                b[field]['observation']['start'] = False
+                selected[field]['observation']['start'] = False
                 result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
                                 selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
                 self.assertEqual(result['state'], 'unknown')

@@ -91,7 +91,9 @@ def _assess_claim(claim, selection, observation_id):
             raise ResolutionError(f'claim differs from selected {evidence_field} evidence')
     if (selection['reference'] is None) != (selection['verdict'] is None):
         raise ResolutionError('selected reference and verdict required together')
-    asserted = 'reference' in claim
+    asserted = 'reference' in claim and claim['reference'] is not None
+    if asserted != ('verdict' in claim and claim['verdict'] is not None):
+        raise ResolutionError('claim reference and verdict required together')
     if asserted and (not _strict_equal(claim['reference'], selection['reference'])
                      or not _strict_equal(claim['verdict'], selection['verdict'])):
         raise ResolutionError('claim differs from independently selected reference')
