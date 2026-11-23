@@ -174,6 +174,24 @@ class Prototype(unittest.TestCase):
                 dump(path,rec)
             duplicate_cmd = [*cmd]; duplicate_cmd[2] = str(duplicate)
             p = subprocess.run(duplicate_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('duplicate key',p.stderr)
+            cache_child = root/'cache-child'; shutil.copytree(run,cache_child)
+            cache_path = cache_child/'db/db-ucode/default/cache/pages/injected'; cache_path.write_text('x')
+            for index, stage in enumerate(STAGES):
+                path = cache_child/(stage+'.receipt.json'); rec = json.loads(path.read_text())
+                for edge in ('before','after'):
+                    if index > STAGES.index('extracted_query') or (stage == 'extracted_query' and edge == 'after'):
+                        rec[edge]['database']['db-ucode/default/cache/pages/injected'] = {'sha256':sha(cache_path),'size':1}
+                dump(path,rec)
+            cache_cmd = [*cmd]; cache_cmd[2] = str(cache_child)
+            p = subprocess.run(cache_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('query log transition: extracted_query',p.stderr)
+            cache_missing = root/'cache-missing'; shutil.copytree(run,cache_missing); (cache_missing/'db/db-ucode/default/cache/pages').rmdir()
+            for index, stage in enumerate(STAGES):
+                path = cache_missing/(stage+'.receipt.json'); rec = json.loads(path.read_text())
+                for edge in ('before','after'):
+                    if index > STAGES.index('extracted_query') or (stage == 'extracted_query' and edge == 'after'): del rec[edge]['database']['db-ucode/default/cache/pages']
+                dump(path,rec)
+            missing_cache_cmd = [*cmd]; missing_cache_cmd[2] = str(cache_missing)
+            p = subprocess.run(missing_cache_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('query log transition: extracted_query',p.stderr)
             db_mutation = root/'db-mutation'; shutil.copytree(run, db_mutation)
             (db_mutation/'db/data').write_text('corrupted')
             mutated_db_hash = sha(db_mutation/'db/data')
