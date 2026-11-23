@@ -33,7 +33,7 @@ def fixture_claim(key, caller, tag):
 
 OBSERVATION = {'kind': 'synthetic-observation', 'version': 1,
                'identity': {'id': 'synthetic-shared-observation', 'source': 'fixture.uc',
-                            'start': 2, 'end': 5}}
+                            'start': 0, 'end': 1}}
 
 
 class MultiPrimaryTests(unittest.TestCase):
@@ -106,6 +106,17 @@ class MultiPrimaryTests(unittest.TestCase):
                 result = self.run_claims(b)[0]
                 self.assertEqual(result['state'], 'unknown')
                 self.assertEqual(result['policy'], 'matched')
+
+    def test_absent_claim_evidence_stays_unknown_when_selection_contains_positive_evidence(self):
+        for field in ('gate', 'effect'):
+            with self.subTest(field=field):
+                b = copy.deepcopy(self.b)
+                selected = self.selection(b)
+                b[field] = None
+                result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
+                                selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+                self.assertEqual(result['state'], 'unknown')
+                self.assertEqual(result[field], 'unknown')
 
     def test_supplementary_root_allow_does_not_supply_gate(self):
         b = copy.deepcopy(self.b)
@@ -221,6 +232,28 @@ class MultiPrimaryTests(unittest.TestCase):
                 self.assertEqual(result['state'], 'unknown')
                 self.assertEqual(result[field], 'unknown')
 
+    def test_each_gate_and_effect_binding_field_is_independently_checked(self):
+        for record_name in ('gate', 'effect'):
+            for field in ('claim_key', 'observation', 'scope', 'context', 'pairs'):
+                with self.subTest(record=record_name, field=field):
+                    b = copy.deepcopy(self.b)
+                    record = b[record_name]
+                    if field == 'claim_key':
+                        record[field] = 'other-claim'
+                    elif field == 'observation':
+                        record[field] = dict(record[field], source='other-source')
+                    elif field == 'scope':
+                        record[field] = dict(record[field], caller='other-caller')
+                    elif field == 'context':
+                        record[field] = dict(record[field], corpus='other-corpus')
+                    else:
+                        record[field] = [{'target': 'other-target', 'operation': 'read'}]
+                    result = self.run_claims(b)[0]
+                    self.assertEqual(result['state'], 'unknown')
+                    self.assertEqual(result[record_name], 'unknown')
+                    self.assertEqual(result['effect' if record_name == 'gate' else 'gate'],
+                                     'available' if record_name == 'gate' else 'allow')
+
     def test_selected_evidence_is_validated_and_envelope_must_repeat_it(self):
         b = copy.deepcopy(self.b)
         selection = self.selection(b)
@@ -236,6 +269,19 @@ class MultiPrimaryTests(unittest.TestCase):
                         selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
         self.assertEqual(result['state'], 'contract_error')
 
+    def test_boolean_evidence_values_reject_integer_substitutions(self):
+        for field in ('gate', 'effect'):
+            with self.subTest(field=field):
+                b = copy.deepcopy(self.b)
+                selected = self.selection(b)
+                bool_field = 'allowed' if field == 'gate' else 'available'
+                selected[field][bool_field] = 1
+                b[field] = copy.deepcopy(selected[field])
+                result = assess(copy.deepcopy(OBSERVATION), [selected], [b],
+                                selected_observation=copy.deepcopy(OBSERVATION['identity']))[0]
+                self.assertEqual(result['state'], 'unknown')
+                self.assertEqual(result[field], 'unknown')
+
     def test_shared_observation_identity_is_bound_and_swap_is_structural(self):
         alternate = {'kind': 'synthetic-observation', 'version': 1,
                      'identity': {'id': 'other-observation', 'source': 'fixture.uc',
@@ -248,6 +294,13 @@ class MultiPrimaryTests(unittest.TestCase):
         with self.assertRaisesRegex(ResolutionError, 'shared observation selection mismatch'):
             assess(same_id_different_span, [self.selection(self.a)], [self.a],
                    selected_observation=copy.deepcopy(OBSERVATION['identity']))
+        for field, invalid in (('start', False), ('end', True)):
+            with self.subTest(field=field):
+                selected = copy.deepcopy(OBSERVATION['identity'])
+                selected[field] = invalid
+                with self.assertRaisesRegex(ResolutionError, 'shared observation selection mismatch'):
+                    assess(copy.deepcopy(OBSERVATION), [self.selection(self.a)], [self.a],
+                           selected_observation=selected)
         malformed = copy.deepcopy(OBSERVATION)
         malformed['identity']['id'] = ''
         with self.assertRaisesRegex(ResolutionError, 'invalid shared observation'):
@@ -277,6 +330,16 @@ class MultiPrimaryTests(unittest.TestCase):
                          [self.a, self.b],
                          selected_observation=copy.deepcopy(OBSERVATION['identity']))
         self.assertEqual([r['state'] for r in results], ['assessed', 'contract_error'])
+        extra = self.selection(self.b)
+        extra['key'] = 'selection-with-no-claim'
+        results = assess(copy.deepcopy(OBSERVATION), [extra, self.selection(self.a)],
+                         [self.a],
+                         selected_observation=copy.deepcopy(OBSERVATION['identity']))
+        self.assertEqual([r['key'] for r in results], ['claim-a'])
+        results = assess(copy.deepcopy(OBSERVATION), [self.selection(self.a), self.selection(self.b)],
+                         [self.b, self.a],
+                         selected_observation=copy.deepcopy(OBSERVATION['identity']))
+        self.assertEqual([r['key'] for r in results], ['claim-b', 'claim-a'])
         alias = copy.deepcopy(self.a)
         alias['key'] = 'claim-a-alias'
         alias['gate']['claim_key'] = alias['key']

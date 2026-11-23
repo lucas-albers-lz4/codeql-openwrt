@@ -8,6 +8,24 @@ There is no persistence or serialization interface.
 from .v2_resolver import ResolutionError, resolve
 
 
+def _strict_equal(left, right):
+    """JSON-shaped equality that does not conflate booleans and integers."""
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, dict):
+        if len(left) != len(right):
+            return False
+        for left_key, left_value in left.items():
+            matches = [key for key in right if type(key) is type(left_key) and key == left_key]
+            if len(matches) != 1 or not _strict_equal(left_value, right[matches[0]]):
+                return False
+        return True
+    if isinstance(left, list):
+        return len(left) == len(right) and all(
+            _strict_equal(a, b) for a, b in zip(left, right))
+    return left == right
+
+
 def _structural_observation(observation, selected_identity):
     if (not isinstance(observation, dict)
             or set(observation) != {'kind', 'version', 'identity'}
@@ -24,7 +42,7 @@ def _structural_observation(observation, selected_identity):
             or observation['identity']['end'] < observation['identity']['start']):
         raise ResolutionError('invalid shared observation')
     if (not isinstance(selected_identity, dict)
-            or selected_identity != observation['identity']):
+            or not _strict_equal(selected_identity, observation['identity'])):
         raise ResolutionError('shared observation selection mismatch')
 
 
@@ -63,14 +81,19 @@ def _assess_claim(claim, selection, observation_id):
     selected_fields = {'key', 'family', 'scope', 'context', 'pairs', 'authorities',
                        'reference', 'verdict', 'gate', 'effect'}
     if (not isinstance(selection, dict) or set(selection) != selected_fields
-            or any(claim.get(k) != selection[k] for k in
-                   selected_fields - {'reference', 'verdict'})):
+            or any(not _strict_equal(claim.get(k), selection[k]) for k in
+                   selected_fields - {'reference', 'verdict', 'gate', 'effect'})):
         raise ResolutionError('claim differs from independent selection')
+    for evidence_field in ('gate', 'effect'):
+        submitted = claim[evidence_field]
+        selected = selection[evidence_field]
+        if submitted is not None and not _strict_equal(submitted, selected):
+            raise ResolutionError(f'claim differs from selected {evidence_field} evidence')
     if (selection['reference'] is None) != (selection['verdict'] is None):
         raise ResolutionError('selected reference and verdict required together')
     asserted = 'reference' in claim
-    if asserted and (claim['reference'] != selection['reference']
-                     or claim['verdict'] != selection['verdict']):
+    if asserted and (not _strict_equal(claim['reference'], selection['reference'])
+                     or not _strict_equal(claim['verdict'], selection['verdict'])):
         raise ResolutionError('claim differs from independently selected reference')
     scope, context, pairs = selection['scope'], selection['context'], selection['pairs']
     _validate_context(context)
@@ -91,13 +114,13 @@ def _assess_claim(claim, selection, observation_id):
                      verdict=claim.get('verdict') if asserted else None)
     binding = _binding(key, observation_id, scope, context, pairs)
     gate_record, effect_record = selection['gate'], selection['effect']
-    gate_ok = (isinstance(gate_record, dict)
+    gate_ok = (claim['gate'] is not None and isinstance(gate_record, dict)
                and set(gate_record) == set(binding) | {'allowed'}
-               and all(gate_record.get(k) == v for k, v in binding.items())
+               and all(_strict_equal(gate_record.get(k), v) for k, v in binding.items())
                and gate_record.get('allowed') is True)
-    effect_ok = (isinstance(effect_record, dict)
+    effect_ok = (claim['effect'] is not None and isinstance(effect_record, dict)
                  and set(effect_record) == set(binding) | {'available'}
-                 and all(effect_record.get(k) == v for k, v in binding.items())
+                 and all(_strict_equal(effect_record.get(k), v) for k, v in binding.items())
                  and effect_record.get('available') is True)
     # Supplementary evidence is recorded as an input only. It never completes
     # either the primary gate or the provider effect obligation.
@@ -132,7 +155,7 @@ def assess(observation, selections, claims, *, selected_observation):
         return result
 
     selected_by_key = keyed(selections, 'selection')
-    claims_by_key = keyed(claims, 'claim')
+    keyed(claims, 'claim')  # Preflight duplicate/unattributable claim identities.
     def freeze(value):
         if isinstance(value, dict):
             return tuple(sorted((k, freeze(v)) for k, v in value.items()))
@@ -161,9 +184,6 @@ def assess(observation, selections, claims, *, selected_observation):
             results.append({'key': claim['key'], 'state': 'contract_error',
                             'gate': 'unknown', 'effect': 'unknown',
                             'error': str(exc)})
-    for key in selected_by_key.keys() - claims_by_key.keys():
-        results.append({'key': key, 'state': 'contract_error', 'gate': 'unknown',
-                        'effect': 'unknown', 'error': 'missing claim envelope'})
     if len(set(semantic)) != len(semantic):
         raise ResolutionError('duplicate semantic primary claim')
     return results
