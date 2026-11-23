@@ -1,0 +1,30 @@
+{
+  "kind": "markup-historical-reference",
+  "version": 1,
+  "observation_id": "openwrt-136-0a6612f",
+  "bundle_commit": "3b4bd080f9d0187421878e1430c7b4129af46135",
+  "checker_commit": "5f8bd2658483c0c06c0ebfced98fd09b1f57aeff",
+  "consumer": "d37adeadaf836ba97049f75087a348165027f7f9",
+  "producer": "0a6612fe0e66351a0ccda43ad5b51f5ef5a2724e",
+  "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+  "grammar": "4a243af329fae2f4ff01e0fc80133cbab8314600",
+  "dependency": "ce29d8a59af0d25517c622469db17aad826b8d7f",
+  "cli": "2.27.4",
+  "extractor_sha256": "35aeb3a59305c7fb21b9ead30d658add5d255645f3f73efc877f5363abf242a8",
+  "corpus_revision": "sha256:b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+  "profile": "luci-ssl-25.12",
+  "inventory_revision": "inventory:luci-ssl-files-v1",
+  "queries": [
+    "ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+    "ql/src/diagnostics/ExtractionErrors.ql",
+    "ql/src/markup-real-issue56-test.ql"
+  ],
+  "ast_scope": "/usr/share/ucode/luci/uhttpd.uc",
+  "artifacts": {
+    "manifest.json": "8f84bf665718d36972c8b4f3d8648e1bd0c660b016cca80fa430453bb1b47a8f",
+    "routing.json": "6289982629e08a38ae597a6c83723389294d1da8e51aedad78afa6a375ff7684",
+    "extracted.json": "c256735a989cccccabc7e93f011208abe0e08b26d482f7b3f98dee84542aab91",
+    "errors.json": "2c38be0a7d1935f63300ceccb92fd50f5bb76b829bcd0bac782393521a7665fc",
+    "uhttpd-ast.csv": "fcd5b35e686648962d2d5d4acf6e2ed02bb6e3c0de22048d97d75dbf74bd1282"
+  }
+}
