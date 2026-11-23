@@ -112,7 +112,7 @@ def main(context_file, oracle_file, approval):
         if not Path(exe).is_file() or not os.access(exe, os.X_OK): fail('invalid executable')
         if exe not in context['executables'] or sha(Path(exe)) != context['executables'][exe]: fail('executable digest mismatch')
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
-    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent','runtime_transitions'}: fail('context fields')
+    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent','runtime_transitions','runtime_directories'}: fail('context fields')
     if set(context['outputs']) != {'runtime','database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
     if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
     for value in context['inputs'].values(): no_symlink_components(value)
@@ -145,10 +145,12 @@ def main(context_file, oracle_file, approval):
         p = Path(relative)
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
         if paths[name].exists(): fail('output already exists')
+    if type(context['runtime_directories']) is not list or len(set(context['runtime_directories'])) != len(context['runtime_directories']) or any(type(p) is not str or not p or p == '.' or p != str(Path(p)) or Path(p).is_absolute() or '..' in Path(p).parts for p in context['runtime_directories']): fail('invalid runtime directories')
     if type(context['runtime_transitions']) is not dict or list(context['runtime_transitions']) != list(STAGES): fail('runtime transition stages')
     for allowed in context['runtime_transitions'].values():
         if type(allowed) is not list or len(set(allowed)) != len(allowed) or any(type(p) is not str or not p or p == '.' or p != str(Path(p)) or Path(p).is_absolute() or '..' in Path(p).parts for p in allowed): fail('invalid runtime allowlist')
     if type(context['required_absent']) is not list or not context['required_absent'] or any(type(v) is not str or Path(v).is_absolute() or '..' in Path(v).parts or paths['runtime'] not in (run/v).parents for v in context['required_absent']) or len(set(context['required_absent'])) != len(context['required_absent']): fail('invalid required absence paths')
+    if any((run/absence) == (paths['runtime']/directory) or (run/absence) in (paths['runtime']/directory).parents for absence in context['required_absent'] for directory in context['runtime_directories']): fail('required absence conflicts with runtime directory')
     reserved = [run/'context.json', run/'oracle.json', run/'git-preflight.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json','.failure.json')]
     if any(a == b or a in b.parents or b in a.parents for a in output_paths for b in reserved): fail('output collides with reserved packet path')
     run.mkdir(mode=0o700)
@@ -162,6 +164,7 @@ def main(context_file, oracle_file, approval):
     shutil.copyfile(roots['source']/oracle['source'], run/'inputs/source')
     shutil.copyfile(roots['consumer']/'corpus/lock.json', run/'inputs/lock.json')
     paths['runtime'].mkdir(parents=True)
+    for rel in context['runtime_directories']: (paths['runtime']/rel).mkdir(parents=True, exist_ok=True)
     def snapshot(): return {k: inventory(v) for k, v in paths.items()}
     def exact(name, key):
         import csv

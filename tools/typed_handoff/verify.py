@@ -68,6 +68,9 @@ def valid_entry(entry):
     if set(entry) != {'sha256','size'}: return False
     return type(entry['sha256']) is str and len(entry['sha256']) == 64 and all(c in '0123456789abcdef' for c in entry['sha256']) and type(entry['size']) is int and entry['size'] >= 0
 
+def directory_inventory(value):
+    return type(value) is dict and all(type(k) is str and k and not Path(k).is_absolute() and '..' not in Path(k).parts and k == str(Path(k)) and valid_entry(v) for k,v in value.items())
+
 def valid_inventory(value):
     if value is None: return True
     if valid_entry(value): return True
@@ -104,7 +107,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     require(digest(context_bytes) == expected_context, 'context digest')
     require(digest(oracle_bytes) == expected_oracle, 'oracle digest')
     context, oracle = parse(context_bytes), parse(oracle_bytes)
-    require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent','runtime_transitions'}, 'context fields')
+    require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent','runtime_transitions','runtime_directories'}, 'context fields')
     require(set(context['outputs']) == {'runtime','database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}, 'output roles')
     for rel in context['outputs'].values():
         require(type(rel) is str and bool(rel) and not Path(rel).is_absolute() and '..' not in Path(rel).parts and rel == str(Path(rel)), 'output path')
@@ -125,7 +128,8 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         require(set(cfg) == {'argv','cwd','env'} and type(cfg['argv']) is list and bool(cfg['argv']) and all(type(x) is str for x in cfg['argv']) and type(cfg['cwd']) is str and type(cfg['env']) is dict and all(type(k) is str and type(v) is str for k,v in cfg['env'].items()), 'command fields: '+stage)
         require(set(rec['before']) == set(context['inputs']) | set(context['outputs']) and set(rec['after']) == set(rec['before']), 'inventory roles: '+stage)
         require(all(valid_inventory(value) for edge in ('before','after') for value in rec[edge].values()), 'inventory schema: '+stage)
-        require(all(type(rec[edge]['runtime']) is dict and not valid_entry(rec[edge]['runtime']) for edge in ('before','after')), 'runtime directory state: '+stage)
+        require(all(directory_inventory(rec[edge]['runtime']) for edge in ('before','after')), 'runtime directory state: '+stage)
+        require(all(rec[edge]['database'] is None or directory_inventory(rec[edge]['database']) for edge in ('before','after')), 'database directory state: '+stage)
         require(rec['stage'] == stage and rec['context_sha256'] == expected_context, 'receipt identity: '+stage)
         require(rec['argv'] == cfg['argv'] and rec['cwd'] == cfg['cwd'] and rec['environment'] == cfg['env'], 'command: '+stage)
         require(type(rec['exit_code']) is int and rec['exit_code'] == 0, 'exit: '+stage)
@@ -169,13 +173,20 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
                 relative = str(Path(rel).relative_to(context['outputs']['runtime']))
                 require(relative not in state and not any(k.startswith(relative+'/') for k in state), 'required path observed')
     initial = receipts[0]['before']
+    runtime_dirs = context['runtime_directories']
+    require(type(runtime_dirs) is list and len(set(runtime_dirs)) == len(runtime_dirs) and all(type(p) is str and p and p != '.' and p == str(Path(p)) and not Path(p).is_absolute() and '..' not in Path(p).parts for p in runtime_dirs), 'runtime directories')
+    expected_runtime = {}
+    for directory in runtime_dirs:
+        expected_runtime[directory] = {'directory':True}
+        for parent in Path(directory).parents:
+            if str(parent) != '.': expected_runtime[str(parent)] = {'directory':True}
     for name, value in context['initial'].items():
         require(initial[name] == value, 'initial: '+name)
     for name in context['inputs']:
         if name != 'consumer':
             require(all(r[edge][name] == initial[name] for r in receipts for edge in ('before','after')), 'input drift: '+name)
     for name, rel in context['outputs'].items():
-        require(initial[name] == ({} if name == 'runtime' else None), 'output not absent: '+name)
+        require(initial[name] == (expected_runtime if name == 'runtime' else None), 'output not absent: '+name)
         p = Path(rel)
         require(not p.is_absolute() and '..' not in p.parts, 'output path')
     require(set(context['outputs']) == {'runtime','database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}, 'output roles')
