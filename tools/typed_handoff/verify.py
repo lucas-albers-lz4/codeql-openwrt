@@ -49,6 +49,18 @@ def parse(data):
     return json.loads(data, object_pairs_hook=pairs,
                       parse_constant=lambda x: (_ for _ in ()).throw(ValueError(x)))
 def read_json(path): return parse(path.read_bytes())
+def valid_entry(entry):
+    if type(entry) is not dict: return False
+    if set(entry) == {'directory'}: return entry['directory'] is True
+    if set(entry) != {'sha256','size'}: return False
+    return type(entry['sha256']) is str and len(entry['sha256']) == 64 and all(c in '0123456789abcdef' for c in entry['sha256']) and type(entry['size']) is int and entry['size'] >= 0
+
+def valid_inventory(value):
+    if value is None: return True
+    if valid_entry(value): return True
+    if type(value) is not dict: return False
+    return all(type(k) is str and k and not Path(k).is_absolute() and '..' not in Path(k).parts and k == str(Path(k)) and valid_entry(v) for k,v in value.items())
+
 def inventory(root):
     if root.is_symlink(): raise ValueError('symlink: '+str(root))
     if not root.exists(): raise ValueError('missing: '+str(root))
@@ -94,6 +106,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         require(cfg['argv'][0] in context['executables'], 'executable role: '+stage)
         require(set(cfg) == {'argv','cwd','env'} and type(cfg['argv']) is list and bool(cfg['argv']) and all(type(x) is str for x in cfg['argv']) and type(cfg['cwd']) is str and type(cfg['env']) is dict and all(type(k) is str and type(v) is str for k,v in cfg['env'].items()), 'command fields: '+stage)
         require(set(rec['before']) == set(context['inputs']) | set(context['outputs']) and set(rec['after']) == set(rec['before']), 'inventory roles: '+stage)
+        require(all(valid_inventory(value) for edge in ('before','after') for value in rec[edge].values()), 'inventory schema: '+stage)
         require(rec['stage'] == stage and rec['context_sha256'] == expected_context, 'receipt identity: '+stage)
         require(rec['argv'] == cfg['argv'] and rec['cwd'] == cfg['cwd'] and rec['environment'] == cfg['env'], 'command: '+stage)
         require(type(rec['exit_code']) is int and rec['exit_code'] == 0, 'exit: '+stage)
