@@ -112,7 +112,7 @@ def main(context_file, oracle_file, approval):
         if not Path(exe).is_file() or not os.access(exe, os.X_OK): fail('invalid executable')
         if exe not in context['executables'] or sha(Path(exe)) != context['executables'][exe]: fail('executable digest mismatch')
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
-    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent'}: fail('context fields')
+    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent','runtime_transitions'}: fail('context fields')
     if set(context['outputs']) != {'runtime','database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
     if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
     for value in context['inputs'].values(): no_symlink_components(value)
@@ -145,7 +145,8 @@ def main(context_file, oracle_file, approval):
         p = Path(relative)
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
         if paths[name].exists(): fail('output already exists')
-    if type(context['required_absent']) is not list or any(type(v) is not str or Path(v).is_absolute() or '..' in Path(v).parts or paths['runtime'] not in (run/v).parents for v in context['required_absent']) or len(set(context['required_absent'])) != len(context['required_absent']): fail('invalid required absence paths')
+    if type(context['runtime_transitions']) is not dict or list(context['runtime_transitions']) != list(STAGES): fail('runtime transition stages')
+    if type(context['required_absent']) is not list or not context['required_absent'] or any(type(v) is not str or Path(v).is_absolute() or '..' in Path(v).parts or paths['runtime'] not in (run/v).parents for v in context['required_absent']) or len(set(context['required_absent'])) != len(context['required_absent']): fail('invalid required absence paths')
     reserved = [run/'context.json', run/'oracle.json', run/'git-preflight.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json','.failure.json')]
     if any(a == b or a in b.parents or b in a.parents for a in output_paths for b in reserved): fail('output collides with reserved packet path')
     run.mkdir(mode=0o700)
@@ -192,6 +193,7 @@ def main(context_file, oracle_file, approval):
                 if not same(before_report[:target]+before_report[target+1:],after_report[:target]+after_report[target+1:]): fail('other report rows changed')
 
         before = snapshot()
+        if stage == 'reimport' and before != imported: fail('pre-reimport state changed')
         created = {'init':'database', 'extracted_query':'extracted_bqrs', 'errors_query':'errors_bqrs', 'effects_query':'effects_bqrs', 'extracted_decode':'extracted', 'errors_decode':'errors', 'effects_decode':'effects', 'export':'typed'}.get(stage)
         if created and before[created] is not None: fail('output not absent: ' + created)
         start = time.time_ns()
@@ -225,6 +227,10 @@ def main(context_file, oracle_file, approval):
         if created and after[created] is None: fail('output not created: ' + created)
         if stage == 'init' and not paths['database'].is_dir(): fail('database must be a directory')
         if stage.endswith('_query') and not log_only(before['database'],after['database']): fail('query log transition')
+        allowed = context['runtime_transitions'][stage]
+        if type(allowed) is not list or any(type(p) is not str or not p or Path(p).is_absolute() or '..' in Path(p).parts for p in allowed): fail('invalid runtime allowlist')
+        changed_runtime = {k for k in set(before['runtime']) | set(after['runtime']) if before['runtime'].get(k) != after['runtime'].get(k)}
+        if any(not any(k == prefix or k.startswith(prefix+'/') for prefix in allowed) for k in changed_runtime): fail('unexpected runtime transition')
         for name in context['outputs']:
             if name != created and name != 'runtime' and before[name] != after[name]:
                 permitted_db = name == 'database' and (stage in ('index','finalize') or (stage.endswith('_query') and log_only(before[name], after[name])))

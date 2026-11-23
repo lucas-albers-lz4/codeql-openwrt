@@ -104,7 +104,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     require(digest(context_bytes) == expected_context, 'context digest')
     require(digest(oracle_bytes) == expected_oracle, 'oracle digest')
     context, oracle = parse(context_bytes), parse(oracle_bytes)
-    require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent'}, 'context fields')
+    require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent','runtime_transitions'}, 'context fields')
     require(set(context['outputs']) == {'runtime','database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}, 'output roles')
     for rel in context['outputs'].values():
         require(type(rel) is str and bool(rel) and not Path(rel).is_absolute() and '..' not in Path(rel).parts and rel == str(Path(rel)), 'output path')
@@ -116,6 +116,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     require(safe_bytes(packet/'context.json') == context_bytes, 'packet context')
     require(safe_bytes(packet/'oracle.json') == oracle_bytes, 'packet oracle')
     require(list(context['commands']) == list(STAGES), 'stages')
+    require(type(context['runtime_transitions']) is dict and list(context['runtime_transitions']) == list(STAGES), 'runtime stages')
     receipts = []
     for stage in STAGES:
         rec = read_json(packet / (stage + '.receipt.json')); cfg = context['commands'][stage]
@@ -136,6 +137,7 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         receipts.append(rec)
     require(digest(safe_bytes(packet/'inputs/source')) == oracle['source_sha256'], 'retained source')
     require(digest(safe_bytes(packet/'inputs/lock.json')) == oracle['lock_sha256'], 'retained lock')
+    require(type(context['required_absent']) is list and bool(context['required_absent']) and len(set(context['required_absent'])) == len(context['required_absent']), 'required absence list')
     for rel in context['required_absent']:
         p = Path(rel); require(not p.is_absolute() and '..' not in p.parts and Path(context['outputs']['runtime']) in p.parents, 'absence path')
         require(not (packet/p).exists() and not (packet/p).is_symlink(), 'required path exists')
@@ -179,6 +181,10 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
     creates = {'init':'database', 'extracted_query':'extracted_bqrs', 'errors_query':'errors_bqrs', 'effects_query':'effects_bqrs', 'extracted_decode':'extracted', 'errors_decode':'errors', 'effects_decode':'effects', 'export':'typed'}
     for stage, rec in zip(STAGES, receipts):
         created = creates.get(stage)
+        allowed = context['runtime_transitions'][stage]
+        require(type(allowed) is list and all(type(p) is str and p and not Path(p).is_absolute() and '..' not in Path(p).parts for p in allowed), 'runtime allowlist')
+        changed_runtime = {k for k in set(rec['before']['runtime']) | set(rec['after']['runtime']) if rec['before']['runtime'].get(k) != rec['after']['runtime'].get(k)}
+        require(all(any(k == prefix or k.startswith(prefix+'/') for prefix in allowed) for k in changed_runtime), 'runtime transition: '+stage)
         if stage.endswith('_query'): require(log_only(rec['before']['database'],rec['after']['database']), 'query log transition: '+stage)
         if created:
             require(rec['before'][created] is None and rec['after'][created] is not None, 'creation: '+stage)
