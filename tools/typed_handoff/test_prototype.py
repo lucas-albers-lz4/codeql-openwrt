@@ -11,6 +11,7 @@ import tempfile
 import unittest
 
 HERE = Path(__file__).resolve().parent
+PY = str(Path(sys.executable).resolve()); GIT = str(Path(shutil.which('git')).resolve())
 STAGES = ('init','index','finalize','extracted_query','extracted_decode','errors_query','errors_decode','effects_query','effects_decode','export','import','reimport')
 def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
 def dump(p, obj): p.write_text(json.dumps(obj))
@@ -39,16 +40,16 @@ class Prototype(unittest.TestCase):
                 subprocess.run(['git','-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','--quiet','-m','fixture'],cwd=checkout,check=True)
                 pins[name] = subprocess.check_output(['git','rev-parse','HEAD'],cwd=checkout,text=True).strip()
             script = root/'stage.py'
-            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s=="init":\n (r/"db/log").mkdir(parents=True)\n (r/"db/data").write_text("database")\nif s.endswith("_query"):\n (r/(s[:-6]+".bqrs")).write_text("bqrs")\n (r/("db/log/query-run-"+s+".log")).write_text("query log")\nif s.endswith("_decode"):\n import csv\n csv.writer(sys.stdout,lineterminator="\\n").writerows(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())[s[:-7]+"_rows"])\nif s=="export": print(json.dumps(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())["neutral_typed_payload"]))\nif s=="import":\n for name in ["reports/handler_effects.json","reports/m4-block-device-exec.json"]: (c/name).write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
+            script.write_text('''import json, os, pathlib, sys\ns=sys.argv[1]; r=pathlib.Path(os.environ["RUN"]); c=pathlib.Path(os.environ["CONSUMER"])\nif s=="init":\n (r/"db/log").mkdir(parents=True)\n (r/"db/data").write_text("database")\nif s.endswith("_query"):\n (r/(s[:-6]+".bqrs")).write_text("bqrs")\n (r/("db/log/query-run-"+s+".log")).write_text("query log")\n (r/("db/log/execute-queries-"+s+".log")).write_text("query log")\nif s.endswith("_decode"):\n import csv\n csv.writer(sys.stdout,lineterminator="\\n").writerows(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())[s[:-7]+"_rows"])\nif s=="export": print(json.dumps(json.loads(pathlib.Path(os.environ["ORACLE"]).read_text())["neutral_typed_payload"]))\nif s=="import":\n for name in ["reports/handler_effects.json","reports/m4-block-device-exec.json"]: (c/name).write_text(json.dumps([{"record_id":"m4:effect:luci-setBlockDetect-system","value":"after"},{"record_id":"keep"}]))\n''')
             run = root/'run'; oracle = root/'oracle.json'; context = root/'context.json'
             dump(oracle, {'source':'usr/share/rpcd/ucode/luci', 'source_sha256':family['source_sha256'], 'lock_sha256':family['lock_sha256'], 'extracted_rows':[['f','col1'],[str(source_file),'']], 'errors_rows':family['errors_rows'], 'effects_rows':family['effects_rows'], 'neutral_typed_payload':family['neutral_typed_payload'], 'expected_effects':reports, 'prestate_provenance':{name:{'target_index':0} for name in reports}, 'expected_complete_targets':{name:[after[0]] for name in reports}})
-            commands = {s:{'argv':[sys.executable,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer),'ORACLE':str(oracle)}} for s in STAGES}
+            commands = {s:{'argv':[PY,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer),'ORACLE':str(oracle)}} for s in STAGES}
             initial = {'reports':{'directory':True}, 'corpus':{'directory':True}, '.git':{'sha256':sha(consumer/'.git'),'size':(consumer/'.git').stat().st_size}} | {name:{'sha256':sha(consumer/name),'size':(consumer/name).stat().st_size} for name in reports} | {'corpus/lock.json':{'sha256':sha(lock),'size':lock.stat().st_size}}
-            dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer),'producer':str(producer),'source':str(source)},'run':str(run),'initial':{'consumer':initial,'producer':{name:{'sha256':sha(producer/name),'size':(producer/name).stat().st_size} for name in ('.git','marker')},'source':{**{d:{'directory':True} for d in ('usr','usr/share','usr/share/rpcd','usr/share/rpcd/ucode')},'usr/share/rpcd/ucode/luci':{'sha256':sha(source_file),'size':source_file.stat().st_size}}},'git':pins,'git_executable':shutil.which('git'),'git_env':{'PATH':'/usr/bin:/bin','LC_ALL':'C','GIT_CONFIG_GLOBAL':'/dev/null','GIT_CONFIG_SYSTEM':'/dev/null'},'runner_sha256':sha(HERE/'runner.py'),'verifier_sha256':sha(HERE/'verify.py'),'executables':{sys.executable:sha(Path(sys.executable)),shutil.which('git'):sha(Path(shutil.which('git')))},'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
+            dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer),'producer':str(producer),'source':str(source)},'run':str(run),'initial':{'consumer':initial,'producer':{name:{'sha256':sha(producer/name),'size':(producer/name).stat().st_size} for name in ('.git','marker')},'source':{**{d:{'directory':True} for d in ('usr','usr/share','usr/share/rpcd','usr/share/rpcd/ucode')},'usr/share/rpcd/ucode/luci':{'sha256':sha(source_file),'size':source_file.stat().st_size}}},'git':pins,'required_absent':['runtime/empty-pycache'],'git_executable':GIT,'git_env':{'PATH':'/usr/bin:/bin','LC_ALL':'C','GIT_CONFIG_GLOBAL':'/dev/null','GIT_CONFIG_SYSTEM':'/dev/null'},'runner_sha256':sha(HERE/'runner.py'),'verifier_sha256':sha(HERE/'verify.py'),'executables':{PY:sha(Path(PY)),GIT:sha(Path(GIT))},'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db','runtime':'runtime'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
             bad_context = root/'bad-context.json'; bad = json.loads(context.read_text()); bad['runner_sha256'] = '0'*64; dump(bad_context,bad)
             digest_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(digest_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('implementation digest mismatch',result.stderr)
-            bad = json.loads(context.read_text()); bad['executables'][sys.executable] = '0'*64; dump(bad_context,bad)
+            bad = json.loads(context.read_text()); bad['executables'][PY] = '0'*64; dump(bad_context,bad)
             result = subprocess.run(digest_cmd[:-1]+[sha(bad_context)],capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('executable digest mismatch',result.stderr)
             bad = json.loads(context.read_text()); bad['git']['producer'] = '0'*40; dump(bad_context,bad)
             bad_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
@@ -69,16 +70,24 @@ class Prototype(unittest.TestCase):
             aliased = json.loads(context.read_text()); aliased['run'] = str(root/'alias-run'); aliased['outputs']['errors'] = aliased['outputs']['effects']; dump(bad_context,aliased)
             alias_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(alias_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('overlapping output paths',result.stderr)
-            failed = json.loads(context.read_text()); failed['run'] = str(root/'failed-run'); failed['commands']['init']['argv'] = [sys.executable, '-c', 'raise SystemExit(7)']; dump(bad_context,failed)
+            failed = json.loads(context.read_text()); failed['run'] = str(root/'failed-run'); failed['commands']['init']['argv'] = [PY, '-c', 'raise SystemExit(7)']; dump(bad_context,failed)
             failed_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(failed_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('stage failed: init',result.stderr)
             self.assertEqual(json.loads((root/'failed-run/init.receipt.json').read_text())['exit_code'],7)
             self.assertFalse((root/'failed-run/index.receipt.json').exists())
             failed = json.loads(context.read_text()); failed['run'] = str(root/'snapshot-failure'); failed['commands']['init']['env']['RUN'] = failed['run']
-            failed['commands']['init']['argv'] = [sys.executable,'-c',"import os,pathlib; p=pathlib.Path(os.environ['RUN'])/'db'; p.mkdir(); (p/'link').symlink_to('/dev/null')"]
+            failed['commands']['init']['argv'] = [PY,'-c',"import os,pathlib; p=pathlib.Path(os.environ['RUN'])/'db'; p.mkdir(); (p/'link').symlink_to('/dev/null')"]
             dump(bad_context,failed); failure_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(failure_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('stage artifact or snapshot failed: init',result.stderr)
             self.assertIn('symlink',json.loads((root/'snapshot-failure/init.failure.json').read_text())['snapshot_error'])
+            bad_target = json.loads(oracle.read_text()); bad_target['expected_complete_targets'][reports[0]][0]['value'] = 'wrong'; dump(bad_oracle,bad_target)
+            target_context = json.loads(context.read_text()); target_context['oracle_sha256'] = sha(bad_oracle); target_context['run'] = str(root/'target-run')
+            for cfg in target_context['commands'].values(): cfg['env']['RUN'] = target_context['run']; cfg['env']['ORACLE'] = str(bad_oracle)
+            dump(bad_context,target_context)
+            target_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(bad_oracle),sha(bad_context)]
+            result = subprocess.run(target_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('import target mismatch',result.stderr)
+            self.assertFalse((root/'target-run/reimport.receipt.json').exists())
+            for name in reports: dump(consumer/name,before)
             marker = producer/'marker'; marker.write_text('changed')
             clean_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(context),str(oracle),sha(context)]
             result = subprocess.run(clean_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('input inventory mismatch: producer',result.stderr)
@@ -101,6 +110,17 @@ class Prototype(unittest.TestCase):
             symlink = root/'packet-link'; shutil.copytree(run,symlink); log = next((symlink/'db/log').iterdir()); log.unlink(); log.symlink_to(root/'oracle.json')
             symlink_cmd = [*cmd]; symlink_cmd[2] = str(symlink)
             p = subprocess.run(symlink_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('symlink:',p.stderr)
+            fifo = root/'fifo'; shutil.copytree(run,fifo); (fifo/'init.stdout').unlink(); os.mkfifo(fifo/'init.stdout')
+            fifo_cmd = [*cmd]; fifo_cmd[2] = str(fifo)
+            p = subprocess.run(fifo_cmd,capture_output=True,text=True,timeout=5); self.assertNotEqual(p.returncode,0); self.assertIn('special entry',p.stderr)
+            bad_size = root/'bad-size'; shutil.copytree(run,bad_size)
+            for index, stage in enumerate(STAGES):
+                path = bad_size/(stage+'.receipt.json'); rec = json.loads(path.read_text())
+                for edge in ('before','after'):
+                    if index > STAGES.index('effects_decode') or (stage == 'effects_decode' and edge == 'after'): rec[edge]['effects']['size'] = 0
+                dump(path,rec)
+            size_cmd = [*cmd]; size_cmd[2] = str(bad_size)
+            p = subprocess.run(size_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('output binding: effects',p.stderr)
             altered_stream = root/'altered-stream'; shutil.copytree(run, altered_stream)
             (altered_stream/'errors_decode.stdout').write_text('corrupt')
             stream_cmd = [*cmd]; stream_cmd[2] = str(altered_stream)
@@ -138,7 +158,7 @@ class Prototype(unittest.TestCase):
                         rec[edge]['database']['data'] = {'sha256':mutated_db_hash,'size':len('corrupted')}
                 dump(path,rec)
             db_cmd = [*cmd]; db_cmd[2] = str(db_mutation)
-            p = subprocess.run(db_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('output transition: effects_query/database',p.stderr)
+            p = subprocess.run(db_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('query log transition: effects_query',p.stderr)
             coherent = root/'coherent'; shutil.copytree(run, coherent)
             wrong = b'name\nwrong\n'
             (coherent/'effects.csv').write_bytes(wrong)

@@ -36,8 +36,9 @@ def family_check(context, oracle):
 
 def log_only(before, after):
     if type(before) is not dict or type(after) is not dict: return False
-    changed = {k for k in set(before) | set(after) if before.get(k) != after.get(k)}
-    return all(re.fullmatch(r'log/(?:execute-queries|query-run)-[^/]+\.log', name) for name in changed)
+    added = set(after) - set(before)
+    if any(after.get(k) != v for k,v in before.items()) or len(added) != 2: return False
+    return all(type(after[name]) is dict and set(after[name]) == {'sha256','size'} for name in added) and sum(bool(re.fullmatch(r'log/execute-queries-[^/]+\.log', name)) for name in added) == 1 and sum(bool(re.fullmatch(r'log/query-run-[^/]+\.log', name)) for name in added) == 1
 
 def same(a, b):
     return json.dumps(a, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(b, sort_keys=True, separators=(',', ':'), allow_nan=False)
@@ -107,10 +108,12 @@ def main(context_file, oracle_file, approval):
     if sha(Path(__file__)) != context['runner_sha256'] or sha(Path(__file__).with_name('verify.py')) != context['verifier_sha256']: fail('implementation digest mismatch')
     for command in context['commands'].values():
         exe = command['argv'][0]
+        no_symlink_components(exe)
+        if not Path(exe).is_file() or not os.access(exe, os.X_OK): fail('invalid executable')
         if exe not in context['executables'] or sha(Path(exe)) != context['executables'][exe]: fail('executable digest mismatch')
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
-    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env'}: fail('context fields')
-    if set(context['outputs']) != {'database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
+    if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs','executables','runner_sha256','verifier_sha256','git_executable','git_env','required_absent'}: fail('context fields')
+    if set(context['outputs']) != {'runtime','database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
     if set(context['initial']) != set(context['inputs']) or 'consumer' not in context['inputs']: fail('input roles')
     for value in context['inputs'].values(): no_symlink_components(value)
     no_symlink_components(context['run'])
@@ -124,6 +127,8 @@ def main(context_file, oracle_file, approval):
     for name, root in roots.items():
         if inventory(root) != context['initial'][name]: fail('input inventory mismatch: ' + name)
     git_exe, git_env = context['git_executable'], context['git_env']
+    no_symlink_components(git_exe)
+    if not Path(git_exe).is_file() or not os.access(git_exe, os.X_OK): fail('invalid git executable')
     if git_exe not in context['executables'] or sha(Path(git_exe)) != context['executables'][git_exe]: fail('git executable digest mismatch')
     git_receipts = {}
     for role, pin in context['git'].items():
@@ -140,6 +145,7 @@ def main(context_file, oracle_file, approval):
         p = Path(relative)
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
         if paths[name].exists(): fail('output already exists')
+    if type(context['required_absent']) is not list or any(type(v) is not str or Path(v).is_absolute() or '..' in Path(v).parts or paths['runtime'] not in (run/v).parents for v in context['required_absent']) or len(set(context['required_absent'])) != len(context['required_absent']): fail('invalid required absence paths')
     reserved = [run/'context.json', run/'oracle.json', run/'git-preflight.json', run/'reports', run/'inputs', run/'implementation'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json','.failure.json')]
     if any(a == b or a in b.parents or b in a.parents for a in output_paths for b in reserved): fail('output collides with reserved packet path')
     run.mkdir(mode=0o700)
@@ -152,6 +158,7 @@ def main(context_file, oracle_file, approval):
     (run / 'inputs').mkdir()
     shutil.copyfile(roots['source']/oracle['source'], run/'inputs/source')
     shutil.copyfile(roots['consumer']/'corpus/lock.json', run/'inputs/lock.json')
+    paths['runtime'].mkdir(parents=True)
     def snapshot(): return {k: inventory(v) for k, v in paths.items()}
     def exact(name, key):
         import csv
@@ -171,6 +178,19 @@ def main(context_file, oracle_file, approval):
             for name in ('extracted', 'errors', 'effects'): exact(name, name + '_rows')
         if stage == 'import' and not same(load(paths['typed']), oracle['neutral_typed_payload']):
             fail('typed payload mismatch')
+        if stage == 'reimport':
+            for name in oracle['expected_effects']:
+                before_report = parse((run/'reports'/'init'/name).read_bytes())
+                after_bytes = (roots['consumer']/name).read_bytes()
+                if after_bytes != (run/'reports'/'import'/name).read_bytes(): fail('first import snapshot mismatch')
+                after_report = parse(after_bytes)
+                target = oracle['prestate_provenance'][name]['target_index']
+                if type(target) is not int or target < 0: fail('invalid target index')
+                def positions(rows): return [i for i,row in enumerate(rows) if row.get('record_id') == 'm4:effect:luci-setBlockDetect-system']
+                if positions(before_report) != [target] or positions(after_report) != [target]: fail('target position mismatch')
+                if not same(after_report[target],oracle['expected_complete_targets'][name][0]): fail('import target mismatch')
+                if not same(before_report[:target]+before_report[target+1:],after_report[:target]+after_report[target+1:]): fail('other report rows changed')
+
         before = snapshot()
         created = {'init':'database', 'extracted_query':'extracted_bqrs', 'errors_query':'errors_bqrs', 'effects_query':'effects_bqrs', 'extracted_decode':'extracted', 'errors_decode':'errors', 'effects_decode':'effects', 'export':'typed'}.get(stage)
         if created and before[created] is not None: fail('output not absent: ' + created)
@@ -188,6 +208,7 @@ def main(context_file, oracle_file, approval):
                 name = stage.removesuffix('_decode') if stage != 'export' else 'typed'
                 with paths[name].open('xb') as target: target.write(stdout.read_bytes())
             after = snapshot(); end = time.time_ns()
+            if any((run/rel).exists() or (run/rel).is_symlink() for rel in context['required_absent']): fail('required path exists')
         except (OSError, ValueError) as exc:
             failure = {'stage':stage, 'context_sha256':approval, 'argv':cfg['argv'], 'cwd':cfg['cwd'],
                        'environment':cfg['env'], 'exit_code':exit_code, 'start_ns':start,
@@ -203,8 +224,9 @@ def main(context_file, oracle_file, approval):
         if exit_code: fail('stage failed: ' + stage)
         if created and after[created] is None: fail('output not created: ' + created)
         if stage == 'init' and not paths['database'].is_dir(): fail('database must be a directory')
+        if stage.endswith('_query') and not log_only(before['database'],after['database']): fail('query log transition')
         for name in context['outputs']:
-            if name != created and before[name] != after[name]:
+            if name != created and name != 'runtime' and before[name] != after[name]:
                 permitted_db = name == 'database' and (stage in ('index','finalize') or (stage.endswith('_query') and log_only(before[name], after[name])))
                 if not permitted_db: fail('unexpected output transition: ' + name)
         for name in roots:
@@ -223,7 +245,7 @@ def main(context_file, oracle_file, approval):
             for name in oracle['expected_effects']:
                 target = run / 'reports' / stage / name
                 target.parent.mkdir(parents=True, exist_ok=True)
-                target.write_bytes((consumer / name).read_bytes())
+                with target.open('xb') as f: f.write((consumer / name).read_bytes())
     print('Stages completed; independent verification still required.')
 
 if __name__ == '__main__':
