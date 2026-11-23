@@ -32,11 +32,14 @@ def family_check(context, oracle):
     expected_rows = [['f','col1'], [str(Path(context['inputs']['source']) / source), '']]
     if oracle['extracted_rows'] != expected_rows: raise ValueError('extracted identity')
 
-def log_only(before, after):
+def query_transition(before, after, stage):
     if type(before) is not dict or type(after) is not dict: return False
     added = set(after) - set(before)
-    if any(after.get(k) != v for k,v in before.items()) or len(added) != 2: return False
-    return all(type(after[name]) is dict and set(after[name]) == {'sha256','size'} for name in added) and sum(bool(re.fullmatch(r'log/execute-queries-[^/]+\.log', name)) for name in added) == 1 and sum(bool(re.fullmatch(r'log/query-run-[^/]+\.log', name)) for name in added) == 1
+    if any(after.get(k) != v for k,v in before.items()): return False
+    cache = {'db-ucode/default/cache/pages','db-ucode/default/cache/predicates','db-ucode/default/cache/relations'} if stage == 'extracted_query' else set()
+    if not cache.issubset(added) or any(after[name] != {'directory':True} for name in cache): return False
+    logs = added - cache
+    return len(logs) == 2 and all(type(after[name]) is dict and set(after[name]) == {'sha256','size'} for name in logs) and sum(bool(re.fullmatch(r'log/execute-queries-[^/]+\.log', name)) for name in logs) == 1 and sum(bool(re.fullmatch(r'log/query-run-[^/]+\.log', name)) for name in logs) == 1
 
 def same(a, b):
     return json.dumps(a, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(b, sort_keys=True, separators=(',', ':'), allow_nan=False)
@@ -197,12 +200,12 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         require(type(allowed) is list and len(set(allowed)) == len(allowed) and all(type(p) is str and p and p != '.' and p == str(Path(p)) and not Path(p).is_absolute() and '..' not in Path(p).parts for p in allowed), 'runtime allowlist')
         changed_runtime = {k for k in set(rec['before']['runtime']) | set(rec['after']['runtime']) if rec['before']['runtime'].get(k) != rec['after']['runtime'].get(k)}
         require(all(any(k == prefix or k.startswith(prefix+'/') for prefix in allowed) for k in changed_runtime), 'runtime transition: '+stage)
-        if stage.endswith('_query'): require(log_only(rec['before']['database'],rec['after']['database']), 'query log transition: '+stage)
+        if stage.endswith('_query'): require(query_transition(rec['before']['database'],rec['after']['database'],stage), 'query log transition: '+stage)
         if created:
             require(rec['before'][created] is None and rec['after'][created] is not None, 'creation: '+stage)
         for name in context['outputs']:
             if name != created and name != 'runtime' and rec['before'][name] != rec['after'][name]:
-                permitted_db = name == 'database' and (stage in ('index','finalize') or (stage.endswith('_query') and log_only(rec['before'][name], rec['after'][name])))
+                permitted_db = name == 'database' and (stage in ('index','finalize') or (stage.endswith('_query') and query_transition(rec['before'][name], rec['after'][name], stage)))
                 require(permitted_db, 'output transition: '+stage+'/'+name)
     for name in ('extracted','errors','effects'):
         bqrs = name+'_bqrs'; raw = safe_bytes(packet/context['outputs'][bqrs])
