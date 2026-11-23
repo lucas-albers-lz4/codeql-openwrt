@@ -157,6 +157,20 @@ class Prototype(unittest.TestCase):
                 trial_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(bad_oracle),sha(bad_context)]
                 result = subprocess.run(trial_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('prestate provenance',result.stderr); self.assertFalse((Path(trial['run'])/'import.receipt.json').exists())
                 self.assertEqual(json.loads(report.read_text()),before)
+            # Simulate the output guard rejecting only after a valid decode command.
+            guard_trial = json.loads(context.read_text()); guard_trial['run'] = str(root/'decode-guard')
+            for cfg in guard_trial['commands'].values(): cfg['env']['RUN'] = guard_trial['run']
+            dump(bad_context,guard_trial)
+            spec = importlib.util.spec_from_file_location('runner_output_guard',HERE/'runner.py'); guarded = importlib.util.module_from_spec(spec); spec.loader.exec_module(guarded)
+            original_guard = guarded.no_symlink_components; guard_run = Path(guard_trial['run']); guard_calls = []
+            def reject_decode_target(path):
+                if Path(path) == guard_run/'extracted.csv' and (guard_run/'extracted_decode.stdout').exists():
+                    guard_calls.append(str(path)); raise ValueError('simulated output path rejection')
+                return original_guard(path)
+            with mock.patch.object(guarded,'no_symlink_components',side_effect=reject_decode_target):
+                with self.assertRaisesRegex(ValueError,'stage artifact or snapshot failed: extracted_decode'): guarded.main(str(bad_context),str(oracle),sha(bad_context))
+            self.assertEqual(len(guard_calls),1); self.assertTrue((guard_run/'extracted_query.receipt.json').exists()); self.assertFalse((guard_run/'extracted.csv').exists())
+            self.assertIn('simulated output path rejection',json.loads((guard_run/'extracted_decode.failure.json').read_text())['snapshot_error'])
             # Mutate between the early import inventory and the command's final snapshot.
             trial = json.loads(context.read_text()); trial['run'] = str(root/'preimport-drift')
             for cfg in trial['commands'].values(): cfg['env']['RUN'] = trial['run']
