@@ -6,6 +6,7 @@ This checks retained evidence against external context and oracle, not execution
 import csv
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 import sys
@@ -25,7 +26,7 @@ def family_check(context, oracle):
     if context['initial']['consumer']['corpus/lock.json']['sha256'] != oracle['lock_sha256']: raise ValueError('consumer lock')
     if sorted(oracle['expected_effects']) != ['reports/handler_effects.json','reports/m4-block-device-exec.json']: raise ValueError('family reports')
     files = context['initial']['source']
-    if set(files) != {source} or files[source]['sha256'] != oracle['source_sha256']: raise ValueError('source inventory')
+    if set(files) != {source, 'usr','usr/share','usr/share/rpcd','usr/share/rpcd/ucode'} or files[source]['sha256'] != oracle['source_sha256']: raise ValueError('source inventory')
     expected_rows = [['f','col1'], [str(Path(context['inputs']['source']) / source), '']]
     if oracle['extracted_rows'] != expected_rows: raise ValueError('extracted identity')
 
@@ -38,27 +39,51 @@ def same(a, b):
     return json.dumps(a, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(b, sort_keys=True, separators=(',', ':'), allow_nan=False)
 
 def digest(data): return hashlib.sha256(data).hexdigest()
-def read_json(path):
+def parse(data):
     def pairs(items):
         obj = {}
         for key, val in items:
             if key in obj: raise ValueError('duplicate key: ' + key)
             obj[key] = val
         return obj
-    return json.loads(path.read_bytes(), object_pairs_hook=pairs,
+    return json.loads(data, object_pairs_hook=pairs,
                       parse_constant=lambda x: (_ for _ in ()).throw(ValueError(x)))
+def read_json(path): return parse(path.read_bytes())
+def inventory(root):
+    if root.is_symlink(): raise ValueError('symlink: '+str(root))
+    if not root.exists(): raise ValueError('missing: '+str(root))
+    if root.is_file():
+        if root.stat().st_nlink != 1: raise ValueError('hardlink: '+str(root))
+        return {'sha256': digest(root.read_bytes()), 'size': root.stat().st_size}
+    result = {}
+    def error(exc): raise exc
+    for directory, dirs, files in os.walk(root, followlinks=False, onerror=error):
+        for name in sorted(dirs+files):
+            p = Path(directory)/name; key = str(p.relative_to(root))
+            if p.is_symlink(): raise ValueError('symlink: '+key)
+            if p.is_dir(): result[key] = {'directory':True}
+            elif p.is_file():
+                if p.stat().st_nlink != 1: raise ValueError('hardlink: '+key)
+                result[key] = {'sha256':digest(p.read_bytes()),'size':p.stat().st_size}
+            else: raise ValueError('special entry: '+key)
+    return result
+
 def require(condition, text):
     if not condition: raise ValueError(text)
 def verify(packet, context_file, oracle_file, expected_context, expected_oracle):
     packet = Path(packet); context_file = Path(context_file); oracle_file = Path(oracle_file)
-    require(digest(context_file.read_bytes()) == expected_context, 'context digest')
-    require(digest(oracle_file.read_bytes()) == expected_oracle, 'oracle digest')
-    context, oracle = read_json(context_file), read_json(oracle_file)
+    for path in (packet, context_file, oracle_file):
+        require(path.is_absolute() and '..' not in path.parts, 'non-absolute or traversing path')
+        require(not any(part.is_symlink() for part in (path, *path.parents)), 'symlink path')
+    context_bytes, oracle_bytes = context_file.read_bytes(), oracle_file.read_bytes()
+    require(digest(context_bytes) == expected_context, 'context digest')
+    require(digest(oracle_bytes) == expected_oracle, 'oracle digest')
+    context, oracle = parse(context_bytes), parse(oracle_bytes)
     require(set(context) == {'oracle_sha256','commands','inputs','run','initial','git','outputs'}, 'context fields')
     family_check(context, oracle)
     require(context['oracle_sha256'] == expected_oracle, 'oracle binding')
-    require((packet/'context.json').read_bytes() == context_file.read_bytes(), 'packet context')
-    require((packet/'oracle.json').read_bytes() == oracle_file.read_bytes(), 'packet oracle')
+    require((packet/'context.json').read_bytes() == context_bytes, 'packet context')
+    require((packet/'oracle.json').read_bytes() == oracle_bytes, 'packet oracle')
     require(list(context['commands']) == list(STAGES), 'stages')
     receipts = []
     for stage in STAGES:
@@ -76,6 +101,22 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
             require(receipts[-1]['end_ns'] <= rec['start_ns'], 'stage order')
             require(receipts[-1]['after'] == rec['before'], 'state continuity')
         receipts.append(rec)
+    require(digest((packet/'inputs/source').read_bytes()) == oracle['source_sha256'], 'retained source')
+    require(digest((packet/'inputs/lock.json').read_bytes()) == oracle['lock_sha256'], 'retained lock')
+    require(inventory(packet/context['outputs']['database']) == receipts[-1]['after']['database'], 'database inventory')
+    expected_files = {'context.json','oracle.json','inputs/source','inputs/lock.json'}
+    expected_files.update(stage+suffix for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json'))
+    for name, rel in context['outputs'].items():
+        if name == 'database':
+            expected_files.add(rel)
+            expected_files.update(str(Path(rel)/child) for child in receipts[-1]['after'][name])
+        else: expected_files.add(rel)
+    expected_files.update(str(Path('reports')/phase/name) for phase in ('init','import','reimport') for name in oracle['expected_effects'])
+    expected_paths = set(expected_files)
+    for name in list(expected_files):
+        expected_paths.update(str(parent) for parent in Path(name).parents if str(parent) != '.')
+    packet_inventory = inventory(packet)
+    require(set(packet_inventory) == expected_paths, 'packet inventory')
     initial = receipts[0]['before']
     for name, value in context['initial'].items():
         require(initial[name] == value, 'initial: '+name)
@@ -119,12 +160,12 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         raw = [(packet/'reports'/phase/name).read_bytes() for phase in ('init','import','reimport')]
         require(digest(raw[0]) == before[name]['sha256'], 'before report: '+name)
         require(digest(raw[1]) == after[name]['sha256'] and raw[1] == raw[2], 'replay report: '+name)
-        rows = [json.loads(b) for b in raw]
+        rows = [parse(b) for b in raw]
         positions = [[i for i,x in enumerate(row) if x.get('record_id') == 'm4:effect:luci-setBlockDetect-system'] for row in rows]
         require(positions[0] == positions[1] == positions[2] == [oracle['prestate_provenance'][name]['target_index']], 'target position: '+name)
         i = positions[0][0]
         require(same(rows[1][i], oracle['expected_complete_targets'][name][0]), 'target: '+name)
-        require(rows[0][:i]+rows[0][i+1:] == rows[1][:i]+rows[1][i+1:], 'other rows: '+name)
+        require(same(rows[0][:i]+rows[0][i+1:], rows[1][:i]+rows[1][i+1:]), 'other rows: '+name)
     print('Packet checks passed; execution is not authenticated.')
 if __name__ == '__main__':
     try:

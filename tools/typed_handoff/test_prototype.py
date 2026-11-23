@@ -43,8 +43,8 @@ class Prototype(unittest.TestCase):
             run = root/'run'; oracle = root/'oracle.json'; context = root/'context.json'
             dump(oracle, {'source':'usr/share/rpcd/ucode/luci', 'source_sha256':family['source_sha256'], 'lock_sha256':family['lock_sha256'], 'extracted_rows':[['f','col1'],[str(source_file),'']], 'errors_rows':family['errors_rows'], 'effects_rows':family['effects_rows'], 'neutral_typed_payload':family['neutral_typed_payload'], 'expected_effects':reports, 'prestate_provenance':{name:{'target_index':0} for name in reports}, 'expected_complete_targets':{name:[after[0]] for name in reports}})
             commands = {s:{'argv':[sys.executable,str(script),s], 'cwd':str(root), 'env':{'RUN':str(run),'CONSUMER':str(consumer),'ORACLE':str(oracle)}} for s in STAGES}
-            initial = {'.git':{'sha256':sha(consumer/'.git'),'size':(consumer/'.git').stat().st_size}} | {name:{'sha256':sha(consumer/name),'size':(consumer/name).stat().st_size} for name in reports} | {'corpus/lock.json':{'sha256':sha(lock),'size':lock.stat().st_size}}
-            dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer),'producer':str(producer),'source':str(source)},'run':str(run),'initial':{'consumer':initial,'producer':{name:{'sha256':sha(producer/name),'size':(producer/name).stat().st_size} for name in ('.git','marker')},'source':{'usr/share/rpcd/ucode/luci':{'sha256':sha(source_file),'size':source_file.stat().st_size}}},'git':pins,'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
+            initial = {'reports':{'directory':True}, 'corpus':{'directory':True}, '.git':{'sha256':sha(consumer/'.git'),'size':(consumer/'.git').stat().st_size}} | {name:{'sha256':sha(consumer/name),'size':(consumer/name).stat().st_size} for name in reports} | {'corpus/lock.json':{'sha256':sha(lock),'size':lock.stat().st_size}}
+            dump(context, {'oracle_sha256':sha(oracle),'commands':commands,'inputs':{'consumer':str(consumer),'producer':str(producer),'source':str(source)},'run':str(run),'initial':{'consumer':initial,'producer':{name:{'sha256':sha(producer/name),'size':(producer/name).stat().st_size} for name in ('.git','marker')},'source':{**{d:{'directory':True} for d in ('usr','usr/share','usr/share/rpcd','usr/share/rpcd/ucode')},'usr/share/rpcd/ucode/luci':{'sha256':sha(source_file),'size':source_file.stat().st_size}}},'git':pins,'outputs':{k:k+'.csv' for k in ('extracted','errors','effects')}|{'typed':'typed.json','database':'db'}|{k+'_bqrs':k+'.bqrs' for k in ('extracted','errors','effects')}})
             bad_context = root/'bad-context.json'; bad = json.loads(context.read_text()); bad['git']['producer'] = '0'*40; dump(bad_context,bad)
             bad_cmd = [sys.executable,str(HERE/'runner.py'),'--synthetic-only',str(bad_context),str(oracle),sha(bad_context)]
             result = subprocess.run(bad_cmd,capture_output=True,text=True); self.assertNotEqual(result.returncode,0); self.assertIn('unclean or wrong git input: producer',result.stderr)
@@ -79,6 +79,15 @@ class Prototype(unittest.TestCase):
             p = subprocess.run(cmd,capture_output=True,text=True); self.assertEqual(p.returncode,0,p.stderr)
             repeated = subprocess.run(env,capture_output=True,text=True)
             self.assertNotEqual(repeated.returncode,0); self.assertIn('fresh and absolute',repeated.stderr)
+            missing_db = root/'missing-db'; shutil.copytree(run, missing_db); shutil.rmtree(missing_db/'db')
+            missing_cmd = [*cmd]; missing_cmd[2] = str(missing_db)
+            p = subprocess.run(missing_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('missing:',p.stderr)
+            extra = root/'extra'; shutil.copytree(run,extra); (extra/'unexpected').write_text('x')
+            extra_cmd = [*cmd]; extra_cmd[2] = str(extra)
+            p = subprocess.run(extra_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('packet inventory',p.stderr)
+            symlink = root/'packet-link'; shutil.copytree(run,symlink); log = next((symlink/'db/log').iterdir()); log.unlink(); log.symlink_to(root/'oracle.json')
+            symlink_cmd = [*cmd]; symlink_cmd[2] = str(symlink)
+            p = subprocess.run(symlink_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('symlink:',p.stderr)
             altered_stream = root/'altered-stream'; shutil.copytree(run, altered_stream)
             (altered_stream/'errors_decode.stdout').write_text('corrupt')
             stream_cmd = [*cmd]; stream_cmd[2] = str(altered_stream)
@@ -97,11 +106,13 @@ class Prototype(unittest.TestCase):
             bqrs_cmd = [*cmd]; bqrs_cmd[2] = str(altered_bqrs)
             p = subprocess.run(bqrs_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('bqrs: effects',p.stderr)
             db_mutation = root/'db-mutation'; shutil.copytree(run, db_mutation)
+            (db_mutation/'db/data').write_text('corrupted')
+            mutated_db_hash = sha(db_mutation/'db/data')
             for index, stage in enumerate(STAGES):
                 path = db_mutation/(stage+'.receipt.json'); rec = json.loads(path.read_text())
                 for edge in ('before','after'):
                     if index > STAGES.index('effects_query') or (stage == 'effects_query' and edge == 'after'):
-                        rec[edge]['database']['data']['sha256'] = '0'*64
+                        rec[edge]['database']['data'] = {'sha256':mutated_db_hash,'size':len('corrupted')}
                 dump(path,rec)
             db_cmd = [*cmd]; db_cmd[2] = str(db_mutation)
             p = subprocess.run(db_cmd,capture_output=True,text=True); self.assertNotEqual(p.returncode,0); self.assertIn('output transition: effects_query/database',p.stderr)

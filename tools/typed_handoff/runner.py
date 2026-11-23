@@ -6,6 +6,7 @@ Receipts describe an observation; they do not authenticate command execution.
 import hashlib
 import json
 import re
+import shutil
 import os
 from pathlib import Path
 import subprocess
@@ -29,7 +30,7 @@ def family_check(context, oracle):
     if context['initial']['consumer']['corpus/lock.json']['sha256'] != oracle['lock_sha256']: raise ValueError('consumer lock')
     if sorted(oracle['expected_effects']) != ['reports/handler_effects.json','reports/m4-block-device-exec.json']: raise ValueError('family reports')
     files = context['initial']['source']
-    if set(files) != {source} or files[source]['sha256'] != oracle['source_sha256']: raise ValueError('source inventory')
+    if set(files) != {source, 'usr','usr/share','usr/share/rpcd','usr/share/rpcd/ucode'} or files[source]['sha256'] != oracle['source_sha256']: raise ValueError('source inventory')
     expected_rows = [['f','col1'], [str(Path(context['inputs']['source']) / source), '']]
     if oracle['extracted_rows'] != expected_rows: raise ValueError('extracted identity')
 
@@ -44,7 +45,7 @@ def same(a, b):
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
-def load(path):
+def parse(data):
     def pairs(items):
         result = {}
         for key, value in items:
@@ -52,8 +53,11 @@ def load(path):
                 raise ValueError('duplicate JSON key: ' + key)
             result[key] = value
         return result
-    return json.loads(path.read_text(), object_pairs_hook=pairs,
+    return json.loads(data, object_pairs_hook=pairs,
                       parse_constant=lambda x: (_ for _ in ()).throw(ValueError(x)))
+
+def load(path):
+    return parse(path.read_bytes())
 
 def inventory(path):
     if not path.exists():
@@ -64,15 +68,20 @@ def inventory(path):
         if path.stat().st_nlink != 1: raise ValueError('hardlinked file: ' + str(path))
         return {'sha256': sha(path), 'size': path.stat().st_size}
     result = {}
-    for directory, dirs, files in os.walk(path, followlinks=False):
+    def walk_error(exc): raise exc
+    for directory, dirs, files in os.walk(path, followlinks=False, onerror=walk_error):
         dirs.sort(); files.sort()
         for name in dirs + files:
             p = Path(directory) / name
             if p.is_symlink():
                 raise ValueError('symlink in inventory: ' + str(p))
-            if p.is_file():
+            if p.is_dir():
+                result[str(p.relative_to(path))] = {'directory': True}
+            elif p.is_file():
                 if p.stat().st_nlink != 1: raise ValueError('hardlinked input: ' + str(p))
                 result[str(p.relative_to(path))] = {'sha256': sha(p), 'size': p.stat().st_size}
+            else:
+                raise ValueError('unsupported filesystem entry: ' + str(p))
     return result
 
 def fail(message):
@@ -89,11 +98,12 @@ def main(context_file, oracle_file, approval):
     no_symlink_components(context_file); no_symlink_components(oracle_file)
     context_file = Path(context_file).resolve(strict=True)
     oracle_file = Path(oracle_file).resolve(strict=True)
-    context = load(context_file); oracle = load(oracle_file)
+    context_bytes = context_file.read_bytes(); oracle_bytes = oracle_file.read_bytes()
+    context = parse(context_bytes); oracle = parse(oracle_bytes)
     family_check(context, oracle)
     # Approval is an external reviewer's context digest, not an authentication mechanism.
-    if approval != sha(context_file): fail('reviewed context digest mismatch')
-    if context['oracle_sha256'] != sha(oracle_file): fail('oracle mismatch')
+    if approval != hashlib.sha256(context_bytes).hexdigest(): fail('reviewed context digest mismatch')
+    if context['oracle_sha256'] != hashlib.sha256(oracle_bytes).hexdigest(): fail('oracle mismatch')
     if list(context['commands']) != list(STAGES): fail('stage sequence mismatch')
     if set(context) != {'oracle_sha256','commands','inputs','run','initial','git','outputs'}: fail('context fields')
     if set(context['outputs']) != {'database','extracted_bqrs','errors_bqrs','effects_bqrs','extracted','errors','effects','typed'}: fail('output roles')
@@ -114,9 +124,6 @@ def main(context_file, oracle_file, approval):
         head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
         status = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=all'], cwd=root, text=True)
         if head != pin or status: fail('unclean or wrong git input: ' + role)
-    run.mkdir(mode=0o700)
-    (run / 'context.json').write_bytes(context_file.read_bytes())
-    (run / 'oracle.json').write_bytes(oracle_file.read_bytes())
     paths = {**roots, **{k: run / v for k, v in context['outputs'].items()}}
     output_paths = [paths[k] for k in context['outputs']]
     if any(a == b or a in b.parents or b in a.parents for i,a in enumerate(output_paths) for b in output_paths[i+1:]): fail('overlapping output paths')
@@ -124,6 +131,14 @@ def main(context_file, oracle_file, approval):
         p = Path(relative)
         if p.is_absolute() or '..' in p.parts or not p.parts: fail('invalid output path')
         if paths[name].exists(): fail('output already exists')
+    reserved = [run/'context.json', run/'oracle.json', run/'reports', run/'inputs'] + [run/(stage+suffix) for stage in STAGES for suffix in ('.stdout','.stderr','.receipt.json')]
+    if any(a == b or a in b.parents or b in a.parents for a in output_paths for b in reserved): fail('output collides with reserved packet path')
+    run.mkdir(mode=0o700)
+    (run / 'context.json').write_bytes(context_bytes)
+    (run / 'oracle.json').write_bytes(oracle_bytes)
+    (run / 'inputs').mkdir()
+    shutil.copyfile(roots['source']/oracle['source'], run/'inputs/source')
+    shutil.copyfile(roots['consumer']/'corpus/lock.json', run/'inputs/lock.json')
     def snapshot(): return {k: inventory(v) for k, v in paths.items()}
     def exact(name, key):
         import csv
