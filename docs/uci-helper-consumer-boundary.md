@@ -12,6 +12,17 @@ The catalog in `policy/uci_consumers.py` at the base contains one pinned source-
 
 Producer contract reference: `codeql-ucode` commit `d398198` (`docs/issue-53-uci-inventory.md`, `ql/src/inventory/UciHelperObservation.ql`). Consumer contract reference: `docs/pack-contract.md`, section “UCI consumers”, and `policy/uci_consumers.py`. Producer and consumer observations must remain separate evidence families.
 
+The pinned source shape distinguishes the commit input from nearby uses of
+`config`: `uci_apply(false)` obtains `changes` at line 76, iterates its keys
+into the local `config` at line 78, and passes that variable at the `commit`
+site on line 79. The separate revert loop at lines 144–145 also uses keys from
+a `changes` result, but calls `revert`, not `commit`. The `config` read at line
+49 (`config?.apply?.rollback`) supplies an apply timeout and does not identify
+a UCI config name at the commit site. The producer fixture's SHA-256 is
+`ac75cfef7d74f87ed7f957778004a7bf486c76df699398c215795b4947e0c93e`, matching
+the source blob recorded in `docs/issue-53-uci-inventory.md`. These are source
+inspection details, not a new extraction or data-flow result.
+
 ## Independently specified controls
 
 Expected producer positive: on the pinned `controller/admin/uci.uc`, the exact source call `uci.commit` is associated with the top-level `ubus_call` helper and its syntactic `ubus.call(object, method, args)` forwarding, where each argument refers to the corresponding lexical formal. This is not proof of runtime value preservation or execution, and it is not a config identity result.
@@ -24,7 +35,7 @@ Expected consumer negatives: unknown or dynamic config, mismatched corpus revisi
 
 ## Existing verification and limits
 
-The producer PR's `docs/issue-53-uci-inventory.md` records a fresh single-file extraction of the pinned controller at producer revision `8375887`. That extraction observed argument nodes at positions 0, 1, and 2 at the `uci.commit` site and helper forwarding site, and reported zero extraction errors; it did not establish an exact call-pair association. The later bounded observer established the call-pair association, and the later producer work separately recorded paired positive/negative controls. These are syntactic source observations, not interprocedural data flow, proof of runtime value preservation, or proof of execution.
+The producer PR's `docs/issue-53-uci-inventory.md` records a fresh single-file extraction of the pinned controller at producer revision `8375887`. That extraction observed argument nodes at positions 0, 1, and 2 at the `uci.commit` site and helper forwarding site, and reported zero extraction errors; it did not establish an exact call-pair association. The bounded observer was introduced in producer commit `cc87f6d` and was present at `374b035`, an ancestor of merged producer commit `d398198`; it established the call-pair association, and the producer work separately recorded paired positive/negative controls. These are syntactic source observations, not interprocedural data flow, proof of runtime value preservation, or proof of execution.
 
 The existing consumer test `policy/tests/test_uci_consumers.py` checks catalog rows against the six known assets, checks artifact schema and exact join-key behavior, and independently exercises synthetic UCI and direct-file gates. Its `test_bounded_system_option_expectation` also distinguishes an intended operation from the ACL's broader config-level grant. These tests validate the consumer contract but do not validate producer-to-consumer config identity, since the producer observation has no such identity.
 

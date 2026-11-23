@@ -22,6 +22,20 @@ jobs:
         run: python3 -m unittest discover -s ql-js -p 'test_*.py' -v
       - name: Markup assessment validator checks
         run: python3 -m unittest discover -s evidence/markup-profile-0a6612f -p 'test_validate.py' -v
+      - name: Checkout pinned LuCI source for historical reference
+        uses: actions/checkout@v4
+        with:
+          repository: openwrt/luci
+          ref: b2e0be4b46ec0fd43394c081fa7c50657af14011
+          path: .ci-luci-historical
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify LuCI source revision
+        run: test "$(git -C .ci-luci-historical rev-parse HEAD)" = b2e0be4b46ec0fd43394c081fa7c50657af14011
+      - name: Historical markup reference checks
+        env:
+          OPENWRT68_LUCI_SOURCE: ${{ github.workspace }}/.ci-luci-historical
+        run: python3 -m unittest discover -s evidence/markup-historical-reference -p 'test_validate.py' -v
 
   typed-handoff:
     runs-on: ubuntu-latest
