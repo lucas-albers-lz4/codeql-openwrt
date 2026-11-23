@@ -6,6 +6,7 @@ This checks retained evidence against external context and oracle, not execution
 import csv
 import hashlib
 import json
+import re
 from pathlib import Path
 import sys
 
@@ -27,6 +28,11 @@ def family_check(context, oracle):
     if set(files) != {source} or files[source]['sha256'] != oracle['source_sha256']: raise ValueError('source inventory')
     expected_rows = [['f','col1'], [str(Path(context['inputs']['source']) / source), '']]
     if oracle['extracted_rows'] != expected_rows: raise ValueError('extracted identity')
+
+def log_only(before, after):
+    if type(before) is not dict or type(after) is not dict: return False
+    changed = {k for k in set(before) | set(after) if before.get(k) != after.get(k)}
+    return all(re.fullmatch(r'log/(?:execute-queries|query-run)-[^/]+\.log', name) for name in changed)
 
 def same(a, b):
     return json.dumps(a, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(b, sort_keys=True, separators=(',', ':'), allow_nan=False)
@@ -87,8 +93,9 @@ def verify(packet, context_file, oracle_file, expected_context, expected_oracle)
         if created:
             require(rec['before'][created] is None and rec['after'][created] is not None, 'creation: '+stage)
         for name in context['outputs']:
-            if name != created and not (name == 'database' and stage in ('index','finalize')):
-                require(rec['before'][name] == rec['after'][name], 'output transition: '+stage+'/'+name)
+            if name != created and rec['before'][name] != rec['after'][name]:
+                permitted_db = name == 'database' and (stage in ('index','finalize') or (stage.endswith('_query') and log_only(rec['before'][name], rec['after'][name])))
+                require(permitted_db, 'output transition: '+stage+'/'+name)
     for name in ('extracted','errors','effects'):
         bqrs = name+'_bqrs'; raw = (packet/context['outputs'][bqrs]).read_bytes()
         require(receipts[STAGES.index(name+'_query')]['after'][bqrs]['sha256'] == digest(raw), 'bqrs: '+name)

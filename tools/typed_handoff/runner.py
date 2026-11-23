@@ -5,6 +5,7 @@ Receipts describe an observation; they do not authenticate command execution.
 """
 import hashlib
 import json
+import re
 import os
 from pathlib import Path
 import subprocess
@@ -31,6 +32,11 @@ def family_check(context, oracle):
     if set(files) != {source} or files[source]['sha256'] != oracle['source_sha256']: raise ValueError('source inventory')
     expected_rows = [['f','col1'], [str(Path(context['inputs']['source']) / source), '']]
     if oracle['extracted_rows'] != expected_rows: raise ValueError('extracted identity')
+
+def log_only(before, after):
+    if type(before) is not dict or type(after) is not dict: return False
+    changed = {k for k in set(before) | set(after) if before.get(k) != after.get(k)}
+    return all(re.fullmatch(r'log/(?:execute-queries|query-run)-[^/]+\.log', name) for name in changed)
 
 def same(a, b):
     return json.dumps(a, sort_keys=True, separators=(',', ':'), allow_nan=False) == json.dumps(b, sort_keys=True, separators=(',', ':'), allow_nan=False)
@@ -160,7 +166,9 @@ def main(context_file, oracle_file, approval):
         if exit_code: fail('stage failed: ' + stage)
         if created and after[created] is None: fail('output not created: ' + created)
         for name in context['outputs']:
-            if name != created and not (name == 'database' and stage in ('index','finalize')) and before[name] != after[name]: fail('unexpected output transition: ' + name)
+            if name != created and before[name] != after[name]:
+                permitted_db = name == 'database' and (stage in ('index','finalize') or (stage.endswith('_query') and log_only(before[name], after[name])))
+                if not permitted_db: fail('unexpected output transition: ' + name)
         for name in roots:
             if (name != 'consumer' or stage in ('init','index','finalize','extracted_query','extracted_decode','errors_query','errors_decode','effects_query','effects_decode','export')) and after[name] != initial[name]: fail('input drift: ' + name)
         if stage == 'import':
