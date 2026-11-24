@@ -10,13 +10,13 @@ python3 -B tools/sarif_accept.py \
   --source-root <staged-files>
 ```
 
-The manifest schema is `ucode-sarif-acceptance-v1`. It supplies `producer` (`sha`, `pack_sha256`, `codeql_version`, `suite_sha256`), `sources` with relative `%SRCROOT%` URI and SHA-256, exact `expected_extracted` file identities, `expected_rules` (the exact resolved suite rule set), and an exact `expected_results` multiset of rule ID, URI, SARIF start/end line/column and effective level. Expected SARIF columns use `utf16CodeUnits`; a source oracle's byte-inclusive end column needs explicit review and conversion to SARIF's exclusive end column. Historical vulnerable and fixed versions use separate manifests and databases.
+The manifest schema is `ucode-sarif-acceptance-v1`. It supplies `producer` (`sha`, `pack_sha256`, `codeql_version`, `suite_sha256`), `sources` with relative `%SRCROOT%` URI and SHA-256, exact `expected_extracted` file identities, `expected_rules` (the exact resolved suite rule set), `expected_sarif_descriptors` (the exact descriptor set CodeQL emits for that scenario), and an exact `expected_results` multiset of rule ID, URI, SARIF start/end line/column and effective level. CodeQL can resolve a diagnostic query yet omit it from SARIF descriptors when it has no SARIF result; the observed two-diagnostic default suite emitted an empty descriptor list. Expected SARIF columns use `utf16CodeUnits`; a source oracle's byte-inclusive end column needs explicit review and conversion to SARIF's exclusive end column. Historical vulnerable and fixed versions use separate manifests and databases.
 
 The receipt schema is `ucode-sarif-run-v1`. It repeats the producer identity, records nonempty `run_id`, `sarif_sha256`, exact `successful_files`, `extraction_errors`, `resolved_rules`, and command argv/exits. The verifier rejects failed commands, extraction errors, source hash differences, missing/duplicate extracted files, unknown or missing rules, unsafe URIs, invalid locations, and any missing or additional result. It requires a CodeQL SARIF run whose tool version agrees with the manifest. A result can omit `level`; the verifier uses its rule descriptor's default level.
 
 This prototype **does not authenticate** a fabricated receipt or prove that the supplied SARIF came from CodeQL. The future Linux CI job must hash the actual producer checkout, pack and suite, run extraction and the resolved default suite on the staged bytes, generate the receipt from its actual commands and complete diagnostics, and pass the same SARIF bytes to this verifier in that job. The current consumer's CSV and typed setBlockDetect adapters are separate contracts; this prototype does not change them. It does not map package source to installed bytes or scan incoming upstream revisions yet.
 
-Eight focused acceptance and rejection tests run with:
+Nine focused acceptance and rejection tests run with:
 
 ```sh
 python3 -B -m unittest policy.tests.test_sarif_accept -v

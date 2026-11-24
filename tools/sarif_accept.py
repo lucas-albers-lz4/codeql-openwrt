@@ -150,8 +150,14 @@ def accept(sarif_path: Path, manifest_path: Path, receipt_path: Path,
             len(set(resolved_rules)) == len(resolved_rules) and
             set(resolved_rules) == set(expected_rules),
             "resolved suite rule set differs from manifest")
-    require(set(levels) == set(expected_rules),
-            "SARIF rule descriptors differ from expected suite")
+    expected_descriptors = manifest.get("expected_sarif_descriptors")
+    require(isinstance(expected_descriptors, list) and
+            all(isinstance(rule, str) and rule for rule in expected_descriptors) and
+            len(set(expected_descriptors)) == len(expected_descriptors) and
+            set(expected_descriptors).issubset(expected_rules),
+            "invalid expected SARIF descriptor set")
+    require(set(levels) == set(expected_descriptors),
+            "SARIF rule descriptors differ from manifest")
     results = run.get("results", [])
     require(isinstance(results, list), "invalid SARIF results")
     actual = Counter(result_tuple(item, levels) for item in results)

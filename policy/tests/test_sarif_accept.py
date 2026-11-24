@@ -29,6 +29,7 @@ class SarifAcceptanceTests(unittest.TestCase):
                          "sources": [{"uri": self.uri,
                                       "sha256": hashlib.sha256(staged.read_bytes()).hexdigest()}],
                          "expected_extracted": [self.uri], "expected_rules": [self.rule],
+                         "expected_sarif_descriptors": [self.rule],
                          "expected_results": [self.location]}
         self.sarif = {"version": "2.1.0", "runs": [{
             "tool": {"driver": {"name": "CodeQL", "semanticVersion": "2.27.4",
@@ -122,6 +123,15 @@ class SarifAcceptanceTests(unittest.TestCase):
         self.receipt["resolved_rules"] = [self.rule]
         self.sarif["runs"][0]["tool"]["driver"]["rules"].append(
             {"id": "ucode/m4/extra", "defaultConfiguration": {"level": "warning"}})
+        with self.assertRaisesRegex(ValueError, "rule descriptors differ"):
+            self.verify()
+
+    def test_resolved_diagnostic_without_sarif_descriptor(self):
+        diagnostic = "ucode/diagnostics/extraction-errors"
+        self.manifest["expected_rules"].append(diagnostic)
+        self.receipt["resolved_rules"].append(diagnostic)
+        self.assertEqual(len(self.verify()["accepted_results"]), 1)
+        self.manifest["expected_sarif_descriptors"].append(diagnostic)
         with self.assertRaisesRegex(ValueError, "rule descriptors differ"):
             self.verify()
 
