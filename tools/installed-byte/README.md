@@ -22,6 +22,13 @@ Package/Version/Architecture from the control file. Host tools and the
 cross-toolchain are built explicitly before the package target. The PASS
 receipt is written after source, feed, config and package-stage checks.
 
+Manual run `45503598387` completed host tools and toolchain, then failed in
+the original `make -n` target probe before the intended package build. The
+pinned OpenWrt top-level recipe uses recursive `+` make, which executes under
+`-n`; that probe reached a dependency and hid its underlying error. This
+revision removes the probe and retains one verbose serial package build.
+The failed run has no IPK or installed-byte comparison result.
+
 The exact feed resolution, generated target and package-stage location have
 not yet been exercised on Linux. The script intentionally stops on unexpected
 resolution or multiplicity; inspect failure logs before changing it. The
