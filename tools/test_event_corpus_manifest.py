@@ -7,8 +7,11 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
-from tools.event_corpus_manifest import POLICY_SHA256, build, source_route
+from tools import event_corpus_manifest as generator
+from tools.event_corpus_manifest import (POLICY_SHA256, build, changed_paths,
+                                         relevant_recipe_changes, source_route)
 from tools.full_tree_candidates import SelectorError
 
 
@@ -43,6 +46,7 @@ class EventCorpusManifestTests(unittest.TestCase):
                           "proposed_installed_path": "usr/share/ucode/scan.uc",
                           "expected_route": {"classification": "plain", "reason": "ucode_extension"},
                           "source_sha256": hashlib.sha256(b"return 1\n").hexdigest(),
+                          "prior_local_extraction": "old observation",
                           "git_blob": git(self.repo, "rev-parse", f"{self.base}:{self.selected}")}],
             "excluded": [{"repo": "openwrt", "source_path": self.excluded,
                           "source_commit": self.base,
@@ -87,6 +91,8 @@ class EventCorpusManifestTests(unittest.TestCase):
         self.assertEqual(result["pins"]["openwrt"], self.head)
         self.assertEqual(result["event"]["head_tree"], self.tree)
         self.assertEqual(result["excluded"][0]["source_commit"], self.head)
+        self.assertNotIn("prior_local_extraction", row)
+        self.assertNotIn("plain_route_observed", result["counts"])
 
     def test_route_precedence_controls(self):
         self.assertEqual(source_route("x.ut", "usr/share/ucode/x.ut", b"return 1\n"),
@@ -97,6 +103,14 @@ class EventCorpusManifestTests(unittest.TestCase):
                          {"classification": "plain", "reason": "ucode_shebang"})
         self.assertEqual(source_route("x.uc", "usr/share/ucode/x.uc", b"{{ markup }}\n"),
                          {"classification": "markup", "reason": "markup_tag_content"})
+        self.assertEqual(source_route("x.uc", "usr/share/ucode/x.uc", b"return 1\r{{ not_a_new_line }}\n"),
+                         {"classification": "plain", "reason": "ucode_extension"})
+        self.assertEqual(source_route("x.uc", "usr/share/ucode/x.uc", "return 1\u0085{{ not_a_new_line }}\n".encode()),
+                         {"classification": "plain", "reason": "ucode_extension"})
+        self.assertEqual(source_route("x.uc", "usr/share/ucode/x.uc", b"\x1c{{ not_rust_whitespace }}\n"),
+                         {"classification": "plain", "reason": "ucode_extension"})
+        self.assertEqual(source_route("source.uc", "usr/share/ucode/staged.ut", b"return 1\n"),
+                         {"classification": "markup", "reason": "ut_markup_extension"})
 
     def test_inventory_identity_and_content_tampering_rejected(self):
         bad = json.loads(json.dumps(self.inventory))
@@ -124,6 +138,68 @@ class EventCorpusManifestTests(unittest.TestCase):
                                                    "reason": "markup_tag_content"}
         with self.assertRaisesRegex(SelectorError, "source route changed"):
             build(bad, self.receipt, self.inventory, self.repo)
+
+    def test_selected_owner_recipe_drift_is_separate_from_unrelated_recipe(self):
+        paths = ["package/example/Makefile", "package/other/Makefile",
+                 "include/package.mk", "package/example/files/readme.txt"]
+        self.assertEqual(relevant_recipe_changes(self.policy, "openwrt", paths),
+                         ["include/package.mk", "package/example/Makefile"])
+        self.put("package/example/Makefile", b"# changed install rule\n")
+        self.commit()
+        new_head = git(self.repo, "rev-parse", "HEAD")
+        self.receipt["source"] = {"commit": new_head,
+                                  "tree": git(self.repo, "rev-parse", "HEAD^{tree}")}
+        self.inventory["head_commit"] = new_head
+        self.inventory["head_tree"] = self.receipt["source"]["tree"]
+        with self.assertRaisesRegex(SelectorError, "reviewed recipe/config input changed"):
+            build(self.policy, self.receipt, self.inventory, self.repo)
+
+    def test_recipe_rename_exposes_old_and_new_paths(self):
+        self.put("package/example/Makefile", b"# owner recipe\n")
+        self.commit()
+        before = git(self.repo, "rev-parse", "HEAD")
+        (self.repo / "package/other").mkdir(parents=True)
+        (self.repo / "package/example/Makefile").rename(self.repo / "package/other/README")
+        self.commit()
+        after = git(self.repo, "rev-parse", "HEAD")
+        paths = changed_paths(self.repo, before, after)
+        self.assertEqual(paths, ["package/example/Makefile", "package/other/README"])
+        self.assertEqual(relevant_recipe_changes(self.policy, "openwrt", paths),
+                         ["package/example/Makefile"])
+
+    def test_cli_pins_policy_and_rechecks_candidate_report(self):
+        root = Path(self.temp.name)
+        policy_path, receipt_path = root / "policy.json", root / "receipt.json"
+        inventory_path, output_path = root / "inventory.json", root / "out.json"
+        policy_bytes = json.dumps(self.policy).encode()
+        policy_digest = hashlib.sha256(policy_bytes).hexdigest()
+        self.inventory["policy_sha256"] = policy_digest
+        policy_path.write_bytes(policy_bytes)
+        receipt_path.write_text(json.dumps(self.receipt))
+        inventory_path.write_text(json.dumps(self.inventory))
+        arguments = ["event_corpus_manifest.py", str(policy_path), str(receipt_path),
+                     str(inventory_path), str(self.repo), str(output_path)]
+        with patch.object(generator, "POLICY_SHA256", policy_digest), \
+             patch.object(generator, "compare", return_value=self.inventory), \
+             patch("sys.argv", arguments):
+            self.assertEqual(generator.main(), 0)
+        output = json.loads(output_path.read_text())
+        self.assertEqual(output["event"]["candidate_inventory_sha256"],
+                         hashlib.sha256(inventory_path.read_bytes()).hexdigest())
+        output_path.unlink()
+        with patch.object(generator, "POLICY_SHA256", "0" * 64), \
+             patch.object(generator, "compare", return_value=self.inventory), \
+             patch("sys.argv", arguments):
+            self.assertEqual(generator.main(), 2)
+        self.assertFalse(output_path.exists())
+        changed = json.loads(inventory_path.read_text())
+        changed["head_candidate_count"] = 999
+        inventory_path.write_text(json.dumps(changed))
+        with patch.object(generator, "POLICY_SHA256", policy_digest), \
+             patch.object(generator, "compare", return_value=self.inventory), \
+             patch("sys.argv", arguments):
+            self.assertEqual(generator.main(), 2)
+        self.assertFalse(output_path.exists())
 
 
 if __name__ == "__main__":
