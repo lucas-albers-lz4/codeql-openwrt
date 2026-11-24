@@ -167,6 +167,25 @@ class EventCorpusManifestTests(unittest.TestCase):
         self.assertEqual(relevant_recipe_changes(self.policy, "openwrt", paths),
                          ["package/example/Makefile"])
 
+    def test_recipe_change_before_pr_base_still_requires_review(self):
+        self.put("package/example/Makefile", b"# recipe changed before PR base\n")
+        self.commit()
+        pr_base = git(self.repo, "rev-parse", "HEAD")
+        self.put(self.selected, b"return 3\n")
+        self.commit()
+        head = git(self.repo, "rev-parse", "HEAD")
+        self.receipt["base"]["commit"] = pr_base
+        self.receipt["source"] = {"commit": head,
+                                  "tree": git(self.repo, "rev-parse", "HEAD^{tree}")}
+        self.inventory["base_commit"] = pr_base
+        self.inventory["head_commit"] = head
+        self.inventory["head_tree"] = self.receipt["source"]["tree"]
+        self.inventory["events"][0]["head"]["git_blob"] = git(
+            self.repo, "rev-parse", f"{head}:{self.selected}")
+        self.inventory["events"][0]["head"]["sha256"] = hashlib.sha256(b"return 3\n").hexdigest()
+        with self.assertRaisesRegex(SelectorError, "reviewed recipe/config input changed"):
+            build(self.policy, self.receipt, self.inventory, self.repo)
+
     def test_cli_pins_policy_and_rechecks_candidate_report(self):
         root = Path(self.temp.name)
         policy_path, receipt_path = root / "policy.json", root / "receipt.json"
