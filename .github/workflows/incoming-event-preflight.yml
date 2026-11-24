@@ -149,6 +149,7 @@ jobs:
           python3 -B -m tools.event_corpus_manifest docs/current-corpus-source-v0.6.json incoming-event-receipt.json full-tree-candidates.json upstream-source event-corpus-manifest.json
       - name: Name this attempt's preflight artifact
         id: artifact-name
+        if: always()
         run: echo "name=incoming-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
       - name: Retain exact API response, identity receipt and candidate reports
         if: always()
@@ -290,12 +291,18 @@ jobs:
               lines += ['Scan did not produce an accepted event receipt. Inspect the retained R3 and event failure artifacts.']
           control = root.parent / 'control-corpus'
           assertion = control / 'control-assertion.json'
+          control_failure = root.parent.parent / f"event-input-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}" / 'control-oracle/control-failure.json'
+          if not control_failure.is_file():
+              control_failure = root.parent.parent / f"event-input-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}" / 'control-oracle/failure.json'
           if assertion.is_file():
               control_data = json.loads(assertion.read_text())
               lines += ['', f"Clean control: **{control_data['status']}**; results: {control_data['result_count']}"]
+          elif control_failure.is_file():
+              control_data = json.loads(control_failure.read_text())
+              lines += ['', f"Clean control incomplete at **{control_data['stage']}**; inspect retained failure artifact."]
           elif (control / 'out/triage.json').is_file():
               control_data = json.loads((control / 'out/triage.json').read_text())
-              lines += ['', f"Clean control assertion failed; status: **{control_data['status']}**; results: {control_data['result_count']}"]
+              lines += ['', f"Control triage is provisional; status: **{control_data['status']}**; results: {control_data['result_count']}. No clean assertion completed."]
           else:
               lines += ['', 'Clean control scan did not complete. Inspect retained control failure artifacts.']
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:

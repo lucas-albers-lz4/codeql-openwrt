@@ -248,6 +248,9 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                               "--include=**/*", f"--working-dir={stage}",
                               f"--common-caches={common}", "--threads=1", "--ram=2048", db], env=env)
         route_path = db / "trap/ucode/routing.json"
+        out = run.root / "out"
+        need(route_path.is_file(), "routing report missing after index")
+        shutil.copyfile(route_path, out / "routing.json")
         routing = json.loads(route_path.read_text())
         actual_routes = Counter((d["installed_path"], d["classification"], d["reason"], d["status"])
                                 for d in routing["decisions"])
@@ -261,8 +264,6 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
              routing.get("markup_inconclusive_count") == route_counts["markup"] and
              all(routing.get(k) == 0 for k in ("excluded_count", "uncertain_count", "duplicate_input_count")),
              "route identities/counts differ from source oracle")
-        out = run.root / "out"
-        shutil.copyfile(route_path, out / "routing.json")
         run.call("db-finalize", [codeql, "database", "finalize", db,
                                  f"--common-caches={common}"], env=env)
         diagnostics = {}
