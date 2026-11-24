@@ -55,13 +55,12 @@ PYTHONPATH="$HERE" python3 -c 'import pathlib, compare; compare.build_inputs(pat
 [[ $(realpath feeds/luci) == "$RUN/luci" && $(realpath feeds/packages) == "$RUN/packages" ]]
 [[ $(realpath package/feeds/luci/luci-base) == "$RUN/luci/modules/luci-base" ]]
 # A fresh package compile target does not bootstrap host tools or the
-# cross-toolchain. Build those explicitly before probing the package target.
+# cross-toolchain. Build those explicitly before the package target.
 timed tools-install make -j2 tools/install V=s
 timed toolchain-install make -j2 toolchain/install V=s
-# Dry-run establishes the exact target before the costly package build.
-timed target-probe make -n package/feeds/luci/luci-base/compile
-# Single build: do not retry interrupted or failed jobs.
-timed build make -j2 package/feeds/luci/luci-base/compile V=s
+# OpenWrt's recursive + recipes execute even under make -n. Use one real,
+# verbose, serial package build so a dependency failure is retained in run.log.
+timed build make -j1 package/feeds/luci/luci-base/compile V=s
 # Resolve each path uniquely, never select an arbitrary glob match.
 find build_dir -type f -path '*/luci-base/ucode/http.uc' -print0 > "$RUN/output/prepared-paths.nul"
 find build_dir -type f -path '*/luci-base/ipkg-*/luci-base/usr/share/ucode/luci/http.uc' -print0 > "$RUN/output/staged-paths.nul"
