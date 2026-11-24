@@ -58,6 +58,30 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual((row['family'], row['assessment'], row['property'], row['ids']),
                              ('rpc_surface', 'candidate', 'get', [-2, 5]))
 
+    def test_invalid_output_leaf_rejected_before_writes_or_children(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            wrapper, oracle, pins = root / 'wrapper', root / 'oracle', root / 'pins'
+            wrapper.write_bytes(b'wrapper'); oracle.write_bytes(b'oracle')
+            packs, git = root / 'packs', root / 'git'
+            packs.mkdir(); git.mkdir()
+            pin_data = json.dumps({'inputs': {}, 'packs': {}, 'resolutions':
+                                   {'files': 'x', 'errors': 'x', 'uci_surface': 'x'}}).encode()
+            pins.write_bytes(pin_data)
+            output = root / 'wrong'
+            args = ['--wrapper', str(wrapper), '--wrapper-log', str(root / 'wrapper.log'),
+                    '--packs', str(packs), '--luci-git', str(git), '--oracle', str(oracle),
+                    '--pins', str(pins), '--pins-sha256', uci_run.digest(pin_data), '--output', str(output)]
+            before = sorted(p.name for p in root.iterdir())
+            with patch.object(uci_run.gate, 'build_manifest') as build, \
+                 patch.object(uci_run.subprocess, 'run') as child:
+                with self.assertRaisesRegex(ValueError, 'attempt output directory'):
+                    uci_run.main(args)
+                build.assert_not_called()
+                child.assert_not_called()
+            self.assertFalse(output.exists())
+            self.assertEqual(before, sorted(p.name for p in root.iterdir()))
+
     def test_commands_propagate_wrapper_failure_before_receipt(self):
         import subprocess
         with tempfile.TemporaryDirectory() as directory:
@@ -68,7 +92,7 @@ class RunnerTests(unittest.TestCase):
             packs, git = root / 'packs', root / 'git'
             packs.mkdir()
             git.mkdir()
-            output = root / 'run'
+            output = root / 'output'
             rows = [{'source': f'{i}.js', 'blob': 'blob'} for i in range(88)]
             (packs / 'pack').write_bytes(b'pack')
             (root / 'wrapper.log').write_bytes(b'')
@@ -102,7 +126,7 @@ class RunnerTests(unittest.TestCase):
                 wrapper.write_bytes(b'wrapper'); oracle.write_bytes(b'oracle'); log.write_bytes(b''); log.chmod(0o600)
                 packs, git = root / 'packs', root / 'git'
                 packs.mkdir(); git.mkdir(); (packs / 'pack').write_bytes(b'pack')
-                out = root / 'run'
+                out = root / 'output'
                 rows = [{'source': f'{i}.js', 'blob': 'blob', 'sha256': uci_run.digest(b'source')} for i in range(88)]
                 resolution = b'expected resolver stdout'
                 pins_data = json.dumps({'inputs': {}, 'packs': {'pack': uci_run.digest(b'pack')},

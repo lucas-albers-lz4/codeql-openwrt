@@ -17,7 +17,7 @@ paths and both diagnostics have zero `JSParseError` rows. `files.ql` reports
 distinct paths; this is not a count of TopLevel entities or a check of every
 extractor diagnostic. The recorded run used one thread, 2048 MB and allowed
 minified files. It logged an absent extern trap cache, inability to retrieve a
-qlpack Git commit hash, and disabled stage caching at the configured heap size. Extraction progress
+qlpack Git commit hash, and disabled stage caching with an observed 1160 MB evaluator heap. Extraction progress
 listed exactly the 88 selected source paths, alongside 110 pinned bundled externs. The
 source archive `src.zip` SHA-256 is
 `9b93720b6aff9c42b70cf4501f927c2b7252c9c684c50670672442a94dcae080`.
@@ -44,7 +44,7 @@ database.
 | Pack lock SHA-256 | `eb487627c92c867a5760b9c24405db13d028eff5582378a9c4ff252debe13925` |
 | Pack inventory SHA-256 | `091e007ca44cd8e17a085f21e8dcf8729352422d0141e24ee7f2011e6b3da0ff` |
 | UCI query SHA-256 | `0cda9ffc13b95bd20ff05a67a6ae271835456b2da2e010877157ce4bf33452e9` |
-| Runner SHA-256 | `aca36f3b5182469117eeebe163713453b58d3b5b65b35af4464aa9c3c91790b8` |
+| Runner used for this historical attempt SHA-256 | `aca36f3b5182469117eeebe163713453b58d3b5b65b35af4464aa9c3c91790b8` |
 | Isolation wrapper SHA-256 | `c3bacd28300f3578ca6b48c71bb22b3227cd92a1e22b4f1124ac8aa64050c40a` |
 | Reviewed run pins SHA-256 | `e98e056855ec07e4de0f0acd4ed66caf41f0883f7937c9882474524c7070115b` |
 

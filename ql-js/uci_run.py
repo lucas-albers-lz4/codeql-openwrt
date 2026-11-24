@@ -121,6 +121,8 @@ def main(argv=None):
             or set(selected['resolutions']) != {'files', 'errors', 'uci_surface'}):
         raise ValueError('invalid reviewed pins')
     out = args.output
+    if out.name != 'output':
+        raise ValueError('output must be the attempt output directory')
     if not out.is_absolute() or out.parent.resolve(strict=True) != out.parent:
         raise ValueError('output parent must be a physical absolute path')
     wrapper_log = args.wrapper_log
