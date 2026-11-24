@@ -98,24 +98,29 @@ def compare(root, base, head, policy, raw_manifest, repository="openwrt"):
     bi, hi = make_inventory(root, base, policy, repository), make_inventory(root, head, policy, repository)
     bm, hm = {x["source_path"]:x for x in bi}, {x["source_path"]:x for x in hi}
     events = []
+    selected_paths = {x["source_path"] for x in policy.get("selected",[]) if x.get("repo")==repository}
     base_policy = {x["source_path"]:x for x in policy.get("selected",[])+policy.get("excluded",[]) if x.get("repo")==repository}
-    for p in sorted(set(bm)|set(hm)):
+    for p in sorted(set(bm)|set(hm)|set(base_policy)):
         b,h=bm.get(p),hm.get(p)
-        status = h["status"] if h else b["status"]
+        baseline = base_policy.get(p)
+        status = h["status"] if h else b["status"] if b else "selected" if p in selected_paths else "excluded"
         reasons=[]
+        if baseline is not None and not b and not h: reasons.append("baseline_identity_missing_at_base_and_head")
         if b and not h: reasons.append("candidate_removed_or_signal_lost")
         if h and not b: reasons.append("candidate_added")
         if b and h and b["signals"] != h["signals"]: reasons.append("candidate_signal_changed")
         if b and h and b["git_blob"] != h["git_blob"]:
-            if p in base_policy: reasons.append("selected_or_excluded_content_changed")
+            if baseline is not None and status == "selected": reasons.append("selected_content_changed_scan_eligible")
+            elif baseline is not None and status == "excluded": reasons.append("excluded_content_changed_review_required")
             else: reasons.append("unreviewed_candidate_content_changed")
         if h and h["status"]=="unreviewed": reasons.append("no_reviewed_disposition")
-        events.append({"source_path":p,"status":status,"base":b,"head":h,"events":reasons})
-    fail = any((e["status"]=="unreviewed") or any(x in e["events"] for x in ("candidate_removed_or_signal_lost","candidate_added","candidate_signal_changed","unreviewed_candidate_content_changed")) for e in events)
+        events.append({"source_path":p,"status":status,"baseline_policy":baseline,"base":b,"head":h,"events":reasons})
+    fail = any((e["status"]=="unreviewed") or any(x in e["events"] for x in ("baseline_identity_missing_at_base_and_head","candidate_removed_or_signal_lost","candidate_added","candidate_signal_changed","excluded_content_changed_review_required","unreviewed_candidate_content_changed")) for e in events)
     return {"schema":"full-tree-ucode-candidates-v1","policy_schema":policy["schema"],"policy_sha256":hashlib.sha256(raw_manifest).hexdigest(),
             "repository":repository,"base_commit":base,"base_tree":git(root,"rev-parse",f"{base}^{{tree}}"),"head_commit":head,"head_tree":git(root,"rev-parse",f"{head}^{{tree}}"),
             "base_candidate_count":len(bi),"head_candidate_count":len(hi),"head_selected_count":sum(x["status"]=="selected" for x in hi),
             "head_excluded_count":sum(x["status"]=="excluded" for x in hi),"head_unreviewed_count":sum(x["status"]=="unreviewed" for x in hi),
+            "missing_baseline_count":sum("baseline_identity_missing_at_base_and_head" in x["events"] for x in events),
             "events":events,"fail_closed":fail,"status":"review_required" if fail else "inventory_ready",
             "limitations":["Candidate signals do not prove installability or installed bytes.","Recipe mapping/configuration inference is not implemented; policy rows only preserve reviewed v0.4 dispositions.","Each invocation covers one repository. Package-feed mapping, CodeQL execution, producer-to-consumer handoff, and Gate 8 remain out of scope."]}
 

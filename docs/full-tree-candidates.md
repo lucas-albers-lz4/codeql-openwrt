@@ -8,7 +8,8 @@ v0.4 source manifest. It preserves one row per path/blob identity, even when
 multiple paths have identical bytes. Each head candidate is labeled `selected`,
 `excluded`, or `unreviewed`. An unresolved candidate, candidate addition or
 removal, or source-signal change sets `fail_closed`; content edits to reviewed
-selected identities are recorded and remain eligible for review/selection.
+selected identities are recorded and remain scan-eligible. Excluded-file edits
+require review. A v0.4 identity missing from both source revisions fails closed.
 
 The tool is a source candidate inventory. It does not infer package recipes,
 configuration conditions, source-to-installed rewrites, or actual installed
@@ -43,8 +44,9 @@ excluded, and 17 unreviewed on the head. The two additional identities were
 first-line shebang candidates missed by the old parser. The run failed closed;
 there were no candidate additions/removals or signal transitions between the
 source base and head. LuCI remained at 69 identities: 65 selected and four
-excluded, with no unreviewed identities. The five local controls passed:
-ordinary selected edit, duplicate-byte path multiplicity, new suffix plus two
+excluded, with no unreviewed identities. The seven local controls passed:
+ordinary selected edit, excluded-content review, selected/excluded policy identities
+missing from both revisions, duplicate-byte path multiplicity, a new suffix plus two
 first-line shebang candidates and a line-2 shebang negative, nested OpenWrt and
 LuCI installed roots with a `fakeusr/` negative, and rename/deletion plus
 signal-change fail-closed behavior.
@@ -54,12 +56,6 @@ content SHA-256 identities. Each remains unresolved by the v0.4 disposition:
 
 | Source path | Git blob | Content SHA-256 |
 |---|---|---|
-
-
-This local selector result is not Gate 8. It does not cover package feeds,
-recipe-only selection changes, installation mapping, extraction, CodeQL, SARIF,
-or a producer-to-consumer event run. The checked-in v0.4 policy is not a
-complete install recipe catalog.
 | `package/base-files/files/usr/libexec/duid-generate` | `2318239feb7b41dd44d92a0b1b363f5075376d8c` | `b1bd9cd34dc960f22eb65cfb666b3746dae21143f3b83668e26354c4f48a7af0` |
 | `package/boot/uboot-tools/uboot-envtools/files/fw_loadenv` | `9fe302ce892315c2bcc36f0855e93a72ff296745` | `6a03dcf045db393a2bfbd94ca6dd56d635c425730f2118ff409d8c69f556d26a` |
 | `package/network/config/netifd/files/lib/netifd/main.uc` | `56911347a75d1b85211eecf3cc33d34d93924041` | `0643779b5403e23d91e55550942e695d6901e3ddff605898b9f40f368cf830cf` |
@@ -77,3 +73,7 @@ complete install recipe catalog.
 | `package/utils/provision/files/usr/share/ucode/provision.uc` | `50fccfaad9a9a20f89503fdd9ff76901277aefba` | `6b13625355cf4dfc48f8d76510f12b4efaf9a1aaea4e421e5b8f129f1317a7c3` |
 | `package/utils/ucode-mod-pkgen/files/pkgen` | `e37e5f5329d100b374bb4dcbd48a6f4aef6ccfdf` | `5927d4050793b5f5b68ebcd87ff0f26dae695b31e2a16933945645752bd350dd` |
 | `target/linux/ipq806x/base-files/usr/bin/base64decode.uc` | `7dcf30986c045dd92b6ea010319d6f6dee026ed6` | `1ca194eb61dd9ed6a8e1954a7dc057c4b40e153d2da306b8e69d6db0ab909562` |
+
+This local selector result is not Gate 8. It does not cover package feeds,
+recipe-only selection changes, installation mapping, extraction, CodeQL, SARIF,
+or a producer-to-consumer event run. The checked-in v0.4 policy is not a

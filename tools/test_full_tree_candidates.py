@@ -14,9 +14,20 @@ class FullTreeControls(unittest.TestCase):
  def sha(self):return subprocess.check_output(['git','-C',str(self.root),'rev-parse','HEAD'],text=True).strip()
  def result(self):return selector.compare(self.root,self.base,self.sha(),self.policy,self.raw,"openwrt")
  def test_edit_and_duplicate_identities(self):
-  self.put('selected/pkg.uc',b'edited\n');self.commit();r=self.result();self.assertFalse(r['fail_closed']);self.assertEqual(sum(x['head'] and x['head']['sha256']==hashlib.sha256(b'identical\n').hexdigest() for x in r['events']),2);self.assertIn('selected_or_excluded_content_changed',next(x for x in r['events'] if x['source_path']=='selected/pkg.uc')['events'])
+  self.put('selected/pkg.uc',b'edited\n');self.commit();r=self.result();self.assertFalse(r['fail_closed']);self.assertEqual(sum(x['head'] and x['head']['sha256']==hashlib.sha256(b'identical\n').hexdigest() for x in r['events']),2);self.assertIn('selected_content_changed_scan_eligible',next(x for x in r['events'] if x['source_path']=='selected/pkg.uc')['events'])
  def test_outside_candidate_shebang_and_extensionless(self):
   self.put('elsewhere/new.uc',b'x');self.put('bin/odd.py',b'#!/usr/bin/ucode\nprint(1)');self.put('bin/another.sh',b'#!/usr/bin/ucode\nprint(2)');self.put('usr/share/ucode/noext',b'x');self.put('bin/late.py',b'# comment\n#!/usr/bin/ucode\n');self.commit();r=self.result();self.assertTrue(r['fail_closed']);self.assertEqual(r['head_unreviewed_count'],4);by={x['source_path']:x for x in r['events']};self.assertIn('ucode_suffix',by['elsewhere/new.uc']['head']['signals']);self.assertIn('first_line_ucode_shebang',by['bin/odd.py']['head']['signals']);self.assertIn('first_line_ucode_shebang',by['bin/another.sh']['head']['signals']);self.assertIn('extensionless_installed_ucode_root',by['usr/share/ucode/noext']['head']['signals']);self.assertNotIn('bin/late.py',by)
+ def test_excluded_content_change_requires_review(self):
+  self.put('twin-a/tool.ucode',b'changed exclusion\n');self.commit();r=self.result();self.assertTrue(r['fail_closed'])
+  row=next(x for x in r['events'] if x['source_path']=='twin-a/tool.ucode')
+  self.assertEqual(row['status'],'excluded');self.assertIn('excluded_content_changed_review_required',row['events'])
+ def test_reviewed_baseline_missing_from_both_trees_fails_closed(self):
+  self.policy['selected'].append({'repo':'openwrt','source_path':'missing/selected.uc'})
+  self.policy['excluded'].append({'repo':'openwrt','source_path':'missing/excluded.ut','reason':'reviewed exclusion'})
+  r=self.result();self.assertTrue(r['fail_closed']);self.assertEqual(r['missing_baseline_count'],2)
+  by={x['source_path']:x for x in r['events']}
+  self.assertEqual(by['missing/selected.uc']['status'],'selected');self.assertEqual(by['missing/selected.uc']['baseline_policy']['repo'],'openwrt');self.assertIn('baseline_identity_missing_at_base_and_head',by['missing/selected.uc']['events'])
+  self.assertEqual(by['missing/excluded.ut']['status'],'excluded');self.assertIn('baseline_identity_missing_at_base_and_head',by['missing/excluded.ut']['events'])
  def test_rename_and_deletion(self):
   (self.root/'selected/pkg.uc').unlink();self.put('selected/renamed.uc',b'old source\n');self.commit();r=self.result();self.assertTrue(r['fail_closed']);by={x['source_path']:x for x in r['events']};self.assertIn('candidate_removed_or_signal_lost',by['selected/pkg.uc']['events']);self.assertIn('candidate_added',by['selected/renamed.uc']['events'])
  def test_changed_selection_signal(self):
