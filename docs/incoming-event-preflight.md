@@ -25,6 +25,9 @@ signals, changed exclusions and unresolved candidates. These comparisons do
 not infer install recipes or full source coverage, invoke the released
 producer, or pass SARIF to the consumer. They do not establish Gate 8 or
 security behavior.
+On changes to the workflow, selector, resolver, tests or v0.6 manifest, a
+separate pull-request contract job runs the resolver and selector controls.
+It does not fetch upstream source or execute the manual drill.
 Do not turn this preflight into blocking incoming CI until those steps have a
 reviewed implementation and a live end-to-end drill.
 
