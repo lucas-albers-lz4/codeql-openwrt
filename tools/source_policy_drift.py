@@ -54,7 +54,24 @@ def candidate(path: str) -> bool:
 
 def policy_input(path: str) -> bool:
     name = PurePosixPath(path).name
-    return name in {"Makefile", "Config.in"} or name.startswith("Kconfig") or name.endswith(".mk")
+    return name in {"Makefile", "Config.in", "luci.mk"} or name.startswith("Kconfig") or name.endswith(".mk")
+
+def package_roots(repo_name: str, selected: list[dict]) -> set[str]:
+    roots = set()
+    for row in selected:
+        parts = PurePosixPath(row["source_path"]).parts
+        if repo_name == "luci" and len(parts) >= 2:
+            roots.add("/".join(parts[:2]))
+        elif repo_name == "openwrt":
+            for index, part in enumerate(parts):
+                if part == "files" or part.startswith("files-") or part.startswith("files_"):
+                    if index:
+                        roots.add("/".join(parts[:index]))
+                    break
+    return roots
+
+def in_package_roots(path: str, roots: set[str]) -> bool:
+    return any(path == root or path.startswith(root + "/") for root in roots)
 
 def validate_manifest(manifest: dict, raw_bytes: bytes, repo_name: str, expected_sha256: str = EXPECTED_MANIFEST_SHA256) -> tuple[list, list, str]:
     digest = hashlib.sha256(raw_bytes).hexdigest()
@@ -111,6 +128,7 @@ def analyze(manifest: dict, manifest_bytes: bytes, repo_name: str, root: Path, e
     base_tree = git(root, "rev-parse", f"{base_sha}^{{tree}}")
     event_tree = git(root, "rev-parse", f"{event_sha}^{{tree}}")
     names = {x["source_path"]: x for x in selected + excluded}
+    owner_roots = package_roots(repo_name, selected)
     resolved_rows, removed, changed = [], [], []
     for path, item in names.items():
         now = file_identity(root, event_sha, path)
@@ -143,8 +161,11 @@ def analyze(manifest: dict, manifest_bytes: bytes, repo_name: str, root: Path, e
         else:
             raise DriftError(f"unrecognized git diff name-status record: {status!r}")
     drift = []
+    unrelated_policy_files = []
     for item in diffs:
         path = item.get("new_path", item.get("path", "")); old = item.get("old_path")
+        paths = [p for p in (old, path) if p]
+        relevant_policy_change = any(policy_input(p) and ((repo_name == "luci" and p == "luci.mk") or in_package_roots(p, owner_roots)) for p in paths)
         if item["status"] == "removed" and path in names:
             drift.append({**item, "class": "removed_baseline_identity"})
         elif item["status"] == "renamed" and (old in names or candidate(path) or candidate(old)):
@@ -153,8 +174,12 @@ def analyze(manifest: dict, manifest_bytes: bytes, repo_name: str, root: Path, e
             drift.append({**item, "class": "new_candidate"})
         elif item["status"] == "type_changed" and (path in names or candidate(path)):
             drift.append({**item, "class": "baseline_identity_type_changed" if path in names else "candidate_type_changed"})
-        elif item["status"] in {"added", "removed", "modified", "type_changed"} and policy_input(path):
-            drift.append({**item, "class": "policy_condition_or_routing_input_changed"})
+        elif any(policy_input(p) for p in paths):
+            policy_record = {**item, "class": "policy_condition_or_routing_input_changed"}
+            if relevant_policy_change:
+                drift.append(policy_record)
+            else:
+                unrelated_policy_files.append(policy_record)
     fail = bool(drift or removed)
     status = "review_required" if fail else "content_changes_observed" if changed else "no_bounded_drift_observed"
     return {"schema": "source-policy-drift-v1", "baseline_schema": manifest["schema"],
@@ -164,8 +189,10 @@ def analyze(manifest: dict, manifest_bytes: bytes, repo_name: str, root: Path, e
             "baseline_selected_count_for_repo": len(selected), "baseline_excluded_count_for_repo": len(excluded),
             "selected_and_excluded_identities": resolved_rows, "removed_baseline_identities": removed,
             "changed_selected_or_excluded": changed, "drift": drift,
+            "owner_package_roots": sorted(owner_roots), "unrelated_policy_files": unrelated_policy_files,
             "status": status, "fail_closed": fail,
             "limitations": ["Only baseline identities and paths in the explicit base-to-event Git diff are compared.",
+                            "Unrelated package build-file changes are reported but do not fail; Makefile-only activation of previously unselected sources is not covered.",
                             "No full-tree discovery, install-path inference, package condition evaluation, extraction, CodeQL, SARIF, or consumer handoff is performed.",
                             "Extensionless candidate heuristic is intentionally broad; unrecognized source layouts may be missed."]}
 

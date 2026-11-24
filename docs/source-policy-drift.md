@@ -26,19 +26,24 @@ preserves package owner, configuration condition, exclusion reason and
 expected route. Source byte changes appear in `changed_selected_or_excluded`
 with their fresh event identities, but do not fail by themselves. Missing
 baseline paths, renames, added `.uc`, `.ut` or extensionless candidates, and
-changes to package policy inputs such as `Makefile`, `Config.in`, `Kconfig*` or
-`*.mk` fail closed with exit 1. Invalid identities, manifest bytes, pins,
-duplicate/unsafe paths or dirty checkouts fail with exit 2. Exit 0 means no
-bounded path or policy-input drift was observed; the report can still contain
-source content changes.
+changes to policy inputs under selected package roots fail closed with exit 1.
+The roots are derived from selected source paths: OpenWrt package roots before
+`files*`, and LuCI owning package roots, plus LuCI's root `luci.mk`. Unrelated
+Makefile/Config.in/Kconfig/`*.mk` changes are listed in
+`unrelated_policy_files` and do not fail the report. Invalid identities,
+manifest bytes, pins, duplicate/unsafe paths or dirty checkouts fail with exit
+2. Exit 0 means no bounded path or relevant policy-input drift was observed;
+the report can still contain source content changes.
 
 This is an incremental source-policy check, not the full dynamic selector in
 the incoming-CI design. It inspects baseline identities plus candidate paths in
 the explicit base-to-event diff. It does not find unmodified candidate paths
 already present outside that diff, infer installation from recipes, evaluate
 package conditions semantically, detect every possible route change, or identify
-every candidate naming convention. Changes to recognized package policy input
-files fail for review; their semantic effect is not evaluated here. It does
+every candidate naming convention. In particular, Makefile-only activation of
+previously unselected source outside selected package roots is not covered.
+Changes to recognized policy files under selected package roots fail for review;
+their semantic effect is not evaluated here. It does
 not run extraction or CodeQL and does not establish Gate 8.
 
 Mechanical tests:
