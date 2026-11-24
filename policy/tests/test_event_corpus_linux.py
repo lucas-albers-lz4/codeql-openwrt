@@ -49,9 +49,16 @@ class EventCorpusLinuxTests(unittest.TestCase):
                                       (ROOT / "tools/event_corpus_manifest.py").read_bytes()).hexdigest()}}
             output.write_text(json.dumps(expected))
             with patch("tools.current_corpus_linux.compare_candidates", return_value=report), \
-                 patch("tools.current_corpus_linux.build_event_manifest", return_value={
+                 patch("tools.current_corpus_linux.build_event_manifest", side_effect=lambda *_: {
                      "schema": expected["schema"], "event": {"policy_sha256": expected["event"]["policy_sha256"]}}):
                 self.assertEqual(validate_event_manifest(output, receipt, inventory, root), expected)
+                control_expected = json.loads(json.dumps(expected))
+                control_expected["event"]["source_role"] = "clean_control"
+                output.write_text(json.dumps(control_expected))
+                self.assertEqual(validate_event_manifest(output, receipt, inventory, root,
+                                                         source_role="clean_control"), control_expected)
+                with self.assertRaisesRegex(RuntimeError, "differs from source-first oracle"):
+                    validate_event_manifest(output, receipt, inventory, root)
                 inventory.write_text(json.dumps({**report, "head_candidate_count": 999}))
                 with self.assertRaisesRegex(RuntimeError, "fresh Git objects"):
                     validate_event_manifest(output, receipt, inventory, root)

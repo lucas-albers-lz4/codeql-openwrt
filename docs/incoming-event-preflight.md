@@ -64,7 +64,9 @@ from the exact canonical control commit before either corpus scan. It compares
 that commit with the frozen policy pin, fails closed on candidate or recipe
 changes requiring review, and binds the oracle to the captured control commit,
 tree and receipt digest. A derived receipt adapts the existing event oracle;
-it is not a claim that the control is the PR head. The job replays the oracle
+it is not a claim that the control is the PR head. The control manifest and
+scan receipt carry `event.source_role: clean_control`, which the runner
+validates against its separate control run label. The job replays the oracle
 and runs the same released producer and triage consumer in a separate
 `control-corpus` database, stage, caches and outputs. The control assertion
 requires an empty result tuple list and `clean_scan`. A nonempty control fails

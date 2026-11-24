@@ -35,7 +35,8 @@ def prepare(receipt_path: Path, checkout: Path, output: Path) -> None:
     manifest = build(policy, derived, inventory, checkout)
     manifest['event'].update(identity_receipt_sha256=digest(output / 'control-derived-receipt.json'),
                              candidate_inventory_sha256=digest(output / 'control-inventory.json'),
-                             route_oracle_script_sha256=digest(ROOT / 'tools/event_corpus_manifest.py'))
+                             route_oracle_script_sha256=digest(ROOT / 'tools/event_corpus_manifest.py'),
+                             source_role='clean_control')
     write_json(output / 'control-manifest.json', manifest)
     write_json(output / 'control-binding.json', {
         'schema': 'incoming-control-binding-v1', 'incoming_receipt_sha256': digest(receipt_path),

@@ -100,7 +100,9 @@ def index_with_retained_routing(run: Run, argv: list, env: dict,
 
 
 def validate_event_manifest(manifest_path: Path, receipt_path: Path,
-                            inventory_path: Path, source_checkout: Path) -> dict:
+                            inventory_path: Path, source_checkout: Path,
+                            *, source_role: str = "incoming_pr_head") -> dict:
+    need(source_role in ("incoming_pr_head", "clean_control"), "invalid event source role")
     baseline_path = ROOT / "docs/current-corpus-source-v0.6.json"
     need(digest(baseline_path) == MANIFEST_SHA256 == EVENT_POLICY_SHA256,
          "event baseline policy digest drift")
@@ -117,6 +119,8 @@ def validate_event_manifest(manifest_path: Path, receipt_path: Path,
     expected["event"].update(identity_receipt_sha256=digest(receipt_path),
                              candidate_inventory_sha256=digest(inventory_path),
                              route_oracle_script_sha256=digest(ROOT / "tools/event_corpus_manifest.py"))
+    if source_role == "clean_control":
+        expected["event"]["source_role"] = "clean_control"
     manifest = json.loads(manifest_path.read_text())
     need(manifest == expected, "event corpus manifest differs from source-first oracle")
     need(manifest.get("schema") == "mvp-incoming-event-corpus-v1" and
@@ -131,10 +135,13 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
     lock = json.loads(lock_path.read_text())
     pinned(lock)
     event = event_context is not None
+    need(run_label in (None, "control-corpus"), "invalid corpus run label")
+    need(run_label is None or event, "control requires event oracle")
     if event:
         receipt_path, inventory_path, source_checkout = event_context
         manifest = validate_event_manifest(manifest_path, receipt_path,
-                                           inventory_path, source_checkout)
+                                           inventory_path, source_checkout,
+                                           source_role="clean_control" if run_label == "control-corpus" else "incoming_pr_head")
     else:
         need(digest(manifest_path) == MANIFEST_SHA256, "current corpus manifest digest drift")
         manifest = json.loads(manifest_path.read_text())
@@ -180,8 +187,6 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
     available = re.search(r"(?m)^MemAvailable:\s*(\d+) kB$", memory)
     need(available is not None and int(available.group(1)) >= 2 * 1024**2,
          "less than 2 GiB available memory")
-    need(run_label in (None, "control-corpus"), "invalid corpus run label")
-    need(run_label is None or event, "control requires event oracle")
     run = Run(prior_root / (run_label or ("event-corpus" if event else "current-corpus")), run_id)
     try:
         bundle = run.root / "bundle/codeql-ucode-linux"
