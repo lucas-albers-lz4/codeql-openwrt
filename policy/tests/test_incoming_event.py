@@ -38,6 +38,15 @@ class IncomingEventTests(unittest.TestCase):
             "source_sha": self.source,
             "control_sha": self.control,
         }
+        self.api_pr = {
+            "number": 123,
+            "state": "open",
+            "base": {"repo": {"full_name": "openwrt/openwrt"}},
+            "head": {
+                "sha": self.source,
+                "repo": {"full_name": "contributor/openwrt", "fork": True},
+            },
+        }
 
     def tearDown(self):
         self.temp.cleanup()
@@ -47,42 +56,79 @@ class IncomingEventTests(unittest.TestCase):
         return subprocess.check_output(["git", *args], text=True).strip()
 
     def test_resolves_full_commit_and_tree_and_labels_limited_status(self):
-        result = validate(self.event, self.repo, self.control_repo)
+        result = validate(self.event, self.api_pr, self.repo, self.control_repo)
         self.assertEqual(result["source"]["commit"], self.source)
         self.assertEqual(result["control"]["commit"], self.control)
         self.assertEqual(result["status"], "identities_resolved_only")
+        self.assertEqual(result["head_repository"], "contributor/openwrt")
+        self.assertTrue(result["head_repository_is_fork"])
         self.assertNotEqual(result["source"]["tree"], result["control"]["tree"])
 
     def test_rejects_branch_name_instead_of_full_commit(self):
         bad = dict(self.event, source_sha="main")
-        with self.assertRaisesRegex(InvalidEvent, "full 40-character"):
-            validate(bad, self.repo, self.control_repo)
+        api = {**self.api_pr, "head": {**self.api_pr["head"], "sha": "main"}}
+        with self.assertRaisesRegex(InvalidEvent, "full commit SHA"):
+            validate(bad, api, self.repo, self.control_repo)
 
     def test_rejects_mismatched_repository_origin(self):
-        bad = dict(self.event, repository="luci")
+        self.git("-C", str(self.repo), "remote", "set-url", "origin",
+                 "https://github.com/attacker/openwrt.git")
         with self.assertRaisesRegex(InvalidEvent, "origin does not match"):
-            validate(bad, self.repo, self.control_repo)
+            validate(self.event, self.api_pr, self.repo, self.control_repo)
 
     def test_rejects_same_source_and_control(self):
         bad = dict(self.event, control_sha=self.source)
         with self.assertRaisesRegex(InvalidEvent, "must differ"):
-            validate(bad, self.repo, self.control_repo)
+            validate(bad, self.api_pr, self.repo, self.control_repo)
 
     def test_rejects_missing_commit(self):
         absent = "0" * 40
         bad = dict(self.event, source_sha=absent)
+        api = {**self.api_pr, "head": {**self.api_pr["head"], "sha": absent}}
         with self.assertRaisesRegex(InvalidEvent, "git rev-parse"):
-            validate(bad, self.repo, self.control_repo)
+            validate(bad, api, self.repo, self.control_repo)
 
     def test_rejects_invalid_event_metadata(self):
         bad = dict(self.event, pr_number=0)
         with self.assertRaisesRegex(InvalidEvent, "positive integer"):
-            validate(bad, self.repo, self.control_repo)
+            validate(bad, self.api_pr, self.repo, self.control_repo)
 
     def test_rejects_dirty_control(self):
         (self.control_repo / "extra").write_text("uncommitted\n")
         with self.assertRaisesRegex(InvalidEvent, "checkout is dirty"):
-            validate(self.event, self.repo, self.control_repo)
+            validate(self.event, self.api_pr, self.repo, self.control_repo)
+
+    def test_rejects_api_response_for_another_pr(self):
+        bad = dict(self.api_pr, number=124)
+        with self.assertRaisesRegex(InvalidEvent, "number mismatch"):
+            validate(self.event, bad, self.repo, self.control_repo)
+
+    def test_rejects_closed_pr(self):
+        bad = dict(self.api_pr, state="closed")
+        with self.assertRaisesRegex(InvalidEvent, "not open"):
+            validate(self.event, bad, self.repo, self.control_repo)
+
+    def test_rejects_wrong_base_repository(self):
+        bad = {**self.api_pr, "base": {"repo": {"full_name": "attacker/openwrt"}}}
+        with self.assertRaisesRegex(InvalidEvent, "base repository"):
+            validate(self.event, bad, self.repo, self.control_repo)
+
+    def test_rejects_api_sha_that_differs_from_checkout_and_event(self):
+        bad = {**self.api_pr, "head": {**self.api_pr["head"], "sha": self.control}}
+        with self.assertRaisesRegex(InvalidEvent, "event source SHA disagrees"):
+            validate(self.event, bad, self.repo, self.control_repo)
+
+    def test_rejects_cross_repository_head_not_marked_as_fork(self):
+        bad = {**self.api_pr, "head": {**self.api_pr["head"],
+                                         "repo": {"full_name": "contributor/openwrt", "fork": False}}}
+        with self.assertRaisesRegex(InvalidEvent, "not identified as a fork"):
+            validate(self.event, bad, self.repo, self.control_repo)
+
+    def test_accepts_same_repository_pull_head(self):
+        same_repo = {**self.api_pr, "head": {**self.api_pr["head"],
+                                              "repo": {"full_name": "openwrt/openwrt", "fork": False}}}
+        result = validate(self.event, same_repo, self.repo, self.control_repo)
+        self.assertEqual(result["head_repository"], "openwrt/openwrt")
 
 
 if __name__ == "__main__":

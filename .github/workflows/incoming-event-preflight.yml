@@ -4,46 +4,51 @@ on:
   workflow_dispatch:
     inputs:
       upstream:
-        description: Upstream repository to check out
+        description: Upstream repository containing the PR base
         type: choice
         required: true
         options: [openwrt, luci]
       pr_number:
-        description: Claimed upstream PR number (metadata only)
+        description: Open upstream PR number
         type: number
         required: true
-      source_sha:
-        description: Full 40-character upstream commit SHA
-        type: string
-        required: true
       control_sha:
-        description: Full 40-character clean control commit SHA
+        description: Full clean control commit SHA from canonical upstream
         type: string
         required: true
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   resolve-pins:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - name: Select canonical upstream URL
-        id: upstream
+      - name: Fetch exact GitHub pull API response
+        id: pull
         env:
+          GH_TOKEN: ${{ github.token }}
           UPSTREAM: ${{ inputs.upstream }}
+          PR_NUMBER: ${{ inputs.pr_number }}
         run: |
+          set -euo pipefail
           case "$UPSTREAM" in
-            openwrt) url=https://github.com/openwrt/openwrt.git ;;
-            luci) url=https://github.com/openwrt/luci.git ;;
+            openwrt|luci) ;;
             *) echo 'unsupported upstream' >&2; exit 2 ;;
           esac
-          echo "url=$url" >> "$GITHUB_OUTPUT"
+          [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]]
+          gh api -H 'Accept: application/vnd.github+json' \
+            "repos/openwrt/$UPSTREAM/pulls/$PR_NUMBER" > pull-api-response.json
+          source_sha=$(jq -er '.head.sha | select(test("^[0-9a-f]{40}$"))' pull-api-response.json)
+          api_number=$(jq -er '.number' pull-api-response.json)
+          [[ "$api_number" == "$PR_NUMBER" ]]
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: openwrt/${{ inputs.upstream }}
-          ref: ${{ inputs.source_sha }}
+          ref: refs/pull/${{ inputs.pr_number }}/head
           path: upstream-source
           persist-credentials: false
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -52,13 +57,14 @@ jobs:
           ref: ${{ inputs.control_sha }}
           path: upstream-control
           persist-credentials: false
-      - name: Resolve source and control commit/tree identities
+      - name: Resolve API-bound PR source and canonical control identities
         env:
           UPSTREAM: ${{ inputs.upstream }}
           PR_NUMBER: ${{ inputs.pr_number }}
-          SOURCE_SHA: ${{ inputs.source_sha }}
+          SOURCE_SHA: ${{ steps.pull.outputs.source_sha }}
           CONTROL_SHA: ${{ inputs.control_sha }}
         run: |
+          set -euo pipefail
           python3 - <<'PY'
           from datetime import datetime, timezone
           import json, os
@@ -74,11 +80,13 @@ jobs:
           }
           Path("incoming-event.json").write_text(json.dumps(event, indent=2) + "\n")
           PY
-          python3 -B tools/incoming_event.py incoming-event.json upstream-source upstream-control incoming-event-receipt.json
-      - name: Retain identity receipt
+          python3 -B tools/incoming_event.py incoming-event.json pull-api-response.json upstream-source upstream-control incoming-event-receipt.json
+      - name: Retain exact API response and identity receipt
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: incoming-event-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: warn
-          path: incoming-event*.json
+          path: |
+            pull-api-response.json
+            incoming-event*.json

@@ -55,7 +55,8 @@ def commit_identity(path: Path, sha: str) -> dict[str, str]:
     return {"commit": commit, "tree": git(path, "rev-parse", f"{commit}^{{tree}}")}
 
 
-def validate(event: dict, source_checkout: Path, control_checkout: Path) -> dict:
+def validate(event: dict, api_pr: dict, source_checkout: Path,
+             control_checkout: Path) -> dict:
     require(event.get("schema") == "incoming-event-v1", "unsupported event schema")
     repo = event.get("repository")
     require(repo in REPOSITORIES, "repository must be openwrt or luci")
@@ -63,6 +64,30 @@ def validate(event: dict, source_checkout: Path, control_checkout: Path) -> dict
     pr = event.get("pr_number")
     require(isinstance(pr, int) and not isinstance(pr, bool) and pr > 0,
             "pr_number must be a positive integer")
+    require(isinstance(api_pr, dict), "GitHub pull API response must be an object")
+    require(api_pr.get("number") == pr, "GitHub pull response number mismatch")
+    require(api_pr.get("state") == "open", "GitHub pull request is not open")
+    base = api_pr.get("base")
+    head = api_pr.get("head")
+    require(isinstance(base, dict) and isinstance(base.get("repo"), dict),
+            "GitHub pull response has no base repository")
+    require(isinstance(head, dict) and isinstance(head.get("repo"), dict),
+            "GitHub pull response has no head repository")
+    base_repo = base["repo"].get("full_name")
+    head_repo = head["repo"].get("full_name")
+    head_fork = head["repo"].get("fork")
+    head_sha = head.get("sha")
+    expected_full_name = REPOSITORIES[repo].removeprefix("https://github.com/").removesuffix(".git")
+    require(isinstance(base_repo, str) and base_repo.lower() == expected_full_name,
+            "GitHub pull base repository does not match selected upstream")
+    require(isinstance(head_repo, str) and head_repo and isinstance(head_fork, bool),
+            "GitHub pull head repository identity is missing or malformed")
+    require(head_repo.lower() == expected_full_name or head_fork,
+            "cross-repository PR head is not identified as a fork")
+    require(isinstance(head_sha, str) and bool(SHA.fullmatch(head_sha)),
+            "GitHub pull response head SHA is not a full commit SHA")
+    require("source_sha" not in event or event["source_sha"] == head_sha,
+            "event source SHA disagrees with GitHub pull response")
     event_time = event.get("event_time")
     require(isinstance(event_time, str), "event_time must be an ISO-8601 timestamp")
     try:
@@ -70,24 +95,27 @@ def validate(event: dict, source_checkout: Path, control_checkout: Path) -> dict
     except ValueError as exc:
         raise InvalidEvent("event_time must be an ISO-8601 timestamp") from exc
     require(parsed_time.tzinfo is not None, "event_time must include a timezone")
-    source_sha, control_sha = event.get("source_sha", ""), event.get("control_sha", "")
-    require(source_sha != control_sha, "source and clean control must differ")
+    control_sha = event.get("control_sha", "")
+    require(head_sha != control_sha, "source and clean control must differ")
     canonical_repository(source_checkout, REPOSITORIES[repo])
     canonical_repository(control_checkout, REPOSITORIES[repo])
-    source = commit_identity(source_checkout, source_sha)
+    source = commit_identity(source_checkout, head_sha)
     control = commit_identity(control_checkout, control_sha)
     return {
         "schema": "incoming-event-receipt-v1",
         "repository": repo,
         "repository_url": REPOSITORIES[repo],
         "pr_number": pr,
+        "base_repository": base_repo,
+        "head_repository": head_repo,
+        "head_repository_is_fork": head_fork,
         "event_type": event["event_type"],
         "event_time": event_time,
         "source": source,
         "control": control,
         "status": "identities_resolved_only",
         "limitations": [
-            "PR membership is not authenticated by this offline resolver.",
+            "PR membership is bound to the captured GitHub pull response and fetched PR head ref; it is not a scan result.",
             "No source-policy discovery, CodeQL execution, SARIF, or consumer handoff is performed.",
         ],
     }
@@ -96,13 +124,16 @@ def validate(event: dict, source_checkout: Path, control_checkout: Path) -> dict
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("event", type=Path, help="pinned event JSON")
-    parser.add_argument("source_checkout", type=Path)
+    parser.add_argument("pull_api_response", type=Path, help="exact GitHub pull API JSON")
+    parser.add_argument("source_checkout", type=Path,
+                        help="checkout of refs/pull/<number>/head from canonical upstream")
     parser.add_argument("control_checkout", type=Path)
     parser.add_argument("receipt", type=Path)
     args = parser.parse_args()
     try:
         event = json.loads(args.event.read_text())
-        receipt = validate(event, args.source_checkout, args.control_checkout)
+        api_pr = json.loads(args.pull_api_response.read_text())
+        receipt = validate(event, api_pr, args.source_checkout, args.control_checkout)
         args.receipt.parent.mkdir(parents=True, exist_ok=True)
         args.receipt.write_text(json.dumps(receipt, indent=2) + "\n")
         print(json.dumps(receipt, indent=2))
