@@ -227,6 +227,27 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
         expected_files = [row["proposed_installed_path"] for row in manifest["selected"]]
         need(Counter(successes) == Counter(expected_files) and not diagnostics["errors"],
              "successful identity or extraction-error mismatch")
+        decisions = {d["installed_path"]: d for d in routing["decisions"]}
+        success_counts = Counter(successes)
+        coverage = {"schema": "ucode-current-corpus-coverage-v0.4",
+                    "source_manifest_sha256": digest(manifest_path),
+                    "release_tag": release["tag"], "producer_commit": release["commit"],
+                    "source_pins": PINS, "actual_package_installed_bytes_verified": False,
+                    "counts": {"selected": 111, "extracted_once": 111, "errored": 0,
+                               "modeled_markup_inconclusive": 35, "excluded": 13},
+                    "selected": [{"repo": row["repo"], "source_commit": row["source_commit"],
+                                  "source_path": row["source_path"],
+                                  "source_sha256": row["source_sha256"],
+                                  "git_blob": row["git_blob"],
+                                  "staged_path": row["proposed_installed_path"],
+                                  "route_classification": decisions[row["proposed_installed_path"]]["classification"],
+                                  "route_reason": decisions[row["proposed_installed_path"]]["reason"],
+                                  "route_status": decisions[row["proposed_installed_path"]]["status"],
+                                  "extracted_count": success_counts[row["proposed_installed_path"]],
+                                  "extraction_error_count": 0}
+                                 for row in manifest["selected"]],
+                    "excluded": manifest["excluded"]}
+        write_json(out / "coverage-v0.4.json", coverage)
         resolved = json.loads(run.call("resolve-suite", [codeql, "resolve", "queries", "--format=json", suite,
                                                        f"--search-path={search}", f"--common-caches={common}"]))
         rules = []
@@ -285,6 +306,7 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                     ("input_count", "plain_count", "markup_count", "markup_inconclusive_count",
                      "uncertain_count", "excluded_count", "duplicate_input_count")},
                    "successful_count": len(successes), "extraction_error_count": 0,
+                   "coverage_sha256": digest(out / "coverage-v0.4.json"),
                    "resolved_rules": rules, "sarif_sha256": digest(sarif),
                    "accepted_sha256": digest(out / "accepted.json"),
                    "commands_sha256": digest(run.root / "commands.json"),

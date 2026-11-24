@@ -22,7 +22,10 @@ The runner checks clean pinned source checkouts, Git blobs and SHA-256 for
 every selected file, excluded source bytes, exact staged hashes and unique
 proposed installed paths before extraction. It checks each route tuple and
 successful extracted identity with multiplicity, zero extraction errors,
-the released suite rule IDs, and the actual SARIF through the consumer's
+then emits `out/coverage-v0.4.json` with every selected source, route,
+extraction count and the 13 explicit exclusions. It records markup-model
+inconclusiveness separately from extraction success. It checks the
+released suite rule IDs, and the actual SARIF through the consumer's
 strict `sarif_accept.py` in the same job. The initial baseline is **zero**
 direct-rule alerts, as observed in a local macOS source-staged run. A Linux
 alert fails this gate for source review; zero alerts do not prove source
@@ -33,7 +36,7 @@ chain. Its JSON alone cannot authenticate an independent run; the workflow
 must execute R3 successfully immediately before this script.
 
 GNU `time -v` records wall time and peak RSS for each command. The artifact
-retains the current-corpus preflight, command log, routing/diagnostic/SARIF
+retains the current-corpus preflight, command log, coverage, routing/diagnostic/SARIF
 outputs, accepted consumer record and terminal receipt or failure. This
 first Linux job establishes a bounded source-staged scan and cost; it does
 not complete installed-byte provenance, broader package selection,
