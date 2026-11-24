@@ -25,7 +25,8 @@ REPOS = ('openwrt/openwrt', 'openwrt/luci')
 API = 'https://api.github.com'
 REQUEST_LOG = []
 MAX_RESPONSE = 2_000_000
-MAX_RECORD = 32_000_000
+MAX_RECORD = 128_000_000
+MAX_REQUEST_HISTORY = 96_000_000
 MAX_EVENTS = 10_000
 PAGE_SIZE = 25
 
@@ -96,7 +97,7 @@ def fetch(path):
             check(response.headers.get('X-RateLimit-Remaining', '').isdigit() and int(response.headers['X-RateLimit-Remaining']) > 0, 'missing or exhausted rate limit')
             raw = response.read(MAX_RESPONSE + 1)
             check(len(raw) <= MAX_RESPONSE, 'API response exceeds byte limit')
-            check(sum(len(r['body_base64']) for r in REQUEST_LOG) + len(raw) * 4 // 3 + 4 <= MAX_RECORD // 2, 'request history exceeds byte limit')
+            check(sum(len(r['body_base64']) for r in REQUEST_LOG) + len(raw) * 4 // 3 + 4 <= MAX_REQUEST_HISTORY, 'request history exceeds byte limit')
             data = json.loads(raw, object_pairs_hook=unique_object)
             link = ', '.join(response.headers.get_all('Link', [])) if hasattr(response.headers, 'get_all') else response.headers.get('Link', '')
             REQUEST_LOG.append({'path': path, 'status': response.status, 'time': datetime.now(timezone.utc).isoformat(), 'link': link, 'rate_remaining': response.headers['X-RateLimit-Remaining'], 'sha256': hashlib.sha256(raw).hexdigest(), 'body_base64': base64.b64encode(raw).decode('ascii')})
@@ -187,8 +188,10 @@ def snapshot(repo, get, max_pages):
         head_repo = head['repo']['full_name']
         check(head_repo == repo or head['repo']['fork'], 'invalid cross-repository head')
         check(bool(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', head_repo)), 'invalid head repository name')
-        source = identity(head_repo, full_sha(head.get('sha')), get)
-        base_identity = identity(repo, base_sha, get)
+        # Discovery binds API-reported commits only. The event resolver must
+        # revalidate membership and obtain trees before any scan.
+        source = {'commit': full_sha(head.get('sha')), 'tree': None}
+        base_identity = {'commit': base_sha, 'tree': None}
         events.append({'repository': repo, 'kind': 'pull_request', 'number': number, 'head_repository': head_repo, 'head_fork': head['repo']['fork'], 'head_ref': head_ref, 'base_ref': base_ref, 'base_commit': base_sha, 'base': base_identity, 'source': source})
     return events
 
@@ -199,8 +202,9 @@ def validate_event(event):
     check(isinstance(event, dict) and event.get('repository') in REPOS, 'invalid event repository')
     source = event.get('source')
     check(isinstance(source, dict) and set(source) == {'commit', 'tree'}, 'invalid source identity')
-    full_sha(source['commit']); full_sha(source['tree'])
+    full_sha(source['commit'])
     if event.get('kind') == 'default_branch':
+        full_sha(source['tree'])
         check(set(event) == {'repository', 'kind', 'ref', 'source'} and isinstance(event['ref'], str) and bool(event['ref']), 'invalid default event')
     elif event.get('kind') == 'pull_request':
         check(set(event) == {'repository', 'kind', 'number', 'head_repository', 'head_fork', 'head_ref', 'base_ref', 'base_commit', 'base', 'source'}, 'invalid PR event fields')
@@ -210,7 +214,8 @@ def validate_event(event):
         check(all(isinstance(event[x], str) and event[x] for x in ('head_ref', 'base_ref')), 'invalid PR refs')
         base = event['base']
         check(isinstance(base, dict) and set(base) == {'commit', 'tree'}, 'invalid base identity')
-        full_sha(event['base_commit']); full_sha(base['tree'])
+        full_sha(event['base_commit'])
+        check(source['tree'] is None and base['tree'] is None, 'PR discovery trees must remain unresolved')
         check(event['base_commit'] == base['commit'], 'base commit mismatch')
     else:
         raise PollError('invalid event kind')
@@ -220,7 +225,7 @@ def read_checkpoint(path):
         raw = handle.read(MAX_RECORD + 1)
     check(len(raw) <= MAX_RECORD, 'checkpoint exceeds byte limit')
     doc = json.loads(raw, object_pairs_hook=unique_object)
-    check(isinstance(doc, dict) and set(doc) == {'schema', 'status', 'observed_at', 'capacity', 'previous_sha256', 'genesis', 'requests', 'decisions', 'limitations'} and doc.get('schema') == 'incoming-poll-v1' and doc.get('status') == 'complete' and isinstance(doc.get('decisions'), list), 'invalid checkpoint')
+    check(isinstance(doc, dict) and set(doc) == {'schema', 'status', 'observed_at', 'capacity', 'previous_sha256', 'genesis', 'requests', 'decisions', 'limitations'} and doc.get('schema') == 'incoming-poll-v2' and doc.get('status') == 'complete' and isinstance(doc.get('decisions'), list), 'invalid checkpoint')
     check(type(doc['genesis']) is bool and type(doc['capacity']) is int and 0 <= doc['capacity'] <= 1000 and isinstance(doc['requests'], list) and isinstance(doc['limitations'], list) and isinstance(doc['observed_at'], str), 'invalid checkpoint metadata')
     try:
         timestamp = datetime.fromisoformat(doc['observed_at'].replace('Z', '+00:00'))
@@ -265,13 +270,14 @@ def plan(previous, discovered, capacity):
         for identity in (event['source'], event.get('base')):
             if identity is not None:
                 sha, tree = identity['commit'], identity['tree']
+                if tree is None: continue
                 check(sha not in identities or identities[sha] == tree, 'commit has inconsistent tree')
                 identities[sha] = tree
     old = {}
     for row in previous:
         check(isinstance(row, dict) and set(row) == {'event', 'status', 'decision', 'reason'} and row.get('status') == 'pending' and row.get('decision') in ('selected', 'backlog') and row.get('reason') in ('new', 'retry'), 'invalid previous record; completion is not implemented')
         event = row.get('event'); validate_event(event); remember(event)
-        try: k = key(event); full_sha(event['source']['commit']); full_sha(event['source']['tree'])
+        try: k = key(event)
         except (KeyError, TypeError): raise PollError('malformed previous event')
         check(k not in old, 'duplicate previous event'); old[k] = row
     fresh = {}
@@ -312,7 +318,7 @@ def main():
         observed = []
         for repo in REPOS: observed.extend(snapshot(repo, fetch, a.max_pages))
         decisions = plan(previous, observed, a.capacity)
-        result = {'schema': 'incoming-poll-v1', 'status': 'complete', 'observed_at': datetime.now(timezone.utc).isoformat(), 'capacity': a.capacity, 'previous_sha256': previous_hash, 'genesis': a.genesis, 'requests': REQUEST_LOG, 'decisions': decisions, 'limitations': ['Observed snapshots only; intermediate PR heads and default-branch commits between polls are not enumerated.', 'Selections are not scans or authenticated scan completions.', 'PR and default branch discovery is not an atomic upstream snapshot.']}
+        result = {'schema': 'incoming-poll-v2', 'status': 'complete', 'observed_at': datetime.now(timezone.utc).isoformat(), 'capacity': a.capacity, 'previous_sha256': previous_hash, 'genesis': a.genesis, 'requests': REQUEST_LOG, 'decisions': decisions, 'limitations': ['Observed snapshots only; intermediate PR heads and default-branch commits between polls are not enumerated.', 'PR discovery trees are unresolved; selections are not scan-ready and require independent event resolver verification.', 'PR and default branch discovery is not an atomic upstream snapshot.']}
         atomic_write(a.output_dir / 'decisions.json', result)
         return 0
     except (PollError, OSError, ValueError, KeyError, TypeError, RecursionError) as exc:

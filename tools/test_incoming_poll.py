@@ -13,7 +13,7 @@ C = 'c' * 40
 
 def event(sha=A, number=1):
     return {'repository': 'openwrt/openwrt', 'kind': 'pull_request', 'number': number,
-            'head_repository': 'openwrt/openwrt', 'head_fork': False, 'head_ref': 'topic', 'base_ref': 'main', 'base_commit': B, 'base': {'commit': B, 'tree': C}, 'source': {'commit': sha, 'tree': C}}
+            'head_repository': 'openwrt/openwrt', 'head_fork': False, 'head_ref': 'topic', 'base_ref': 'main', 'base_commit': B, 'base': {'commit': B, 'tree': None}, 'source': {'commit': sha, 'tree': None}}
 
 def row(e):
     return {'event': e, 'status': 'pending', 'decision': 'backlog', 'reason': 'new'}
@@ -45,7 +45,7 @@ class PollTests(unittest.TestCase):
         with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: ([{}] * 25, link), 1)
         with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: ([], '<https://evil/>; rel="next"'), 2)
 
-    def test_successful_snapshot_records_head_and_base_trees(self):
+    def test_snapshot_defers_pr_trees_without_per_pr_gets(self):
         paths = []
         def get(path):
             paths.append(path)
@@ -57,9 +57,24 @@ class PollTests(unittest.TestCase):
             if '/commits/' in path: return ({'sha': B}, '')
             return ({'id': 123, 'full_name': 'openwrt/luci', 'default_branch': 'master'}, '')
         found = p.snapshot('openwrt/luci', get, 2)
-        self.assertEqual(found[1]['source'], {'commit': A, 'tree': C})
-        self.assertEqual(found[1]['base'], {'commit': B, 'tree': C})
-        self.assertIn('/repos/fork/luci/git/commits/' + A, paths)
+        self.assertEqual(found[1]['source'], {'commit': A, 'tree': None})
+        self.assertEqual(found[1]['base'], {'commit': B, 'tree': None})
+        self.assertEqual([path for path in paths if '/git/commits/' in path], ['/repos/openwrt/luci/git/commits/' + B])
+
+    def test_many_prs_selected_remain_discovery_only(self):
+        pulls = [{'number': number, 'state': 'open', 'base': {'repo': {'full_name': 'openwrt/luci'}, 'ref': 'master', 'sha': B}, 'head': {'repo': {'full_name': 'fork/luci', 'fork': True}, 'ref': 'change', 'sha': A}} for number in range(1, 24)]
+        paths = []
+        def get(path):
+            paths.append(path)
+            if '?' in path: return (pulls, '')
+            if '/git/commits/' in path: return ({'sha': B, 'tree': {'sha': C}}, '')
+            if '/commits/' in path: return ({'sha': B}, '')
+            return ({'id': 123, 'full_name': 'openwrt/luci', 'default_branch': 'master'}, '')
+        found = p.snapshot('openwrt/luci', get, 2)
+        selected = [d for d in p.plan([], found, 24) if d['event']['kind'] == 'pull_request']
+        self.assertEqual(len(selected), 23)
+        self.assertTrue(all(d['event']['source']['tree'] is None and d['event']['base']['tree'] is None for d in selected))
+        self.assertEqual(len([path for path in paths if '/git/commits/' in path]), 1)
 
     def test_snapshot_requires_tree_and_valid_base(self):
         def get(path):
