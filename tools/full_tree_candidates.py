@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Full tracked-tree Ucode candidate inventory against the reviewed v0.4 policy."""
+"""Full tracked-tree Ucode candidate inventory against pinned corpus manifests."""
 from __future__ import annotations
 import argparse, hashlib, json, re, subprocess, sys
 from pathlib import Path, PurePosixPath
 
-EXPECTED_MANIFEST_SHA256 = "1e25cf9c2adc40c854502fed8d1ccc0977a3c4825d6ee4a1c0a543ffe0a76699"
+EXPECTED_MANIFESTS = {
+    "mvp-bounded-corpus-v0.4": "1e25cf9c2adc40c854502fed8d1ccc0977a3c4825d6ee4a1c0a543ffe0a76699",
+    "mvp-bounded-corpus-v0.5-source-staged": "70ba39e2307b7c5c9905d572d85b0cca320214e48c0dc64065bad668cddb08fc",
+    "mvp-bounded-corpus-v0.6": "9c004ed477665f6567a071eac45051445c61019af927bfa4e51bae4c50ebd490",
+}
 ROOTS = ("usr/share/ucode/", "usr/share/rpcd/ucode/", "usr/lib/ucode/")
 SUFFIXES = (".uc", ".ucode", ".ut")
 ROOT_PARTS = tuple(tuple(r.strip("/").split("/")) for r in ROOTS)
@@ -91,8 +95,11 @@ def make_inventory(root, rev, policy, repository):
     return entries
 
 def compare(root, base, head, policy, raw_manifest, repository="openwrt"):
-    if hashlib.sha256(raw_manifest).hexdigest() != EXPECTED_MANIFEST_SHA256: raise SelectorError("v0.4 manifest digest mismatch")
-    if policy.get("schema") != "mvp-bounded-corpus-v0.4": raise SelectorError("unsupported policy schema")
+    schema = policy.get("schema")
+    expected_digest = EXPECTED_MANIFESTS.get(schema)
+    if expected_digest is None: raise SelectorError("unsupported policy schema")
+    if hashlib.sha256(raw_manifest).hexdigest() != expected_digest: raise SelectorError(f"{schema} manifest digest mismatch")
+    if json.loads(raw_manifest) != policy: raise SelectorError("parsed policy differs from pinned manifest bytes")
     for rev in (base, head):
         if not re.fullmatch(r"[0-9a-f]{40}", rev) or git(root,"rev-parse","--verify",f"{rev}^{{commit}}") != rev: raise SelectorError(f"revision must resolve as exact full SHA: {rev}")
     bi, hi = make_inventory(root, base, policy, repository), make_inventory(root, head, policy, repository)
@@ -122,7 +129,7 @@ def compare(root, base, head, policy, raw_manifest, repository="openwrt"):
             "head_excluded_count":sum(x["status"]=="excluded" for x in hi),"head_unreviewed_count":sum(x["status"]=="unreviewed" for x in hi),
             "missing_baseline_count":sum("baseline_identity_missing_at_base_and_head" in x["events"] for x in events),
             "events":events,"fail_closed":fail,"status":"review_required" if fail else "inventory_ready",
-            "limitations":["Candidate signals do not prove installability or installed bytes.","Recipe mapping/configuration inference is not implemented; policy rows only preserve reviewed v0.4 dispositions.","Each invocation covers one repository. Package-feed mapping, CodeQL execution, producer-to-consumer handoff, and Gate 8 remain out of scope."]}
+            "limitations":["Candidate signals do not prove installability or installed bytes.","Recipe mapping/configuration inference is not implemented; policy rows only preserve dispositions in the selected pinned manifest.","Each invocation covers one repository. Package-feed mapping, CodeQL execution, producer-to-consumer handoff, and Gate 8 remain out of scope."]}
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__); ap.add_argument("manifest",type=Path); ap.add_argument("repository",choices=("openwrt","luci")); ap.add_argument("checkout",type=Path); ap.add_argument("base_sha"); ap.add_argument("head_sha"); ap.add_argument("output",type=Path); a=ap.parse_args()

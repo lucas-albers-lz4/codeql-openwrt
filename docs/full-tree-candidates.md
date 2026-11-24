@@ -4,18 +4,42 @@
 revisions and unions four signals: `.uc`, `.ucode`, and `.ut` suffixes; a
 Ucode interpreter in the first-line shebang; extensionless files below the
 three installed Ucode roots; and paths explicitly reviewed in the checked-in
-v0.4 source manifest. It preserves one row per path/blob identity, even when
-multiple paths have identical bytes. Each head candidate is labeled `selected`,
+v0.4, v0.5, or v0.6 source manifest. Each supported manifest schema has its
+own exact SHA-256 pin; another digest or schema fails closed. It preserves one
+row per path/blob identity, even when multiple paths have identical bytes. Each
+head candidate is labeled `selected`,
 `excluded`, or `unreviewed`. An unresolved candidate, candidate addition or
 removal, or source-signal change sets `fail_closed`; content edits to reviewed
 selected identities are recorded and remain scan-eligible. Excluded-file edits
-require review. A v0.4 identity missing from both source revisions fails closed.
+require review. A reviewed identity missing from both source revisions fails
+closed.
 
 The tool is a source candidate inventory. It does not infer package recipes,
 configuration conditions, source-to-installed rewrites, or actual installed
-bytes. The v0.4 manifest contributes only its existing reviewed dispositions;
+bytes. The chosen manifest contributes only its existing reviewed dispositions;
 newly discovered paths deliberately remain unreviewed. Run one repository per
 invocation (`openwrt` or `luci`).
+
+The checked-in `current-corpus-source-v0.6.json` is the ledger's source-staged
+v0.6 manifest, pinned at SHA-256
+`9c004ed477665f6567a071eac45051445c61019af927bfa4e51bae4c50ebd490`. It has
+51 selected OpenWrt paths and one excluded OpenWrt path, 65 selected LuCI
+paths and four excluded LuCI paths, plus 12 selected and eight excluded
+packages-feed paths. The selector accepts only `openwrt` and `luci`, so the
+packages-feed rows are not selectable. Against the captured OpenWrt PR #26933
+pair, v0.6 yielded 52 head candidates: 51 selected, one excluded, none
+unreviewed, with no candidate events. See the run receipt in
+`work/gate8-v06-openwrt-20261124/README.md`. This inventory does not establish
+installability, extraction, CodeQL results or Gate 8 completion.
+
+The checked-in `current-corpus-source-v0.5.json` is the ledger's source-staged
+v0.5 manifest, pinned at SHA-256
+`70ba39e2307b7c5c9905d572d85b0cca320214e48c0dc64065bad668cddb08fc`. Against
+OpenWrt `4e9642517b48bae612ff10fb72fb9199e559500e` as both base and head, it
+yielded 47 candidate identities (46 selected and one excluded), with no
+unreviewed identities or fail-closed events. The v0.4 manifest on the same
+tree leaves the 12 v0.5 additions unreviewed and fails closed. This comparison
+does not establish package installation or Gate 8 completion.
 
 ## Bounded run against existing OpenWrt PR control
 
