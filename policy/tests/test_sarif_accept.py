@@ -28,7 +28,7 @@ class SarifAcceptanceTests(unittest.TestCase):
         self.manifest = {"schema": "ucode-sarif-acceptance-v1", "producer": self.producer,
                          "sources": [{"uri": self.uri,
                                       "sha256": hashlib.sha256(staged.read_bytes()).hexdigest()}],
-                         "expected_extracted": [self.uri], "required_rules": [self.rule],
+                         "expected_extracted": [self.uri], "expected_rules": [self.rule],
                          "expected_results": [self.location]}
         self.sarif = {"version": "2.1.0", "runs": [{
             "tool": {"driver": {"name": "CodeQL", "semanticVersion": "2.27.4",
@@ -112,7 +112,17 @@ class SarifAcceptanceTests(unittest.TestCase):
             self.verify()
         result["locations"][0]["physicalLocation"]["artifactLocation"]["uri"] = self.uri
         self.sarif["runs"][0]["tool"]["driver"]["rules"] = []
-        with self.assertRaisesRegex(ValueError, "required rule absent"):
+        with self.assertRaisesRegex(ValueError, "rule descriptors differ"):
+            self.verify()
+
+    def test_unexpected_or_unexecuted_suite_rule_rejected(self):
+        self.receipt["resolved_rules"].append("ucode/m4/extra")
+        with self.assertRaisesRegex(ValueError, "resolved suite rule set differs"):
+            self.verify()
+        self.receipt["resolved_rules"] = [self.rule]
+        self.sarif["runs"][0]["tool"]["driver"]["rules"].append(
+            {"id": "ucode/m4/extra", "defaultConfiguration": {"level": "warning"}})
+        with self.assertRaisesRegex(ValueError, "rule descriptors differ"):
             self.verify()
 
 

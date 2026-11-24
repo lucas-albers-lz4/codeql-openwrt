@@ -139,12 +139,19 @@ def accept(sarif_path: Path, manifest_path: Path, receipt_path: Path,
         require(isinstance(rule_id, str) and rule_id and rule_id not in levels,
                 "duplicate or invalid rule descriptor")
         levels[rule_id] = rule.get("defaultConfiguration", {}).get("level")
-    expected_rules = manifest.get("required_rules")
+    expected_rules = manifest.get("expected_rules")
+    resolved_rules = receipt.get("resolved_rules")
     require(isinstance(expected_rules, list) and expected_rules and
-            set(expected_rules).issubset(levels) and len(set(expected_rules)) == len(expected_rules),
-            "required rule absent or duplicated")
-    require(set(expected_rules).issubset(set(receipt.get("resolved_rules", []))),
-            "required rule absent from resolved suite receipt")
+            all(isinstance(rule, str) and rule for rule in expected_rules) and
+            len(set(expected_rules)) == len(expected_rules),
+            "missing or duplicated expected suite rule")
+    require(isinstance(resolved_rules, list) and
+            all(isinstance(rule, str) and rule for rule in resolved_rules) and
+            len(set(resolved_rules)) == len(resolved_rules) and
+            set(resolved_rules) == set(expected_rules),
+            "resolved suite rule set differs from manifest")
+    require(set(levels) == set(expected_rules),
+            "SARIF rule descriptors differ from expected suite")
     results = run.get("results", [])
     require(isinstance(results, list), "invalid SARIF results")
     actual = Counter(result_tuple(item, levels) for item in results)
