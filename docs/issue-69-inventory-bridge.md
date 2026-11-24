@@ -53,10 +53,10 @@ The filesystem inventory JSON currently labels each row with `type: rpc_surface`
 ## Open boundaries
 
 - Pull request [#126](https://github.com/lucas-albers-lz4/codeql-openwrt/pull/126) merged this bounded CGI syntax slice as `84e2006ecde13c091d24882ad2fe926c89fbd2fd`. It records six candidates in three files. It does not cover all CGI constructions or establish request behavior, bindings, server operations, grants, or effects.
-- UCI inventory remains held. Its prior approval was withdrawn. This report does not change that decision.
+- The [owner decision](https://github.com/lucas-albers-lz4/codeql-openwrt/issues/69#issuecomment-7118342035) resumed bounded UCI inventory work and left Track A deferred. The earlier UCI hold is historical. This bridge reports only the retained inventories above and does not establish a new UCI corpus result.
 - The candidate counts do not prove complete source coverage, semantic bindings, runtime calls, effects, taint, grants, or exploitability.
 - The extraction result covers the selected paths and recorded `JSParseError` rows. It does not establish semantic correctness or all possible extraction failures.
 - The manifest and package closure do not establish an OpenWrt image build or actual installed files.
 - The roadmap work tracked by pull request [#122](https://github.com/lucas-albers-lz4/codeql-openwrt/pull/122) is separate from this report.
 
-This report bridges retained evidence. It does not implement UCI inventory, promote Track A, or change issue status.
+This report bridges the retained RPC, filesystem and CGI evidence; it does not report a UCI corpus result, promote Track A, or change issue status.
