@@ -38,9 +38,9 @@ class PollTests(unittest.TestCase):
         self.assertTrue(all(r['decision'] == 'backlog' for r in out))
 
     def test_page_errors_fail_closed(self):
-        with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: ([{}] * 100, ''), 2)
-        link = '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=100&page=2>; rel="next"'
-        with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: ([{}] * 100, link), 1)
+        with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: ([{}] * 25, ''), 2)
+        link = '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=25&page=2>; rel="next"'
+        with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: ([{}] * 25, link), 1)
         with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: ([], '<https://evil/>; rel="next"'), 2)
 
     def test_successful_snapshot_records_head_and_base_trees(self):
@@ -68,33 +68,33 @@ class PollTests(unittest.TestCase):
         with self.assertRaises(p.PollError): p.snapshot('openwrt/luci', get, 1)
 
     def test_short_next_and_semantic_url(self):
-        link = '<https://api.github.com/repos/openwrt/luci/pulls?page=2&per_page=100&state=open>; rel="next"'
+        link = '<https://api.github.com/repos/openwrt/luci/pulls?page=2&per_page=25&state=open>; rel="next"'
         responses = iter([([1], link), ([2], '')])
         self.assertEqual(p.pull_pages('openwrt/luci', lambda _: next(responses), 2), [1, 2])
 
     def test_full_terminal_page_and_numeric_repo_link(self):
-        responses = iter([([{}] * 100, ''), ([], '')])
-        self.assertEqual(len(p.pull_pages('openwrt/luci', lambda _: next(responses), 2)), 100)
-        link = '<https://api.github.com/repositories/123/pulls?state=open&per_page=100&page=2>; rel=next'
+        responses = iter([([{}] * 25, ''), ([], '')])
+        self.assertEqual(len(p.pull_pages('openwrt/luci', lambda _: next(responses), 2)), 25)
+        link = '<https://api.github.com/repositories/123/pulls?state=open&per_page=25&page=2>; rel=next'
         responses = iter([([1], link), ([], '')])
         self.assertEqual(p.pull_pages('openwrt/luci', lambda _: next(responses), 2, 123), [1])
         with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: ([1], link), 2, 124)
 
     def test_empty_terminal_probe_accepts_prev_but_not_next(self):
-        prev = '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=100&page=1>; rel="prev", <https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=100&page=1>; rel="first"'
-        responses = iter([([{}] * 100, ''), ([], prev)])
-        self.assertEqual(len(p.pull_pages('openwrt/luci', lambda _: next(responses), 2)), 100)
-        next_link = '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=100&page=3>; rel="NEXT"'
-        responses = iter([([{}] * 100, ''), ([], next_link)])
+        prev = '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=25&page=1>; rel="prev", <https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=25&page=1>; rel="first"'
+        responses = iter([([{}] * 25, ''), ([], prev)])
+        self.assertEqual(len(p.pull_pages('openwrt/luci', lambda _: next(responses), 2)), 25)
+        next_link = '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=25&page=3>; rel="NEXT"'
+        responses = iter([([{}] * 25, ''), ([], next_link)])
         with self.assertRaises(p.PollError): p.pull_pages('openwrt/luci', lambda _: next(responses), 2)
 
     def test_next_relation_case_insensitive(self):
-        link = '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=100&page=2>; rel="NEXT"'
+        link = '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=25&page=2>; rel="NEXT"'
         responses = iter([([1], link), ([2], '')])
         self.assertEqual(p.pull_pages('openwrt/luci', lambda _: next(responses), 2), [1, 2])
 
     def test_link_rel_tokens_and_unrelated_parameters(self):
-        url = 'https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=100&page=2'
+        url = 'https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=25&page=2'
         link = '<https://example.test/prev>; title="before, here"; rel=prev, <' + url + '>; title="next page"; rel="next alternate"'
         responses = iter([([1], link), ([2], '')])
         self.assertEqual(p.pull_pages('openwrt/luci', lambda _: next(responses), 2), [1, 2])
@@ -102,10 +102,10 @@ class PollTests(unittest.TestCase):
 
     def test_next_link_rejects_query_and_origin_attacks(self):
         links = [
-            '<https://evil.test/repos/openwrt/luci/pulls?state=open&per_page=100&page=2>; rel="next"',
-            '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=100&page=2&page=3>; rel="next"',
-            '<https://api.github.com/repos/openwrt/openwrt/pulls?state=open&per_page=100&page=2>; rel="next"',
-            '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=100&page=2#x>; rel="next"',
+            '<https://evil.test/repos/openwrt/luci/pulls?state=open&per_page=25&page=2>; rel="next"',
+            '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=25&page=2&page=3>; rel="next"',
+            '<https://api.github.com/repos/openwrt/openwrt/pulls?state=open&per_page=25&page=2>; rel="next"',
+            '<https://api.github.com/repos/openwrt/luci/pulls?state=open&per_page=25&page=2#x>; rel="next"',
         ]
         for link in links:
             with self.subTest(link=link), self.assertRaises(p.PollError):

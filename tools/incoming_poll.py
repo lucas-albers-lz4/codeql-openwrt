@@ -27,6 +27,7 @@ REQUEST_LOG = []
 MAX_RESPONSE = 2_000_000
 MAX_RECORD = 32_000_000
 MAX_EVENTS = 10_000
+PAGE_SIZE = 25
 
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -96,8 +97,8 @@ def pull_pages(repo, get, max_pages, repo_id=None):
     rows = []
     expect_empty = False
     for page in range(1, max_pages + 1):
-        data, link = get(f'/repos/{repo}/pulls?state=open&per_page=100&page={page}')
-        check(isinstance(data, list) and len(data) <= 100, 'invalid pull page')
+        data, link = get(f'/repos/{repo}/pulls?state=open&per_page={PAGE_SIZE}&page={page}')
+        check(isinstance(data, list) and len(data) <= PAGE_SIZE, 'invalid pull page')
         if expect_empty:
             check(not data and not any('next' in relations for _, relations in link_values(link)), 'missing next link on nonterminal full page')
             return rows
@@ -108,9 +109,9 @@ def pull_pages(repo, get, max_pages, repo_id=None):
         if next_urls:
             url = urlsplit(next_urls[0])
             query = parse_qs(url.query, keep_blank_values=True, strict_parsing=True)
-            check(url.scheme == 'https' and url.netloc == 'api.github.com' and url.path in ({f'/repos/{repo}/pulls', f'/repositories/{repo_id}/pulls'} if repo_id is not None else {f'/repos/{repo}/pulls'}) and not url.fragment and query == {'state': ['open'], 'per_page': ['100'], 'page': [str(page + 1)]}, 'unexpected next link')
+            check(url.scheme == 'https' and url.netloc == 'api.github.com' and url.path in ({f'/repos/{repo}/pulls', f'/repositories/{repo_id}/pulls'} if repo_id is not None else {f'/repos/{repo}/pulls'}) and not url.fragment and query == {'state': ['open'], 'per_page': [str(PAGE_SIZE)], 'page': [str(page + 1)]}, 'unexpected next link')
         else:
-            if len(data) < 100: return rows
+            if len(data) < PAGE_SIZE: return rows
             # Verify a full terminal page with one bounded empty-page request.
             expect_empty = True
     raise PollError('pagination bound exceeded')
@@ -258,14 +259,14 @@ def main():
     source.add_argument('--previous', type=Path, help='previous successful decision record')
     source.add_argument('--genesis', action='store_true', help='explicitly start a new observation history')
     p.add_argument('--capacity', type=int, required=True)
-    p.add_argument('--max-pages', type=int, default=20)
+    p.add_argument('--max-pages', type=int, default=401)
     p.add_argument('--output-dir', type=Path, required=True, help='new run-owned directory')
     a = p.parse_args()
     created = False
     try:
         a.output_dir.mkdir(parents=True, exist_ok=False)
         created = True
-        check(1 <= a.max_pages <= 100, 'invalid page bound')
+        check(1 <= a.max_pages <= 401, 'invalid page bound')
         previous = []
         previous_hash = None
         if a.previous:
