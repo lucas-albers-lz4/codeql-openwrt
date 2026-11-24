@@ -124,7 +124,9 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
     run = Run(prior_root / "current-corpus", run_id)
     try:
         bundle = run.root / "bundle/codeql-ucode-linux"
-        shutil.copytree(original_bundle, bundle)
+        need(not any(path.is_symlink() for path in original_bundle.rglob("*")),
+             "release bundle gained a symlink after R3")
+        shutil.copytree(original_bundle, bundle, symlinks=True)
         suite = bundle / "ql/src/codeql-suites/code-scanning.qls"
         need(digest(suite) == release["suite_sha256"] and
              digest(bundle / "extractor-pack/tools/linux64/extractor") == release["extractor_sha256"],
