@@ -7,7 +7,7 @@ on:
       - '.github/workflows/r3-released-ucode-handoff.yml'
       - 'docs/r3-release-lock.json'
       - 'docs/r3-openvpn-source-oracle.json'
-      - 'docs/current-corpus-source-v0.4.json'
+      - 'docs/current-corpus-source-v0.6.json'
       - 'docs/current-corpus-linux.md'
       - 'tools/r3_linux_handoff.py'
       - 'tools/current_corpus_linux.py'
@@ -79,7 +79,7 @@ jobs:
         run: |
           set -euo pipefail
           run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          python3 -B -m tools.current_corpus_linux docs/r3-release-lock.json docs/current-corpus-source-v0.4.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B -m tools.current_corpus_linux docs/r3-release-lock.json docs/current-corpus-source-v0.6.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Retain normalized receipt and raw outputs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

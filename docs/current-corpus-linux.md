@@ -6,13 +6,12 @@ CLI, then creates an independent run directory, source checkouts, database,
 cache, `HOME`, `TMPDIR` and outputs. The release lock must be populated;
 an all-null lock skips the live job on PRs, and partial locks fail.
 
-The frozen [source manifest](current-corpus-source-v0.4.json) has SHA-256
-`1e25cf9c2adc40c854502fed8d1ccc0977a3c4825d6ee4a1c0a543ffe0a76699`.
+The frozen [source manifest](current-corpus-source-v0.6.json) has SHA-256
+`9c004ed477665f6567a071eac45051445c61019af927bfa4e51bae4c50ebd490`.
 Its status and boundaries retain their **pre-run oracle wording** so the
-source expectation is not rewritten after observing results. The later
-local macOS run is separate evidence; this job will supply the Linux result.
-It selects 111 source files at exact LuCI, OpenWrt and packages-feed commits:
-65 LuCI, 34 OpenWrt and 12 packages-feed. Expected routes are 76 plain and
+source expectation is not rewritten after observing results. The later local macOS run is separate evidence; this job will supply the Linux result.
+It selects 128 source files at exact LuCI, OpenWrt and packages-feed commits:
+65 LuCI, 51 OpenWrt and 12 packages-feed. Expected routes are 93 plain and
 35 markup-inconclusive. The 17 wifi-scripts Ucode files assume
 `CONFIG_WIFI_SCRIPTS_UCODE=y`; package configuration and installed bytes
 are not verified. Thirteen excluded identities remain outside the selected
@@ -22,12 +21,12 @@ The runner checks clean pinned source checkouts, Git blobs and SHA-256 for
 every selected file, excluded source bytes, exact staged hashes and unique
 proposed installed paths before extraction. It checks each route tuple and
 successful extracted identity with multiplicity, zero extraction errors,
-then emits `out/coverage-v0.4.json` with every selected source, route,
+then emits `out/coverage-v0.6.json` with every selected source, route,
 extraction count and the 13 explicit exclusions. It records markup-model
 inconclusiveness separately from extraction success. It checks the
 released suite rule IDs, and the actual SARIF through the consumer's
 strict `sarif_accept.py` in the same job. The initial baseline is **zero**
-direct-rule alerts, as observed in a local macOS source-staged run. A Linux
+direct-rule alerts, as observed in the refined local macOS v0.6 source-staged run. A Linux
 alert fails this gate for source review; zero alerts do not prove source
 safety or comprehensive query coverage.
 
