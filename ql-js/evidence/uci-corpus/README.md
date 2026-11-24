@@ -30,6 +30,20 @@ comparison of source-site candidates, not evidence of computed-key corpus
 coverage. The source multiset has no CodeQL identities; IDs are local to this
 database.
 
+## Portable inventory
+
+The version-controlled [inventory](inventory.json) records each relative source
+path, inclusive span, receiver form, access kind, property-known flag,
+property and positive multiplicity, with artifact-level `rpc_surface` and
+`candidate` labels. Its SHA-256 is
+`91bf4add23d23e0c852131e39107a779d596ce02bd7e625d47c65b4676e9b477`.
+It is a projection of the audited `candidates.json` named below, with
+machine-local database IDs omitted and common classification labels lifted to the artifact level. Every full tuple and its multiplicity was
+compared to the pinned source-first multiset; no span was used as a substitute
+for database identity in the original audit. The inventory is a portable
+record of that bounded comparison, not an independently rerunnable extraction
+receipt.
+
 ## Inputs and toolchain
 
 | Input | Identity |
