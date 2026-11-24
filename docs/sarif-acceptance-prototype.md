@@ -33,3 +33,9 @@ pinned source before extraction and receipts from decoded diagnostic paths,
 resolved query metadata, command exits and SARIF bytes. This is local
 contract evidence; it does not pin a released producer artifact, run Linux
 CI, map installed package bytes or scan incoming upstream revisions.
+
+The [R3 OpenVPN source oracle](r3-openvpn-source-oracle.json) pins the parent
+and fixed LuCI commits, blobs and source hashes before a versioned producer
+release is chosen. It records one parent SARIF result and zero fixed results,
+with exact stage paths and suite-rule expectations. Its producer identity is
+unset until an immutable release is published and independently pinned.
