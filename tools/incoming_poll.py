@@ -16,6 +16,7 @@ from pathlib import Path
 import re
 import sys
 import tempfile
+import time
 from urllib.error import HTTPError, URLError
 from urllib.parse import parse_qs, urlsplit
 from urllib.request import Request, HTTPRedirectHandler, build_opener
@@ -24,6 +25,8 @@ SHA = re.compile(r'[0-9a-f]{40}\Z')
 REPOS = ('openwrt/openwrt', 'openwrt/luci')
 API = 'https://api.github.com'
 REQUEST_LOG = []
+HTTP_ERRORS = []
+MAX_HTTP_ERRORS = 20_000
 MAX_RESPONSE = 2_000_000
 MAX_RECORD = 128_000_000
 MAX_REQUEST_HISTORY = 96_000_000
@@ -58,7 +61,7 @@ def http_failure(path, exc):
     if not truncated:
         try:
             obj = json.loads(raw, object_pairs_hook=unique_object)
-            if isinstance(obj, dict) and obj.get('message') in SAFE_MESSAGES:
+            if isinstance(obj, dict) and isinstance(obj.get('message'), str) and obj['message'] in SAFE_MESSAGES:
                 message = obj['message']
         except (ValueError, UnicodeError, RecursionError):
             pass
@@ -91,21 +94,35 @@ def fetch(path):
     check(path.startswith('/repos/'), 'invalid API path')
     headers = {'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'User-Agent': 'codeql-openwrt-incoming-poll'}
     if os.environ.get('GITHUB_TOKEN'): headers['Authorization'] = 'Bearer ' + os.environ['GITHUB_TOKEN']
-    try:
-        with OPENER.open(Request(API + path, headers=headers), timeout=30) as response:
-            check(response.status == 200, 'non-200 API response')
-            check(response.headers.get('X-RateLimit-Remaining', '').isdigit() and int(response.headers['X-RateLimit-Remaining']) > 0, 'missing or exhausted rate limit')
-            raw = response.read(MAX_RESPONSE + 1)
-            check(len(raw) <= MAX_RESPONSE, 'API response exceeds byte limit')
-            check(sum(len(r['body_base64']) for r in REQUEST_LOG) + len(raw) * 4 // 3 + 4 <= MAX_REQUEST_HISTORY, 'request history exceeds byte limit')
-            data = json.loads(raw, object_pairs_hook=unique_object)
-            link = ', '.join(response.headers.get_all('Link', [])) if hasattr(response.headers, 'get_all') else response.headers.get('Link', '')
-            REQUEST_LOG.append({'path': path, 'status': response.status, 'time': datetime.now(timezone.utc).isoformat(), 'link': link, 'rate_remaining': response.headers['X-RateLimit-Remaining'], 'sha256': hashlib.sha256(raw).hexdigest(), 'body_base64': base64.b64encode(raw).decode('ascii')})
-            return data, link
-    except HTTPError as exc:
-        raise PollError('GitHub API returned an HTTP error', http_failure(path, exc)) from exc
-    except (URLError, HTTPException, TimeoutError, OSError, json.JSONDecodeError, RecursionError) as exc:
-        raise PollError('API request failed (' + type(exc).__name__ + ')', {'path': path}) from exc
+    retried_401 = False
+    for attempt in range(3):
+        try:
+            with OPENER.open(Request(API + path, headers=headers), timeout=30) as response:
+                check(response.status == 200, 'non-200 API response')
+                check(response.headers.get('X-RateLimit-Remaining', '').isdigit() and int(response.headers['X-RateLimit-Remaining']) > 0, 'missing or exhausted rate limit')
+                raw = response.read(MAX_RESPONSE + 1)
+                check(len(raw) <= MAX_RESPONSE, 'API response exceeds byte limit')
+                check(sum(len(r['body_base64']) for r in REQUEST_LOG) + len(raw) * 4 // 3 + 4 <= MAX_REQUEST_HISTORY, 'request history exceeds byte limit')
+                data = json.loads(raw, object_pairs_hook=unique_object)
+                link = ', '.join(response.headers.get_all('Link', [])) if hasattr(response.headers, 'get_all') else response.headers.get('Link', '')
+                REQUEST_LOG.append({'path': path, 'status': response.status, 'time': datetime.now(timezone.utc).isoformat(), 'link': link, 'rate_remaining': response.headers['X-RateLimit-Remaining'], 'sha256': hashlib.sha256(raw).hexdigest(), 'body_base64': base64.b64encode(raw).decode('ascii')})
+                return data, link
+        except HTTPError as exc:
+            detail = http_failure(path, exc)
+            check(len(HTTP_ERRORS) < MAX_HTTP_ERRORS, 'HTTP failure history exceeds limit')
+            HTTP_ERRORS.append(detail)
+            if exc.headers and exc.headers.get('Retry-After') is not None:
+                raise PollError('GitHub API requested deferred retry', detail) from exc
+            remaining = detail['headers'].get('X-RateLimit-Remaining')
+            if remaining == '0':
+                raise PollError('GitHub API rate limit exhausted', detail) from exc
+            retryable = exc.code in (502, 503, 504) or (exc.code == 401 and not retried_401)
+            if exc.code == 401: retried_401 = True
+            if not retryable or attempt == 2:
+                raise PollError('GitHub API returned an HTTP error', detail) from exc
+            time.sleep(attempt + 1)
+        except (URLError, HTTPException, TimeoutError, OSError, json.JSONDecodeError, RecursionError) as exc:
+            raise PollError('API request failed (' + type(exc).__name__ + ')', {'path': path}) from exc
 
 def link_values(header):
     """Parse a bounded, conservative Link subset; unsupported syntax fails closed."""
@@ -225,7 +242,7 @@ def read_checkpoint(path):
         raw = handle.read(MAX_RECORD + 1)
     check(len(raw) <= MAX_RECORD, 'checkpoint exceeds byte limit')
     doc = json.loads(raw, object_pairs_hook=unique_object)
-    check(isinstance(doc, dict) and set(doc) == {'schema', 'status', 'observed_at', 'capacity', 'previous_sha256', 'genesis', 'requests', 'decisions', 'limitations'} and doc.get('schema') == 'incoming-poll-v2' and doc.get('status') == 'complete' and isinstance(doc.get('decisions'), list), 'invalid checkpoint')
+    check(isinstance(doc, dict) and set(doc) == {'schema', 'status', 'observed_at', 'capacity', 'previous_sha256', 'genesis', 'requests', 'http_errors', 'decisions', 'limitations'} and doc.get('schema') == 'incoming-poll-v3' and doc.get('status') == 'complete' and isinstance(doc.get('decisions'), list), 'invalid checkpoint')
     check(type(doc['genesis']) is bool and type(doc['capacity']) is int and 0 <= doc['capacity'] <= 1000 and isinstance(doc['requests'], list) and isinstance(doc['limitations'], list) and isinstance(doc['observed_at'], str), 'invalid checkpoint metadata')
     try:
         timestamp = datetime.fromisoformat(doc['observed_at'].replace('Z', '+00:00'))
@@ -233,6 +250,10 @@ def read_checkpoint(path):
         raise PollError('invalid checkpoint timestamp') from exc
     check(timestamp.tzinfo is not None, 'checkpoint timestamp missing timezone')
     check(all(isinstance(x, str) for x in doc['limitations']), 'invalid checkpoint limitations')
+    check(isinstance(doc['http_errors'], list) and len(doc['http_errors']) <= MAX_HTTP_ERRORS, 'invalid HTTP failure history')
+    for error in doc['http_errors']:
+        check(isinstance(error, dict) and set(error) == {'path', 'status', 'time', 'body_prefix_sha256', 'body_prefix_bytes', 'body_truncated', 'safe_message', 'headers'}, 'invalid HTTP failure record')
+        check(isinstance(error['path'], str) and error['path'].startswith('/repos/') and type(error['status']) is int and 400 <= error['status'] <= 599 and isinstance(error['time'], str) and isinstance(error['headers'], dict) and isinstance(error['safe_message'], str) and type(error['body_prefix_bytes']) is int and 0 <= error['body_prefix_bytes'] <= MAX_ERROR_BODY and type(error['body_truncated']) is bool and isinstance(error['body_prefix_sha256'], str) and bool(re.fullmatch(r'[0-9a-f]{64}', error['body_prefix_sha256'])), 'invalid HTTP failure fields')
     for request in doc['requests']:
         check(isinstance(request, dict) and set(request) == {'path', 'status', 'time', 'link', 'rate_remaining', 'sha256', 'body_base64'}, 'invalid checkpoint request')
         check(isinstance(request['path'], str) and request['path'].startswith('/repos/') and request['status'] == 200 and all(isinstance(request[x], str) for x in ('time', 'link', 'rate_remaining', 'sha256', 'body_base64')), 'invalid checkpoint request fields')
@@ -318,13 +339,13 @@ def main():
         observed = []
         for repo in REPOS: observed.extend(snapshot(repo, fetch, a.max_pages))
         decisions = plan(previous, observed, a.capacity)
-        result = {'schema': 'incoming-poll-v2', 'status': 'complete', 'observed_at': datetime.now(timezone.utc).isoformat(), 'capacity': a.capacity, 'previous_sha256': previous_hash, 'genesis': a.genesis, 'requests': REQUEST_LOG, 'decisions': decisions, 'limitations': ['Observed snapshots only; intermediate PR heads and default-branch commits between polls are not enumerated.', 'PR discovery trees are unresolved; selections are not scan-ready and require independent event resolver verification.', 'PR and default branch discovery is not an atomic upstream snapshot.']}
+        result = {'schema': 'incoming-poll-v3', 'status': 'complete', 'observed_at': datetime.now(timezone.utc).isoformat(), 'capacity': a.capacity, 'previous_sha256': previous_hash, 'genesis': a.genesis, 'requests': REQUEST_LOG, 'http_errors': HTTP_ERRORS, 'decisions': decisions, 'limitations': ['Observed snapshots only; intermediate PR heads and default-branch commits between polls are not enumerated.', 'PR discovery trees are unresolved; selections are not scan-ready and require independent event resolver verification.', 'PR and default branch discovery is not an atomic upstream snapshot.']}
         atomic_write(a.output_dir / 'decisions.json', result)
         return 0
     except (PollError, OSError, ValueError, KeyError, TypeError, RecursionError) as exc:
         if created:
             try:
-                atomic_write(a.output_dir / 'failure.json', {'status': 'failed', 'error': str(exc), 'failed_request': exc.detail if isinstance(exc, PollError) else None, 'requests': REQUEST_LOG})
+                atomic_write(a.output_dir / 'failure.json', {'status': 'failed', 'error': str(exc), 'failed_request': exc.detail if isinstance(exc, PollError) else None, 'requests': REQUEST_LOG, 'http_errors': HTTP_ERRORS})
             except (PollError, OSError) as failure_exc:
                 print('failure record could not be written: ' + str(failure_exc), file=sys.stderr)
         print('incoming poll failed: ' + str(exc), file=sys.stderr)

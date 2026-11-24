@@ -131,9 +131,7 @@ class PollTests(unittest.TestCase):
     def test_http_error_receipt_redacts_arbitrary_server_text(self):
         secret = 'ghp_test_secret'
         body = json.dumps({'message': 'Bad credentials', 'echo': secret}).encode()
-        error = HTTPError('https://api.github.com/repos/openwrt/luci', 401, 'Unauthorized',
-                          {'X-GitHub-Request-Id': 'ABCD:123', 'X-RateLimit-Remaining': '7', 'Authorization': secret}, io.BytesIO(body))
-        with patch.dict(p.os.environ, {'GITHUB_TOKEN': secret}), patch.object(p.OPENER, 'open', side_effect=error):
+        with patch.dict(p.os.environ, {'GITHUB_TOKEN': secret}), patch.object(p.OPENER, 'open', side_effect=lambda *args, **kwargs: (_ for _ in ()).throw(HTTPError('https://api.github.com/repos/openwrt/luci', 401, 'Unauthorized', {'X-GitHub-Request-Id': 'ABCD:123', 'X-RateLimit-Remaining': '7', 'Authorization': secret}, io.BytesIO(body)))), patch.object(p.time, 'sleep'):
             with self.assertRaises(p.PollError) as raised: p.fetch('/repos/openwrt/luci')
         detail = raised.exception.detail
         self.assertEqual(detail['status'], 401)
@@ -149,6 +147,45 @@ class PollTests(unittest.TestCase):
         self.assertTrue(detail['body_truncated'])
         self.assertEqual(detail['body_prefix_bytes'], p.MAX_ERROR_BODY)
         self.assertEqual(detail['safe_message'], '[unrecognized or unavailable response omitted]')
+
+    def test_transient_retry_success_and_exhaustion(self):
+        class Response:
+            status = 200
+            headers = {'X-RateLimit-Remaining': '9'}
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, limit): return b'{}'
+        def error(): return HTTPError('https://api.github.com', 504, 'Gateway Timeout', {'X-GitHub-Request-Id': 'ABCD:123', 'X-RateLimit-Remaining': '9'}, io.BytesIO(b''))
+        p.HTTP_ERRORS.clear(); p.REQUEST_LOG.clear()
+        with patch.object(p.OPENER, 'open', side_effect=[error(), Response()]), patch.object(p.time, 'sleep') as sleep:
+            self.assertEqual(p.fetch('/repos/openwrt/luci'), ({}, ''))
+            sleep.assert_called_once_with(1)
+        self.assertEqual([e['status'] for e in p.HTTP_ERRORS], [504])
+        self.assertEqual(p.HTTP_ERRORS[0]['headers']['X-GitHub-Request-Id'], 'ABCD:123')
+        p.HTTP_ERRORS.clear()
+        with patch.object(p.OPENER, 'open', side_effect=[error(), error(), error()]), patch.object(p.time, 'sleep') as sleep:
+            with self.assertRaises(p.PollError): p.fetch('/repos/openwrt/luci')
+            self.assertEqual(sleep.call_count, 2)
+        self.assertEqual(len(p.HTTP_ERRORS), 3)
+
+    def test_rate_exhaustion_does_not_retry(self):
+        err = HTTPError('https://api.github.com', 503, 'Unavailable', {'X-RateLimit-Remaining': '0'}, io.BytesIO(b''))
+        with patch.object(p.OPENER, 'open', side_effect=err) as opened, patch.object(p.time, 'sleep') as sleep:
+            with self.assertRaises(p.PollError): p.fetch('/repos/openwrt/luci')
+            opened.assert_called_once(); sleep.assert_not_called()
+
+    def test_non_string_error_message_keeps_failure_details(self):
+        error = HTTPError('https://api.github.com', 504, 'Unavailable', {}, io.BytesIO(b'{"message": ["unexpected"]}'))
+        detail = p.http_failure('/repos/openwrt/luci', error)
+        self.assertEqual(detail['safe_message'], '[unrecognized or unavailable response omitted]')
+        self.assertEqual(detail['status'], 504)
+
+    def test_retry_after_seconds_or_date_does_not_retry(self):
+        for value in ('10', 'Wed, 21 Oct 2037 07:28:00 GMT'):
+            error = HTTPError('https://api.github.com', 503, 'Unavailable', {'Retry-After': value, 'X-RateLimit-Remaining': '10'}, io.BytesIO(b''))
+            with self.subTest(value=value), patch.object(p.OPENER, 'open', side_effect=error) as opened, patch.object(p.time, 'sleep') as sleep:
+                with self.assertRaises(p.PollError): p.fetch('/repos/openwrt/luci')
+                opened.assert_called_once(); sleep.assert_not_called()
 
     def test_response_limit(self):
         class Response:
