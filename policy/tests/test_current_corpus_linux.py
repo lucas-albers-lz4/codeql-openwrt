@@ -11,7 +11,7 @@ from tools.current_corpus_linux import (MANIFEST_SHA256, digest, run_current,
 
 
 ROOT = Path(__file__).resolve().parents[2]
-MANIFEST = ROOT / "docs/current-corpus-source-v0.4.json"
+MANIFEST = ROOT / "docs/current-corpus-source-v0.6.json"
 
 
 class CurrentCorpusLinuxTests(unittest.TestCase):
@@ -51,7 +51,7 @@ class CurrentCorpusLinuxTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             prior = Path(temp) / "r3"
             process = subprocess.run([sys.executable, "-B", "-m", "tools.current_corpus_linux",
-                                      "docs/r3-release-lock.json", "docs/current-corpus-source-v0.4.json",
+                                      "docs/r3-release-lock.json", "docs/current-corpus-source-v0.6.json",
                                       str(prior), "test"], cwd=ROOT, text=True, capture_output=True)
             self.assertNotEqual(process.returncode, 0)
             self.assertIn("unpopulated/invalid release commit", process.stderr)
