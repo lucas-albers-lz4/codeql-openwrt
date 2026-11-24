@@ -1,5 +1,7 @@
 import unittest
 import json
+import io
+from urllib.error import HTTPError
 import tempfile
 from pathlib import Path
 from unittest.mock import patch
@@ -110,6 +112,28 @@ class PollTests(unittest.TestCase):
         for link in links:
             with self.subTest(link=link), self.assertRaises(p.PollError):
                 p.pull_pages('openwrt/luci', lambda _: ([], link), 2)
+
+    def test_http_error_receipt_redacts_arbitrary_server_text(self):
+        secret = 'ghp_test_secret'
+        body = json.dumps({'message': 'Bad credentials', 'echo': secret}).encode()
+        error = HTTPError('https://api.github.com/repos/openwrt/luci', 401, 'Unauthorized',
+                          {'X-GitHub-Request-Id': 'ABCD:123', 'X-RateLimit-Remaining': '7', 'Authorization': secret}, io.BytesIO(body))
+        with patch.dict(p.os.environ, {'GITHUB_TOKEN': secret}), patch.object(p.OPENER, 'open', side_effect=error):
+            with self.assertRaises(p.PollError) as raised: p.fetch('/repos/openwrt/luci')
+        detail = raised.exception.detail
+        self.assertEqual(detail['status'], 401)
+        self.assertEqual(detail['path'], '/repos/openwrt/luci')
+        self.assertEqual(detail['safe_message'], 'Bad credentials')
+        self.assertEqual(detail['headers']['X-GitHub-Request-Id'], 'ABCD:123')
+        self.assertNotIn(secret, json.dumps(detail))
+        self.assertNotIn('Authorization', detail['headers'])
+
+    def test_http_error_oversize_and_untrusted_message(self):
+        error = HTTPError('https://api.github.com', 401, 'Unauthorized', {}, io.BytesIO(b'x' * (p.MAX_ERROR_BODY + 1)))
+        detail = p.http_failure('/repos/openwrt/luci', error)
+        self.assertTrue(detail['body_truncated'])
+        self.assertEqual(detail['body_prefix_bytes'], p.MAX_ERROR_BODY)
+        self.assertEqual(detail['safe_message'], '[unrecognized or unavailable response omitted]')
 
     def test_response_limit(self):
         class Response:

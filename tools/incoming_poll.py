@@ -35,7 +35,42 @@ class NoRedirect(HTTPRedirectHandler):
 
 OPENER = build_opener(NoRedirect())
 
-class PollError(ValueError): pass
+class PollError(ValueError):
+    def __init__(self, message, detail=None):
+        super().__init__(message)
+        self.detail = detail
+
+MAX_ERROR_BODY = 8192
+SAFE_MESSAGES = {'Bad credentials', 'Requires authentication', 'API rate limit exceeded', 'Resource not accessible by integration', 'Not Found', 'Forbidden'}
+
+def http_failure(path, exc):
+    # Do not retain arbitrary server text, which could reflect request credentials.
+    try:
+        raw = exc.read(MAX_ERROR_BODY + 1)
+    except (OSError, HTTPException):
+        raw = b''
+    finally:
+        exc.close()
+    truncated = len(raw) > MAX_ERROR_BODY
+    raw = raw[:MAX_ERROR_BODY]
+    message = '[unrecognized or unavailable response omitted]'
+    if not truncated:
+        try:
+            obj = json.loads(raw, object_pairs_hook=unique_object)
+            if isinstance(obj, dict) and obj.get('message') in SAFE_MESSAGES:
+                message = obj['message']
+        except (ValueError, UnicodeError, RecursionError):
+            pass
+    safe_headers = {}
+    for name in ('X-GitHub-Request-Id', 'X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset', 'X-RateLimit-Used', 'Retry-After'):
+        value = exc.headers.get(name, '') if exc.headers else ''
+        token = os.environ.get('GITHUB_TOKEN', '')
+        if isinstance(value, str) and len(value) <= 128 and re.fullmatch(r'[A-Za-z0-9:._-]+', value) and (not token or token not in value):
+            safe_headers[name] = value
+    return {'path': path, 'status': exc.code, 'time': datetime.now(timezone.utc).isoformat(),
+            'body_prefix_sha256': hashlib.sha256(raw).hexdigest(), 'body_prefix_bytes': len(raw),
+            'body_truncated': truncated, 'safe_message': message, 'headers': safe_headers}
+
 
 def check(ok, msg):
     if not ok: raise PollError(msg)
@@ -66,8 +101,10 @@ def fetch(path):
             link = ', '.join(response.headers.get_all('Link', [])) if hasattr(response.headers, 'get_all') else response.headers.get('Link', '')
             REQUEST_LOG.append({'path': path, 'status': response.status, 'time': datetime.now(timezone.utc).isoformat(), 'link': link, 'rate_remaining': response.headers['X-RateLimit-Remaining'], 'sha256': hashlib.sha256(raw).hexdigest(), 'body_base64': base64.b64encode(raw).decode('ascii')})
             return data, link
-    except (HTTPError, URLError, HTTPException, TimeoutError, OSError, json.JSONDecodeError, RecursionError) as exc:
-        raise PollError('API request failed: ' + str(exc)) from exc
+    except HTTPError as exc:
+        raise PollError('GitHub API returned an HTTP error', http_failure(path, exc)) from exc
+    except (URLError, HTTPException, TimeoutError, OSError, json.JSONDecodeError, RecursionError) as exc:
+        raise PollError('API request failed (' + type(exc).__name__ + ')', {'path': path}) from exc
 
 def link_values(header):
     """Parse a bounded, conservative Link subset; unsupported syntax fails closed."""
@@ -281,7 +318,7 @@ def main():
     except (PollError, OSError, ValueError, KeyError, TypeError, RecursionError) as exc:
         if created:
             try:
-                atomic_write(a.output_dir / 'failure.json', {'status': 'failed', 'error': str(exc), 'requests': REQUEST_LOG})
+                atomic_write(a.output_dir / 'failure.json', {'status': 'failed', 'error': str(exc), 'failed_request': exc.detail if isinstance(exc, PollError) else None, 'requests': REQUEST_LOG})
             except (PollError, OSError) as failure_exc:
                 print('failure record could not be written: ' + str(failure_exc), file=sys.stderr)
         print('incoming poll failed: ' + str(exc), file=sys.stderr)
