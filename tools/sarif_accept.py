@@ -76,6 +76,17 @@ def expected_tuple(item: dict) -> tuple:
             item["level"])
 
 
+def validate_event_region(row: tuple, source_root: Path) -> None:
+    _, uri, start_line, start_col, end_line, end_col, _ = row
+    lines = (source_root / uri).read_bytes().decode("utf-8", "replace").split("\n")
+    require(end_line <= len(lines), f"event SARIF region beyond source EOF: {uri}")
+    for line_number, column in ((start_line, start_col), (end_line, end_col)):
+        line = lines[line_number - 1].removesuffix("\r")
+        utf16_units = len(line.encode("utf-16-le")) // 2
+        require(column <= utf16_units + 1,
+                f"event SARIF UTF-16 column beyond source line: {uri}:{line_number}:{column}")
+
+
 def inspect(sarif_path: Path, manifest_path: Path, receipt_path: Path,
             source_root: Path, *, event: bool = False) -> dict:
     manifest, receipt, sarif = map(load_object,
@@ -171,6 +182,8 @@ def inspect(sarif_path: Path, manifest_path: Path, receipt_path: Path,
     if event:
         require("expected_results" not in manifest,
                 "event triage cannot borrow output-generated expected results")
+        for row in actual:
+            validate_event_region(row, source_root)
     else:
         expected = manifest.get("expected_results")
         require(isinstance(expected, list), "missing expected results")

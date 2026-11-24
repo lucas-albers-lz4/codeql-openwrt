@@ -149,8 +149,8 @@ def build(policy: dict, receipt: dict, inventory: dict, checkout: Path) -> dict:
     need(git(checkout, "rev-parse", "HEAD") == head["commit"] and
          git(checkout, "rev-parse", f"{head['commit']}^{{tree}}") == head["tree"] and
          not git(checkout, "status", "--porcelain=v1"), "event checkout changed")
-    recipe_changes = relevant_recipe_changes(policy, repo,
-                                             changed_paths(checkout, base["commit"], head["commit"]))
+    recipe_changes = relevant_recipe_changes(
+        policy, repo, changed_paths(checkout, policy["pins"][repo], head["commit"]))
     need(not recipe_changes, "reviewed recipe/config input changed: " + ", ".join(recipe_changes))
     historical_fields = {"prior_claims", "prior_local_extraction", "route_support", "source_oracle"}
     selected = [{key: value for key, value in row.items() if key not in historical_fields}

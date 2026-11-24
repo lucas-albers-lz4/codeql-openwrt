@@ -11,7 +11,9 @@ SHA-256 and source commit from the event head; an excluded edit, new candidate,
 missing candidate, changed signal, changed route or installed-path collision
 fails closed before extraction. A changed Makefile, Config.in, Kconfig or `.mk`
 input under a selected owner's root (or a shared `include/` build file) also
-requires review. This bounded rule does not prove all possible build-system
+requires review, comparing the frozen policy's repository pin to the event
+head so a recipe change already present at the PR base is still detected.
+This bounded rule does not prove all possible build-system
 effects absent.
 
 The output records the upstream PR number, base and head commits, head tree,

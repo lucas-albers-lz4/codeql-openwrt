@@ -29,6 +29,19 @@ The following [source-first event corpus oracle](event-corpus-manifest.md)
 refreshes selected Git blobs and hashes from the verified head and checks
 routes before extraction. It remains an input contract for a later released
 scanner job.
+When the immutable release lock is populated, a second Ubuntu job re-fetches
+the captured PR and control SHAs, replays the resolver, selector and oracle,
+and requires byte-identical input reports before R3 release verification and
+the event corpus scan. It passes actual SARIF to the
+[event triage consumer](event-sarif-triage.md). With the current null lock,
+that scan step does not run; the workflow summary says so. A populated lock
+and a successful hosted manual run are still required for Gate 8 evidence.
+The released job separately records whether the tagged producer's
+`extractor/src/extractor.rs` bytes match the route-oracle source digest. This
+is a source-file comparison, not a claim that the entire released bundle and
+local PR tree are identical. Its job summary shows `triage_required` or
+`clean_scan`, selected-file count, markup-inconclusive count, and up to 20
+result tuples; the artifact retains the complete set.
 On changes to the workflow, selector, resolver, tests or v0.6 manifest, a
 separate pull-request contract job runs the resolver and selector controls.
 It does not fetch upstream source or execute the manual drill.
