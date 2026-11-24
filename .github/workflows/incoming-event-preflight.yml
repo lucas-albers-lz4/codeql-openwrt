@@ -26,6 +26,8 @@ on:
       - 'tools/incoming_event.py'
       - 'tools/full_tree_candidates.py'
       - 'tools/test_full_tree_candidates.py'
+      - 'tools/event_corpus_manifest.py'
+      - 'tools/test_event_corpus_manifest.py'
       - 'policy/tests/test_incoming_event.py'
       - 'docs/current-corpus-source-v0.6.json'
 
@@ -42,6 +44,7 @@ jobs:
         run: |
           python3 -B -m unittest policy.tests.test_incoming_event -v
           python3 -B tools/test_full_tree_candidates.py -v
+          python3 -B -m unittest tools.test_event_corpus_manifest -v
   resolve-pins:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
@@ -126,6 +129,10 @@ jobs:
         run: |
           set -euo pipefail
           python3 -B tools/full_tree_candidates.py docs/current-corpus-source-v0.6.json "$UPSTREAM" upstream-source "$BASE_SHA" "$SOURCE_SHA" full-tree-candidates.json
+      - name: Prepare source-first event corpus oracle
+        run: |
+          set -euo pipefail
+          python3 -B -m tools.event_corpus_manifest docs/current-corpus-source-v0.6.json incoming-event-receipt.json full-tree-candidates.json upstream-source event-corpus-manifest.json
       - name: Retain exact API response, identity receipt and candidate reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -137,3 +144,4 @@ jobs:
             incoming-event*.json
             source-policy-drift.json
             full-tree-candidates.json
+            event-corpus-manifest.json
