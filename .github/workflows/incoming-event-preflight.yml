@@ -101,7 +101,15 @@ jobs:
           git -C upstream-source fetch --no-tags --depth=1 origin "$BASE_SHA"
           [[ "$(git -C upstream-source rev-parse --verify "$BASE_SHA^{commit}")" == "$BASE_SHA" ]]
           python3 -B tools/source_policy_drift.py docs/current-corpus-source-v0.4.json "$UPSTREAM" upstream-source "$SOURCE_SHA" "$BASE_SHA" source-policy-drift.json
-      - name: Retain exact API response, identity receipt and drift report
+      - name: Inventory full-tree Ucode candidates against reviewed v0.6 policy
+        env:
+          BASE_SHA: ${{ steps.pull.outputs.base_sha }}
+          SOURCE_SHA: ${{ steps.pull.outputs.source_sha }}
+          UPSTREAM: ${{ inputs.upstream }}
+        run: |
+          set -euo pipefail
+          python3 -B tools/full_tree_candidates.py docs/current-corpus-source-v0.6.json "$UPSTREAM" upstream-source "$BASE_SHA" "$SOURCE_SHA" full-tree-candidates.json
+      - name: Retain exact API response, identity receipt and candidate reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -111,3 +119,4 @@ jobs:
             pull-api-response.json
             incoming-event*.json
             source-policy-drift.json
+            full-tree-candidates.json
