@@ -36,12 +36,13 @@ class IncomingEventTests(unittest.TestCase):
             "pr_number": 123,
             "event_time": "2026-11-24T12:00:00Z",
             "source_sha": self.source,
+            "base_sha": self.control,
             "control_sha": self.control,
         }
         self.api_pr = {
             "number": 123,
             "state": "open",
-            "base": {"repo": {"full_name": "openwrt/openwrt"}},
+            "base": {"sha": self.control, "repo": {"full_name": "openwrt/openwrt"}},
             "head": {
                 "sha": self.source,
                 "repo": {"full_name": "contributor/openwrt", "fork": True},
@@ -117,6 +118,11 @@ class IncomingEventTests(unittest.TestCase):
         bad = {**self.api_pr, "head": {**self.api_pr["head"], "sha": self.control}}
         with self.assertRaisesRegex(InvalidEvent, "event source SHA disagrees"):
             validate(self.event, bad, self.repo, self.control_repo)
+
+    def test_rejects_event_base_sha_that_differs_from_api(self):
+        bad = dict(self.event, base_sha=self.source)
+        with self.assertRaisesRegex(InvalidEvent, "base SHA disagrees"):
+            validate(bad, self.api_pr, self.repo, self.control_repo)
 
     def test_rejects_cross_repository_head_not_marked_as_fork(self):
         bad = {**self.api_pr, "head": {**self.api_pr["head"],

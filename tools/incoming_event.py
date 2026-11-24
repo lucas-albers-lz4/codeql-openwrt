@@ -77,6 +77,7 @@ def validate(event: dict, api_pr: dict, source_checkout: Path,
     head_repo = head["repo"].get("full_name")
     head_fork = head["repo"].get("fork")
     head_sha = head.get("sha")
+    base_sha = base.get("sha")
     expected_full_name = REPOSITORIES[repo].removeprefix("https://github.com/").removesuffix(".git")
     require(isinstance(base_repo, str) and base_repo.lower() == expected_full_name,
             "GitHub pull base repository does not match selected upstream")
@@ -88,6 +89,10 @@ def validate(event: dict, api_pr: dict, source_checkout: Path,
             "GitHub pull response head SHA is not a full commit SHA")
     require(event.get("source_sha") == head_sha,
             "event source SHA disagrees with GitHub pull response")
+    require(isinstance(base_sha, str) and bool(SHA.fullmatch(base_sha)),
+            "GitHub pull response base SHA is not a full commit SHA")
+    require(event.get("base_sha") == base_sha,
+            "event base SHA disagrees with GitHub pull response")
     event_time = event.get("event_time")
     require(isinstance(event_time, str), "event_time must be an ISO-8601 timestamp")
     try:
@@ -112,11 +117,12 @@ def validate(event: dict, api_pr: dict, source_checkout: Path,
         "event_type": event["event_type"],
         "event_time": event_time,
         "source": source,
+        "base": {"commit": base_sha},
         "control": control,
         "status": "identities_resolved_only",
         "limitations": [
             "PR membership is bound to the captured GitHub pull response and fetched PR head ref; it is not a scan result.",
-            "No source-policy discovery, CodeQL execution, SARIF, or consumer handoff is performed.",
+            "No source-policy discovery, CodeQL execution, SARIF, or consumer handoff is performed by this resolver.",
         ],
     }
 
