@@ -86,6 +86,12 @@ class SarifAcceptanceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "successful-file multiset"):
             self.verify()
 
+    def test_duplicate_expected_extraction_rejected(self):
+        self.manifest["expected_extracted"] = [self.uri, self.uri]
+        self.receipt["successful_files"] = [self.uri, self.uri]
+        with self.assertRaisesRegex(ValueError, "duplicate expected extracted-file"):
+            self.verify()
+
     def test_source_and_sarif_hash_rejected(self):
         self.manifest["sources"][0]["sha256"] = "0" * 64
         with self.assertRaisesRegex(ValueError, "source-byte mismatch"):

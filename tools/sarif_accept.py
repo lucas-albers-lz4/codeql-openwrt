@@ -97,8 +97,11 @@ def accept(sarif_path: Path, manifest_path: Path, receipt_path: Path,
     actual_files = receipt.get("successful_files")
     require(isinstance(expected_files, list) and isinstance(actual_files, list),
             "missing extracted-file inventory")
+    normalized_expected = list(map(relative_uri, expected_files))
+    require(len(normalized_expected) == len(set(normalized_expected)),
+            "duplicate expected extracted-file identity")
     require(Counter(map(relative_uri, actual_files)) ==
-            Counter(map(relative_uri, expected_files)),
+            Counter(normalized_expected),
             "successful-file multiset differs from source-first expectation")
     sources = manifest.get("sources")
     require(isinstance(sources, list) and sources, "missing source list")
@@ -115,7 +118,7 @@ def accept(sarif_path: Path, manifest_path: Path, receipt_path: Path,
         require(path.is_file() and path.resolve().is_relative_to(source_root.resolve()),
                 f"missing or escaping source: {uri}")
         require(sha256(path) == digest, f"source-byte mismatch: {uri}")
-    require(allowed == set(map(relative_uri, expected_files)),
+    require(allowed == set(normalized_expected),
             "source records differ from extraction inventory")
     require(sarif.get("version") == "2.1.0", "unsupported SARIF version")
     runs = sarif.get("runs")
