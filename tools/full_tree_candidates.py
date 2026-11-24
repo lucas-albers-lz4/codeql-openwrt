@@ -85,6 +85,8 @@ def make_inventory(root, rev, policy, repository):
     for path in sorted(candidate_paths):
         info=present.get(path)
         if not info: continue
+        if info["mode"] not in ("100644", "100755"):
+            raise SelectorError(f"candidate is not a regular tracked file: {path} ({info['mode']})")
         data=data_by_blob[info["git_blob"]]; name=PurePosixPath(path).name; hits=[]
         if name.endswith(SUFFIXES): hits.append("ucode_suffix")
         if path in shebang_matches and data.splitlines()[:1] and data.splitlines()[0].startswith(b"#!") and b"ucode" in data.splitlines()[0].lower(): hits.append("first_line_ucode_shebang")
@@ -116,13 +118,14 @@ def compare(root, base, head, policy, raw_manifest, repository="openwrt"):
         if b and not h: reasons.append("candidate_removed_or_signal_lost")
         if h and not b: reasons.append("candidate_added")
         if b and h and b["signals"] != h["signals"]: reasons.append("candidate_signal_changed")
+        if b and h and b["mode"] != h["mode"]: reasons.append("candidate_mode_changed")
         if b and h and b["git_blob"] != h["git_blob"]:
             if baseline is not None and status == "selected": reasons.append("selected_content_changed_scan_eligible")
             elif baseline is not None and status == "excluded": reasons.append("excluded_content_changed_review_required")
             else: reasons.append("unreviewed_candidate_content_changed")
         if h and h["status"]=="unreviewed": reasons.append("no_reviewed_disposition")
         events.append({"source_path":p,"status":status,"baseline_policy":baseline,"base":b,"head":h,"events":reasons})
-    fail = any((e["status"]=="unreviewed") or any(x in e["events"] for x in ("baseline_identity_missing_at_base_and_head","candidate_removed_or_signal_lost","candidate_added","candidate_signal_changed","excluded_content_changed_review_required","unreviewed_candidate_content_changed")) for e in events)
+    fail = any((e["status"]=="unreviewed") or any(x in e["events"] for x in ("baseline_identity_missing_at_base_and_head","candidate_removed_or_signal_lost","candidate_added","candidate_signal_changed","candidate_mode_changed","excluded_content_changed_review_required","unreviewed_candidate_content_changed")) for e in events)
     return {"schema":"full-tree-ucode-candidates-v1","policy_schema":policy["schema"],"policy_sha256":hashlib.sha256(raw_manifest).hexdigest(),
             "repository":repository,"base_commit":base,"base_tree":git(root,"rev-parse",f"{base}^{{tree}}"),"head_commit":head,"head_tree":git(root,"rev-parse",f"{head}^{{tree}}"),
             "base_candidate_count":len(bi),"head_candidate_count":len(hi),"head_selected_count":sum(x["status"]=="selected" for x in hi),

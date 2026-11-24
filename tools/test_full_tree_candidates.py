@@ -34,6 +34,18 @@ class FullTreeControls(unittest.TestCase):
  def test_changed_selection_signal(self):
   self.put('selected/pkg.uc',b'#!/usr/bin/ucode\n');self.commit();r=self.result();self.assertTrue(r['fail_closed']);self.assertIn('candidate_signal_changed',next(x for x in r['events'] if x['source_path']=='selected/pkg.uc')['events'])
 
+ def test_candidate_mode_change_requires_review(self):
+  (self.root/'selected/pkg.uc').chmod(0o755);self.commit();r=self.result()
+  self.assertTrue(r['fail_closed'])
+  self.assertIn('candidate_mode_changed',next(x for x in r['events'] if x['source_path']=='selected/pkg.uc')['events'])
+
+ def test_candidate_symlink_rejected(self):
+  (self.root/'selected/pkg.uc').unlink()
+  (self.root/'selected/pkg.uc').symlink_to('../twin-a/tool.ucode')
+  self.commit()
+  with self.assertRaisesRegex(selector.SelectorError,'not a regular tracked file'):
+   self.result()
+
  def test_nested_openwrt_and_luci_roots_match_but_fakeusr_does_not(self):
   openwrt_path='package/example/files/usr/share/ucode/tool';luci_path='modules/luci-base/root/usr/share/rpcd/ucode/luci';fake_path='package/example/files/fakeusr/share/ucode/not-a-root'
   self.put(openwrt_path,b'return 1\n');self.put(luci_path,b'return 2\n');self.put(fake_path,b'return 3\n');self.commit()
