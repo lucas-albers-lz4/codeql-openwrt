@@ -26,6 +26,8 @@ counts and zero-result SARIF expectation must not be relaxed to consume an
 event manifest. The event manifest is an input oracle only: it does not run
 CodeQL, prove installed bytes, infer previously unreviewed package recipes,
 or establish the released producer-to-consumer Gate 8 handoff.
+Incoming alerts use a separate [SARIF triage contract](event-sarif-triage.md)
+so valid new results remain visible for review.
 
 Run the focused controls with:
 
