@@ -12,6 +12,10 @@ on:
         description: Open upstream PR number
         type: number
         required: true
+      source_sha:
+        description: Full expected PR head commit SHA
+        type: string
+        required: true
       control_sha:
         description: Full clean control commit SHA from canonical upstream
         type: string
@@ -32,6 +36,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           UPSTREAM: ${{ inputs.upstream }}
           PR_NUMBER: ${{ inputs.pr_number }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
         run: |
           set -euo pipefail
           case "$UPSTREAM" in
@@ -44,6 +49,7 @@ jobs:
           source_sha=$(jq -er '.head.sha | select(test("^[0-9a-f]{40}$"))' pull-api-response.json)
           api_number=$(jq -er '.number' pull-api-response.json)
           [[ "$api_number" == "$PR_NUMBER" ]]
+          [[ "$source_sha" == "$SOURCE_SHA" ]]
           echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:

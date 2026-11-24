@@ -86,7 +86,7 @@ def validate(event: dict, api_pr: dict, source_checkout: Path,
             "cross-repository PR head is not identified as a fork")
     require(isinstance(head_sha, str) and bool(SHA.fullmatch(head_sha)),
             "GitHub pull response head SHA is not a full commit SHA")
-    require("source_sha" not in event or event["source_sha"] == head_sha,
+    require(event.get("source_sha") == head_sha,
             "event source SHA disagrees with GitHub pull response")
     event_time = event.get("event_time")
     require(isinstance(event_time, str), "event_time must be an ISO-8601 timestamp")
