@@ -7,6 +7,7 @@ from pathlib import Path, PurePosixPath
 EXPECTED_MANIFEST_SHA256 = "1e25cf9c2adc40c854502fed8d1ccc0977a3c4825d6ee4a1c0a543ffe0a76699"
 ROOTS = ("usr/share/ucode/", "usr/share/rpcd/ucode/", "usr/lib/ucode/")
 SUFFIXES = (".uc", ".ucode", ".ut")
+ROOT_PARTS = tuple(tuple(r.strip("/").split("/")) for r in ROOTS)
 HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 
 class SelectorError(ValueError): pass
@@ -35,20 +36,23 @@ def tree(root, rev):
         if kind == "blob": rows[path] = {"mode": mode, "git_blob": blob}
     return rows
 
-def shebang_paths(root, rev):
-    # git grep searches the named tree directly at the supplied commit.
+def under_installed_root(path):
+    parts=PurePosixPath(path).parts
+    return any(any(parts[i:i+len(root)] == root for i in range(len(parts)-len(root)+1)) for root in ROOT_PARTS)
+
+def shebang_match_paths(root, rev):
+    # -z emits complete path records without newline-based record parsing.
     try:
-        raw = subprocess.check_output(["git", "-C", str(root), "grep", "-I", "-n", "--null", "-E", "-e", "^#!.*[Uu][Cc][Oo][Dd][Ee]", rev, "--"], stderr=subprocess.PIPE)
+        raw = subprocess.check_output(["git", "-C", str(root), "grep", "-I", "-l", "-z", "-E", "-e", "^#!.*[Uu][Cc][Oo][Dd][Ee]", rev, "--"], stderr=subprocess.PIPE)
     except subprocess.CalledProcessError as e:
         if e.returncode == 1: return set()
         raise SelectorError(f"git grep failed: {e.stderr.decode(errors='replace').strip()}") from e
+    prefix=rev.encode()+b":"
     found=set()
-    fields=raw.split(b"\0")
-    for i in range(0,len(fields)-2,3):
-        path, num = fields[i], fields[i+1]
-        # Git prefixes the path with REV: and null-delimits line numbers.
-        if b":" in path: path=path.split(b":",1)[1]
-        if num == b"1": found.add(path.decode("utf-8","surrogateescape"))
+    for record in raw.split(b"\0"):
+        if not record: continue
+        path=record[len(prefix):] if record.startswith(prefix) else record
+        found.add(path.decode("utf-8","surrogateescape"))
     return found
 
 def blob_contents(root, blobs):
@@ -66,11 +70,11 @@ def blob_contents(root, blobs):
 def make_inventory(root, rev, policy, repository):
     selected = {x["source_path"]: x for x in policy.get("selected", []) if x.get("repo") == repository}
     excluded = {x["source_path"]: x for x in policy.get("excluded", []) if x.get("repo") == repository}
-    all_paths = tree(root, rev); shebangs=shebang_paths(root, rev)
-    candidate_paths=set(selected)|set(excluded)|shebangs
+    all_paths = tree(root, rev); shebang_matches=shebang_match_paths(root, rev)
+    candidate_paths=set(selected)|set(excluded)|shebang_matches
     for path in all_paths:
         name=PurePosixPath(path).name
-        if name.endswith(SUFFIXES) or ("." not in name and any(path.startswith(r) for r in ROOTS)): candidate_paths.add(path)
+        if name.endswith(SUFFIXES) or ("." not in name and under_installed_root(path)): candidate_paths.add(path)
     present={p:all_paths[p] for p in candidate_paths if p in all_paths}
     data_by_blob=blob_contents(root, sorted({x["git_blob"] for x in present.values()}))
     entries=[]
@@ -79,9 +83,10 @@ def make_inventory(root, rev, policy, repository):
         if not info: continue
         data=data_by_blob[info["git_blob"]]; name=PurePosixPath(path).name; hits=[]
         if name.endswith(SUFFIXES): hits.append("ucode_suffix")
-        if path in shebangs: hits.append("first_line_ucode_shebang")
-        if "." not in name and any(path.startswith(r) for r in ROOTS): hits.append("extensionless_installed_ucode_root")
+        if path in shebang_matches and data.splitlines()[:1] and data.splitlines()[0].startswith(b"#!") and b"ucode" in data.splitlines()[0].lower(): hits.append("first_line_ucode_shebang")
+        if "." not in name and under_installed_root(path): hits.append("extensionless_installed_ucode_root")
         baseline=selected.get(path) or excluded.get(path)
+        if not hits and baseline is None: continue
         entries.append({"source_path":path,"git_blob":info["git_blob"],"sha256":hashlib.sha256(data).hexdigest(),"mode":info["mode"],"signals":hits,"explicit_policy":baseline is not None,"status":"selected" if path in selected else "excluded" if path in excluded else "unreviewed","policy":baseline})
     return entries
 
