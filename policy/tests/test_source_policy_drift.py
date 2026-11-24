@@ -45,8 +45,17 @@ class SourcePolicyDriftTests(unittest.TestCase):
         (self.work / "known.uc").write_text("let a=3;\n"); event = self.commit_event(False)
         result = analyze(self.manifest, self.raw, "luci", self.work, event, self.base, self.manifest_sha)
         row = result["changed_selected_or_excluded"][0]
-        self.assertTrue(result["fail_closed"]); self.assertNotEqual(row["event_identity"]["git_blob"], row["baseline_git_blob"])
+        self.assertFalse(result["fail_closed"]); self.assertEqual(result["drift"], [])
+        self.assertEqual(result["status"], "content_changes_observed")
+        self.assertNotEqual(row["event_identity"]["git_blob"], row["baseline_git_blob"])
         self.assertEqual(row["event_identity"]["sha256"], hashlib.sha256(b"let a=3;\n").hexdigest())
+    def test_package_policy_input_change_fails_closed(self):
+        (self.work / "Makefile").write_text("# changed package routing condition\n")
+        event = self.commit_event(False)
+        result = analyze(self.manifest, self.raw, "luci", self.work, event, self.base, self.manifest_sha)
+        self.assertTrue(result["fail_closed"])
+        self.assertEqual(result["drift"][0]["class"], "policy_condition_or_routing_input_changed")
+
     def test_manifest_hash_mismatch_fails_closed(self):
         event = self.commit_event(False)
         with self.assertRaisesRegex(DriftError, "manifest SHA-256 mismatch"):

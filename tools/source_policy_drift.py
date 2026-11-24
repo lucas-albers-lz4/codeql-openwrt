@@ -52,6 +52,10 @@ def candidate(path: str) -> bool:
     name = PurePosixPath(path).name
     return PurePosixPath(name).suffix in {".uc", ".ut"} or ("." not in name and name not in {"Makefile", "Config.in"})
 
+def policy_input(path: str) -> bool:
+    name = PurePosixPath(path).name
+    return name in {"Makefile", "Config.in"} or name.startswith("Kconfig") or name.endswith(".mk")
+
 def validate_manifest(manifest: dict, raw_bytes: bytes, repo_name: str, expected_sha256: str = EXPECTED_MANIFEST_SHA256) -> tuple[list, list, str]:
     digest = hashlib.sha256(raw_bytes).hexdigest()
     if digest != expected_sha256:
@@ -147,11 +151,12 @@ def analyze(manifest: dict, manifest_bytes: bytes, repo_name: str, root: Path, e
             drift.append({**item, "class": "renamed_or_candidate_path"})
         elif item["status"] == "added" and candidate(path):
             drift.append({**item, "class": "new_candidate"})
-        elif item["status"] in {"modified", "type_changed"} and path in names:
-            drift.append({**item, "class": "baseline_identity_content_changed"})
-        elif item["status"] == "type_changed" and candidate(path):
-            drift.append({**item, "class": "candidate_type_changed"})
-    fail = bool(drift or removed or changed)
+        elif item["status"] == "type_changed" and (path in names or candidate(path)):
+            drift.append({**item, "class": "baseline_identity_type_changed" if path in names else "candidate_type_changed"})
+        elif item["status"] in {"added", "removed", "modified", "type_changed"} and policy_input(path):
+            drift.append({**item, "class": "policy_condition_or_routing_input_changed"})
+    fail = bool(drift or removed)
+    status = "review_required" if fail else "content_changes_observed" if changed else "no_bounded_drift_observed"
     return {"schema": "source-policy-drift-v1", "baseline_schema": manifest["schema"],
             "baseline_manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(), "baseline_source_commit": baseline_pin,
             "repository": repo_name, "base_commit": base_sha, "base_tree": base_tree,
@@ -159,7 +164,7 @@ def analyze(manifest: dict, manifest_bytes: bytes, repo_name: str, root: Path, e
             "baseline_selected_count_for_repo": len(selected), "baseline_excluded_count_for_repo": len(excluded),
             "selected_and_excluded_identities": resolved_rows, "removed_baseline_identities": removed,
             "changed_selected_or_excluded": changed, "drift": drift,
-            "status": "review_required" if fail else "no_bounded_drift_observed", "fail_closed": fail,
+            "status": status, "fail_closed": fail,
             "limitations": ["Only baseline identities and paths in the explicit base-to-event Git diff are compared.",
                             "No full-tree discovery, install-path inference, package condition evaluation, extraction, CodeQL, SARIF, or consumer handoff is performed.",
                             "Extensionless candidate heuristic is intentionally broad; unrecognized source layouts may be missed."]}

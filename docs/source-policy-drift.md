@@ -23,16 +23,22 @@ the report even when drift causes the job to fail.
 The report recalculates Git blob IDs and SHA-256 content hashes for all
 baseline selected and excluded source paths in the chosen repository. It
 preserves package owner, configuration condition, exclusion reason and
-expected route. Missing paths, content changes, renames and added `.uc`, `.ut`
-or extensionless candidates fail closed with exit 1. Invalid identities,
-manifest bytes, pins, duplicate/unsafe paths or dirty checkouts fail with exit
-2. Exit 0 means only that this bounded comparison found no drift.
+expected route. Source byte changes appear in `changed_selected_or_excluded`
+with their fresh event identities, but do not fail by themselves. Missing
+baseline paths, renames, added `.uc`, `.ut` or extensionless candidates, and
+changes to package policy inputs such as `Makefile`, `Config.in`, `Kconfig*` or
+`*.mk` fail closed with exit 1. Invalid identities, manifest bytes, pins,
+duplicate/unsafe paths or dirty checkouts fail with exit 2. Exit 0 means no
+bounded path or policy-input drift was observed; the report can still contain
+source content changes.
 
 This is an incremental source-policy check, not the full dynamic selector in
 the incoming-CI design. It inspects baseline identities plus candidate paths in
 the explicit base-to-event diff. It does not find unmodified candidate paths
 already present outside that diff, infer installation from recipes, evaluate
-package conditions, or identify every candidate naming convention. It does
+package conditions semantically, detect every possible route change, or identify
+every candidate naming convention. Changes to recognized package policy input
+files fail for review; their semantic effect is not evaluated here. It does
 not run extraction or CodeQL and does not establish Gate 8.
 
 Mechanical tests:
