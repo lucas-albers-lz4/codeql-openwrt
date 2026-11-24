@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 from tools.current_corpus_linux import (MANIFEST_SHA256, digest, run_current,
-                                        validate_manifest)
+                                        validate_manifest, index_with_retained_routing)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -70,6 +70,22 @@ class CurrentCorpusLinuxTests(unittest.TestCase):
             self.assertNotEqual(process.returncode, 0)
             self.assertIn("unpopulated/invalid release commit", process.stderr)
             self.assertFalse(prior.exists())
+
+    def test_index_failure_retains_emitted_routing_report(self):
+        with tempfile.TemporaryDirectory() as temp:
+            route = Path(temp) / "routing.json"
+            retained = Path(temp) / "retained.json"
+
+            class FailingIndex:
+                def call(self, label, argv, *, env):
+                    if label != "db-index":
+                        raise AssertionError(label)
+                    route.write_text('{"decisions": []}')
+                    raise RuntimeError("index failed after routing")
+
+            with self.assertRaisesRegex(RuntimeError, "index failed after routing"):
+                index_with_retained_routing(FailingIndex(), ["codeql"], {}, route, retained)
+            self.assertEqual(retained.read_bytes(), route.read_bytes())
 
 
 if __name__ == "__main__":

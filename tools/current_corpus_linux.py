@@ -90,6 +90,15 @@ def source_bytes(path: Path) -> bytes:
     return path.read_bytes()
 
 
+def index_with_retained_routing(run: Run, argv: list, env: dict,
+                                route_path: Path, retained_path: Path) -> None:
+    try:
+        run.call("db-index", argv, env=env)
+    finally:
+        if route_path.is_file():
+            shutil.copyfile(route_path, retained_path)
+
+
 def validate_event_manifest(manifest_path: Path, receipt_path: Path,
                             inventory_path: Path, source_checkout: Path) -> dict:
     baseline_path = ROOT / "docs/current-corpus-source-v0.6.json"
@@ -244,13 +253,13 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
         run.call("db-init", [codeql, "database", "init", db, "--language=ucode",
                              f"--search-path={search}", f"--common-caches={common}",
                              f"--source-root={stage}"], env=env)
-        run.call("db-index", [codeql, "database", "index-files", "--language=ucode",
-                              "--include=**/*", f"--working-dir={stage}",
-                              f"--common-caches={common}", "--threads=1", "--ram=2048", db], env=env)
         route_path = db / "trap/ucode/routing.json"
         out = run.root / "out"
+        index_with_retained_routing(run, [codeql, "database", "index-files", "--language=ucode",
+                                        "--include=**/*", f"--working-dir={stage}",
+                                        f"--common-caches={common}", "--threads=1", "--ram=2048", db],
+                                    env, route_path, out / "routing.json")
         need(route_path.is_file(), "routing report missing after index")
-        shutil.copyfile(route_path, out / "routing.json")
         routing = json.loads(route_path.read_text())
         actual_routes = Counter((d["installed_path"], d["classification"], d["reason"], d["status"])
                                 for d in routing["decisions"])
