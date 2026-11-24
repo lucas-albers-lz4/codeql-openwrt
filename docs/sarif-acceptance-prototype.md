@@ -23,3 +23,13 @@ python3 -B -m unittest policy.tests.test_sarif_accept -v
 ```
 
 Offline shape probes against the experimental OpenVPN and Tailscale explicit-query SARIF files succeeded with constructed receipts. Those probes establish parser compatibility with the observed SARIF fields only. Neither is a fresh consumer handoff or default-suite release result.
+
+A separate local macOS handoff used fresh CodeQL databases for the historical
+OpenVPN parent and fix plus pinned LuCI `swconfig`, resolved a draft default
+suite, and passed its actual SARIF bytes to this parser in a disposable
+consumer checkout. The parser accepted one parent alert at 71:115–132 and
+empty fixed and `swconfig` results. The orchestrator generated manifests from
+pinned source before extraction and receipts from decoded diagnostic paths,
+resolved query metadata, command exits and SARIF bytes. This is local
+contract evidence; it does not pin a released producer artifact, run Linux
+CI, map installed package bytes or scan incoming upstream revisions.
