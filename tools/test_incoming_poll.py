@@ -76,6 +76,19 @@ class PollTests(unittest.TestCase):
         self.assertTrue(all(d['event']['source']['tree'] is None and d['event']['base']['tree'] is None for d in selected))
         self.assertEqual(len([path for path in paths if '/git/commits/' in path]), 1)
 
+    def test_cross_repository_nonfork_is_recorded_not_scan_approved(self):
+        def get(path):
+            if '?' in path:
+                return ([{'number': 24444, 'state': 'open', 'base': {'repo': {'full_name': 'openwrt/openwrt'}, 'ref': 'main', 'sha': B}, 'head': {'repo': {'full_name': 'brudalevante/openwrt', 'fork': False}, 'ref': 'topic', 'sha': A}}], '')
+            if '/git/commits/' in path: return ({'sha': B, 'tree': {'sha': C}}, '')
+            if '/commits/' in path: return ({'sha': B}, '')
+            return ({'id': 123, 'full_name': 'openwrt/openwrt', 'default_branch': 'main'}, '')
+        discovered = p.snapshot('openwrt/openwrt', get, 2)
+        event = discovered[1]
+        self.assertEqual((event['head_repository'], event['head_fork']), ('brudalevante/openwrt', False))
+        self.assertIsNone(event['source']['tree'])
+        self.assertEqual(len(p.plan([], discovered, 1)), 2)
+
     def test_snapshot_requires_tree_and_valid_base(self):
         def get(path):
             if '?' in path: return ([{'number': 7, 'state': 'open', 'base': {'repo': {'full_name': 'wrong'}, 'sha': B}, 'head': {'sha': A}}], '')

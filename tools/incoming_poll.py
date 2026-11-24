@@ -203,7 +203,6 @@ def snapshot(repo, get, max_pages):
         base_ref, head_ref = base.get('ref'), head.get('ref')
         check(isinstance(base_ref, str) and base_ref and isinstance(head_ref, str) and head_ref, 'missing PR refs')
         head_repo = head['repo']['full_name']
-        check(head_repo == repo or head['repo']['fork'], 'invalid cross-repository head')
         check(bool(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', head_repo)), 'invalid head repository name')
         # Discovery binds API-reported commits only. The event resolver must
         # revalidate membership and obtain trees before any scan.
@@ -227,7 +226,7 @@ def validate_event(event):
         check(set(event) == {'repository', 'kind', 'number', 'head_repository', 'head_fork', 'head_ref', 'base_ref', 'base_commit', 'base', 'source'}, 'invalid PR event fields')
         check(type(event['number']) is int and event['number'] > 0, 'invalid PR number')
         check(isinstance(event['head_repository'], str) and bool(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', event['head_repository'])), 'invalid head repository')
-        check(type(event['head_fork']) is bool and (event['head_repository'] == event['repository'] or event['head_fork']), 'invalid head fork')
+        check(type(event['head_fork']) is bool, 'invalid head fork')
         check(all(isinstance(event[x], str) and event[x] for x in ('head_ref', 'base_ref')), 'invalid PR refs')
         base = event['base']
         check(isinstance(base, dict) and set(base) == {'commit', 'tree'}, 'invalid base identity')
