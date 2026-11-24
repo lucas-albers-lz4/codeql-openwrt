@@ -29,6 +29,8 @@ on:
       - 'tools/event_corpus_manifest.py'
       - 'tools/test_event_corpus_manifest.py'
       - 'tools/event_corpus_linux.py'
+      - 'tools/event_control_scan.py'
+      - 'tools/test_event_control_scan.py'
       - 'tools/current_corpus_linux.py'
       - 'tools/sarif_accept.py'
       - 'policy/tests/test_incoming_event.py'
@@ -49,7 +51,7 @@ jobs:
         run: |
           python3 -B -m unittest policy.tests.test_incoming_event -v
           python3 -B tools/test_full_tree_candidates.py -v
-          python3 -B -m unittest tools.test_event_corpus_manifest -v
+          python3 -B -m unittest tools.test_event_corpus_manifest tools.test_event_control_scan -v
           python3 -B -m unittest policy.tests.test_event_corpus_linux policy.tests.test_current_corpus_linux policy.tests.test_sarif_accept policy.tests.test_r3_linux_handoff -v
   resolve-pins:
     if: github.event_name == 'workflow_dispatch'
@@ -227,22 +229,45 @@ jobs:
           git -C "$source_root" fetch --no-tags --depth=1 origin "$base_sha"
           policy_sha=$(jq -er --arg repo "$UPSTREAM" '.pins[$repo]' docs/current-corpus-source-v0.6.json)
           git -C "$source_root" fetch --no-tags --depth=1 origin "$policy_sha"
+          git -C "$control_root" fetch --no-tags --depth=1 origin "$policy_sha"
           python3 -B tools/full_tree_candidates.py docs/current-corpus-source-v0.6.json "$UPSTREAM" "$source_root" "$base_sha" "$SOURCE_SHA" "$input_root/replayed-inventory.json"
           cmp "$input_root/full-tree-candidates.json" "$input_root/replayed-inventory.json"
           python3 -B -m tools.event_corpus_manifest docs/current-corpus-source-v0.6.json "$input_root/incoming-event-receipt.json" "$input_root/full-tree-candidates.json" "$source_root" "$input_root/replayed-manifest.json"
           cmp "$input_root/event-corpus-manifest.json" "$input_root/replayed-manifest.json"
-      - name: Run released producer and same-job event consumer
+      - name: Prepare control oracle before either corpus scan
+        id: control-oracle
+        if: steps.release.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          input_root="$RUNNER_TEMP/event-input-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          control_root="$RUNNER_TEMP/event-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B -c 'import sys; from pathlib import Path; from tools.event_control_scan import prepare_with_report; prepare_with_report(*map(Path, sys.argv[1:]))' "$input_root/incoming-event-receipt.json" "$control_root" "$input_root/control-oracle"
+      - name: Verify released producer in same job
+        id: r3
         if: steps.release.outputs.ready == 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B tools/r3_linux_handoff.py docs/r3-release-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Run released producer and same-job event consumer
+        if: steps.r3.outcome == 'success'
+        run: |
+          set -euo pipefail
           input_root="$RUNNER_TEMP/event-input-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           source_root="$RUNNER_TEMP/event-source-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          python3 -B tools/r3_linux_handoff.py docs/r3-release-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B -m tools.event_corpus_linux docs/r3-release-lock.json "$input_root/event-corpus-manifest.json" "$input_root/incoming-event-receipt.json" "$input_root/full-tree-candidates.json" "$source_root" "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Run independent released clean-control scan
+        if: always() && !cancelled() && steps.r3.outcome == 'success' && steps.control-oracle.outcome == 'success'
+        run: |
+          set -euo pipefail
+          input_root="$RUNNER_TEMP/event-input-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          control_root="$RUNNER_TEMP/event-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B -m tools.event_control_scan docs/r3-release-lock.json "$input_root/incoming-event-receipt.json" "$control_root" "$input_root/control-oracle" "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Summarize scan outcome and markup coverage gap
         if: always() && steps.release.outputs.ready == 'true'
         run: |
@@ -263,6 +288,16 @@ jobs:
                   lines += ['    ' + json.dumps(row, sort_keys=True) for row in results[:20]]
           else:
               lines += ['Scan did not produce an accepted event receipt. Inspect the retained R3 and event failure artifacts.']
+          control = root.parent / 'control-corpus'
+          assertion = control / 'control-assertion.json'
+          if assertion.is_file():
+              control_data = json.loads(assertion.read_text())
+              lines += ['', f"Clean control: **{control_data['status']}**; results: {control_data['result_count']}"]
+          elif (control / 'out/triage.json').is_file():
+              control_data = json.loads((control / 'out/triage.json').read_text())
+              lines += ['', f"Clean control assertion failed; status: **{control_data['status']}**; results: {control_data['result_count']}"]
+          else:
+              lines += ['', 'Clean control scan did not complete. Inspect retained control failure artifacts.']
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
               summary.write('\n'.join(lines) + '\n')
           PY
@@ -273,6 +308,7 @@ jobs:
           name: released-event-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: warn
           path: |
+            ${{ runner.temp }}/event-input-${{ github.run_id }}-${{ github.run_attempt }}/**/*.json
             ${{ runner.temp }}/event-input-${{ github.run_id }}-${{ github.run_attempt }}/*.json
             ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/preflight.json
             ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/receipt.json
@@ -285,3 +321,10 @@ jobs:
             ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/event-corpus/commands.json
             ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/event-corpus/commands/**
             ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/event-corpus/out/**
+            ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/control-corpus/preflight.json
+            ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/control-corpus/receipt.json
+            ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/control-corpus/failure.json
+            ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/control-corpus/control-assertion.json
+            ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/control-corpus/commands.json
+            ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/control-corpus/commands/**
+            ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/control-corpus/out/**

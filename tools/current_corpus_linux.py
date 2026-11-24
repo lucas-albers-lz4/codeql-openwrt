@@ -117,7 +117,8 @@ def validate_event_manifest(manifest_path: Path, receipt_path: Path,
 
 
 def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: str,
-                *, event_context: tuple[Path, Path, Path] | None = None) -> None:
+                *, event_context: tuple[Path, Path, Path] | None = None,
+                run_label: str | None = None) -> None:
     lock = json.loads(lock_path.read_text())
     pinned(lock)
     event = event_context is not None
@@ -170,7 +171,9 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
     available = re.search(r"(?m)^MemAvailable:\s*(\d+) kB$", memory)
     need(available is not None and int(available.group(1)) >= 2 * 1024**2,
          "less than 2 GiB available memory")
-    run = Run(prior_root / ("event-corpus" if event else "current-corpus"), run_id)
+    need(run_label in (None, "control-corpus"), "invalid corpus run label")
+    need(run_label is None or event, "control requires event oracle")
+    run = Run(prior_root / (run_label or ("event-corpus" if event else "current-corpus")), run_id)
     try:
         bundle = run.root / "bundle/codeql-ucode-linux"
         need(not any(path.is_symlink() for path in original_bundle.rglob("*")),

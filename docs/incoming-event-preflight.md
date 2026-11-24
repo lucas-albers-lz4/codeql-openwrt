@@ -58,3 +58,20 @@ python3 -B -m unittest tools.test_event_corpus_manifest -v
 
 The tests use temporary local Git repositories and mocked pull API JSON; they
 do not access GitHub.
+
+With a populated release lock, the same job also prepares a control oracle
+from the exact canonical control commit before either corpus scan. It compares
+that commit with the frozen policy pin, fails closed on candidate or recipe
+changes requiring review, and binds the oracle to the captured control commit,
+tree and receipt digest. A derived receipt adapts the existing event oracle;
+it is not a claim that the control is the PR head. The job replays the oracle
+and runs the same released producer and triage consumer in a separate
+`control-corpus` database, stage, caches and outputs. The control assertion
+requires an empty result tuple list and `clean_scan`. A nonempty control fails
+the clean-control assertion and its full output remains available for review.
+After R3 verification, the control scan still runs if the event scan fails;
+the job summary reports both outcomes. Oracle and replay failures retain a
+stage-specific JSON failure record alongside any prepared inventory.
+The event and control scans are bounded source-staged observations; a clean
+control does not establish safety or actual installed bytes. With the current
+null release lock neither scan has run.
