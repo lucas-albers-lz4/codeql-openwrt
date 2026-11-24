@@ -1,0 +1,61 @@
+{
+  "schema": "ucode-r3-source-oracle-v1",
+  "scope": "historical OpenVPN parent/fix source-first expectation for the R3 Linux handoff",
+  "expected_rules": [
+    "ucode/m4/direct-rpc-shell-word",
+    "ucode/diagnostics/extraction-errors",
+    "ucode/diagnostics/successfully-extracted-files"
+  ],
+  "cases": [
+    {
+      "name": "openvpn-parent",
+      "source": {
+        "repository": "https://github.com/openwrt/luci",
+        "commit": "b45584b4e6068b9b096872dd02494a048d869c36",
+        "path": "protocols/luci-proto-openvpn/root/usr/share/rpcd/ucode/luci.openvpn.uc",
+        "sha256": "051c8162f826683333e11264615806df5ab08415676c0bd098921cb1b05af991",
+        "git_blob": "da389170328212f8f0a3b7bea42be11d42bd0c38"
+      },
+      "proposed_stage_path": "usr/share/rpcd/ucode/luci.openvpn.uc",
+      "stage_bytes": "verbatim source bytes; staged-file SHA-256 must equal source SHA-256",
+      "actual_package_installed_bytes_verified": false,
+      "expected_sarif_descriptors": [
+        "ucode/m4/direct-rpc-shell-word"
+      ],
+      "expected_results": [
+        {
+          "rule_id": "ucode/m4/direct-rpc-shell-word",
+          "uri": "usr/share/rpcd/ucode/luci.openvpn.uc",
+          "start_line": 71,
+          "start_column": 115,
+          "end_line": 71,
+          "end_column": 132,
+          "level": "warning"
+        }
+      ]
+    },
+    {
+      "name": "openvpn-fixed",
+      "source": {
+        "repository": "https://github.com/openwrt/luci",
+        "commit": "e4ff45ecbc6ad212951815c8c99b2749fbd7de6b",
+        "path": "protocols/luci-proto-openvpn/root/usr/share/rpcd/ucode/luci.openvpn.uc",
+        "sha256": "6593792678951fd500c2b090d17d9e500a05a642cfb996ee02c1649473152410",
+        "git_blob": "eb3b418f855d24ae0a34d5d09a289b9342098129"
+      },
+      "proposed_stage_path": "usr/share/rpcd/ucode/luci.openvpn.uc",
+      "stage_bytes": "verbatim source bytes; staged-file SHA-256 must equal source SHA-256",
+      "actual_package_installed_bytes_verified": false,
+      "expected_sarif_descriptors": [
+        "ucode/m4/direct-rpc-shell-word"
+      ],
+      "expected_results": []
+    }
+  ],
+  "producer_release_identity": null,
+  "limitations": [
+    "This is a source-derived expectation, not a run receipt or a claim of fresh execution.",
+    "No producer release, pack, CodeQL version, or suite digest is asserted here.",
+    "Staging source bytes at the proposed installed path does not establish actual package-installed bytes."
+  ]
+}
