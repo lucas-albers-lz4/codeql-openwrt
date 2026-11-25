@@ -93,7 +93,7 @@ def resolve(event: dict, control: dict, run: Path) -> dict:
         require(commit == expected and git('-C', str(path), 'rev-parse', 'HEAD') == expected,
                 'fetched checkout commit drift')
         require(not git('-C', str(path), 'status', '--porcelain=v1'), 'fetched checkout dirty')
-        return {'commit': commit, 'tree': git('-C', str(path), 'rev-parse', expected + '^{tree}')} 
+        return {'commit': commit, 'tree': git('-C', str(path), 'rev-parse', expected + '^{tree}')}
     identities = {}
     for label, ref, expected in [('source', 'refs/heads/' + branch, source['commit']),
                                  ('control', control_sha, control_sha)]:
