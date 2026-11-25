@@ -27,8 +27,9 @@ def prepare(receipt_path: Path, checkout: Path, output: Path) -> None:
     policy = json.loads(raw)
     # This derived input is solely an adapter for the existing source oracle;
     # its head is the control, not the captured GitHub PR head.
-    derived = dict(receipt, source=control, base={'commit': policy['pins'][repo]})
     inventory = compare(checkout, policy['pins'][repo], control['commit'], policy, raw, repo)
+    derived = dict(receipt, source=control,
+                   base={'commit': policy['pins'][repo], 'tree': inventory['base_tree']})
     output.mkdir(parents=True, exist_ok=True)
     write_json(output / 'control-derived-receipt.json', derived)
     write_json(output / 'control-inventory.json', inventory)
