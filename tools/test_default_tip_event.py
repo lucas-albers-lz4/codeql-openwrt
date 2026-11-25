@@ -20,7 +20,7 @@ class DefaultTipTests(unittest.TestCase):
         self.commit = {'sha': self.source, 'commit': {'tree': {'sha': self.tree}}}
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.run = Path(self.temp.name) / 'run'
+        self.run = Path(self.temp.name).resolve() / 'run'
 
     def call(self, event=None, responses=None, identities=None):
         ids = identities or [self.event['source'], {'commit': self.control, 'tree': '4' * 40}]
@@ -82,6 +82,22 @@ class DefaultTipTests(unittest.TestCase):
         with self.assertRaisesRegex(InvalidEvent, 'duplicate discovery'):
             checkpoint_event(path, 0)
 
+    def test_rejects_unsafe_run_paths_without_network(self):
+        from tools.default_tip_event import validate_run_path
+        link = Path(self.temp.name).resolve() / 'link'
+        link.symlink_to(Path(self.temp.name).resolve(), target_is_directory=True)
+        for path in (Path('relative/run'), Path('/tmp/-bad/run'), link / 'new', Path('/tmp/../new')):
+            with self.subTest(path=path), self.assertRaises(InvalidEvent):
+                validate_run_path(path)
+
+    def test_git_environment_disables_redirects(self):
+        _, commands = self.call()
+        for call in commands.call_args_list:
+            env = call.kwargs['env']
+            self.assertEqual(env['GIT_CONFIG_KEY_0'], 'http.followRedirects')
+            self.assertEqual(env['GIT_CONFIG_VALUE_0'], 'false')
+            self.assertEqual(env['GIT_CONFIG_COUNT'], '1')
+
     def test_control_requires_earlier_same_branch_observation(self):
         now = {'observed_at': '2026-11-24T12:00:00Z'}
         prior = {'observed_at': '2026-11-23T12:00:00Z'}
@@ -131,7 +147,7 @@ class DefaultTipTests(unittest.TestCase):
 
     def test_refuses_existing_run(self):
         self.run.mkdir()
-        with self.assertRaises(FileExistsError):
+        with self.assertRaisesRegex(InvalidEvent, 'already exists'):
             self.call()
 
 

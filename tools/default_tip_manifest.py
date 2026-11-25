@@ -107,7 +107,8 @@ def main():
     home = (args.run / 'home').resolve()
     require(home.is_dir(), 'resolver run home missing')
     os.environ.update(HOME=str(home), TMPDIR=str(home), GIT_CONFIG_NOSYSTEM='1',
-                      GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT='0')
+                      GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT='0', GIT_CONFIG_COUNT='1',
+                      GIT_CONFIG_KEY_0='http.followRedirects', GIT_CONFIG_VALUE_0='false')
     try:
         prepare(args.receipt, args.run, args.output)
     except (OSError, ValueError, TypeError, KeyError) as exc:

@@ -37,7 +37,18 @@ def api(url: str) -> dict:
     return result
 
 
+def validate_run_path(run: Path) -> None:
+    require(run.is_absolute() and all(part not in ('.', '..') and not part.startswith('-')
+                                      for part in run.parts[1:]), 'unsafe run path')
+    current = Path(run.anchor)
+    for part in run.parts[1:]:
+        current = current / part
+        require(not current.is_symlink(), 'run path contains symlink')
+    require(not run.exists(), 'run path already exists')
+
+
 def resolve(event: dict, control: dict, run: Path) -> dict:
+    validate_run_path(run)
     require(isinstance(event, dict) and set(event) == {'repository', 'kind', 'ref', 'source'}, 'invalid discovered event')
     repo = event['repository']
     require(isinstance(repo, str) and repo in REPO_ALIASES and event['kind'] == 'default_branch', 'unsupported event')
@@ -73,7 +84,8 @@ def resolve(event: dict, control: dict, run: Path) -> dict:
     home.mkdir()
     env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
     env.update(HOME=str(home.resolve()), TMPDIR=str(home.resolve()),
-               GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT='0')
+               GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT='0',
+               GIT_CONFIG_COUNT='1', GIT_CONFIG_KEY_0='http.followRedirects', GIT_CONFIG_VALUE_0='false')
     def git(*args: str) -> str:
         return subprocess.check_output(['git', *args], stderr=subprocess.PIPE, env=env, text=True).strip()
     def identity(path: Path, expected: str) -> dict:
