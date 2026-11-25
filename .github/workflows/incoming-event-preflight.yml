@@ -200,7 +200,7 @@ jobs:
         with:
           name: ${{ needs.resolve-pins.outputs.artifact_name }}
           path: ${{ runner.temp }}/event-input-${{ github.run_id }}-${{ github.run_attempt }}
-      - name: Revalidate captured PR inputs from canonical Git objects
+      - name: Re-fetch PR and revalidate inputs from canonical Git objects
         if: steps.release.outputs.ready == 'true'
         shell: bash
         env:
@@ -208,6 +208,7 @@ jobs:
           PR_NUMBER: ${{ inputs.pr_number }}
           SOURCE_SHA: ${{ inputs.source_sha }}
           CONTROL_SHA: ${{ inputs.control_sha }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           [[ "$UPSTREAM" == openwrt || "$UPSTREAM" == luci ]]
@@ -224,7 +225,9 @@ jobs:
           [[ "$(git -C "$source_root" rev-parse HEAD)" == "$SOURCE_SHA" ]]
           git -C "$control_root" fetch --no-tags --depth=1 origin "$CONTROL_SHA"
           git -C "$control_root" checkout -q --detach "$CONTROL_SHA"
-          python3 -B tools/incoming_event.py "$input_root/incoming-event.json" "$input_root/pull-api-response.json" "$source_root" "$control_root" "$input_root/replayed-receipt.json"
+          gh api -H 'Accept: application/vnd.github+json' \
+            "repos/openwrt/$UPSTREAM/pulls/$PR_NUMBER" > "$input_root/scan-pull-api-response.json"
+          python3 -B tools/incoming_event.py "$input_root/incoming-event.json" "$input_root/scan-pull-api-response.json" "$source_root" "$control_root" "$input_root/replayed-receipt.json"
           cmp "$input_root/incoming-event-receipt.json" "$input_root/replayed-receipt.json"
           base_sha=$(jq -er '.base.commit' "$input_root/incoming-event-receipt.json")
           git -C "$source_root" fetch --no-tags --depth=1 origin "$base_sha"

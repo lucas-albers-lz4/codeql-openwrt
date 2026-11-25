@@ -75,6 +75,29 @@ class IncomingEventTests(unittest.TestCase):
         self.assertTrue(result["head_repository_is_fork"])
         self.assertNotEqual(result["source"]["tree"], result["control"]["tree"])
 
+    def test_fresh_scan_response_rejects_drift_after_preflight(self):
+        preflight = validate(self.event, self.api_pr, self.repo, self.control_repo)
+        self.assertEqual(preflight, validate(self.event, self.api_pr, self.repo, self.control_repo))
+        changed = (
+            ({**self.api_pr, "state": "closed"}, "not open"),
+            ({**self.api_pr, "number": 124}, "number mismatch"),
+            ({**self.api_pr, "head": {**self.api_pr["head"], "sha": self.control}},
+             "source SHA disagrees"),
+            ({**self.api_pr, "base": {**self.api_pr["base"], "sha": self.source}},
+             "base SHA disagrees"),
+            ({**self.api_pr, "base": {**self.api_pr["base"],
+                                       "repo": {"full_name": "attacker/openwrt"}}},
+             "base repository"),
+        )
+        for fresh, reason in changed:
+            with self.subTest(reason=reason), self.assertRaisesRegex(InvalidEvent, reason):
+                validate(self.event, fresh, self.repo, self.control_repo)
+        # A provenance change can remain syntactically valid; comparing the fresh
+        # receipt with the preflight receipt still catches it.
+        fork_changed = {**self.api_pr, "head": {**self.api_pr["head"],
+                        "repo": {"full_name": "another/openwrt", "fork": True}}}
+        self.assertNotEqual(preflight, validate(self.event, fork_changed, self.repo, self.control_repo))
+
     def test_rejects_branch_name_instead_of_full_commit(self):
         bad = dict(self.event, source_sha="main")
         api = {**self.api_pr, "head": {**self.api_pr["head"], "sha": "main"}}

@@ -34,7 +34,7 @@ the captured PR and control SHAs, replays the resolver, selector and oracle,
 and requires byte-identical input reports before R3 release verification and
 the event corpus scan. It passes actual SARIF to the
 [event triage consumer](event-sarif-triage.md). With the current null lock,
-that scan step does not run; the workflow summary says so. A populated lock
+that scan step does not run; the workflow summary says so. The scan job fetches a fresh PR API response and validates it against the captured event and clean canonical checkouts; closed PRs or changed head/base identities fail before oracle replay. A populated lock
 and a successful hosted manual run are still required for Gate 8 evidence.
 The released job separately records whether the tagged producer's
 `extractor/src/extractor.rs` bytes match the route-oracle source digest. This
