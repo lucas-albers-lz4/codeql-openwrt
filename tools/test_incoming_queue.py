@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from incoming_poll import PollError
-from incoming_queue import open_queue, transition, apply_attested, encoded
+from incoming_queue import open_queue, transition, apply_attested, encoded, identity
 
 
 def event(repo, number, sha):
@@ -47,11 +47,11 @@ class QueueTests(unittest.TestCase):
     def test_authenticated_completion_and_stale_competitor(self):
         a,p = self.advance(None)
         eid = a['selected'][0]
-        start = {'kind':'start','event_id':eid,'reservation':0,'run_id':'run-1'}
+        start = {'kind':'start','event_id':eid,'reservation':0,'reservation_digest':p[1],'queue_id':a['queue_id'],'run_id':'run-1'}
         _,q = self.attested(p,start)
         with self.assertRaises(PollError): self.attested(p,start)
-        event = next(r['event'] for r in a['events'] if json.dumps(__import__('incoming_poll').key(r['event']),separators=(',',':')) == eid)
-        complete = {'kind':'complete','event_id':eid,'reservation':0,'run_id':'run-1','source':{'commit':event['source']['commit'],'tree':'f'*40},'release_lock_sha256':'1'*64,'manifest_sha256':'2'*64,'extraction_sha256':'3'*64,'sarif_sha256':'4'*64,'consumer_disposition':'alert_triage','control_sha256':'5'*64}
+        event = next(r['event'] for r in a['events'] if identity(r['event']) == eid)
+        complete = {'kind':'complete','event_id':eid,'reservation':0,'reservation_digest':p[1],'queue_id':a['queue_id'],'run_id':'run-1','source':{'commit':event['source']['commit'],'tree':'f'*40},'release_lock_sha256':'1'*64,'manifest_sha256':'2'*64,'extraction_sha256':'3'*64,'sarif_sha256':'4'*64,'consumer_disposition':'alert_triage','control_sha256':'5'*64}
         bad = dict(complete,source={'commit':'9'*40,'tree':'f'*40})
         with self.assertRaises(PollError): self.attested(q,bad)
         _,r = self.attested(q,complete)
@@ -60,7 +60,7 @@ class QueueTests(unittest.TestCase):
     def test_failure_retry_does_not_starve_unstarted(self):
         a,p = self.advance(None)
         eid = a['selected'][0]
-        start = {'kind':'start','event_id':eid,'reservation':0,'run_id':'run-1'}
+        start = {'kind':'start','event_id':eid,'reservation':0,'reservation_digest':p[1],'queue_id':a['queue_id'],'run_id':'run-1'}
         _,p = self.attested(p,start)
         failure = dict(start,kind='failure',failure='tool')
         _,p = self.attested(p,failure)
@@ -68,6 +68,43 @@ class QueueTests(unittest.TestCase):
         self.assertNotEqual(b['selected'][0],eid)
         c,_ = self.advance(p)
         self.assertNotIn(eid,c['selected'])
+    def test_queue_and_reservation_binding_and_recovery(self):
+        a,p = self.advance(None)
+        start = {'kind':'start','event_id':a['selected'][0],'reservation':0,'reservation_digest':p[1], 'queue_id':a['queue_id'],'run_id':'run'}
+        with self.assertRaises(PollError): self.attested(p,dict(start,queue_id='0'*32))
+        with self.assertRaises(PollError): self.attested(p,dict(start,reservation_digest='0'*64))
+        _,q = self.attested(p,dict(start,kind='recover'))
+        with self.assertRaises(PollError): self.attested(q,start)
+        b,r = self.advance(q)
+        self.assertEqual(b['selected'][0],start['event_id'])
+        self.assertNotEqual(r[1],start['reservation_digest'])
+    def test_base_move_retains_started_attempt_fairness(self):
+        a,p = self.advance(None)
+        start = {'kind':'start','event_id':a['selected'][0],'reservation':0,'reservation_digest':p[1], 'queue_id':a['queue_id'],'run_id':'run'}
+        _,p = self.attested(p,start)
+        selected = next(e for e in self.events if identity(e)==start['event_id'])
+        changed = dict(selected,base_commit='f'*40,base={'commit':'f'*40,'tree':None})
+        snapshot(self.snap,[changed if identity(e)==start['event_id'] else e for e in self.events])
+        b,p = self.advance(p)
+        self.assertNotEqual(b['selected'][0],start['event_id'])
+        row = next(r for r in b['events'] if identity(r['event']) == start['event_id'])
+        self.assertEqual(row['attempts'],1)
+        self.assertEqual(row['reason'],'base_changed')
+        with self.assertRaises(PollError): self.attested(p,dict(start,kind='failure',failure='tool'))
+    def test_reserved_unstarted_blocks_retries_until_recovered(self):
+        a,p = self.advance(None)
+        first = {'kind':'start','event_id':a['selected'][0],'reservation':0,'reservation_digest':p[1],'queue_id':a['queue_id'],'run_id':'run'}
+        _,p = self.attested(p,first)
+        _,p = self.attested(p,dict(first,kind='failure',failure='tool'))
+        b,p = self.advance(p,2)
+        self.assertEqual(len(b['selected']),2)
+        c,p = self.advance(p,2)
+        self.assertEqual(c['selected'],[])
+        recover = {'kind':'recover','event_id':b['selected'][0],'reservation':b['sequence'],'reservation_digest':p[1], 'queue_id':b['queue_id'],'run_id':'recover'}
+        recover['reservation_digest'] = self.db.execute('SELECT reservation_digest FROM events WHERE id=?',(b['selected'][0],)).fetchone()[0]
+        _,p = self.attested(p,recover)
+        d,_ = self.advance(p,1)
+        self.assertEqual(d['selected'],[recover['event_id']])
     def test_duplicate_subject_rolls_back(self):
         _,p = self.advance(None,0)
         snapshot(self.snap,[self.events[0],event('openwrt/openwrt',1,'e')])

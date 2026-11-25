@@ -5,6 +5,7 @@ import hmac
 import re
 import json
 import sqlite3
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from incoming_poll import PollError, check, key, plan, read_checkpoint, unique_object, MAX_EVENTS
@@ -15,7 +16,7 @@ def encoded(value):
 
 
 def identity(event):
-    return json.dumps(key(event), separators=(',', ':'))
+    return json.dumps((event['repository'], event['kind'], event.get('number', event.get('ref')), event['source']['commit']), separators=(',', ':'))
 
 
 def subject(event):
@@ -26,8 +27,12 @@ def open_queue(path):
     db = sqlite3.connect(path, timeout=10, isolation_level=None)
     db.execute('PRAGMA journal_mode=DELETE')
     db.execute('PRAGMA synchronous=FULL')
-    db.executescript('''CREATE TABLE IF NOT EXISTS history (seq INTEGER PRIMARY KEY, digest TEXT UNIQUE NOT NULL, document BLOB NOT NULL);
-    CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, subject TEXT NOT NULL, event TEXT NOT NULL, first_seen TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL, last_attempt INTEGER, reason TEXT NOT NULL, reservation INTEGER);''')
+    db.executescript('''CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS history (seq INTEGER PRIMARY KEY, digest TEXT UNIQUE NOT NULL, document BLOB NOT NULL);
+    CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, subject TEXT NOT NULL, event TEXT NOT NULL, first_seen TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL, last_attempt INTEGER, reason TEXT NOT NULL, reservation INTEGER, reservation_digest TEXT);''')
+    columns = [row[1] for row in db.execute('PRAGMA table_info(events)')]
+    check('reservation_digest' in columns, 'old queue schema requires explicit migration')
+    db.execute("INSERT OR IGNORE INTO metadata VALUES ('queue_id', ?)", (uuid.uuid4().hex,))
     return db
 
 
@@ -53,6 +58,7 @@ def transition(db, expected, snapshot, capacity, now):
         head = db.execute('SELECT seq,digest FROM history ORDER BY seq DESC LIMIT 1').fetchone()
         check(head == expected, 'stale or missing predecessor')
         seq = 0 if head is None else head[0] + 1
+        queue_id = db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
         if head is not None:
             previous = json.loads(db.execute('SELECT document FROM history WHERE seq=?', (head[0],)).fetchone()[0])
             check(timestamp >= datetime.fromisoformat(previous['observed_at'].replace('Z', '+00:00')), 'timestamp moved backwards')
@@ -64,27 +70,35 @@ def transition(db, expected, snapshot, capacity, now):
         for event in events:
             eid, subj, text = identity(event), subject(event), encoded(event).decode()
             old = db.execute('SELECT event FROM events WHERE id=?', (eid,)).fetchone()
-            check(old is None or old[0] == text, 'event metadata changed for same identity')
+            if old is not None and old[0] != text:
+                prior = json.loads(old[0]); updated = dict(event)
+                check(event['kind'] == 'pull_request', 'event metadata changed for same identity')
+                for field in ('base', 'base_commit', 'base_ref'):
+                    prior.pop(field); updated.pop(field)
+                check(prior == updated, 'non-base metadata changed for same identity')
+                db.execute("UPDATE events SET event=?,status='pending',reason='base_changed',reservation=NULL,reservation_digest=NULL WHERE id=?", (text,eid))
             if old is None:
-                db.execute('INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?)', (eid, subj, text, now, 'pending', 0, None, 'new', None))
+                db.execute('INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?,?)', (eid, subj, text, now, 'pending', 0, None, 'new', None, None))
             else:
-                db.execute("UPDATE events SET status='pending',reason='reappeared',reservation=NULL WHERE id=? AND status='inactive'", (eid,))
+                db.execute("UPDATE events SET status='pending',reason='reappeared',reservation=NULL,reservation_digest=NULL WHERE id=? AND status='inactive'", (eid,))
         check(db.execute('SELECT count(*) FROM events').fetchone()[0] <= MAX_EVENTS, 'history bound exceeded')
         # Global first-attempt priority prevents retries starving fresh work; round
         # robin by repository/kind within each attempt count via SQL row numbers.
+        unstarted_inflight = db.execute("SELECT count(*) FROM events WHERE status='reserved' AND attempts=0").fetchone()[0]
         selected = db.execute('''SELECT id FROM (SELECT id, attempts, last_attempt,
             row_number() OVER (PARTITION BY attempts, json_extract(event,'$.repository'), json_extract(event,'$.kind') ORDER BY coalesce(last_attempt,-1),id) AS slot
-            FROM events WHERE status='pending') ORDER BY attempts,slot,last_attempt,id LIMIT ?''', (capacity,)).fetchall()
+            FROM events WHERE status='pending' AND (? = 0 OR attempts = 0)) ORDER BY attempts,slot,last_attempt,id LIMIT ?''', (unstarted_inflight, capacity)).fetchall()
         for (eid,) in selected:
             db.execute("UPDATE events SET status='reserved',reservation=?,reason='reserved' WHERE id=?", (seq, eid))
         records = [{'event': json.loads(e), 'first_seen': first, 'status': status, 'attempts': attempts, 'last_attempt': last, 'reason': reason}
                    for e, first, status, attempts, last, reason in db.execute('SELECT event,first_seen,status,attempts,last_attempt,reason FROM events ORDER BY id')]
         result = {'schema':'incoming-queue-v1', 'sequence':seq, 'previous_sha256':None if head is None else head[1],
-                  'snapshot_sha256':snapshot_hash, 'observed_at':now, 'capacity':capacity,
+                  'queue_id':queue_id, 'snapshot_sha256':snapshot_hash, 'observed_at':now, 'capacity':capacity,
                   'selected':[x[0] for x in selected], 'events':records}
         raw = encoded(result)
         digest = hashlib.sha256(raw).hexdigest()
         db.execute('INSERT INTO history VALUES (?,?,?)', (seq,digest,raw))
+        db.executemany('UPDATE events SET reservation_digest=? WHERE id=?', [(digest, eid) for (eid,) in selected])
         db.execute('COMMIT')
         return result, digest
     except BaseException:
@@ -99,9 +113,9 @@ def apply_attested(db, expected, payload, mac, secret, now):
     """
     check(isinstance(secret, bytes) and len(secret) >= 32, 'invalid signer key')
     check(isinstance(mac, str) and hmac.compare_digest(hmac.new(secret, encoded(payload), hashlib.sha256).hexdigest(), mac), 'invalid attestation')
-    check(isinstance(payload, dict) and payload.get('kind') in ('start', 'failure', 'complete'), 'invalid attestation kind')
-    common = {'kind','event_id','reservation','run_id'}
-    extra = set() if payload['kind'] == 'start' else ({'failure'} if payload['kind'] == 'failure' else {'source','release_lock_sha256','manifest_sha256','extraction_sha256','sarif_sha256','consumer_disposition','control_sha256'})
+    check(isinstance(payload, dict) and payload.get('kind') in ('start', 'failure', 'complete', 'recover'), 'invalid attestation kind')
+    common = {'kind','queue_id','event_id','reservation','reservation_digest','run_id'}
+    extra = set() if payload['kind'] in ('start', 'recover') else ({'failure'} if payload['kind'] == 'failure' else {'source','release_lock_sha256','manifest_sha256','extraction_sha256','sarif_sha256','consumer_disposition','control_sha256'})
     check(set(payload) == common | extra, 'invalid attestation fields')
     check(isinstance(payload['run_id'], str) and 1 <= len(payload['run_id']) <= 128, 'invalid run id')
     check(type(payload['reservation']) is int and payload['reservation'] >= 0 and isinstance(payload['event_id'], str), 'invalid reservation identity')
@@ -121,18 +135,23 @@ def apply_attested(db, expected, payload, mac, secret, now):
         check(head is not None and head == expected, 'stale or missing predecessor')
         previous = json.loads(db.execute('SELECT document FROM history WHERE seq=?',(head[0],)).fetchone()[0])
         check(timestamp >= datetime.fromisoformat(previous['observed_at'].replace('Z','+00:00')), 'timestamp moved backwards')
-        row = db.execute('SELECT event,status,reservation,reason FROM events WHERE id=?',(payload['event_id'],)).fetchone()
-        check(row is not None and row[2] == payload['reservation'], 'unknown or stale reservation')
+        queue_id = db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
+        check(payload['queue_id'] == queue_id, 'wrong queue identity')
+        row = db.execute('SELECT event,status,reservation,reason,reservation_digest FROM events WHERE id=?',(payload['event_id'],)).fetchone()
+        check(row is not None and row[2] == payload['reservation'] and row[4] == payload['reservation_digest'], 'unknown or stale reservation')
         event = json.loads(row[0]); kind = payload['kind']
         if kind == 'start':
             check(row[1] == 'reserved', 'reservation is not available')
             db.execute("UPDATE events SET status='started',attempts=attempts+1,last_attempt=?,reason=? WHERE id=?", (head[0]+1,payload['run_id'],payload['event_id']))
+        elif kind == 'recover':
+            check(row[1] == 'reserved' or (row[1] == 'started' and row[3] == payload['run_id']), 'recovery does not match active reservation')
+            db.execute("UPDATE events SET status='pending',reason='recovered',reservation=NULL,reservation_digest=NULL WHERE id=?", (payload['event_id'],))
         else:
             check(row[1] == 'started' and row[3] == payload['run_id'], 'outcome does not match active run')
             if kind == 'complete':
                 check(payload['source']['commit'] == event['source']['commit'], 'source commit mismatch')
                 check(event['source']['tree'] is None or payload['source']['tree'] == event['source']['tree'], 'source tree mismatch')
-            db.execute('UPDATE events SET status=?,reason=?,reservation=NULL WHERE id=?', ('completed' if kind == 'complete' else 'pending', kind if kind == 'complete' else payload['failure'],payload['event_id']))
+            db.execute('UPDATE events SET status=?,reason=?,reservation=NULL,reservation_digest=NULL WHERE id=?', ('completed' if kind == 'complete' else 'pending', kind if kind == 'complete' else payload['failure'],payload['event_id']))
         result = {'schema':'incoming-queue-action-v1','sequence':head[0]+1,'previous_sha256':head[1],'observed_at':now,'attestation':payload,'mac':mac}
         raw = encoded(result); digest = hashlib.sha256(raw).hexdigest()
         db.execute('INSERT INTO history VALUES (?,?,?)',(head[0]+1,digest,raw)); db.execute('COMMIT')

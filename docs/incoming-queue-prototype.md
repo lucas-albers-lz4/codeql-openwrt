@@ -14,14 +14,17 @@ unreliable network filesystems, or schedule this prototype.
 The snapshot is a complete observed set, not the poller's chained checkpoint,
 which also retains old events. An absent subject is marked `not_observed`,
 not proven closed; a changed event for a subject is marked `superseded`.
-Events remain in history and reappearance reactivates them. Inconsistent
-metadata and duplicate subjects fail closed. Discovery is not an atomic
+Events remain in history and reappearance reactivates them. PR identity is repository, PR number and head commit; a base-only change
+invalidates any in-flight reservation and returns the same identity to pending
+without resetting its start count. Other inconsistent metadata and duplicate
+subjects fail closed. Discovery is not an atomic
 upstream snapshot and intermediate changes can be missed.
 
 Each selection reserves a slot; a separately attested start increments the
 attempt count. Pending identities with fewer attested starts always precede those with
-more; buckets share selection within an attempt count. Failed starts cannot starve never-started identities. Abandoned reservations
-remain visible but currently require recovery outside the prototype. This has
+more; buckets share selection within an attempt count. A reserved, never-started identity blocks new retry reservations until it is
+started or explicitly recovered. Other never-started pending identities can
+continue. Abandoned reservations remain visible. This has
 no scan dispatch or verified production receipt issuer. It does not meet Gate 8 or demonstrate a released
 scan. The first-seen timestamp is the queue's observation time, not event age.
 Capacity and interval remain unset pending Linux cost measurements.
@@ -33,7 +36,7 @@ are stored in `history`; the database is the authority, not printed output.
 Run tests with `python3 -B tools/test_incoming_queue.py -v` and
 `python3 -B -m unittest tools.test_incoming_poll`.
 
-The `apply_attested` Python API accepts a start, failure or completion payload
+The `apply_attested` Python API accepts a start, failure, completion or recovery payload
 with an HMAC-SHA256 over canonical JSON using an externally provisioned secret
 of at least 32 bytes. The signer is a trust boundary: the MAC authenticates a
 holder of that key, not that a scan actually ran. No production signer, key
@@ -41,10 +44,16 @@ management, trusted workflow integration, or artifact-byte verification exists.
 Completion's claimed resolved commit/tree and lock, manifest, extraction,
 SARIF and control digests plus consumer disposition are structurally checked;
 the signer must independently validate the actual artifacts and clean control.
+Each claim binds the persistent queue ID and the digest of the transition
+that created its reservation, as well as the event and reservation sequence.
 Failures retain their category and return to pending; all transitions compare
 the current predecessor. A reservation is distinct from a signed start, and
-only signed starts increment attempt counts. A reservation has no expiry or
-recovery API yet. A stale or superseded reservation cannot complete. A signed
+only signed starts increment attempt counts. There is no automatic expiry: an authorized signer can recover a reserved
+item or an identified started run. Before recovering a started run, the owner
+must stop it and establish that it cannot publish an outcome; the transaction
+invalidates its reservation and rejects late results. An old database schema
+is rejected and has no migration. A restored database keeps its queue ID;
+operator storage controls must prevent concurrent use of copied databases. A stale or superseded reservation cannot complete. A signed
 completion is final for that event, not a replacement for triage.
 
 Replay of the retained 1,851-event v3 snapshot (SHA-256
