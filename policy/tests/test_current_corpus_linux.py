@@ -6,7 +6,7 @@ import sys
 import tempfile
 import unittest
 
-from tools.current_corpus_linux import (MANIFEST_SHA256, digest, run_current,
+from tools.current_corpus_linux import (MANIFEST_SHA256, digest, index_and_validate_routes, run_current,
                                         validate_manifest)
 
 
@@ -39,6 +39,47 @@ class CurrentCorpusLinuxTests(unittest.TestCase):
         manifest["selected"][0]["source_sha256"] = "0"
         with self.assertRaisesRegex(RuntimeError, "missing selected source digest/blob"):
             validate_manifest(manifest)
+
+    def test_routing_retained_when_index_fails_after_report(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "out").mkdir()
+            db = root / "db"
+            report = db / "trap/ucode/routing.json"
+            raw = b'{"partial": true}\n'
+
+            class FailedRun:
+                def __init__(self):
+                    self.root = root
+
+                def call(self, *args, **kwargs):
+                    report.parent.mkdir(parents=True)
+                    report.write_bytes(raw)
+                    raise RuntimeError("index failed")
+
+            with self.assertRaisesRegex(RuntimeError, "index failed"):
+                index_and_validate_routes(FailedRun(), db, root, root / "codeql", root, {}, self.manifest())
+            self.assertEqual((root / "out/routing.json").read_bytes(), raw)
+
+    def test_routing_retained_when_route_validation_fails(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "out").mkdir()
+            db = root / "db"
+            report = db / "trap/ucode/routing.json"
+            raw = b'{"decisions": [], "input_count": 0}\n'
+
+            class MismatchedRun:
+                def __init__(self):
+                    self.root = root
+
+                def call(self, *args, **kwargs):
+                    report.parent.mkdir(parents=True)
+                    report.write_bytes(raw)
+
+            with self.assertRaisesRegex(RuntimeError, "route identities/counts differ"):
+                index_and_validate_routes(MismatchedRun(), db, root, root / "codeql", root, {}, self.manifest())
+            self.assertEqual((root / "out/routing.json").read_bytes(), raw)
 
     def test_null_release_lock_fails_before_new_run_root(self):
         with tempfile.TemporaryDirectory() as temp:

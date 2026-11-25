@@ -87,6 +87,33 @@ def source_bytes(path: Path) -> bytes:
     return path.read_bytes()
 
 
+def index_and_validate_routes(run: Run, db: Path, stage: Path, codeql: Path,
+                              common: Path, env: dict, manifest: dict) -> dict:
+    route_path = db / "trap/ucode/routing.json"
+    retained = run.root / "out/routing.json"
+    try:
+        run.call("db-index", [codeql, "database", "index-files", "--language=ucode",
+                              "--include=**/*", f"--working-dir={stage}",
+                              f"--common-caches={common}", "--threads=1", "--ram=2048", db], env=env)
+    finally:
+        if route_path.is_file():
+            shutil.copyfile(route_path, retained)
+    routing = json.loads(retained.read_text())
+    actual_routes = Counter((d["installed_path"], d["classification"], d["reason"], d["status"])
+                            for d in routing["decisions"])
+    expected_routes = Counter((row["proposed_installed_path"],
+                               row["expected_route"]["classification"],
+                               row["expected_route"]["reason"],
+                               "plain_route_selected" if row["expected_route"]["classification"] == "plain" else "inconclusive")
+                              for row in manifest["selected"])
+    need(actual_routes == expected_routes and routing.get("input_count") == 111 and
+         routing.get("plain_count") == 76 and routing.get("markup_count") == 35 and
+         routing.get("markup_inconclusive_count") == 35 and
+         all(routing.get(k) == 0 for k in ("excluded_count", "uncertain_count", "duplicate_input_count")),
+         "route identities/counts differ from source oracle")
+    return routing
+
+
 def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: str) -> None:
     lock = json.loads(lock_path.read_text())
     pinned(lock)
@@ -189,25 +216,8 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
         run.call("db-init", [codeql, "database", "init", db, "--language=ucode",
                              f"--search-path={search}", f"--common-caches={common}",
                              f"--source-root={stage}"], env=env)
-        run.call("db-index", [codeql, "database", "index-files", "--language=ucode",
-                              "--include=**/*", f"--working-dir={stage}",
-                              f"--common-caches={common}", "--threads=1", "--ram=2048", db], env=env)
-        route_path = db / "trap/ucode/routing.json"
-        routing = json.loads(route_path.read_text())
-        actual_routes = Counter((d["installed_path"], d["classification"], d["reason"], d["status"])
-                                for d in routing["decisions"])
-        expected_routes = Counter((row["proposed_installed_path"],
-                                   row["expected_route"]["classification"],
-                                   row["expected_route"]["reason"],
-                                   "plain_route_selected" if row["expected_route"]["classification"] == "plain" else "inconclusive")
-                                  for row in manifest["selected"])
-        need(actual_routes == expected_routes and routing.get("input_count") == 111 and
-             routing.get("plain_count") == 76 and routing.get("markup_count") == 35 and
-             routing.get("markup_inconclusive_count") == 35 and
-             all(routing.get(k) == 0 for k in ("excluded_count", "uncertain_count", "duplicate_input_count")),
-             "route identities/counts differ from source oracle")
+        routing = index_and_validate_routes(run, db, stage, codeql, common, env, manifest)
         out = run.root / "out"
-        shutil.copyfile(route_path, out / "routing.json")
         run.call("db-finalize", [codeql, "database", "finalize", db,
                                  f"--common-caches={common}"], env=env)
         diagnostics = {}
