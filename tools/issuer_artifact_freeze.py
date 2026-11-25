@@ -102,6 +102,16 @@ def _root_entries(root: Path, files: set[str], dirs: set[str]) -> None:
          'run-root alias or unexpected entry type')
 
 
+def _stage_precheck(root: Path) -> None:
+    need(root.is_dir() and not root.is_symlink(), 'unsafe stage root')
+    for base, dirs, files in os.walk(root, followlinks=False):
+        for name in dirs:
+            path = Path(base) / name
+            need(path.is_dir() and not path.is_symlink(), 'stage directory alias')
+        for name in files:
+            _safe_file(Path(base) / name, set())
+
+
 def _source_recheck(source: Path, control: Path, inputs: Path, run: Path) -> dict:
     receipt = json.loads((inputs / 'replayed-receipt.json').read_text())
     result = {}
@@ -169,6 +179,11 @@ def precheck(temp: Path, run_id: str, *, graph_ready: bool) -> None:
     need(temp.is_absolute() and run_id and all(c.isdigit() or c == '-' for c in run_id), 'invalid run paths')
     inputs, run = temp / ('event-input-' + run_id), temp / ('r3-event-' + run_id)
     need(temp.is_dir() and not temp.is_symlink(), 'unsafe attempt parent')
+    for name in ('event-source-' + run_id, 'event-control-' + run_id):
+        checkout = temp / name
+        need(checkout.is_dir() and not checkout.is_symlink() and
+             (checkout / '.git').is_dir() and not (checkout / '.git').is_symlink(),
+             'unsafe event/control checkout root')
     _root_entries(run, {'preflight.json', 'receipt.json', 'commands.json'},
                   {'home', 'tmp', 'cache', 'downloads', 'sources', 'stage', 'db', 'out',
                    'commands', 'cli', 'bundle', 'event-corpus', 'control-corpus'})
@@ -184,6 +199,7 @@ def precheck(temp: Path, run_id: str, *, graph_ready: bool) -> None:
             _safe_file(scan / name, set())
         _inventory(scan / 'out', SCAN_OUT, set())
         _inventory(scan / 'commands', {name.removeprefix('commands/') for name in _command_files(scan)}, set())
+        _stage_precheck(scan / 'stage')
     for name in ('preflight.json', 'receipt.json', 'commands.json'):
         _safe_file(run / name, set())
     _inventory(run / 'commands', {name.removeprefix('commands/') for name in _command_files(run)}, set())

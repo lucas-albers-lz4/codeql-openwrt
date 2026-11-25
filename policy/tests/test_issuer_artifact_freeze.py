@@ -184,6 +184,8 @@ class FreezeEntrypointTests(unittest.TestCase):
         freeze.create_output_root(self.temp, self.run_id)
         self.inputs = self.temp / 'event-input-123-1'
         self.inputs.mkdir()
+        for name in ('event-source-123-1', 'event-control-123-1'):
+            (self.temp / name / '.git').mkdir(parents=True)
         for name in freeze.INPUT_FILES:
             path = self.inputs / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -288,3 +290,35 @@ class FreezeEntrypointTests(unittest.TestCase):
     def test_precheck_rejects_preexisting_graph_report(self):
         with patch.object(freeze, 'ROOT', self.temp), self.assertRaisesRegex(RuntimeError, 'unexpected artifacts'):
             freeze.precheck(self.temp, self.run_id, graph_ready=False)
+
+    def test_precheck_rejects_checkout_root_alias(self):
+        checkout = self.temp / 'event-source-123-1'
+        shutil.rmtree(checkout)
+        checkout.symlink_to(self.temp / 'event-control-123-1', target_is_directory=True)
+        with patch.object(freeze, 'ROOT', self.temp), self.assertRaisesRegex(RuntimeError, 'unsafe event/control'):
+            freeze.precheck(self.temp, self.run_id, graph_ready=False)
+
+    def test_precheck_rejects_staged_hardlink_before_graph(self):
+        os.link(self.run / 'event-corpus/stage/file.uc', self.temp / 'linked.uc')
+        (self.inputs / 'consumer-graph.json').unlink()
+        with patch.object(freeze, 'ROOT', self.temp), self.assertRaisesRegex(RuntimeError, 'alias'):
+            freeze.precheck(self.temp, self.run_id, graph_ready=False)
+
+    def test_real_graph_report_wiring_is_frozen(self):
+        graph = freeze.issuer_workflow_graph
+        identities = {role: {'stage_files': ['file.uc']} for role in ('event', 'control')}
+        (self.temp / 'docs/r3-release-lock.json').write_text('{}')
+        (self.run / 'preflight.json').write_text(json.dumps({
+            'lock_sha256': hashlib.sha256(b'{}').hexdigest(), 'consumer_sha': self.sha}))
+        with patch.object(freeze, 'ROOT', self.temp), patch.object(graph, 'ROOT', self.temp), patch.object(
+                freeze, '_source_recheck', return_value=identities), patch.object(
+                freeze, '_git', side_effect=lambda root, *args: self.sha if args[-1] == 'HEAD' else ''), patch.object(
+                graph, 'pinned'), patch.object(graph, 'validate_event_manifest', return_value={}), patch.object(
+                graph, 'check_event_and_control', return_value=({'status': 'triage_required'}, {'status': 'clean_scan'})), patch.object(
+                graph.subprocess, 'check_output', return_value=self.sha), patch.dict(
+                os.environ, {'GITHUB_SHA': self.sha}):
+            result = freeze.freeze(self.temp, self.run_id)
+        self.assertEqual(result['status'], 'frozen')
+        report = self.temp / 'issuer-freeze-123-1/graph-recheck.json'
+        self.assertEqual(json.loads(report.read_text())['run_id'], self.run_id)
+        self.assertEqual(result['graph_recheck']['sha256'], hashlib.sha256(report.read_bytes()).hexdigest())
