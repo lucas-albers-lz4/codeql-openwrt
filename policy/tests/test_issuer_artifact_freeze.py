@@ -181,6 +181,7 @@ class FreezeEntrypointTests(unittest.TestCase):
         self.temp = Path(self.tmp.name)
         self.run_id = '123-1'
         self.sha = 'a' * 40
+        freeze.create_output_root(self.temp, self.run_id)
         self.inputs = self.temp / 'event-input-123-1'
         self.inputs.mkdir()
         for name in freeze.INPUT_FILES:
@@ -227,11 +228,16 @@ class FreezeEntrypointTests(unittest.TestCase):
         for suffix in ('stdout', 'stderr', 'time'):
             (root / 'commands' / ('one.' + suffix)).write_text('receipt')
 
-    def check(self):
+    def check(self, *, graph_failure=False):
         identities = {role: {'stage_files': ['file.uc']} for role in ('event', 'control')}
+        def graph_recheck(temp, run_id, event, control, path):
+            if graph_failure:
+                raise RuntimeError('graph replay rejected')
+            path.write_text(json.dumps({'status': 'checked', 'run_id': run_id,
+                                        'consumer_sha': self.sha}))
         with patch.object(freeze, 'ROOT', self.temp), patch.object(
                 freeze, '_source_recheck', return_value=identities), patch.object(
-                freeze.issuer_workflow_graph, 'run'), patch.object(
+                freeze.issuer_workflow_graph, 'run', side_effect=graph_recheck), patch.object(
                 freeze, '_git', side_effect=lambda root, *args: self.sha if args[-1] == 'HEAD' else ''), patch.dict(
                 os.environ, {'GITHUB_SHA': self.sha}):
             return freeze.freeze(self.temp, self.run_id)
@@ -274,3 +280,11 @@ class FreezeEntrypointTests(unittest.TestCase):
         graph.symlink_to(self.temp / 'missing.json')
         with self.assertRaisesRegex(RuntimeError, 'not regular'):
             self.check()
+
+    def test_graph_recheck_failure_propagates(self):
+        with self.assertRaisesRegex(RuntimeError, 'graph replay rejected'):
+            self.check(graph_failure=True)
+
+    def test_precheck_rejects_preexisting_graph_report(self):
+        with patch.object(freeze, 'ROOT', self.temp), self.assertRaisesRegex(RuntimeError, 'unexpected artifacts'):
+            freeze.precheck(self.temp, self.run_id, graph_ready=False)

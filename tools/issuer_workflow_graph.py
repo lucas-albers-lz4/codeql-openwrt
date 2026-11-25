@@ -7,16 +7,25 @@ import subprocess
 
 from tools.current_corpus_linux import validate_event_manifest
 from tools.issuer_consumer_prerequisite import check_event_and_control
-from tools.r3_linux_handoff import ROOT, need, pinned, write_json
+from tools.r3_linux_handoff import ROOT, need, pinned
 
 
-def run(temp: Path, run_id: str, event_outcome: str, control_outcome: str) -> None:
+def _write_report(path: Path, value: dict) -> None:
+    need(path.parent.is_dir() and not path.parent.is_symlink(), 'unsafe graph output parent')
+    with path.open('x') as output:
+        output.write(json.dumps(value, indent=2, sort_keys=True) + '\n')
+
+
+def run(temp: Path, run_id: str, event_outcome: str, control_outcome: str,
+        report_path: Path | None = None) -> None:
     need(temp.is_absolute() and run_id and all(c.isdigit() or c == '-' for c in run_id), 'invalid run paths')
     inputs = temp / ('event-input-' + run_id)
     source = temp / ('event-source-' + run_id)
     control = temp / ('event-control-' + run_id)
     root = temp / ('r3-event-' + run_id)
-    output = inputs / 'consumer-graph.json'
+    output = report_path if report_path is not None else inputs / 'consumer-graph.json'
+    need(output.is_absolute(), 'graph output must be absolute')
+    need(not output.exists() and not output.is_symlink(), 'graph output already exists')
     try:
         need(event_outcome == 'success' and control_outcome == 'success', 'event or control step did not succeed')
         lock_path = ROOT / 'docs/r3-release-lock.json'
@@ -32,13 +41,13 @@ def run(temp: Path, run_id: str, event_outcome: str, control_outcome: str) -> No
             control, source_role='clean_control')
         event_result, control_result = check_event_and_control(root, event_path, event,
             control_inputs, control_manifest, receipt, lock_path, lock, run_id, consumer_sha)
-        write_json(output, {'schema': 'incoming-consumer-graph-workflow-v1', 'status': 'checked',
+        _write_report(output, {'schema': 'incoming-consumer-graph-workflow-v1', 'status': 'checked',
                             'run_id': run_id, 'consumer_sha': consumer_sha,
                             'event_status': event_result['status'], 'control_status': control_result['status'],
                             'limitations': ['Non-issuing graph check; not an authenticated completion or Gate 8 pass.']})
     except Exception as exc:
-        inputs.mkdir(parents=True, exist_ok=True)
-        write_json(output, {'schema': 'incoming-consumer-graph-workflow-v1', 'status': 'failed', 'error': repr(exc)})
+        if not output.exists() and not output.is_symlink() and output.parent.is_dir() and not output.parent.is_symlink():
+            _write_report(output, {'schema': 'incoming-consumer-graph-workflow-v1', 'status': 'failed', 'error': repr(exc)})
         raise
 
 

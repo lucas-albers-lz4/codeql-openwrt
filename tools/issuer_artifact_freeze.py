@@ -11,6 +11,7 @@ from pathlib import Path
 import shutil
 import stat
 import subprocess
+import sys
 
 from tools.current_corpus_linux import REPOSITORIES as SCAN_REPOSITORIES, validate_event_manifest
 from tools.incoming_event import REPOSITORIES, canonical_repository
@@ -164,12 +165,10 @@ def _source_recheck(source: Path, control: Path, inputs: Path, run: Path) -> dic
     return result
 
 
-def freeze(temp: Path, run_id: str) -> dict:
+def precheck(temp: Path, run_id: str, *, graph_ready: bool) -> None:
     need(temp.is_absolute() and run_id and all(c.isdigit() or c == '-' for c in run_id), 'invalid run paths')
     inputs, run = temp / ('event-input-' + run_id), temp / ('r3-event-' + run_id)
-    source, control = temp / ('event-source-' + run_id), temp / ('event-control-' + run_id)
     need(temp.is_dir() and not temp.is_symlink(), 'unsafe attempt parent')
-    seen: set[tuple[int, int]] = set()
     _root_entries(run, {'preflight.json', 'receipt.json', 'commands.json'},
                   {'home', 'tmp', 'cache', 'downloads', 'sources', 'stage', 'db', 'out',
                    'commands', 'cli', 'bundle', 'event-corpus', 'control-corpus'})
@@ -178,9 +177,26 @@ def freeze(temp: Path, run_id: str) -> dict:
     _root_entries(run / 'control-corpus', {'preflight.json', 'receipt.json', 'commands.json', 'control-assertion.json'},
                   {'home', 'tmp', 'cache', 'downloads', 'sources', 'stage', 'db', 'out', 'commands', 'bundle'})
     _root_entries(run / 'out', set(), {'openvpn-parent', 'openvpn-fixed'})
-    # Validate all downloaded inputs before reading their JSON. This rejects
-    # FIFOs and path aliases before a read can block or escape the attempt.
-    _inventory(inputs, INPUT_FILES, set())
+    _inventory(inputs, INPUT_FILES if graph_ready else INPUT_FILES - {'consumer-graph.json'}, set())
+    for scan, root_files in ((run / 'event-corpus', {'preflight.json', 'receipt.json', 'commands.json'}),
+                             (run / 'control-corpus', {'preflight.json', 'receipt.json', 'commands.json', 'control-assertion.json'})):
+        for name in root_files:
+            _safe_file(scan / name, set())
+        _inventory(scan / 'out', SCAN_OUT, set())
+        _inventory(scan / 'commands', {name.removeprefix('commands/') for name in _command_files(scan)}, set())
+    for name in ('preflight.json', 'receipt.json', 'commands.json'):
+        _safe_file(run / name, set())
+    _inventory(run / 'commands', {name.removeprefix('commands/') for name in _command_files(run)}, set())
+    for case in ('openvpn-parent', 'openvpn-fixed'):
+        _inventory(run / 'out' / case, R3_OUT, set())
+    _safe_file(ROOT / 'docs/r3-release-lock.json', set())
+
+
+def freeze(temp: Path, run_id: str) -> dict:
+    precheck(temp, run_id, graph_ready=True)
+    inputs, run = temp / ('event-input-' + run_id), temp / ('r3-event-' + run_id)
+    source, control = temp / ('event-source-' + run_id), temp / ('event-control-' + run_id)
+    seen: set[tuple[int, int]] = set()
     graph = json.loads((inputs / 'consumer-graph.json').read_text())
     need(graph.get('schema') == 'incoming-consumer-graph-workflow-v1' and graph.get('status') == 'checked',
          'consumer graph did not pass')
@@ -198,9 +214,13 @@ def freeze(temp: Path, run_id: str) -> dict:
     _inventory(run / 'commands', {name.removeprefix('commands/') for name in _command_files(run)}, set())
     for case in ('openvpn-parent', 'openvpn-fixed'):
         _inventory(run / 'out' / case, R3_OUT, set())
-    # Re-run the graph check after the source recheck and immediately before
-    # hashing; this overwrites only its own checked report.
-    issuer_workflow_graph.run(temp, run_id, 'success', 'success')
+    # Re-run the graph check after source verification into an exclusive
+    # attempt-owned report, leaving the first report unchanged.
+    recheck_path = temp / ('issuer-freeze-' + run_id) / 'graph-recheck.json'
+    issuer_workflow_graph.run(temp, run_id, 'success', 'success', recheck_path)
+    recheck = json.loads(recheck_path.read_text())
+    need(recheck.get('status') == 'checked' and recheck.get('run_id') == run_id and
+         recheck.get('consumer_sha') == consumer_sha, 'graph recheck drift')
     records = {'inputs': _inventory(inputs, INPUT_FILES, seen)}
     for role, scan in (('event', run / 'event-corpus'), ('control', run / 'control-corpus')):
         expected = {'preflight.json', 'receipt.json', 'commands.json'}
@@ -230,7 +250,7 @@ def freeze(temp: Path, run_id: str) -> dict:
          'R3 lock or consumer pin drift')
     return {'schema': 'incoming-artifact-freeze-v1', 'status': 'frozen', 'run_id': run_id,
             'consumer_commit': consumer_sha, 'source_identities': identities,
-            'release_lock': lock, 'artifacts': records,
+            'release_lock': lock, 'graph_recheck': _safe_file(recheck_path, seen), 'artifacts': records,
             'limitations': ['Non-issuing same-job inventory; no queue or signer.']}
 
 
@@ -278,6 +298,9 @@ def create_output_root(temp: Path, run_id: str) -> Path:
 if __name__ == '__main__':
     temp = Path(os.environ['RUNNER_TEMP'])
     run_id = os.environ['GITHUB_RUN_ID'] + '-' + os.environ['GITHUB_RUN_ATTEMPT']
+    if sys.argv[1:] == ['--precheck']:
+        precheck(temp, run_id, graph_ready=False)
+        raise SystemExit(0)
     output_root = create_output_root(temp, run_id)
     output = output_root / 'inventory.json'
     try:

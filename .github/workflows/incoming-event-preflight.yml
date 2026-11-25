@@ -282,9 +282,13 @@ jobs:
           control_root="$RUNNER_TEMP/event-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B -m tools.event_control_scan docs/r3-release-lock.json "$input_root/incoming-event-receipt.json" "$control_root" "$input_root/control-oracle" "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Validate same-job artifact paths before graph replay
+        id: graph-precheck
+        if: always() && !cancelled() && steps.release.outputs.ready == 'true'
+        run: python3 -B -m tools.issuer_artifact_freeze --precheck
       - name: Check event and control consumer graph (non-issuing)
         id: graph
-        if: always() && !cancelled() && steps.release.outputs.ready == 'true'
+        if: always() && !cancelled() && steps.release.outputs.ready == 'true' && steps.graph-precheck.outcome == 'success'
         env:
           EVENT_OUTCOME: ${{ steps.event-scan.outcome }}
           CONTROL_OUTCOME: ${{ steps.control-scan.outcome }}
@@ -339,6 +343,7 @@ jobs:
           if-no-files-found: warn
           path: |
             ${{ runner.temp }}/issuer-freeze-${{ github.run_id }}-${{ github.run_attempt }}/inventory.json
+            ${{ runner.temp }}/issuer-freeze-${{ github.run_id }}-${{ github.run_attempt }}/graph-recheck.json
             ${{ runner.temp }}/issuer-freeze-${{ github.run_id }}-${{ github.run_attempt }}/snapshot/**
             ${{ runner.temp }}/event-input-${{ github.run_id }}-${{ github.run_attempt }}/**/*.json
             ${{ runner.temp }}/event-input-${{ github.run_id }}-${{ github.run_attempt }}/*.json

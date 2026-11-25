@@ -43,6 +43,7 @@ class WorkflowGraphTests(unittest.TestCase):
     def test_missing_or_failed_scan_fails_before_check(self):
         for event, control in [('failure', 'success'), ('success', 'skipped'), ('', 'success')]:
             with self.subTest(event=event, control=control), self.assertRaises(Exception):
+                (self.inputs / 'consumer-graph.json').unlink(missing_ok=True)
                 graph.run(self.temp, '123-1', event, control)
             self.assertEqual(self.result()['status'], 'failed')
         self.mocks[4].assert_not_called()
@@ -58,3 +59,11 @@ class WorkflowGraphTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'unpinned'):
             graph.run(self.temp, '123-1', 'success', 'success')
         self.mocks[4].assert_not_called()
+
+    def test_preexisting_output_symlink_rejected_before_write(self):
+        target = self.temp / 'target.json'
+        target.write_text('untouched')
+        (self.inputs / 'consumer-graph.json').symlink_to(target)
+        with self.assertRaisesRegex(Exception, 'already exists'):
+            graph.run(self.temp, '123-1', 'success', 'success')
+        self.assertEqual(target.read_text(), 'untouched')
