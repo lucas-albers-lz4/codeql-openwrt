@@ -64,8 +64,10 @@ is rejected and has no migration. A restored database keeps its queue ID;
 operator storage controls must prevent concurrent use of copied databases. A stale or superseded reservation cannot complete. A signed
 completion is final for that event, not a replacement for triage.
 
-Replay of the retained 1,851-event v3 snapshot (SHA-256
+An earlier version replayed the retained 1,851-event v3 snapshot (SHA-256
 `91bc6fa58b155206d3b7a2d6e3284d58d34c04a385e7e86ab70e5d6cabe5e95a`)
-selected 1,000 and then 851 distinct reservations with capacity 1,000. Zero
-starts or scans occurred. This offline replay verifies reservation coverage,
-not scan-attempt coverage or authenticated completion on the real events.
+and selected 1,000 then 851 distinct reservations without starting scans.
+That replay predates the global in-flight capacity bound and is not a result
+of this version. This version needs attested starts and outcomes or recovery
+before capacity becomes available for another selection. No full-checkpoint
+scan-attempt coverage or authenticated completion has been demonstrated.
