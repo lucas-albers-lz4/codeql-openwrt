@@ -71,6 +71,7 @@ class DefaultManifestTests(unittest.TestCase):
                 control = json.loads((output / 'control-manifest.json').read_text())
                 self.assertEqual(event['selected'][0]['source_commit'], self.source['commit'])
                 self.assertEqual(control['selected'][0]['source_commit'], self.control['commit'])
+                self.assertEqual(event['event']['base_tree'], control['event']['base_tree'])
                 self.assertEqual(control['event']['source_role'], 'clean_control')
                 import shutil
                 shutil.rmtree(output)

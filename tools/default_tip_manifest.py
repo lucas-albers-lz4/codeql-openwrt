@@ -67,8 +67,9 @@ def prepare(receipt_path: Path, run: Path, output: Path) -> None:
                 git(checkout, 'rev-parse', 'HEAD^{tree}') == identity['tree'] and
                 not git(checkout, 'status', '--porcelain=v1'), role + ' checkout drift')
         base = policy['pins'][repo]
-        derived = dict(receipt, source=identity, base={'commit': base})
         inventory = compare(checkout, base, identity['commit'], policy, raw, repo)
+        derived = dict(receipt, source=identity,
+                       base={'commit': base, 'tree': inventory['base_tree']})
         manifest = build(policy, derived, inventory, checkout)
         def write(name, obj):
             data = (json.dumps(obj, sort_keys=True, indent=2) + '\n').encode()
