@@ -2,6 +2,7 @@ import json
 import hashlib
 import hmac
 import tempfile
+import sqlite3
 import unittest
 from pathlib import Path
 from incoming_poll import PollError
@@ -41,22 +42,66 @@ class QueueTests(unittest.TestCase):
         self.assertEqual(bysha['d']['reason'],'not_observed')
         self.assertEqual(bysha['e']['status'],'pending')
     def attested(self, predecessor, payload, key=b'x'*32):
+        if payload['kind'] in ('start', 'failure') and 'job' not in payload:
+            payload = dict(payload, job=self.job())
         mac = hmac.new(key,encoded(payload),hashlib.sha256).hexdigest()
         result,digest = apply_attested(self.db,predecessor,payload,mac,key,'2026-01-01T00:00:00Z')
         return result,(result['sequence'],digest)
+    def job(self):
+        return {'workflow':'incoming.yml@protected-revision','job':'scan','run_id':101,'attempt':1}
+    def complete(self, start, event):
+        return dict(start,kind='complete',schema='incoming-queue-completion-v2',job=self.job(),
+                    issuer_receipt_sha256='6'*64,source={'commit':event['source']['commit'],'tree':'f'*40},
+                    release_lock_sha256='1'*64,manifest_sha256='2'*64,extraction_sha256='3'*64,
+                    sarif_sha256='4'*64,consumer_disposition='alert_triage',control_sha256='5'*64)
     def test_authenticated_completion_and_stale_competitor(self):
         a,p = self.advance(None)
         eid = a['selected'][0]
-        start = {'kind':'start','event_id':eid,'reservation':0,'reservation_digest':p[1],'queue_id':a['queue_id'],'run_id':'run-1'}
+        start = {'kind':'start','event_id':eid,'reservation':0,'reservation_digest':p[1],'queue_id':a['queue_id'],'run_id':'run-1','job':self.job()}
         _,q = self.attested(p,start)
         with self.assertRaises(PollError): self.attested(p,start)
         event = next(r['event'] for r in a['events'] if identity(r['event']) == eid)
-        complete = {'kind':'complete','event_id':eid,'reservation':0,'reservation_digest':p[1],'queue_id':a['queue_id'],'run_id':'run-1','source':{'commit':event['source']['commit'],'tree':'f'*40},'release_lock_sha256':'1'*64,'manifest_sha256':'2'*64,'extraction_sha256':'3'*64,'sarif_sha256':'4'*64,'consumer_disposition':'alert_triage','control_sha256':'5'*64}
+        complete = self.complete(start,event)
         bad = dict(complete,source={'commit':'9'*40,'tree':'f'*40})
         with self.assertRaises(PollError): self.attested(q,bad)
         _,r = self.attested(q,complete)
         with self.assertRaises(PollError): self.attested(r,complete)
         with self.assertRaises(PollError): apply_attested(self.db,r,start,'0'*64,b'x'*32,'2026-01-01T00:00:00Z')
+    def test_completion_receipt_and_job_controls(self):
+        a,p = self.advance(None)
+        eid = a['selected'][0]
+        start = {'kind':'start','event_id':eid,'reservation':0,'reservation_digest':p[1],
+                 'queue_id':a['queue_id'],'run_id':'run-1','job':self.job()}
+        _,q = self.attested(p,start)
+        event = next(r['event'] for r in a['events'] if identity(r['event']) == eid)
+        complete = self.complete(start,event)
+        for field in ('schema','issuer_receipt_sha256','job'):
+            bad = dict(complete); bad.pop(field)
+            with self.subTest(missing=field), self.assertRaises(PollError): self.attested(q,bad)
+        for bad in (dict(complete, job=dict(self.job(),attempt=2)),
+                    dict(complete, job=dict(self.job(),run_id=102)),
+                    dict(complete, schema='incoming-queue-completion-v1')):
+            with self.assertRaises(PollError): self.attested(q,bad)
+        with self.assertRaises(PollError): apply_attested(self.db,q,complete,'0'*64,b'x'*32,'2026-01-01T00:00:00Z')
+        recover = dict(start,kind='recover'); recover.pop('job')
+        _,r = self.attested(q,recover)
+        with self.assertRaises(PollError): self.attested(r,complete)
+    def test_legacy_store_rejected_without_migration(self):
+        path = self.path/'old.db'
+        old = sqlite3.connect(path)
+        old.execute('CREATE TABLE events (id TEXT PRIMARY KEY, reservation_digest TEXT)')
+        old.commit(); old.close()
+        with self.assertRaises(PollError): open_queue(path)
+    def test_queue_cannot_authenticate_fabricated_receipt(self):
+        a,p = self.advance(None)
+        eid = a['selected'][0]
+        start = {'kind':'start','event_id':eid,'reservation':0,'reservation_digest':p[1],
+                 'queue_id':a['queue_id'],'run_id':'run-1','job':self.job()}
+        _,q = self.attested(p,start)
+        event = next(r['event'] for r in a['events'] if identity(r['event']) == eid)
+        fabricated = dict(self.complete(start,event),issuer_receipt_sha256='7'*64)
+        result,_ = self.attested(q,fabricated)
+        self.assertEqual(result['attestation']['issuer_receipt_sha256'],'7'*64)
     def test_failure_retry_does_not_starve_unstarted(self):
         a,p = self.advance(None)
         eid = a['selected'][0]

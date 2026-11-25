@@ -49,9 +49,19 @@ with an HMAC-SHA256 over canonical JSON using an externally provisioned secret
 of at least 32 bytes. The signer is a trust boundary: the MAC authenticates a
 holder of that key, not that a scan actually ran. No production signer, key
 management, trusted workflow integration, or artifact-byte verification exists.
-Completion's claimed resolved commit/tree and lock, manifest, extraction,
-SARIF and control digests plus consumer disposition are structurally checked;
-the signer must independently validate the actual artifacts and clean control.
+The v2 completion payload requires `schema: incoming-queue-completion-v2`,
+`issuer_receipt_sha256`, and an exact `job` object containing protected
+workflow identity, job identity, numeric run ID, and positive run attempt.
+The same job object is required at start and stored with the active run;
+failure and completion must match it. The action transition records
+`incoming-queue-action-v2`. The claimed resolved commit/tree and lock,
+manifest, extraction, SARIF, control and issuer receipt digests plus consumer
+disposition are structurally checked. The issuer receipt digest must name
+canonical frozen receipt bytes whose schema binds the event receipt, triage,
+full artifact inventory, workflow revision and issuer revision. The queue
+does not read those bytes and cannot tell whether a syntactically valid digest
+is fabricated. A valid MAC over fabricated evidence is therefore still
+accepted by this prototype; only a trusted same-job issuer could reject it.
 Each claim binds the persistent queue ID and the digest of the transition
 that created its reservation, as well as the event and reservation sequence.
 Failures retain their category and return to pending; all transitions compare
@@ -59,8 +69,11 @@ the current predecessor. A reservation is distinct from a signed start, and
 only signed starts increment attempt counts. There is no automatic expiry: an authorized signer can recover a reserved
 item or an identified started run. Before recovering a started run, the owner
 must stop it and establish that it cannot publish an outcome; the transaction
-invalidates its reservation and rejects late results. An old database schema
-is rejected and has no migration. A restored database keeps its queue ID;
+invalidates its reservation and rejects late results. Store schema
+`incoming-queue-store-v2` and the `started_job` column reject old populated
+databases; there is no automatic migration. Existing queue history must not
+be silently upgraded because v1 completion records did not bind receipt or
+job identity. A restored database keeps its queue ID;
 operator storage controls must prevent concurrent use of copied databases. A stale or superseded reservation cannot complete. A signed
 completion is final for that event, not a replacement for triage.
 
