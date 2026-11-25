@@ -1,0 +1,84 @@
+name: R3 released ucode Linux handoff
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/r3-released-ucode-handoff.yml'
+      - 'docs/r3-release-lock.json'
+      - 'docs/r3-openvpn-source-oracle.json'
+      - 'tools/r3_linux_handoff.py'
+      - 'tools/sarif_accept.py'
+      - 'policy/tests/test_r3_linux_handoff.py'
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Test acceptance and R3 lock preflight
+        run: python3 -B -m unittest policy.tests.test_sarif_accept policy.tests.test_r3_linux_handoff -v
+
+  lock-state:
+    runs-on: ubuntu-24.04
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Determine release-lock readiness
+        id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from tools.r3_linux_handoff import pinned
+          lock = json.loads(Path('docs/r3-release-lock.json').read_text())
+          release = lock['release']
+          fields = [release[key] for key in ('tag', 'commit', 'asset_url',
+                    'asset_sha256', 'manifest_sha256', 'verifier_sha256',
+                    'extractor_sha256', 'library_lock_sha256', 'query_lock_sha256',
+                    'suite_sha256', 'codeql_binary_sha256')]
+          fields += [release['packs'][key]['version'] for key in ('library', 'queries')]
+          if all(value is None for value in fields):
+              if os.environ['EVENT_NAME'] == 'workflow_dispatch':
+                  raise SystemExit('manual R3 run requires a populated release lock')
+              ready = 'false'
+          else:
+              pinned(lock)
+              ready = 'true'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'ready={ready}\n')
+          PY
+
+  released-openvpn-pair:
+    needs: [contract, lock-state]
+    if: needs.lock-state.outputs.ready == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Run released producer and same-job consumer acceptance
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B tools/r3_linux_handoff.py docs/r3-release-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Retain normalized receipt and raw outputs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/preflight.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/receipt.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/commands.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/commands/**
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/out/**

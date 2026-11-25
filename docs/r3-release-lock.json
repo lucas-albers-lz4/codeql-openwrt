@@ -1,0 +1,33 @@
+{
+  "schema": "ucode-r3-release-lock-v1",
+  "source_oracle_sha256": "c3098f828d8df4817716030724a1041a6b9113d6b5ae77efac6e7acb3eccf0c2",
+  "release": {
+    "repository": "https://github.com/lucas-albers-lz4/codeql-ucode",
+    "tag": null,
+    "commit": null,
+    "asset_url": null,
+    "asset_sha256": null,
+    "manifest_sha256": null,
+    "verifier_sha256": null,
+    "artifact_kind": "versioned-release",
+    "extractor_sha256": null,
+    "library_lock_sha256": null,
+    "query_lock_sha256": null,
+    "suite_sha256": null,
+    "codeql_binary_sha256": null,
+    "packs": {
+      "library": {"name": "lucas-albers-lz4/ucode-all", "version": null},
+      "queries": {"name": "lucas-albers-lz4/ucode-queries", "version": null}
+    },
+    "expected_rules": [
+      "ucode/m4/direct-rpc-shell-word",
+      "ucode/diagnostics/extraction-errors",
+      "ucode/diagnostics/successfully-extracted-files"
+    ]
+  },
+  "codeql": {
+    "version": "2.27.4",
+    "url": "https://github.com/github/codeql-cli-binaries/releases/download/v2.27.4/codeql-linux64.zip",
+    "sha256": "393bf92b66596141ec93baf9b483f4a350f3749916c922fed0dd63c67706047d"
+  }
+}
