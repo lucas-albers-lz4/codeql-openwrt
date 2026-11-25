@@ -2,6 +2,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -28,14 +29,28 @@ class ArtifactInventoryTests(unittest.TestCase):
         inputs.mkdir()
         (inputs / 'receipt.json').write_text('original')
         digest = hashlib.sha256(b'original').hexdigest()
+        output_root = freeze.create_output_root(self.root, run_id)
+        lock = self.root / 'docs/r3-release-lock.json'
+        lock.parent.mkdir()
+        lock.write_text('lock')
         record = {'artifacts': {'inputs': {'receipt.json': {'sha256': digest, 'bytes': 8}},
-                                'event': {}, 'control': {}, 'r3': {}}}
-        freeze.snapshot(self.root, run_id, record)
+                                'event': {}, 'control': {}, 'r3': {}},
+                  'release_lock': {'sha256': hashlib.sha256(b'lock').hexdigest()}}
+        with patch.object(freeze, 'ROOT', self.root):
+            freeze.snapshot(self.root, run_id, record)
         copied = self.root / ('issuer-freeze-' + run_id) / 'snapshot/inputs/receipt.json'
         self.assertEqual(copied.read_bytes(), b'original')
         self.assertEqual(copied.stat().st_mode & 0o222, 0)
-        with self.assertRaisesRegex(RuntimeError, 'already exists'):
+        with patch.object(freeze, 'ROOT', self.root), self.assertRaisesRegex(RuntimeError, 'already exists'):
             freeze.snapshot(self.root, run_id, record)
+
+    def test_preexisting_output_symlink_is_rejected(self):
+        target = self.root / 'target'
+        target.mkdir()
+        (self.root / 'issuer-freeze-123-1').symlink_to(target, target_is_directory=True)
+        with self.assertRaises(FileExistsError):
+            freeze.create_output_root(self.root, '123-1')
+        self.assertEqual(list(target.iterdir()), [])
 
     def test_rejects_symlink_and_alias(self):
         (self.root / 'out/link.json').symlink_to('result.json')
@@ -128,4 +143,134 @@ class SourceRecheckTests(unittest.TestCase):
         receipt['control']['tree'] = '0' * 40
         (self.inputs / 'replayed-receipt.json').write_text(json.dumps(receipt))
         with self.assertRaisesRegex(RuntimeError, 'checkout drift'):
+            self.check()
+
+    def test_explicit_excluded_git_symlink_hashes_link_text(self):
+        for checkout in (self.source, self.control):
+            (checkout / 'bootstrap-dark').symlink_to('../theme')
+            subprocess.run(['git', '-C', str(checkout), 'add', 'bootstrap-dark'], check=True)
+            subprocess.run(['git', '-C', str(checkout), 'commit', '-qm', 'tracked link'], check=True)
+        identities = {checkout: {'commit': freeze._git(checkout, 'rev-parse', 'HEAD'),
+                                 'tree': freeze._git(checkout, 'rev-parse', 'HEAD^{tree}')}
+                      for checkout in (self.source, self.control)}
+        receipt = {'repository': 'openwrt', 'source': identities[self.source],
+                   'control': identities[self.control], 'base': identities[self.source]}
+        (self.inputs / 'replayed-receipt.json').write_text(json.dumps(receipt))
+        for role, checkout in (('event-corpus', self.source), ('control-corpus', self.control)):
+            dest = self.run / role / 'sources/openwrt'
+            shutil.rmtree(dest)
+            subprocess.run(['git', 'clone', '-q', str(checkout), str(dest)], check=True)
+        excluded = {'repo': 'openwrt', 'source_path': 'bootstrap-dark',
+                    'reason': 'tracked symlink; target not followed',
+                    'sha256': hashlib.sha256(b'../theme').hexdigest()}
+        oracles = [{'selected': [], 'excluded': [excluded], 'pins': {'openwrt': identities[checkout]['commit']}}
+                   for checkout in (self.source, self.control)]
+        with patch.object(freeze, 'canonical_repository'), patch.object(
+                freeze, 'validate_event_manifest', side_effect=oracles):
+            self.assertEqual(freeze._source_recheck(self.source, self.control, self.inputs, self.run)['event']['stage_files'], [])
+        excluded['reason'] = 'ordinary exclusion'
+        with patch.object(freeze, 'canonical_repository'), patch.object(
+                freeze, 'validate_event_manifest', side_effect=oracles), self.assertRaisesRegex(RuntimeError, 'alias'):
+            freeze._source_recheck(self.source, self.control, self.inputs, self.run)
+
+
+class FreezeEntrypointTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.temp = Path(self.tmp.name)
+        self.run_id = '123-1'
+        self.sha = 'a' * 40
+        self.inputs = self.temp / 'event-input-123-1'
+        self.inputs.mkdir()
+        for name in freeze.INPUT_FILES:
+            path = self.inputs / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text('{}')
+        (self.inputs / 'consumer-graph.json').write_text(json.dumps({
+            'schema': 'incoming-consumer-graph-workflow-v1', 'status': 'checked',
+            'run_id': self.run_id, 'consumer_sha': self.sha}))
+        self.run = self.temp / 'r3-event-123-1'
+        for name in ('home', 'tmp', 'cache', 'downloads', 'sources', 'stage', 'db',
+                     'out', 'commands', 'cli', 'bundle'):
+            (self.run / name).mkdir(parents=True, exist_ok=True)
+        for name in ('preflight.json', 'receipt.json'):
+            (self.run / name).write_text('{}')
+        for case in ('openvpn-parent', 'openvpn-fixed'):
+            output = self.run / 'out' / case
+            output.mkdir()
+            for name in freeze.R3_OUT:
+                (output / name).write_text('{}')
+        self._commands(self.run)
+        for role in ('event', 'control'):
+            scan = self.run / (role + '-corpus')
+            for name in ('home', 'tmp', 'cache', 'downloads', 'sources', 'stage',
+                         'db', 'out', 'commands', 'bundle'):
+                (scan / name).mkdir(parents=True, exist_ok=True)
+            for name in ('preflight.json', 'receipt.json'):
+                (scan / name).write_text('{}')
+            if role == 'control':
+                (scan / 'control-assertion.json').write_text('{}')
+            for name in freeze.SCAN_OUT:
+                (scan / 'out' / name).write_text('{}')
+            (scan / 'stage/file.uc').write_text('source')
+            self._commands(scan)
+        lock = self.temp / 'docs/r3-release-lock.json'
+        lock.parent.mkdir()
+        lock.write_text('lock')
+        (self.run / 'preflight.json').write_text(json.dumps({
+            'lock_sha256': hashlib.sha256(b'lock').hexdigest(), 'consumer_sha': self.sha}))
+
+    def _commands(self, root):
+        (root / 'commands.json').write_text(json.dumps([{'label': 'one', 'stdout': 'commands/one.stdout',
+            'stderr': 'commands/one.stderr', 'time': 'commands/one.time'}]))
+        for suffix in ('stdout', 'stderr', 'time'):
+            (root / 'commands' / ('one.' + suffix)).write_text('receipt')
+
+    def check(self):
+        identities = {role: {'stage_files': ['file.uc']} for role in ('event', 'control')}
+        with patch.object(freeze, 'ROOT', self.temp), patch.object(
+                freeze, '_source_recheck', return_value=identities), patch.object(
+                freeze.issuer_workflow_graph, 'run'), patch.object(
+                freeze, '_git', side_effect=lambda root, *args: self.sha if args[-1] == 'HEAD' else ''), patch.dict(
+                os.environ, {'GITHUB_SHA': self.sha}):
+            return freeze.freeze(self.temp, self.run_id)
+
+    def test_freezes_exact_attempt_artifacts(self):
+        result = self.check()
+        self.assertEqual(result['status'], 'frozen')
+        self.assertEqual(result['artifacts']['event']['stage']['file.uc']['sha256'],
+                         hashlib.sha256(b'source').hexdigest())
+
+    def test_rejects_input_fifo_before_json_read(self):
+        graph = self.inputs / 'consumer-graph.json'
+        graph.unlink()
+        os.mkfifo(graph)
+        with self.assertRaisesRegex(RuntimeError, 'not regular'):
+            self.check()
+
+    def test_rejects_unlisted_staged_file(self):
+        (self.run / 'event-corpus/stage/extra.uc').write_text('surprise')
+        with self.assertRaisesRegex(RuntimeError, 'unexpected artifacts'):
+            self.check()
+
+    def test_rejects_hardlinked_staged_file(self):
+        stage = self.run / 'event-corpus/stage/file.uc'
+        os.link(stage, self.temp / 'alias.uc')
+        with self.assertRaisesRegex(RuntimeError, 'alias'):
+            self.check()
+
+    def test_rejects_wrong_graph_run_identity(self):
+        graph = self.inputs / 'consumer-graph.json'
+        value = json.loads(graph.read_text())
+        value['run_id'] = 'other-1'
+        graph.write_text(json.dumps(value))
+        with self.assertRaisesRegex(RuntimeError, 'graph drift'):
+            self.check()
+
+    def test_rejects_input_symlink_before_json_read(self):
+        graph = self.inputs / 'consumer-graph.json'
+        graph.unlink()
+        graph.symlink_to(self.temp / 'missing.json')
+        with self.assertRaisesRegex(RuntimeError, 'not regular'):
             self.check()

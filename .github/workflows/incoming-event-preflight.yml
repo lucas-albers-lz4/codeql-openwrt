@@ -283,13 +283,14 @@ jobs:
           run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B -m tools.event_control_scan docs/r3-release-lock.json "$input_root/incoming-event-receipt.json" "$control_root" "$input_root/control-oracle" "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Check event and control consumer graph (non-issuing)
+        id: graph
         if: always() && !cancelled() && steps.release.outputs.ready == 'true'
         env:
           EVENT_OUTCOME: ${{ steps.event-scan.outcome }}
           CONTROL_OUTCOME: ${{ steps.control-scan.outcome }}
         run: python3 -B -m tools.issuer_workflow_graph
       - name: Freeze same-job artifact inventory and recheck sources (non-issuing)
-        if: always() && !cancelled() && steps.release.outputs.ready == 'true'
+        if: always() && !cancelled() && steps.release.outputs.ready == 'true' && steps.graph.outcome == 'success'
         run: python3 -B -m tools.issuer_artifact_freeze
       - name: Summarize scan outcome and markup coverage gap
         if: always() && steps.release.outputs.ready == 'true'

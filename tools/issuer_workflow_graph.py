@@ -33,6 +33,7 @@ def run(temp: Path, run_id: str, event_outcome: str, control_outcome: str) -> No
         event_result, control_result = check_event_and_control(root, event_path, event,
             control_inputs, control_manifest, receipt, lock_path, lock, run_id, consumer_sha)
         write_json(output, {'schema': 'incoming-consumer-graph-workflow-v1', 'status': 'checked',
+                            'run_id': run_id, 'consumer_sha': consumer_sha,
                             'event_status': event_result['status'], 'control_status': control_result['status'],
                             'limitations': ['Non-issuing graph check; not an authenticated completion or Gate 8 pass.']})
     except Exception as exc:
