@@ -60,6 +60,11 @@ class ArtifactInventoryTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, 'symlink directory'):
             freeze._inventory(self.root, {'out/result.json'}, set())
 
+    def test_source_path_rejects_alias_parent(self):
+        (self.root / 'linked').symlink_to(self.root / 'out', target_is_directory=True)
+        with self.assertRaisesRegex(RuntimeError, 'alias'):
+            freeze._no_alias(self.root, 'linked/result.json')
+
 
 class SourceRecheckTests(unittest.TestCase):
     def setUp(self):

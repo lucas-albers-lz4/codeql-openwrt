@@ -37,6 +37,18 @@ def _git(root: Path, *args: str) -> str:
     return subprocess.check_output(['git', '-C', str(root), *args], text=True).strip()
 
 
+def _no_alias(root: Path, relative: str) -> Path:
+    need(not root.is_symlink() and root.is_dir(), 'unsafe source root')
+    parts = Path(relative).parts
+    need(parts and all(part not in ('', '.', '..') for part in parts) and not Path(relative).is_absolute(),
+         'unsafe source path')
+    path = root
+    for part in parts:
+        path = path / part
+        need(not path.is_symlink(), 'source or stage alias')
+    return path
+
+
 def _safe_file(path: Path, seen: set[tuple[int, int]]) -> dict:
     mode = path.lstat()
     need(stat.S_ISREG(mode.st_mode) and mode.st_nlink == 1, 'artifact is an alias or not regular: ' + str(path))
@@ -113,17 +125,16 @@ def _source_recheck(source: Path, control: Path, inputs: Path, run: Path) -> dic
                  not _git(staged_repo, 'status', '--porcelain=v1'), 'scan source Git drift: ' + repo)
             scan_pins[repo] = {'commit': pin, 'tree': _git(staged_repo, 'rev-parse', 'HEAD^{tree}')}
         for row in oracle['selected']:
-            source_file = scan / 'sources' / row['repo'] / row['source_path']
-            stage_file = scan / 'stage' / row['proposed_installed_path']
-            need(not source_file.is_symlink() and not stage_file.is_symlink(), 'source or stage alias')
+            source_file = _no_alias(scan / 'sources' / row['repo'], row['source_path'])
+            stage_file = _no_alias(scan / 'stage', row['proposed_installed_path'])
             for path in (source_file, stage_file):
                 need(path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest() == row['source_sha256'],
                      role + ' source/stage byte drift: ' + row['source_path'])
             need(_git(scan / 'sources' / row['repo'], 'rev-parse', row['source_commit'] + ':' + row['source_path']) == row['git_blob'],
                  role + ' Git blob drift')
         for row in oracle['excluded']:
-            source_file = scan / 'sources' / row['repo'] / row['source_path']
-            need(not source_file.is_symlink() and source_file.is_file() and
+            source_file = _no_alias(scan / 'sources' / row['repo'], row['source_path'])
+            need(source_file.is_file() and
                  hashlib.sha256(source_file.read_bytes()).hexdigest() == row['sha256'],
                  role + ' excluded source drift: ' + row['source_path'])
         result[role] = {'checkout': identity, 'scan_sources': scan_pins}
