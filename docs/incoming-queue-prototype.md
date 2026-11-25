@@ -23,6 +23,10 @@ upstream snapshot and intermediate changes can be missed.
 Each selection reserves a slot; a separately attested start increments the
 attempt count. Pending identities with fewer attested starts always precede those with
 more; buckets share selection within an attempt count. A retry cannot start while any pending or reserved first attempt remains.
+If new first attempts exceed available slots, reconciliation deterministically
+preempts as many unstarted retry reservations as needed, records their IDs in
+the transition, and invalidates their reservation digests. Started work is
+never preempted and must finish or be safely recovered.
 A reserved, never-started identity also blocks new retry reservations until it
 is started or explicitly recovered. Capacity bounds the total of reserved and
 started work, across polls; lowering it below outstanding work fails closed.

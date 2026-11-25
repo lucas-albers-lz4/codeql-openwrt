@@ -89,6 +89,14 @@ def transition(db, expected, snapshot, capacity, now):
         # robin by repository/kind within each attempt count via SQL row numbers.
         inflight = db.execute("SELECT count(*) FROM events WHERE status IN ('reserved','started')").fetchone()[0]
         check(inflight <= capacity, 'capacity below outstanding work; recover or finish work first')
+        # Free only the slots needed by first attempts. A started run cannot be
+        # preempted; its owner must stop and recover it before another can start.
+        first_pending = db.execute("SELECT count(*) FROM events WHERE status='pending' AND attempts=0").fetchone()[0]
+        needed = max(0, min(first_pending, capacity) - (capacity - inflight))
+        preempted = db.execute("SELECT id FROM events WHERE status='reserved' AND attempts>0 ORDER BY id LIMIT ?", (needed,)).fetchall()
+        for (eid,) in preempted:
+            db.execute("UPDATE events SET status='pending',reason='retry_preempted',reservation=NULL,reservation_digest=NULL WHERE id=?", (eid,))
+        inflight -= len(preempted)
         available = capacity - inflight
         unstarted_inflight = db.execute("SELECT count(*) FROM events WHERE status='reserved' AND attempts=0").fetchone()[0]
         selected = db.execute('''SELECT id FROM (SELECT id, attempts, last_attempt,
@@ -100,7 +108,7 @@ def transition(db, expected, snapshot, capacity, now):
                    for e, first, status, attempts, last, reason in db.execute('SELECT event,first_seen,status,attempts,last_attempt,reason FROM events ORDER BY id')]
         result = {'schema':'incoming-queue-v1', 'sequence':seq, 'previous_sha256':None if head is None else head[1],
                   'queue_id':queue_id, 'snapshot_sha256':snapshot_hash, 'observed_at':now, 'capacity':capacity,
-                  'selected':[x[0] for x in selected], 'events':records}
+                  'selected':[x[0] for x in selected], 'preempted':[x[0] for x in preempted], 'events':records}
         raw = encoded(result)
         digest = hashlib.sha256(raw).hexdigest()
         db.execute('INSERT INTO history VALUES (?,?,?)', (seq,digest,raw))
