@@ -3,6 +3,8 @@ import hashlib
 import hmac
 import tempfile
 import sqlite3
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
 import unittest
 from pathlib import Path
 from incoming_poll import PollError
@@ -92,6 +94,39 @@ class QueueTests(unittest.TestCase):
         old.execute('CREATE TABLE events (id TEXT PRIMARY KEY, reservation_digest TEXT)')
         old.commit(); old.close()
         with self.assertRaises(PollError): open_queue(path)
+    def test_populated_v1_store_rejected_before_schema_ddl(self):
+        path = self.path/'populated-v1.db'
+        old = sqlite3.connect(path)
+        old.execute('CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
+        old.execute('CREATE TABLE history (seq INTEGER PRIMARY KEY, digest TEXT UNIQUE NOT NULL, document BLOB NOT NULL)')
+        old.execute('CREATE TABLE events (id TEXT PRIMARY KEY, reservation_digest TEXT)')
+        old.execute("INSERT INTO metadata VALUES ('queue_id', 'old-queue')")
+        old.execute("INSERT INTO history VALUES (0, 'old-digest', x'00')")
+        old.commit()
+        before = old.execute("SELECT name,sql FROM sqlite_master WHERE type='table' ORDER BY name").fetchall()
+        old.close()
+        with self.assertRaises(PollError): open_queue(path)
+        old = sqlite3.connect(path)
+        self.assertEqual(old.execute("SELECT name,sql FROM sqlite_master WHERE type='table' ORDER BY name").fetchall(), before)
+        self.assertEqual(old.execute('SELECT count(*) FROM history').fetchone()[0], 1)
+        self.assertIsNone(old.execute("SELECT value FROM metadata WHERE key='schema'").fetchone())
+        old.close()
+    def test_concurrent_fresh_open_has_one_store_identity(self):
+        path = self.path/'concurrent.db'
+        barrier = Barrier(2)
+        def open_after_barrier():
+            barrier.wait()
+            db = open_queue(path)
+            try:
+                return db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
+            finally:
+                db.close()
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            ids = list(pool.map(lambda _: open_after_barrier(), range(2)))
+        self.assertEqual(ids[0], ids[1])
+        db = open_queue(path)
+        self.assertEqual(db.execute("SELECT count(*) FROM metadata WHERE key='schema'").fetchone()[0], 1)
+        db.close()
     def test_queue_cannot_authenticate_fabricated_receipt(self):
         a,p = self.advance(None)
         eid = a['selected'][0]

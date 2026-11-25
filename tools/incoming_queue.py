@@ -25,23 +25,34 @@ def subject(event):
 
 def open_queue(path):
     db = sqlite3.connect(path, timeout=10, isolation_level=None)
-    db.execute('PRAGMA journal_mode=DELETE')
-    db.execute('PRAGMA synchronous=FULL')
-    db.executescript('''CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS history (seq INTEGER PRIMARY KEY, digest TEXT UNIQUE NOT NULL, document BLOB NOT NULL);
-    CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, subject TEXT NOT NULL, event TEXT NOT NULL, first_seen TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL, last_attempt INTEGER, reason TEXT NOT NULL, reservation INTEGER, reservation_digest TEXT, started_job TEXT);''')
-    columns = [row[1] for row in db.execute('PRAGMA table_info(events)')]
-    check({'reservation_digest', 'started_job'} <= set(columns), 'old queue schema requires explicit migration')
-    version = db.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()
-    if version is None:
-        check(db.execute('SELECT count(*) FROM history').fetchone()[0] == 0 and
-              db.execute('SELECT count(*) FROM events').fetchone()[0] == 0,
-              'old queue history requires explicit migration')
-        db.execute("INSERT INTO metadata VALUES ('schema','incoming-queue-store-v2')")
-    else:
-        check(version[0] == 'incoming-queue-store-v2', 'unsupported queue store schema')
-    db.execute("INSERT OR IGNORE INTO metadata VALUES ('queue_id', ?)", (uuid.uuid4().hex,))
-    return db
+    try:
+        db.execute('PRAGMA journal_mode=DELETE')
+        db.execute('PRAGMA synchronous=FULL')
+        db.execute('BEGIN IMMEDIATE')
+        tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if tables:
+            # Reject old or partial stores before creating or altering any table.
+            check(tables == {'metadata', 'history', 'events'}, 'unsupported queue store schema')
+            version = db.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()
+            check(version is not None and version[0] == 'incoming-queue-store-v2',
+                  'old queue history requires explicit migration')
+            columns = {row[1] for row in db.execute('PRAGMA table_info(events)')}
+            check({'reservation_digest', 'started_job'} <= columns, 'unsupported queue store schema')
+            check(db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone() is not None,
+                  'missing queue identity')
+        else:
+            db.execute('CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
+            db.execute('CREATE TABLE history (seq INTEGER PRIMARY KEY, digest TEXT UNIQUE NOT NULL, document BLOB NOT NULL)')
+            db.execute('CREATE TABLE events (id TEXT PRIMARY KEY, subject TEXT NOT NULL, event TEXT NOT NULL, first_seen TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL, last_attempt INTEGER, reason TEXT NOT NULL, reservation INTEGER, reservation_digest TEXT, started_job TEXT)')
+            db.execute("INSERT INTO metadata VALUES ('schema','incoming-queue-store-v2')")
+            db.execute("INSERT INTO metadata VALUES ('queue_id', ?)", (uuid.uuid4().hex,))
+        db.execute('COMMIT')
+        return db
+    except BaseException:
+        if db.in_transaction:
+            db.execute('ROLLBACK')
+        db.close()
+        raise
 
 
 def transition(db, expected, snapshot, capacity, now):
