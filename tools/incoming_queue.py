@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""Local transactional incoming queue prototype. No scan or completion authentication."""
+"""Local transactional incoming queue prototype with signer-bound claims."""
 import hashlib
+import hmac
+import re
 import json
 import sqlite3
 from datetime import datetime, timezone
@@ -25,7 +27,7 @@ def open_queue(path):
     db.execute('PRAGMA journal_mode=DELETE')
     db.execute('PRAGMA synchronous=FULL')
     db.executescript('''CREATE TABLE IF NOT EXISTS history (seq INTEGER PRIMARY KEY, digest TEXT UNIQUE NOT NULL, document BLOB NOT NULL);
-    CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, subject TEXT NOT NULL, event TEXT NOT NULL, first_seen TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL, last_attempt INTEGER, reason TEXT NOT NULL);''')
+    CREATE TABLE IF NOT EXISTS events (id TEXT PRIMARY KEY, subject TEXT NOT NULL, event TEXT NOT NULL, first_seen TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL, last_attempt INTEGER, reason TEXT NOT NULL, reservation INTEGER);''')
     return db
 
 
@@ -33,7 +35,7 @@ def transition(db, expected, snapshot, capacity, now):
     """Atomically reconcile a complete snapshot and reserve first attempts before retries.
 
     expected is None only for genesis; otherwise (sequence, digest). A reservation
-    is an attempt for fairness, not evidence a scanner ran. No completion API exists.
+    does not itself count as a start or establish that a scanner ran.
     """
     check(type(capacity) is int and 0 <= capacity <= 1000, 'invalid capacity')
     timestamp = datetime.fromisoformat(now.replace('Z', '+00:00'))
@@ -56,7 +58,7 @@ def transition(db, expected, snapshot, capacity, now):
             check(timestamp >= datetime.fromisoformat(previous['observed_at'].replace('Z', '+00:00')), 'timestamp moved backwards')
         active = {subject(e): identity(e) for e in events}
         for eid, subj, status in db.execute('SELECT id,subject,status FROM events').fetchall():
-            if status == 'pending' and active.get(subj) != eid:
+            if status in ('pending', 'reserved', 'started') and active.get(subj) != eid:
                 reason = 'superseded' if subj in active else 'not_observed'
                 db.execute('UPDATE events SET status=?,reason=? WHERE id=?', ('inactive', reason, eid))
         for event in events:
@@ -64,9 +66,9 @@ def transition(db, expected, snapshot, capacity, now):
             old = db.execute('SELECT event FROM events WHERE id=?', (eid,)).fetchone()
             check(old is None or old[0] == text, 'event metadata changed for same identity')
             if old is None:
-                db.execute('INSERT INTO events VALUES (?,?,?,?,?,?,?,?)', (eid, subj, text, now, 'pending', 0, None, 'new'))
+                db.execute('INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?)', (eid, subj, text, now, 'pending', 0, None, 'new', None))
             else:
-                db.execute("UPDATE events SET status='pending',reason='observed' WHERE id=?", (eid,))
+                db.execute("UPDATE events SET status='pending',reason='reappeared',reservation=NULL WHERE id=? AND status='inactive'", (eid,))
         check(db.execute('SELECT count(*) FROM events').fetchone()[0] <= MAX_EVENTS, 'history bound exceeded')
         # Global first-attempt priority prevents retries starving fresh work; round
         # robin by repository/kind within each attempt count via SQL row numbers.
@@ -74,7 +76,7 @@ def transition(db, expected, snapshot, capacity, now):
             row_number() OVER (PARTITION BY attempts, json_extract(event,'$.repository'), json_extract(event,'$.kind') ORDER BY coalesce(last_attempt,-1),id) AS slot
             FROM events WHERE status='pending') ORDER BY attempts,slot,last_attempt,id LIMIT ?''', (capacity,)).fetchall()
         for (eid,) in selected:
-            db.execute('UPDATE events SET attempts=attempts+1,last_attempt=?,reason=? WHERE id=?', (seq, 'reserved', eid))
+            db.execute("UPDATE events SET status='reserved',reservation=?,reason='reserved' WHERE id=?", (seq, eid))
         records = [{'event': json.loads(e), 'first_seen': first, 'status': status, 'attempts': attempts, 'last_attempt': last, 'reason': reason}
                    for e, first, status, attempts, last, reason in db.execute('SELECT event,first_seen,status,attempts,last_attempt,reason FROM events ORDER BY id')]
         result = {'schema':'incoming-queue-v1', 'sequence':seq, 'previous_sha256':None if head is None else head[1],
@@ -88,6 +90,55 @@ def transition(db, expected, snapshot, capacity, now):
     except BaseException:
         db.execute('ROLLBACK')
         raise
+
+
+
+def apply_attested(db, expected, payload, mac, secret, now):
+    """Apply a trusted signer's start or outcome. MAC authenticates the issuer,
+    not the truth of its claims; production needs a reviewed same-job signer.
+    """
+    check(isinstance(secret, bytes) and len(secret) >= 32, 'invalid signer key')
+    check(isinstance(mac, str) and hmac.compare_digest(hmac.new(secret, encoded(payload), hashlib.sha256).hexdigest(), mac), 'invalid attestation')
+    check(isinstance(payload, dict) and payload.get('kind') in ('start', 'failure', 'complete'), 'invalid attestation kind')
+    common = {'kind','event_id','reservation','run_id'}
+    extra = set() if payload['kind'] == 'start' else ({'failure'} if payload['kind'] == 'failure' else {'source','release_lock_sha256','manifest_sha256','extraction_sha256','sarif_sha256','consumer_disposition','control_sha256'})
+    check(set(payload) == common | extra, 'invalid attestation fields')
+    check(isinstance(payload['run_id'], str) and 1 <= len(payload['run_id']) <= 128, 'invalid run id')
+    check(type(payload['reservation']) is int and payload['reservation'] >= 0 and isinstance(payload['event_id'], str), 'invalid reservation identity')
+    if payload['kind'] == 'failure':
+        check(payload['failure'] in ('tool','api','coverage','consumer'), 'invalid failure category')
+    if payload['kind'] == 'complete':
+        check(payload['consumer_disposition'] in ('clean','alert_triage'), 'invalid consumer disposition')
+        for field in ('release_lock_sha256','manifest_sha256','extraction_sha256','sarif_sha256','control_sha256'):
+            check(isinstance(payload[field], str) and re.fullmatch(r'[0-9a-f]{64}', payload[field]), 'invalid digest')
+        source = payload['source']
+        check(isinstance(source, dict) and set(source) == {'commit','tree'} and all(isinstance(source[x], str) and re.fullmatch(r'[0-9a-f]{40}', source[x]) for x in source), 'invalid resolved source')
+    timestamp = datetime.fromisoformat(now.replace('Z','+00:00'))
+    check(timestamp.tzinfo is not None, 'timestamp needs timezone')
+    db.execute('BEGIN IMMEDIATE')
+    try:
+        head = db.execute('SELECT seq,digest FROM history ORDER BY seq DESC LIMIT 1').fetchone()
+        check(head is not None and head == expected, 'stale or missing predecessor')
+        previous = json.loads(db.execute('SELECT document FROM history WHERE seq=?',(head[0],)).fetchone()[0])
+        check(timestamp >= datetime.fromisoformat(previous['observed_at'].replace('Z','+00:00')), 'timestamp moved backwards')
+        row = db.execute('SELECT event,status,reservation,reason FROM events WHERE id=?',(payload['event_id'],)).fetchone()
+        check(row is not None and row[2] == payload['reservation'], 'unknown or stale reservation')
+        event = json.loads(row[0]); kind = payload['kind']
+        if kind == 'start':
+            check(row[1] == 'reserved', 'reservation is not available')
+            db.execute("UPDATE events SET status='started',attempts=attempts+1,last_attempt=?,reason=? WHERE id=?", (head[0]+1,payload['run_id'],payload['event_id']))
+        else:
+            check(row[1] == 'started' and row[3] == payload['run_id'], 'outcome does not match active run')
+            if kind == 'complete':
+                check(payload['source']['commit'] == event['source']['commit'], 'source commit mismatch')
+                check(event['source']['tree'] is None or payload['source']['tree'] == event['source']['tree'], 'source tree mismatch')
+            db.execute('UPDATE events SET status=?,reason=?,reservation=NULL WHERE id=?', ('completed' if kind == 'complete' else 'pending', kind if kind == 'complete' else payload['failure'],payload['event_id']))
+        result = {'schema':'incoming-queue-action-v1','sequence':head[0]+1,'previous_sha256':head[1],'observed_at':now,'attestation':payload,'mac':mac}
+        raw = encoded(result); digest = hashlib.sha256(raw).hexdigest()
+        db.execute('INSERT INTO history VALUES (?,?,?)',(head[0]+1,digest,raw)); db.execute('COMMIT')
+        return result,digest
+    except BaseException:
+        db.execute('ROLLBACK'); raise
 
 
 def main():
@@ -110,8 +161,8 @@ def main():
         finally:
             db.close()
         print(json.dumps({'sequence': result['sequence'], 'sha256': digest, 'selected': result['selected'],
-                          'pending': sum(r['status'] == 'pending' for r in result['events']),
-                          'unattempted': sum(r['status'] == 'pending' and r['attempts'] == 0 for r in result['events'])}))
+                          'pending': sum(r['status'] in ('pending', 'reserved', 'started') for r in result['events']),
+                          'unattempted': sum(r['status'] in ('pending', 'reserved', 'started') and r['attempts'] == 0 for r in result['events'])}))
         return 0
     except (PollError, ValueError, OSError, sqlite3.Error) as exc:
         print('queue rejected: ' + str(exc), file=sys.stderr)

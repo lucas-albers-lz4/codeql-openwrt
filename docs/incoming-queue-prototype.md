@@ -18,13 +18,11 @@ Events remain in history and reappearance reactivates them. Inconsistent
 metadata and duplicate subjects fail closed. Discovery is not an atomic
 upstream snapshot and intermediate changes can be missed.
 
-Each selection reserves an attempt and increments its count even if no scan
-runs. Pending identities with fewer reservations always precede those with
-more; buckets share selection within an attempt count. Failed or abandoned
-reservations therefore cannot starve never-attempted identities, but an
-operator must interpret reservation counts accordingly. This has no completion
-or retry-outcome interface, no scan dispatch, no authenticated scan receipts,
-and no alert disposition. It does not meet Gate 8 or demonstrate a released
+Each selection reserves a slot; a separately attested start increments the
+attempt count. Pending identities with fewer attested starts always precede those with
+more; buckets share selection within an attempt count. Failed starts cannot starve never-started identities. Abandoned reservations
+remain visible but currently require recovery outside the prototype. This has
+no scan dispatch or verified production receipt issuer. It does not meet Gate 8 or demonstrate a released
 scan. The first-seen timestamp is the queue's observation time, not event age.
 Capacity and interval remain unset pending Linux cost measurements.
 
@@ -34,3 +32,23 @@ and SHA-256 printed by the command. The complete documents and their digests
 are stored in `history`; the database is the authority, not printed output.
 Run tests with `python3 -B tools/test_incoming_queue.py -v` and
 `python3 -B -m unittest tools.test_incoming_poll`.
+
+The `apply_attested` Python API accepts a start, failure or completion payload
+with an HMAC-SHA256 over canonical JSON using an externally provisioned secret
+of at least 32 bytes. The signer is a trust boundary: the MAC authenticates a
+holder of that key, not that a scan actually ran. No production signer, key
+management, trusted workflow integration, or artifact-byte verification exists.
+Completion's claimed resolved commit/tree and lock, manifest, extraction,
+SARIF and control digests plus consumer disposition are structurally checked;
+the signer must independently validate the actual artifacts and clean control.
+Failures retain their category and return to pending; all transitions compare
+the current predecessor. A reservation is distinct from a signed start, and
+only signed starts increment attempt counts. A reservation has no expiry or
+recovery API yet. A stale or superseded reservation cannot complete. A signed
+completion is final for that event, not a replacement for triage.
+
+Replay of the retained 1,851-event v3 snapshot (SHA-256
+`91bc6fa58b155206d3b7a2d6e3284d58d34c04a385e7e86ab70e5d6cabe5e95a`)
+selected 1,000 and then 851 distinct reservations with capacity 1,000. Zero
+starts or scans occurred. This offline replay verifies reservation coverage,
+not scan-attempt coverage or authenticated completion on the real events.
