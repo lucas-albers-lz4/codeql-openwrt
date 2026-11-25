@@ -15,15 +15,19 @@ The snapshot is a complete observed set, not the poller's chained checkpoint,
 which also retains old events. An absent subject is marked `not_observed`,
 not proven closed; a changed event for a subject is marked `superseded`.
 Events remain in history and reappearance reactivates them. PR identity is repository, PR number and head commit; a base-only change
-invalidates any in-flight reservation and returns the same identity to pending
-without resetting its start count. Other inconsistent metadata and duplicate
+requires recovery of any in-flight reservation first and returns the same
+identity to pending without resetting its start count. Other inconsistent metadata and duplicate
 subjects fail closed. Discovery is not an atomic
 upstream snapshot and intermediate changes can be missed.
 
 Each selection reserves a slot; a separately attested start increments the
 attempt count. Pending identities with fewer attested starts always precede those with
-more; buckets share selection within an attempt count. A reserved, never-started identity blocks new retry reservations until it is
-started or explicitly recovered. Other never-started pending identities can
+more; buckets share selection within an attempt count. A retry cannot start while any pending or reserved first attempt remains.
+A reserved, never-started identity also blocks new retry reservations until it
+is started or explicitly recovered. Capacity bounds the total of reserved and
+started work, across polls; lowering it below outstanding work fails closed.
+If an in-flight event changes or disappears, reconciliation fails until the
+operator safely recovers that work. Other never-started pending identities can
 continue. Abandoned reservations remain visible. This has
 no scan dispatch or verified production receipt issuer. It does not meet Gate 8 or demonstrate a released
 scan. The first-seen timestamp is the queue's observation time, not event age.

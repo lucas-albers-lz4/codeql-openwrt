@@ -26,11 +26,11 @@ class QueueTests(unittest.TestCase):
         result, digest = transition(self.db,pred,self.snap,capacity,'2026-01-01T00:00:00Z')
         return result,(result['sequence'],digest)
     def test_first_attempts_before_retries_and_stale_cas(self):
-        a,p = self.advance(None); b,q = self.advance(p); c,r = self.advance(q)
+        a,p = self.advance(None,3); b,q = self.advance(p,3); c,r = self.advance(q,3)
         self.assertEqual(len(set(a['selected']+b['selected']+c['selected'])),3)
         with self.assertRaises(PollError): self.advance(p)
         self.assertEqual(self.db.execute('select count(*) from history').fetchone()[0],3)
-        d,_ = self.advance(r); self.assertEqual(d['selected'], [])
+        d,_ = self.advance(r,3); self.assertEqual(d['selected'], [])
     def test_reconcile_supersession_and_absence(self):
         _,p = self.advance(None,0)
         replacement = event('openwrt/openwrt',1,'e')
@@ -85,6 +85,8 @@ class QueueTests(unittest.TestCase):
         selected = next(e for e in self.events if identity(e)==start['event_id'])
         changed = dict(selected,base_commit='f'*40,base={'commit':'f'*40,'tree':None})
         snapshot(self.snap,[changed if identity(e)==start['event_id'] else e for e in self.events])
+        with self.assertRaises(PollError): self.advance(p)
+        _,p = self.attested(p,dict(start,kind='recover'))
         b,p = self.advance(p)
         self.assertNotEqual(b['selected'][0],start['event_id'])
         row = next(r for r in b['events'] if identity(r['event']) == start['event_id'])
@@ -103,8 +105,32 @@ class QueueTests(unittest.TestCase):
         recover = {'kind':'recover','event_id':b['selected'][0],'reservation':b['sequence'],'reservation_digest':p[1], 'queue_id':b['queue_id'],'run_id':'recover'}
         recover['reservation_digest'] = self.db.execute('SELECT reservation_digest FROM events WHERE id=?',(b['selected'][0],)).fetchone()[0]
         _,p = self.attested(p,recover)
-        d,_ = self.advance(p,1)
+        d,_ = self.advance(p,2)
         self.assertEqual(d['selected'],[recover['event_id']])
+    def test_capacity_bounds_reservations_and_started_runs(self):
+        a,p = self.advance(None,1)
+        b,p = self.advance(p,1)
+        self.assertEqual(b['selected'],[])
+        start = {'kind':'start','event_id':a['selected'][0],'reservation':0,'reservation_digest':a and self.db.execute('SELECT reservation_digest FROM events WHERE id=?',(a['selected'][0],)).fetchone()[0], 'queue_id':a['queue_id'],'run_id':'run'}
+        _,p = self.attested(p,start)
+        c,p = self.advance(p,1)
+        self.assertEqual(c['selected'],[])
+        with self.assertRaises(PollError): self.advance(p,0)
+        self.assertEqual(self.db.execute("SELECT count(*) FROM events WHERE status IN ('started','reserved')").fetchone()[0],1)
+    def test_retry_cannot_start_before_same_batch_fresh_reservation(self):
+        a,p = self.advance(None,1)
+        start = {'kind':'start','event_id':a['selected'][0],'reservation':0,'reservation_digest':p[1],'queue_id':a['queue_id'],'run_id':'first'}
+        _,p = self.attested(p,start)
+        _,p = self.attested(p,dict(start,kind='failure',failure='tool'))
+        b,p = self.advance(p,3)
+        self.assertEqual(len(b['selected']),3)
+        retry = dict(start,reservation=b['sequence'],reservation_digest=p[1],run_id='retry')
+        with self.assertRaises(PollError): self.attested(p,retry)
+        for eid in b['selected']:
+            if eid != start['event_id']:
+                _,p = self.attested(p,dict(retry,event_id=eid,run_id=eid))
+        _,p = self.attested(p,retry)
+        self.assertEqual(self.db.execute('SELECT status FROM events WHERE id=?',(retry['event_id'],)).fetchone()[0],'started')
     def test_duplicate_subject_rolls_back(self):
         _,p = self.advance(None,0)
         snapshot(self.snap,[self.events[0],event('openwrt/openwrt',1,'e')])
@@ -112,6 +138,9 @@ class QueueTests(unittest.TestCase):
         self.assertEqual(self.db.execute('select count(*) from history').fetchone()[0],1)
     def test_reappearance_preserves_attempts(self):
         a,p = self.advance(None,3)
+        digest = p[1]
+        for eid in a['selected']:
+            _,p = self.attested(p,{'kind':'recover','event_id':eid,'reservation':0,'reservation_digest':digest,'queue_id':a['queue_id'],'run_id':'recover'})
         snapshot(self.snap,[]); _,p = self.advance(p,0)
         snapshot(self.snap,self.events); b,_ = self.advance(p,0)
         self.assertTrue(all(r['attempts']==0 and r['status']=='pending' for r in b['events']))

@@ -65,12 +65,15 @@ def transition(db, expected, snapshot, capacity, now):
         active = {subject(e): identity(e) for e in events}
         for eid, subj, status in db.execute('SELECT id,subject,status FROM events').fetchall():
             if status in ('pending', 'reserved', 'started') and active.get(subj) != eid:
+                check(status == 'pending', 'in-flight event changed or disappeared; recover first')
                 reason = 'superseded' if subj in active else 'not_observed'
                 db.execute('UPDATE events SET status=?,reason=? WHERE id=?', ('inactive', reason, eid))
         for event in events:
             eid, subj, text = identity(event), subject(event), encoded(event).decode()
             old = db.execute('SELECT event FROM events WHERE id=?', (eid,)).fetchone()
             if old is not None and old[0] != text:
+                status = db.execute('SELECT status FROM events WHERE id=?', (eid,)).fetchone()[0]
+                check(status not in ('reserved', 'started'), 'in-flight metadata changed; recover first')
                 prior = json.loads(old[0]); updated = dict(event)
                 check(event['kind'] == 'pull_request', 'event metadata changed for same identity')
                 for field in ('base', 'base_commit', 'base_ref'):
@@ -84,10 +87,13 @@ def transition(db, expected, snapshot, capacity, now):
         check(db.execute('SELECT count(*) FROM events').fetchone()[0] <= MAX_EVENTS, 'history bound exceeded')
         # Global first-attempt priority prevents retries starving fresh work; round
         # robin by repository/kind within each attempt count via SQL row numbers.
+        inflight = db.execute("SELECT count(*) FROM events WHERE status IN ('reserved','started')").fetchone()[0]
+        check(inflight <= capacity, 'capacity below outstanding work; recover or finish work first')
+        available = capacity - inflight
         unstarted_inflight = db.execute("SELECT count(*) FROM events WHERE status='reserved' AND attempts=0").fetchone()[0]
         selected = db.execute('''SELECT id FROM (SELECT id, attempts, last_attempt,
             row_number() OVER (PARTITION BY attempts, json_extract(event,'$.repository'), json_extract(event,'$.kind') ORDER BY coalesce(last_attempt,-1),id) AS slot
-            FROM events WHERE status='pending' AND (? = 0 OR attempts = 0)) ORDER BY attempts,slot,last_attempt,id LIMIT ?''', (unstarted_inflight, capacity)).fetchall()
+            FROM events WHERE status='pending' AND (? = 0 OR attempts = 0)) ORDER BY attempts,slot,last_attempt,id LIMIT ?''', (unstarted_inflight, available)).fetchall()
         for (eid,) in selected:
             db.execute("UPDATE events SET status='reserved',reservation=?,reason='reserved' WHERE id=?", (seq, eid))
         records = [{'event': json.loads(e), 'first_seen': first, 'status': status, 'attempts': attempts, 'last_attempt': last, 'reason': reason}
@@ -142,6 +148,10 @@ def apply_attested(db, expected, payload, mac, secret, now):
         event = json.loads(row[0]); kind = payload['kind']
         if kind == 'start':
             check(row[1] == 'reserved', 'reservation is not available')
+            attempts = db.execute('SELECT attempts FROM events WHERE id=?', (payload['event_id'],)).fetchone()[0]
+            if attempts > 0:
+                unstarted = db.execute("SELECT count(*) FROM events WHERE status IN ('pending','reserved') AND attempts=0").fetchone()[0]
+                check(unstarted == 0, 'first attempts remain pending or reserved')
             db.execute("UPDATE events SET status='started',attempts=attempts+1,last_attempt=?,reason=? WHERE id=?", (head[0]+1,payload['run_id'],payload['event_id']))
         elif kind == 'recover':
             check(row[1] == 'reserved' or (row[1] == 'started' and row[3] == payload['run_id']), 'recovery does not match active reservation')
