@@ -25,7 +25,9 @@ baseline selected and excluded source paths in the chosen repository. It
 preserves package owner, configuration condition, exclusion reason and
 expected route. Source byte changes appear in `changed_selected_or_excluded`
 with their fresh event identities, but do not fail by themselves. Missing
-baseline paths, renames, added `.uc`, `.ut` or extensionless candidates, and
+baseline paths, renames, added `.uc`, `.ut`, suffixless files under
+installed Ucode roots (including dotted names), or other extensionless
+candidates, and
 changes to policy inputs under selected package roots fail closed with exit 1.
 The roots are derived from selected source paths: OpenWrt package roots before
 `files*`, and LuCI owning package roots, plus LuCI's root `luci.mk`. Unrelated

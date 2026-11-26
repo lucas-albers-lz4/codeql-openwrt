@@ -2,8 +2,8 @@
 
 `tools/full_tree_candidates.py` enumerates tracked blobs at both immutable source
 revisions and unions four signals: `.uc`, `.ucode`, and `.ut` suffixes; a
-Ucode interpreter in the first-line shebang; extensionless files below the
-three installed Ucode roots; and paths explicitly reviewed in the checked-in
+Ucode interpreter in the first-line shebang; all tracked files below the
+three installed Ucode roots, including dotted names without a Ucode suffix; and paths explicitly reviewed in the checked-in
 v0.4, v0.5, or v0.6 source manifest. Each supported manifest schema has its
 own exact SHA-256 pin; another digest or schema fails closed. It preserves one
 row per path/blob identity, even when multiple paths have identical bytes. Each
