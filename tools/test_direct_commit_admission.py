@@ -84,6 +84,7 @@ class DirectCommitAdmissionTests(unittest.TestCase):
         identity = copy.deepcopy(self.identity)
         identity['schema'] = 'historical-direct-commit-source-identity-v1'
         identity['status'] = 'historical_objects_resolved_only'
+        identity['policy_ref_context'] = identity.pop('ref')
         for key in ('gap_sha256', 'previous_checkpoint_sha256',
                     'current_checkpoint_sha256'):
             del identity[key]

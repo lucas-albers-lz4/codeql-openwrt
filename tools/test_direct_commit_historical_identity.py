@@ -28,6 +28,8 @@ class HistoricalIdentityTests(unittest.TestCase):
             got = historical.resolve(source, control)
         self.assertEqual(got['schema'], 'historical-direct-commit-source-identity-v1')
         self.assertEqual(got['base'], identities[commits['absent_parent']])
+        self.assertEqual(got['policy_ref_context'], 'master')
+        self.assertNotIn('ref', got)
         self.assertNotIn('gap_sha256', got)
         self.assertNotIn('current_checkpoint_sha256', got)
 

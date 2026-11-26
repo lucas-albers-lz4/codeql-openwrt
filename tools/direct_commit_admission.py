@@ -89,10 +89,13 @@ def verify(identity, source_checkout, control_checkout):
                 ('gap_sha256', 'previous_checkpoint_sha256', 'current_checkpoint_sha256')))
     historical = (identity.get('schema') == 'historical-direct-commit-source-identity-v1' and
                   identity.get('status') == 'historical_objects_resolved_only' and
+                  identity.get('policy_ref_context') == 'master' and
+                  'ref' not in identity and
                   not any(key in identity for key in
                           ('gap_sha256', 'previous_checkpoint_sha256', 'current_checkpoint_sha256')))
-    poll.check((live or historical) and identity.get('repository') == 'openwrt/luci' and
-               identity.get('ref') == 'master', 'direct-commit receipt differs')
+    poll.check((live and identity.get('ref') == 'master' or historical) and
+               identity.get('repository') == 'openwrt/luci',
+               'direct-commit receipt differs')
     for role, name in (('source', 'introduced'), ('base', 'absent_parent'), ('control', 'fixed')):
         item = identity.get(role)
         poll.check(isinstance(item, dict) and set(item) == {'commit', 'tree'} and

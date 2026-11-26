@@ -33,12 +33,12 @@ def resolve(source_checkout: Path, control_checkout: Path) -> dict:
         'status': 'historical_objects_resolved_only',
         'repository': 'openwrt/luci',
         'repository_url': url,
-        'ref': 'master',
+        'policy_ref_context': 'master',
         'source': source,
         'base': base,
         'control': control,
         'limitations': [
-            'This is a pinned historical object lookup, not a live default-branch event.',
+            'This is a pinned historical object lookup; policy_ref_context does not prove historical branch membership or a live default-branch event.',
             'No gap record or linked checkpoint was replayed; incoming event custody is unproven.',
             'Object identity does not establish installed package bytes, runtime reachability or a scan.',
         ],
@@ -58,7 +58,8 @@ def main(argv=None) -> int:
         event.write_receipt_exclusive(args.receipt, resolve(args.source_checkout,
                                                             args.control_checkout))
         return 0
-    except (poll.PollError, OSError, ValueError, TypeError, KeyError, RecursionError) as exc:
+    except (poll.PollError, event.incoming_event.InvalidEvent, OSError,
+            ValueError, TypeError, KeyError, RecursionError) as exc:
         print('historical direct-commit identity rejected: ' + str(exc), file=sys.stderr)
         return 2
 

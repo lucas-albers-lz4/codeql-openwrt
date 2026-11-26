@@ -80,6 +80,7 @@ class DirectCommitCorpusManifestTests(unittest.TestCase):
         identity = copy.deepcopy(self.identity)
         identity['schema'] = 'historical-direct-commit-source-identity-v1'
         identity['status'] = 'historical_objects_resolved_only'
+        identity['policy_ref_context'] = identity.pop('ref')
         checked = copy.deepcopy(self.checked)
         checked['identity_receipt_sha256'] = direct.digest(raw(identity))
         result, _ = self.build(identity=identity, admission=checked)

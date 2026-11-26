@@ -39,7 +39,8 @@ on manual dispatch from `main`; pull requests run contract tests only. It uses c
 LuCI checkouts and `direct_commit_historical_identity.py` to resolve the
 introduction, its first parent and the fixed commit against canonical Git
 objects. Its `historical-direct-commit-source-identity-v1` receipt has no
-gap or checkpoint digests and makes no live event-custody claim. The workflow
+gap or checkpoint digests; `policy_ref_context` names the historical policy's
+branch context without claiming verified branch membership. The workflow
 runs R3 and the 112-path direct corpus in one Linux job, then retains the
 input receipts, release handoff and raw scan outputs. A successful run
 establishes a historical source-first known positive. The direct corpus's

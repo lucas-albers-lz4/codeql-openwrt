@@ -45,7 +45,11 @@ def build_manifest(policy_raw, identity_raw, admission_raw, inventory_raw,
                 (identity.get('schema') == 'historical-direct-commit-source-identity-v1' and
                  identity.get('status') == 'historical_objects_resolved_only')) and
                identity.get('repository') == 'openwrt/luci' and
-               identity.get('ref') == 'master', 'direct-commit identity differs')
+               ((identity.get('schema') == 'default-branch-event-identity-v1' and
+                 identity.get('ref') == 'master') or
+                (identity.get('schema') == 'historical-direct-commit-source-identity-v1' and
+                 identity.get('policy_ref_context') == 'master' and 'ref' not in identity)),
+               'direct-commit identity differs')
     poll.check(source.get('commit') == policy['pins']['luci'] and
                base.get('commit') == policy['admitted_additions'][0]['base_commit'],
                'direct-commit revision differs from historical policy')
