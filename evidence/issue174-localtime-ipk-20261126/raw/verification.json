@@ -1,0 +1,133 @@
+{
+  "commands_sha256": "9f193c187c6ab229a4d4c7a01817b4fc066ca5b353330a144b751fc54f7c527c",
+  "extraction_errors": 0,
+  "ipk_sha256": "41376c6774b35ff140ff3fa441643a184be252070cd3f462f645c6a98e527d6b",
+  "lock_sha256": "f4a5abd675c5bec3fdfdb6bc1b2901d4037a01b666c46fddb8dfe92cd9121ae0",
+  "output_sha256": {
+    "errors": "2c38be0a7d1935f63300ceccb92fd50f5bb76b829bcd0bac782393521a7665fc",
+    "query": "b52963d1dddfc71938aaf96c1d4af7b1e1b1fd5382702e1a3adbcd0a9c56a5c7",
+    "routing": "335775df0d812f3d1c0afb7f002f40bf109988ed09050a49987800c89ae212f0",
+    "successful": "b7757081b4d306d20b680e6c255533cdc87ca3b75c31ac7ebe62affe314b1dd3"
+  },
+  "phase_artifacts_sha256": {
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/db/src.zip": "32e0906dd919f6774d11b32f9f159683ee48976f2e9fd95e9540601097013520",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/errors.bqrs": "d0a8e935de5417d9fe22e4a1b61d0397aef7d9f8517de856284674601d00f2c8",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/errors.json": "2c38be0a7d1935f63300ceccb92fd50f5bb76b829bcd0bac782393521a7665fc",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/query.bqrs": "e4436fa8a1279fe546eb4548700ee1aa6cf7195ebeb0ac270477604b4e216363",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/query.json": "b52963d1dddfc71938aaf96c1d4af7b1e1b1fd5382702e1a3adbcd0a9c56a5c7",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/resolve-errors.json": "09449dcbc1c18ce0402927dc57c35a1564d729ae543e0fc46cc224a5012f0e7c",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/resolve-query.json": "6ad26abb85672ec3039cf55237219838dd2dcea9281f233ecda1e2e999fa2007",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/resolve-successful.json": "bcd8ea79b7a987da6975ff37f7b97d8c504d9e238858eecb3eb97d38fa03ccc2",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/routing.json": "335775df0d812f3d1c0afb7f002f40bf109988ed09050a49987800c89ae212f0",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/successful.bqrs": "a031adea263aa5ac2f5d2615bedec13496fe204a171c935d7a90c00b266e74b2",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/successful.json": "b7757081b4d306d20b680e6c255533cdc87ca3b75c31ac7ebe62affe314b1dd3"
+  },
+  "phase_costs": [
+    {
+      "elapsed_seconds": 0.3656333329854533,
+      "label": "resolve-query",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 0.3664276250055991,
+      "label": "resolve-success",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 0.36951991700334474,
+      "label": "resolve-errors",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 0.44435979099944234,
+      "label": "database-init",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 0.737573499995051,
+      "label": "database-index",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 1.1358267499890644,
+      "label": "database-finalize",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 1.45556408300763,
+      "label": "success-query",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 0.2239370829774998,
+      "label": "success-decode",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 1.4329308339802083,
+      "label": "errors-query",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 0.21081379102542996,
+      "label": "errors-decode",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 2.673648875002982,
+      "label": "target-query",
+      "peak_rss_bytes": null
+    },
+    {
+      "elapsed_seconds": 0.2207391250121873,
+      "label": "target-decode",
+      "peak_rss_bytes": null
+    }
+  ],
+  "phase_logs_sha256": {
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-finalize.stderr": "a6907b2c98b95525a086ca14485ec9e28f891b81541b9e87ebfd49820ab4df98",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-finalize.stdout": "c12c2759555ffee2f4e9d1803f88b091c556897422c5af03546bd7bc77ec4a35",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-index.stderr": "2931b16c321f081b9d8d9ab840c3302ed2d5ae6fcd8d2b16f995cdcc2701f672",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-index.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-init.stderr": "ca3a5f51734ff539cc6abfbf12983e6bba4f88c942b5982a9cbe8f8315a4db39",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-init.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/errors-decode.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/errors-decode.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/errors-query.stderr": "d4cf20c9d667f293258c877c859346d41d2047205623cb58f1e7d908ab418991",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/errors-query.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/resolve-errors.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/resolve-query.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/resolve-success.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/success-decode.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/success-decode.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/success-query.stderr": "a47932bd44e1c2d312a82e58cf2f1dac79e433467654ab670f4665b9b393192d",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/success-query.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/target-decode.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/target-decode.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/target-query.stderr": "39a4cc8eff804b782e08619ad807c8454edd5a58aee253bd19a7f580e7675236",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/target-query.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/resolve-errors.json": "09449dcbc1c18ce0402927dc57c35a1564d729ae543e0fc46cc224a5012f0e7c",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/resolve-query.json": "6ad26abb85672ec3039cf55237219838dd2dcea9281f233ecda1e2e999fa2007",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/resolve-successful.json": "bcd8ea79b7a987da6975ff37f7b97d8c504d9e238858eecb3eb97d38fa03ccc2"
+  },
+  "producer_commit": "a7bf614e2fb59200e303f04b6255af7e6d4007e2",
+  "query_rows": 7,
+  "query_sha256": "0bf41049d4841a6c989425b14d7f26ba12587a94c4e2c41f4da1b053f01bbb35",
+  "scope": "Consistency of supplied outputs only; execution origin, runtime and security not established.",
+  "source_oracle_sha256": "95fde6067e9cd3b602fb73b3d72937003f80a7e96574e30ce0139337cf07769f",
+  "status": "observations_match_source_first",
+  "successful_files": [
+    "usr/share/rpcd/ucode/luci"
+  ],
+  "warnings": {
+    "errors-query": [
+      "WARNING: Not caching stages during query-loading, since max heap size is only 1816 MB."
+    ],
+    "success-query": [
+      "WARNING: Not caching stages during query-loading, since max heap size is only 1816 MB."
+    ],
+    "target-query": [
+      "WARNING: Not caching stages during query-loading, since max heap size is only 1816 MB."
+    ]
+  }
+}

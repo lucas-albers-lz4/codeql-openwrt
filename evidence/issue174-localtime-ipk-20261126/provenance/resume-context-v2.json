@@ -1,0 +1,1745 @@
+{
+  "code_sha256": {
+    "check.py": "9cc8c88469603591f166d644e6f9a618e6c356e8a6034c04389a7e8feb102a21",
+    "expected-tuples.json": "95fde6067e9cd3b602fb73b3d72937003f80a7e96574e30ce0139337cf07769f",
+    "prepare.py": "6dbe82579cfb8266fe68ae2a02e79e7aa7c2e22d638da67934aae23256d8f9e8",
+    "verify.py": "cf3ed1da3a87a2f3f42fb03b7f3420e28e38902dc32c644189fa12395132bd5b"
+  },
+  "initial_run_tree": [
+    {
+      "mode": 493,
+      "path": "cache",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile/data",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile/data/3a",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile/data/3a/d1",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "cache/compile/data/3a/d1/3ad13860a296b177dd0e935f9cdb147b",
+      "sha256": "dad700c81aaad9cf04a05f06b0710619e8a35ab69ca212a4f2f0756496748b3a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "cache/compile/data/3a/d1/3ad13860a296b177dd0e935f9cdb147b-dil",
+      "sha256": "7401a642f53d3c815964eb065e52473f46bcf052d9c3c52860bd90d2643aa226",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile/data/52",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile/data/52/07",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "cache/compile/data/52/07/520704f45ea09e1914c474881fea2723",
+      "sha256": "ae3bf75f28947891352e580b9110ee98ffce273c72447dce3333a213f896934c",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile/data/70",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile/data/70/7f",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "cache/compile/data/70/7f/707f47e0e1a6e20369f1131f7ab54656",
+      "sha256": "f0ced9425d916e7c3cdfd9e93c879ed9c441183cd232dfc7e71022a116129d08",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "cache/compile/lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "cache/compile/size",
+      "sha256": "6e5f2f66f2b5b3368981a0f4d2b3077c222b8bc13fb1169ec477bb9ded5b17f0",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "cache/database",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/queries",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/baseline-info.json",
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/codeql-database.yml",
+      "sha256": "65f5f59b0d365b3a507f5c4d81456ce13eacba92392c53877251c458ef83685a",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/.lock",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings/pools",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/buckets",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/buckets/info",
+      "sha256": "64fbf1c189dfac4325b090df3e6eda406d98814ebbe346292ac7c624719272a9",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/buckets/page-000000",
+      "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/ids1",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/ids1/info",
+      "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/ids1/page-000000",
+      "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/indices1",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/indices1/info",
+      "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/indices1/page-000000",
+      "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/info",
+      "sha256": "50943aab7d03f74bedf883411289525ad298d91e491732b5442bb72c0126ae61",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/metadata",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/metadata/info",
+      "sha256": "4e7223a472e9ea0ee83c42de587ce7ee94235acbccdf92fda5646ffabf76f465",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/metadata/page-000000",
+      "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/pageDump",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/0/pageDump/page-000000000",
+      "sha256": "e4b4feafeeb1da14d81e10706fa949f5675af06bc9a25bd3f901ce6758ccaddc",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/pools/poolInfo",
+      "sha256": "ddb845f25f00cbed82385a9ee3e43875ff299d48ce60c64a68f13c8a8f21cfe3",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/cached-strings/tuple-pool",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/cached-strings/tuple-pool/header",
+      "sha256": "221f8af2372a95064f2ef7d7712216a9ab46e7ef98482fd237e106f83eaa7569",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/is-trimmed",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/pages",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/predicates",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/cache/relations",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/cache/version",
+      "sha256": "620a69a93644d31f07dcf4c6dc51287b8f93d25168436d9b05b4690f25b0bdd0",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/containerparent.rel",
+      "sha256": "a43b97ca2e3922eaaae14607b4d015248ff5219081c63507dfd1cd7f27ed294a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/containerparent.rel.meta",
+      "sha256": "ee922201c6fc52aca1d522f9b1d122b26a80c6fc7a5c429670df041199c0a637",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/empty_location.rel",
+      "sha256": "37ebae7c25c73c5137573bae078429c981acc69c2eab799aa3bac200ebcc4781",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/empty_location.rel.meta",
+      "sha256": "15e0a2b7f52df71de6d884a64d675dd6564d9e2fd21cc6e65b7e0d97c39a90cf",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/files.rel",
+      "sha256": "2f95be48650fa06267472bd962199b5b083a24cd784fa01b41c7b72ba9303d08",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/files.rel.meta",
+      "sha256": "aede3e2d964f07f39ad2f70c88e77ce30ab738fc96982a6835185444bb142068",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/folders.rel",
+      "sha256": "feb56e712784a9f47bc705a70499486ed848c47f08c17d7b174ec7cd68535932",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/folders.rel.meta",
+      "sha256": "2301deef29d30a2912c7a2eea78d1c77d2b6865136b19eb92d7bc342b8b72436",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/locations_default.rel",
+      "sha256": "81f9ef58d3492c55e1e03a53e5dcaa44f9c968cd13c10d4a55901796647bcfc6",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/locations_default.rel.meta",
+      "sha256": "7451781ac2c1c816dbe044fad2eaa3e78751d0795f3b0374b3a0105d4f260a60",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/0",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/0/buckets",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/0/buckets/info",
+      "sha256": "d444fe5bc2bd583a704dd7ad016e88507986b6d98e7087f2c12c17ca0be5adb5",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/0/buckets/page-000000",
+      "sha256": "e3098eedb3c78ef1656d4f1590b2490468ecef97e47c209b9852d970f1979b4d",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/0/info",
+      "sha256": "61728e4ef2d22612659390999783bc444aaa4bae58800b9abc3b2c85d4f9b4c0",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/0/metadata",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/0/metadata/info",
+      "sha256": "7ba55cd9a32e1ae6d126235f47ed67d359933cbc2a9f4db5487321071f3c2b18",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/0/metadata/page-000000",
+      "sha256": "3263bbd64ac0069dd642c72537adfdd013791a8cbc75c99b994e622b84c99511",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/0/pageDump",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/0/pageDump/page-000000000",
+      "sha256": "c79ed6ca9598bcffd7fcf31dee3a20cb6cfb00321a4de78958ad3779318b74f0",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/1",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/1/buckets",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/buckets/info",
+      "sha256": "64fbf1c189dfac4325b090df3e6eda406d98814ebbe346292ac7c624719272a9",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/buckets/page-000000",
+      "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/1/ids1",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/ids1/info",
+      "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/ids1/page-000000",
+      "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/1/indices1",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/indices1/info",
+      "sha256": "88d7a32c64c1bfe7b80f277d7ad98524110744216ef5b6ba7df3e7fc8ba5d149",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/indices1/page-000000",
+      "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/info",
+      "sha256": "3d917d148271fe786353f8ef003f60ee24e5311e791c27abc64071322d701905",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/1/metadata",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/metadata/info",
+      "sha256": "4e7223a472e9ea0ee83c42de587ce7ee94235acbccdf92fda5646ffabf76f465",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/metadata/page-000000",
+      "sha256": "9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/pools/1/pageDump",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/1/pageDump/page-000000000",
+      "sha256": "e4b4feafeeb1da14d81e10706fa949f5675af06bc9a25bd3f901ce6758ccaddc",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/max-id#Dynamic-New-Entities",
+      "sha256": "573d569e2ae0c6ebc6c3b25b15f91631756492597d6ad5b15e9eb67867951c0a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/poolInfo",
+      "sha256": "68655a4849d7e2916b961b156527a90247d5db0e3e4ed2235596d83f79529ff1",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/pools/tuples#Dynamic-New-Entities",
+      "sha256": "052bbbd9726b6cfb227d9fda99e9a66ad7b35f10b6a55e4064c71ad2a5c3d27c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/sourceLocationPrefix.rel",
+      "sha256": "05fb005d1d6d070e6d9662f0c349026cdbc7f66891856f64002ed6303272f2b8",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/sourceLocationPrefix.rel.meta",
+      "sha256": "0e4e97d3668083a4b66c906d9b2587b3823d1c01d564cf2d14a4adde1da54b0d",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/db-ucode/default/strings",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arguments_child.rel",
+      "sha256": "cf28265158a02a1e859fe95f3f57f7b34e4d6d34786dd0bd4e021511f41149f5",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arguments_child.rel.meta",
+      "sha256": "8b375162b74de9ad3fb201e9d859c9c3044ca474a616d9957dc9ddf0c6481ded",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arguments_def.rel",
+      "sha256": "d6a10c77eb09381ed3150ac07d643d6cdb1ede4735e0de0217064d2aba91e8cd",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arguments_def.rel.meta",
+      "sha256": "83cdb972025025455eab588a047053e3a6d995ac4f5fba674ec9ffb9abf92d8a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_array_child.rel",
+      "sha256": "9ac4fe8a7d51f1c328ee9c2bd9e83070329050a69562f5ef8063a4657b010d15",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_array_child.rel.meta",
+      "sha256": "3524f1abaa1a95d1acf29023bf9f9b31213cae5c934cd4f349a0420c3c896297",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_array_def.rel",
+      "sha256": "8edaad29c8285db73d063abf2e38108e25bdc2c9dca97e2fcb8f3e5e6c3daca1",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_array_def.rel.meta",
+      "sha256": "04d3d804767f2f582643a31ec87924451c5e528bca8a76d4715ea1f4a39ee541",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arrow_function_def.rel",
+      "sha256": "fcdbfcdca49b55bc58c2d8ca889fd8ee652407d5989f1d00b990941f0f383b92",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arrow_function_def.rel.meta",
+      "sha256": "c5f355b63e8d96e678553c89efb955ba3fc88eacbe141991fa000ef8b74cc2ae",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arrow_function_parameter.rel",
+      "sha256": "90039498f191a0c23f94c6f7ddcb6af76728180fb12ea93303a4ebc81304aa52",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arrow_function_parameter.rel.meta",
+      "sha256": "8073f1980a6d60cf8b604dcfa7febcbb16ff706723fd82bb2a0c4d9239b4c745",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arrow_function_parameters.rel",
+      "sha256": "2bf9855b6fb60af09d108f3c905ce1795d5b3775df081cdec0dcd99a7e5b960b",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_arrow_function_parameters.rel.meta",
+      "sha256": "83ee6368d9d0f8778b5c838b0e241ca4e56d8b9d79c7510c7cfd30883ca6e065",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_assignment_expression_def.rel",
+      "sha256": "976f818e34e304cf36d046405b7cdd2bf1b160c7c52c6b57b83d78645e3b0c64",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_assignment_expression_def.rel.meta",
+      "sha256": "fab2cf102c97b7634e47a95fe198766c1c8308647a4f2b5465ff9e38674b74a0",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_ast_node_location.rel",
+      "sha256": "b64451d54dd94fe160071bb5d7630bb9897e22acfb04e822ded2896ac9592a2e",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_ast_node_location.rel.meta",
+      "sha256": "a440ce6c67986f73dce3c0ca91138b49a3205e2e881a4948332959bc931a3640",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_ast_node_parent.rel",
+      "sha256": "0c7f331b9c00bd294f16e9107c4b617b717e365007c0938dcc8b4a244e2191c7",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_ast_node_parent.rel.meta",
+      "sha256": "3316b36316412569f496381ddc63b5902a459e1dfdb2b3c96a8d5ed31b764cff",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_augmented_assignment_expression_def.rel",
+      "sha256": "c8aef49d759da84c5b4e8c699ac1759272392bbc2207d225447d0b195822902e",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_augmented_assignment_expression_def.rel.meta",
+      "sha256": "8cb233739500e796d2bd5adebbb975cff96d7145618a108f9b6f42403d5ef9c6",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_binary_expression_def.rel",
+      "sha256": "af0f7220564757a9f3418ac27d7c543f590acc2629405727d198d95e352530d8",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_binary_expression_def.rel.meta",
+      "sha256": "8b8cf041ca66f27d37e95c44b6a4ca7293acf17fbde382f7860955aebc5988a4",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_call_expression_def.rel",
+      "sha256": "41ad3efb35e3a7c3ff9a45b40e8c10569e375c963d9fde3f23de4d7e83dbe5ab",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_call_expression_def.rel.meta",
+      "sha256": "bae15fb8e763c8d9f1bfb7f319facbb65b4425b4e16a41af87b91c81b690eb39",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_call_expression_optional_chain.rel",
+      "sha256": "704063eac44ab1039c71bd1cc5da9a35c75568b37f77a55d87731deda30a04c8",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_call_expression_optional_chain.rel.meta",
+      "sha256": "8d13b2adb05bbd6dc9e8874c332c3e6be09bb088c450afe1a20f8199e2493fad",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_catch_clause_def.rel",
+      "sha256": "464c8fc2712245c7ec21c90bcda0bd4a0594ae884a5801741157ae09eee76f94",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_catch_clause_def.rel.meta",
+      "sha256": "bf5cffce0859a15906f54803089be9aa546a445e860f5477942a3566cee84d09",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_catch_clause_parameter.rel",
+      "sha256": "8008f670156b38fd528cab1c55ef1846999ce0ddd909a72c086f4d96ca46d04a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_catch_clause_parameter.rel.meta",
+      "sha256": "d71fabd985a1238c1b8349a7016d551a4ddab711bd5d1e1c49b3e0e3e63d8916",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_else_clause_def.rel",
+      "sha256": "8432ba57a18ce82c6f983519ef93a1bfeae2561a4a94a839d7b1586ce7244f3a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_else_clause_def.rel.meta",
+      "sha256": "a1adff06189691624ed005267234e4537e472adc4d77787917867c29c13691b8",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_expression_statement_def.rel",
+      "sha256": "979bf3e21f9acdd9d3a7c235c5dd8c915aa97193c6aefbbe42ea81b66feee10f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_expression_statement_def.rel.meta",
+      "sha256": "fda1f7459c8ddc1975bcb65cfe2b666c0566072f950107b05264172ab999024b",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_def.rel",
+      "sha256": "9ef079fe5238bfaef096e3e7da08662a58a5e6c5f4409653d7df0600ab2d9acb",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_def.rel.meta",
+      "sha256": "01487b69a8aa20a29e5a150f5aca1feebb9524565ff3642ef45a5c478c090036",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_key.rel",
+      "sha256": "b8122b26990e824f1a6d7252217d82c64ca316bbae3797c09a123fa23396906a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_key.rel.meta",
+      "sha256": "0b7f9db95972f1a20894fb4ce93402f998fb2478f95ec13a83697612b761793f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_kind.rel",
+      "sha256": "828c06f095c90fdceeee6f253e786b6ceceb1e5638a4148e109a8ec03e0f9cc5",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_kind.rel.meta",
+      "sha256": "87dfd75315e2b9221427cccd5af2894a83b9286d2c1f6fee6f27a14ff73ecd68",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_value.rel",
+      "sha256": "0858efe99c164d797e2e1a62b4b5d2a1c96f666ebb59ef73cd88fa815fa2b523",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_value.rel.meta",
+      "sha256": "54724e874a13ef66cf03149bfdefeca483e325269d134040069e173655de95cb",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_variable.rel",
+      "sha256": "a823bd173a3853d2276349580b4fc05e45eb929c59c7ecef11726965c7218c22",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_in_statement_variable.rel.meta",
+      "sha256": "37b02ff22deee696957911d8a8505caf67e55f06912ae065a657a198e2355202",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_statement_def.rel",
+      "sha256": "3445e1359608b95b99ca8100c4f8f0ca2d9c30ee9e2ad14b51d5958952fac5f9",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_statement_def.rel.meta",
+      "sha256": "01fbae5c4bedb24ed7ebb14fb162561d9672d7a410f8e029f8a6020ec4d3003f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_statement_increment.rel",
+      "sha256": "560402fc60ae30cf17403cbf7a38472b8adb1ebd8b7d5ee686e70e4edcbaae8c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_for_statement_increment.rel.meta",
+      "sha256": "92eb30f1e450ad750b53c9c5c40c4560099ceee3be0a1fbb319ffe06dee77ea3",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_formal_parameters_child.rel",
+      "sha256": "e8926c54971d8f7b2b2628050967fab5dece9bb1044c2a8584325abd68277687",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_formal_parameters_child.rel.meta",
+      "sha256": "61a840e4da49f465fa6c71fdcc74b670121289bead6c309745f13be6b6c2ff45",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_formal_parameters_def.rel",
+      "sha256": "0cd4cf6ea8923e1975f0870e304e5bc42f7c4171e0eef542952db1908dbccd8b",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_formal_parameters_def.rel.meta",
+      "sha256": "977b3ce6c02ae4b140d81255e76bdb07ea3b828488c9b561c13836b33ee0a4b6",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_function_declaration_body.rel",
+      "sha256": "7132864f73310ea6fa4ab2bd76bad933aec27a35f83efd87ef9f25f6aa056e85",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_function_declaration_body.rel.meta",
+      "sha256": "f2e5685e929133b51b7dd9fb511605c837d3b79a37f04e6e6aa524427a2ec7fc",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_function_declaration_def.rel",
+      "sha256": "3dcaa243c66faa095956daed63198a1067e610b189b2c79a4bb7621024189082",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_function_declaration_def.rel.meta",
+      "sha256": "1339493c5cc1f04ab049a0ac53b501e4f7cb8ad347560a772418942b7aa2342e",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_function_expression_def.rel",
+      "sha256": "03d2bb8e1741efbb4b8f65bf3065ceda4f8942e770946cbecf22cf9def7ac150",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_function_expression_def.rel.meta",
+      "sha256": "490425d71c8d98bb85fd6611a2b94110a61888ac5694f219295424b71b7b7df0",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_if_statement_alternative.rel",
+      "sha256": "f74eedb0b9f7992b889a45d1fb5b5d9eb448ca202c6f4832e79f4b9f6603c306",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_if_statement_alternative.rel.meta",
+      "sha256": "381218ac9e2d2f3c43b3d7dcddd580e42b6a99d9abf8535622f3aa135a7e13ed",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_if_statement_def.rel",
+      "sha256": "ab39d33be205d3a5e7ef7a0e7389f10d317f464eb9ace7b6d3c0f3fbbea70684",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_if_statement_def.rel.meta",
+      "sha256": "44d39d6fbf4d0e00b3f3bf5cc324ce8ea39f7e9214f536817a452b451c30516a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_clause_def.rel",
+      "sha256": "b81ca26a652d8c0510f9935f09ef5debc97487f5e30cbc5ffcc3dcca4307bf65",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_clause_def.rel.meta",
+      "sha256": "0672bb74159949f791297f972fd0c8a7e277761cf6d20fcd3b54d32e7d257c3e",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_clause_default.rel",
+      "sha256": "1845ba5fa502d8055cc534358aa1fcc6ff0425c593350347f1ba892cbbdea88c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_clause_default.rel.meta",
+      "sha256": "5e0a1c723460fd06365474f994bb8c24844e40fea78c1814c4c337ef6a5a894f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_clause_named.rel",
+      "sha256": "6c9c77b2b877e5ac707e2b3705230d3daabd6f30d67c3a00f1cfbaec58fe3305",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_clause_named.rel.meta",
+      "sha256": "5cdad4c150cc3eeb5f55ed8338515f3fcdd6243c3ed153f629cf62bdec5013ca",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_specifier_def.rel",
+      "sha256": "b0e85950108759ab93af42c8486b5be19f5880506cce5a0891c1c1b440115529",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_specifier_def.rel.meta",
+      "sha256": "7a59bee69decbd66d5e0e8b49368e84e92e42cdc75b5d111d0920d643fdd05f2",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_statement_clause.rel",
+      "sha256": "5ab7caa3373c5f3297a143c63b88713c611904ec3e997e09c1564a04e410781c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_statement_clause.rel.meta",
+      "sha256": "44a67ae8cce6b59db8f2bb7c582433a137d40520123102cd080e445a25be5c4d",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_statement_def.rel",
+      "sha256": "795805ef220fc4a0ad4c715215c175416bebfb7eff350ee772a98aef332ef4f6",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_import_statement_def.rel.meta",
+      "sha256": "543502e8134bf4fcd2668a2ccc4f9d9c64dbc363d8b33975a4ddbb6a63414056",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_lexical_declaration_child.rel",
+      "sha256": "99ab2b29c1f4caf2030ebb874d1c4ffeb17e565ca1d9414d3e685d378cd8985c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_lexical_declaration_child.rel.meta",
+      "sha256": "e944dae80ef9c359f387b98b6d71bf06909f6fb48f905fa54819fab852094916",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_lexical_declaration_def.rel",
+      "sha256": "ea05378b4e17d7efe7b33ff91c61ab425413c3168f11219b385fbfe3e9450d59",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_lexical_declaration_def.rel.meta",
+      "sha256": "86b293315794d00ec5ea4019c0e1687a46278d86741dd0921592d435ca0400da",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_lexical_declaration_kind.rel",
+      "sha256": "7842d68a6f50cf0bd1aa71d20b48356fd94e4ba2b112bd59b7de0b8e75534c05",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_lexical_declaration_kind.rel.meta",
+      "sha256": "d4783bb79a79ba14b6b48fd2feea8e4abcc1b78db4a1501b29466e1bff5e4aa9",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_member_expression_def.rel",
+      "sha256": "0fd75256cd8cdcaa23f2cc009606964555ca8294e98ffa390c60fcfe4cbf3fb0",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_member_expression_def.rel.meta",
+      "sha256": "6c284141b9ab3856592b9ebf4679768c3f1fa496e62812e70666a86d67afc06e",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_member_expression_optional_chain.rel",
+      "sha256": "3ae73c2aeb09657857a905382b81e8e9bc514eb36e05d1adc43dd5fed4c398b9",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_member_expression_optional_chain.rel.meta",
+      "sha256": "c84369526a43367c6a9c2c9fd056224a32c51390e99be5172e756e72c3a81f1c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_named_imports_child.rel",
+      "sha256": "b862dd9b0cd061a575224c7b66df19a994c0a6600dd412e555335c15b5e87e92",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_named_imports_child.rel.meta",
+      "sha256": "89376d436490ba18b5985d39b0378b32857de008cee2551c2c38a3cbe8634e59",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_named_imports_def.rel",
+      "sha256": "8b05dfb98535dc91912dddd81b98afe63cbed1df6215a27ece39f93e9e7d6a24",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_named_imports_def.rel.meta",
+      "sha256": "676eb4f5ced724dbca17340bc01f7a876230aea2339e6b1effc2e4dabf6a7ff1",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_object_child.rel",
+      "sha256": "32287c621cf26b412ce5758cc6987fda2fb144aa9fe184743eda7d264bf531ff",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_object_child.rel.meta",
+      "sha256": "139cdd993603f79be331eda950f268e7827c13e12712ab7ebd428d00a16e964a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_object_def.rel",
+      "sha256": "52f70e823691350d859f9ef83288cc12e553e83931663bb8d0b3633308a49ee4",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_object_def.rel.meta",
+      "sha256": "e82b3a8924b3e02296efb4bebb19454281de6023f3d6aa2252ce9ef8db2ea26e",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_pair_def.rel",
+      "sha256": "7547524dce4d69829c33fe3c6f4affd4ffe92b0602a5352824f7f4c8fd5a4e5f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_pair_def.rel.meta",
+      "sha256": "cb0c70cadc6eddb299fbfaa19f1a437659088907f9b80e749461760ce4206c84",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_parenthesized_expression_def.rel",
+      "sha256": "e552b2b389b917e5c7b29f09047dc5c62ebdf2afc5eba040beb64cb4e7a111ec",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_parenthesized_expression_def.rel.meta",
+      "sha256": "3181e601c8a77d7b7b84c384a7ec2dc993a02999fbfa7932990fae8d9186d72e",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_program_child.rel",
+      "sha256": "d320f3fe7675f1d607fa01d7b9c6cf47c883db6446b0e118dd18623cee0aef47",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_program_child.rel.meta",
+      "sha256": "4916ac8ab4a7d8636c80bc6e2686b5452873abe5fc46723a13358a2f2d0867fe",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_program_def.rel",
+      "sha256": "a2cd0085682b9830d9e754403055ed59549b75d63be6a831e7265851244737eb",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_program_def.rel.meta",
+      "sha256": "e637da807f219cb00e1cf0d0873aa7ad8026295c22aa3bafbeee4ecc3f70b98d",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_regex_def.rel",
+      "sha256": "6c7a143e3752d43e08b8cd6305293c384785f261d3bddc42a0739a1b22cd1379",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_regex_def.rel.meta",
+      "sha256": "011eed9704a3fe23bcd6f40a3d74be06afd637cd24def9acfbcb9ce9fee0e8d1",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_regex_flags.rel",
+      "sha256": "fdcf78b4a2a6e661d42a2f826699fe22409f44fe8a35421be8c9ed662c122f34",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_regex_flags.rel.meta",
+      "sha256": "6007b2984ce39055cb501fe26381d0477a49c085a47ef52fce59509f74cec1db",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_return_statement_child.rel",
+      "sha256": "6e0e72420a0794e880c61329105d6b3379551906537d4ddbc9d86f76248a7c8f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_return_statement_child.rel.meta",
+      "sha256": "459a30788c1bcc421ef3e2b902f55bdca5277a9c05ade1061f3ba484e4f37c84",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_return_statement_def.rel",
+      "sha256": "d11b921a5b00fd7b6a3e0cd67bf04d8fca4ca1d151173b30843fe08a41d6f380",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_return_statement_def.rel.meta",
+      "sha256": "f25add476afba042a4763f5fa29641e888527178d532cd56372f81422e9f2dcd",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_statement_block_child.rel",
+      "sha256": "aa741ac6a7a32ea3c12cd17314785837c1bd4db4f27e210611af033c9bfd58c2",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_statement_block_child.rel.meta",
+      "sha256": "a3ac39841290c46e9d58ce04ada9cc454c01bafe9706a96bf28a4fb845998b4f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_statement_block_def.rel",
+      "sha256": "d84ff1af3a1dd9c07ec5281b72eb179ad0c899a116cab297d1d3dd17865f5599",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_statement_block_def.rel.meta",
+      "sha256": "4dc61513f43523501a41b2457db16e8f49db192221b6ca1725cf895bc2a05348",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_string_child.rel",
+      "sha256": "3db1e401f5b00e4988896ebe69c47a823c3359a01d0d13bb77ccdf4fffe93fa2",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_string_child.rel.meta",
+      "sha256": "8351c80a2f2a61a262efbf94590bdd7523209ce35796d91d65787ba6cdd1a225",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_string_def.rel",
+      "sha256": "3b2c1b6f5b4b3051b0c77aca814f5d8e8c21b14bb258a4a969ebf4951d85b815",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_string_def.rel.meta",
+      "sha256": "cad3e2f0d50baa8f9ccdece2756212d12dcddb6be729d3bd1085b7023340f5bb",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_subscript_expression_def.rel",
+      "sha256": "cec4d9e11aa93a9840b5d19f4498bc0ee5266c2d5683023c8b276af6ce97ae63",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_subscript_expression_def.rel.meta",
+      "sha256": "a8954c3c59449d6c89d0f0d5eccd0f7763db859c586fdf69fd1d35e1d89c9f25",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_subscript_expression_optional_chain.rel",
+      "sha256": "a5480ba74ccbd3ff3b30dfe35028f9001fffd805cb298a5c7ef2e82e42ad3282",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_subscript_expression_optional_chain.rel.meta",
+      "sha256": "4c6d48b258181f3af5ec1dc0e61c4788d3e1a7a041447efa2ab6b2bb25b462d0",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_body_child.rel",
+      "sha256": "313fcb8ed6ed5f2db4f2fdb1a91bdc06d23ceb9ce6222535ba9a8a47e50fab9e",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_body_child.rel.meta",
+      "sha256": "143aa5fb9a721d5ca8d44da81a74f7a35b19616ca951fc9f9f0faa3be31db6ca",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_body_def.rel",
+      "sha256": "1bbb1eb076683e464111098e3702d4fbe7ab2bbe1e0b62b13e36446e90727352",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_body_def.rel.meta",
+      "sha256": "94dafd0c1308b1c19e2e73ec5d423cf8f84f56eaf244b4b0146eb5e673e83107",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_case_body.rel",
+      "sha256": "4df0672d27db0e6776adc294858b9bef830ee75a5cedf2bca3f04c1b9b724486",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_case_body.rel.meta",
+      "sha256": "41c72d7f921caf9f145e54eaa428a14829e2d4ba214116d7aca950a00ad4718d",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_case_def.rel",
+      "sha256": "1a4c8856f7daa234e63f3239e01a68b97262d38ec1919b2de8301b23b4d8553b",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_case_def.rel.meta",
+      "sha256": "a6fe69705d35f86f0f42526bc33415c5ac6fde23e4440b171f47b9579bf8ca35",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_default_body.rel",
+      "sha256": "8fe603dd4c3b80bf72ac3a76b873520c0f192330ad574d7e8f929cf2d0399f11",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_default_body.rel.meta",
+      "sha256": "a416aa5cba585be8ece98c9a456941dbec5d9955c1fdbc14c4d58140d6b1409c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_default_def.rel",
+      "sha256": "9d3b7a36bd538f3ef7a49850f31c4f6148c038b6eb18fc6aa71e13acdbecfa93",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_default_def.rel.meta",
+      "sha256": "38153ae14db2094690dc47835fb5baf77757d6eb0bb27525f7da313a8d1e43ba",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_statement_def.rel",
+      "sha256": "70830441e29c4b292177f03a35531cf011d4952e6f6ce7731f23dec5b6eea2fe",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_switch_statement_def.rel.meta",
+      "sha256": "c16f7769fca8361a1505cc2be3cbc068e8eea6ad3ccadc05a27a0426ba732919",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_template_string_child.rel",
+      "sha256": "378ab21816f59ed6fa7f9c6e3f6174ea4311b403d11d2d6caacad27d5124d1cc",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_template_string_child.rel.meta",
+      "sha256": "d1cea4556af407b4a0e2acc0622c943842e7e4d848f3be1673de27190483e663",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_template_string_def.rel",
+      "sha256": "aa33fb3ca0eeed94a2e740589688bec2dab0f361c2c47f2674d73b1f46ca04e0",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_template_string_def.rel.meta",
+      "sha256": "e2d0f7fe059d68dc0d43f2a8d0d797cd22ea3d85652343e79ef6f9c3a615847f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_template_substitution_def.rel",
+      "sha256": "e1516be82445f233d86194a50b1ad5f0f7c3f0b3f7d53734f3b30f508b025965",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_template_substitution_def.rel.meta",
+      "sha256": "d0cee486a24f1717b437d32a02cf11f51ddfbe9add32b4307600b3e709062920",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_ternary_expression_def.rel",
+      "sha256": "dd7e552e8338cebef41438eff70690883e47350efb36c4a73c07ee46ca3d9b2a",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_ternary_expression_def.rel.meta",
+      "sha256": "37276bc9feef67c968c152e116c1fbefbfdb57bf5f8b674529611db7f96444ac",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_tokeninfo.rel",
+      "sha256": "4b00bef4e46f28fec03d5143c9adb6511ed0be2f8f128dc2b4f0b5667dfa36f5",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_tokeninfo.rel.meta",
+      "sha256": "68b5f4da24f0d10db1e63c07511b85ee9fac18753bcff868b62ab7f2c2f2d6bc",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_try_statement_def.rel",
+      "sha256": "db1d7bdeea8b68c8267287d65c9806458a81dd976981edb68f746b2c572a5e18",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_try_statement_def.rel.meta",
+      "sha256": "c311d3931bfcd618b320626237c90a1e231cfec31b0e6d55bc7411babe03c45c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_unary_expression_def.rel",
+      "sha256": "380e9414806e8e3cc9149c4c513344045e2a0d426e76093c77aa53d758a913f3",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_unary_expression_def.rel.meta",
+      "sha256": "c04c7e2f65ec5069b4c4a432e2868561a79183b8475c2169b953fd037dbba042",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_variable_declarator_def.rel",
+      "sha256": "c0c40ec2535a7d119546ef70cfd48c967ca03ba0b4a83da5d7ae4fb2956eadcd",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_variable_declarator_def.rel.meta",
+      "sha256": "a85068a35dc8a2b5efbe0a4ba159386bff1b38bdffc52f3ac046ded14b16d7f3",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_variable_declarator_value.rel",
+      "sha256": "db85967975532956547e5fd1fc986dae007dd4b747ca96625754c3144641a5ed",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/default/ucode_variable_declarator_value.rel.meta",
+      "sha256": "58c24a46c1766c618b5e9de48bdba620c37908de2395369802f6477510ad0328",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/ucode.dbscheme",
+      "sha256": "d4a9ef5db2dd934c94ddf59141331ded3531d4ec79d86702d8f75afc361fc9fd",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/db-ucode/ucode.dbscheme.stats",
+      "sha256": "90d6939a021bb0cb71fd491117d1ecb4c7968fb5a80262ddc44975a75bd97767",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/diagnostic",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/diagnostic/cli-diagnostics-add-20261126T034721.032Z.json",
+      "sha256": "ef0ef5e3ee2349c81b0d09b0cdce4290be72733728e1dc9e509abb4d3e129c8e",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "db/diagnostic/extractors",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/diagnostic/extractors/ucode",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/diagnostic/extractors/yaml",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/diagnostic/tracer",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "db/log",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "db/log/database-finalize-20261126.034722.071.log",
+      "sha256": "3edaa413cf6fffdaab88e0d29ad6abfa81c1a62dc276efff0e89f0b74afd59a6",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/log/database-index-files-20261126.034721.325.log",
+      "sha256": "9e4689dade0d47c12a10d28f0471f9b564b00c22227da1cf7b3e49bc2d7c7173",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/log/database-index-files-20261126.034722.529.log",
+      "sha256": "8a48d3bbdd471c80949428e5cda29de2fe4106cd082ebc5a9cc187dbd0570b4b",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/log/database-init-20261126.034720.806.log",
+      "sha256": "707007a9c1d3c9890f7301a5e3aa3397a50946ef8bbfa4eb540526aa53dae0ef",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/log/execute-queries-20261126.034723.469.log",
+      "sha256": "0418126d36cea26d40f5f4123cfaec7b77fc6c369abe3fe81336dd03661baeda",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/log/query-run-20261126.034723.220.log",
+      "sha256": "9c4769e9b21bc2a36c9836126ae25ddb2de667c22cfc9b32ad6499a089c389eb",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "db/src.zip",
+      "sha256": "32e0906dd919f6774d11b32f9f159683ee48976f2e9fd95e9540601097013520",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "home",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "output",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "output/continuation-failure.json",
+      "sha256": "cf405156954cb247b3c2c063a5dd824e90e70e9adebb5a09e3ad789126988fb3",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/continuation-postguard.json",
+      "sha256": "cf405156954cb247b3c2c063a5dd824e90e70e9adebb5a09e3ad789126988fb3",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "output/logs",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-finalize.receipt.json",
+      "sha256": "f15b9704a85e4b9cac16cecd84246878ade49435c0e48d54d8a5099905182c69",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-finalize.stderr",
+      "sha256": "a6907b2c98b95525a086ca14485ec9e28f891b81541b9e87ebfd49820ab4df98",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-finalize.stdout",
+      "sha256": "c12c2759555ffee2f4e9d1803f88b091c556897422c5af03546bd7bc77ec4a35",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-index.receipt.json",
+      "sha256": "aab5ddffaf73c179fbd99d195c8f2e6aeacb294394cdd77b0ef5a8f0a37fe247",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-index.stderr",
+      "sha256": "2931b16c321f081b9d8d9ab840c3302ed2d5ae6fcd8d2b16f995cdcc2701f672",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-index.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-init.receipt.json",
+      "sha256": "ed6d30e9f66dad1b2992e7a1d262038eb206b094cc2d9b30a3889b634f036aca",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-init.stderr",
+      "sha256": "ca3a5f51734ff539cc6abfbf12983e6bba4f88c942b5982a9cbe8f8315a4db39",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/database-init.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-errors.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-query.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-success.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/success-query.receipt.json",
+      "sha256": "6ab85db63357669eb1c5332d903b6bee7bb0981684e56c7f36759f394f08da5c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/success-query.stderr",
+      "sha256": "a47932bd44e1c2d312a82e58cf2f1dac79e433467654ab670f4665b9b393192d",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/success-query.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-errors.json",
+      "sha256": "09449dcbc1c18ce0402927dc57c35a1564d729ae543e0fc46cc224a5012f0e7c",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-query.json",
+      "sha256": "6ad26abb85672ec3039cf55237219838dd2dcea9281f233ecda1e2e999fa2007",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-successful.json",
+      "sha256": "bcd8ea79b7a987da6975ff37f7b97d8c504d9e238858eecb3eb97d38fa03ccc2",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolver-only-commands.json",
+      "sha256": "c89a902647789a334874ac266d6568f88e995cdfecceed3cae7f17b803f64b18",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/routing.json",
+      "sha256": "335775df0d812f3d1c0afb7f002f40bf109988ed09050a49987800c89ae212f0",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/successful.bqrs",
+      "sha256": "a031adea263aa5ac2f5d2615bedec13496fe204a171c935d7a90c00b266e74b2",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "stage",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share/rpcd",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share/rpcd/ucode",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "stage/usr/share/rpcd/ucode/luci",
+      "sha256": "04c9cc966f9cbdd9bea942f55ab139ba11bff78e751ed3ee2e99f52be9c73dbf",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "tmp",
+      "type": "directory"
+    }
+  ],
+  "known_warning": "WARNING: Not caching stages during query-loading, since max heap size is only 1816 MB.",
+  "note": "Snapshot of stopped attempt prior to any resumed decode/query; prior failure preserved.",
+  "prior_continuation_context_sha256": "7eec2dd07de96d3f25a6663d7c732e857ab9e5ad31e40c3d3d56391acfab7681",
+  "prior_continuation_sha256": "03bc5b68d90171b925377ae0ca385742b2be141d6aad14c2d2043871f50715e6",
+  "resolver_only_sha256": "c89a902647789a334874ac266d6568f88e995cdfecceed3cae7f17b803f64b18",
+  "run_lock_sha256": "f4a5abd675c5bec3fdfdb6bc1b2901d4037a01b666c46fddb8dfe92cd9121ae0",
+  "schema": "issue174-resume-context-v1",
+  "shared_code_sha256": {
+    "archive.py": "224e748846138261c2d709b2932764ffeaabfd90378ccf2a8ffa7476e6630100",
+    "compare.py": "2cea4cc96279f75f0b1f1194639c7b6285f4e17403f8d49e587143ce2b1974ae"
+  },
+  "success_bqrs_sha256": "a031adea263aa5ac2f5d2615bedec13496fe204a171c935d7a90c00b266e74b2",
+  "supersedes_resume_context_sha256": "cbb73e28d5a395189425842db46163bf6afcb5b6b0894fdc844d34aec33bde10"
+}

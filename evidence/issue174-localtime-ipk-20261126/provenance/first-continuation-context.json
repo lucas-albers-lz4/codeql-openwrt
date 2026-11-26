@@ -1,0 +1,126 @@
+{
+  "code_sha256": {
+    "check.py": "9cc8c88469603591f166d644e6f9a618e6c356e8a6034c04389a7e8feb102a21",
+    "expected-tuples.json": "95fde6067e9cd3b602fb73b3d72937003f80a7e96574e30ce0139337cf07769f",
+    "prepare.py": "cf9a9b29957dacb2b1c41b7d27cff2d774dd00794524d6c07ca702b95cee3a8b",
+    "verify.py": "c15096c37cd8d9a2967492f870bcfd879cddfdb20f7379acaad2549ff86f31c6"
+  },
+  "initial_run_tree": [
+    {
+      "mode": 493,
+      "path": "cache",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/queries",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "home",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "output",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "output/logs",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-errors.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-query.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-success.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-errors.json",
+      "sha256": "d4bcdafff30b1a5d527160590f5991a689aaac326f060fc7e8ea4631e3d5361f",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-query.json",
+      "sha256": "5f0b10e76d6a8c506741a30133b229c978cff971247dc7be316abb9a9f673fe0",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-successful.json",
+      "sha256": "4dba9eb817668ee13a5e25ea740e4e8738450544fc306eae0e93006225dc6b82",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolver-only-commands.json",
+      "sha256": "74a912b67500008e1dac0de8828a98bb2a4fadafc63fc353c1403eba67cc846b",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "stage",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share/rpcd",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share/rpcd/ucode",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "stage/usr/share/rpcd/ucode/luci",
+      "sha256": "04c9cc966f9cbdd9bea942f55ab139ba11bff78e751ed3ee2e99f52be9c73dbf",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "tmp",
+      "type": "directory"
+    }
+  ],
+  "lock_sha256": "0e6471a32620f6e178e022377bd2b268b28d96d3f937ebce8fb33ec4b4ca6d2d",
+  "note": "pre-extraction snapshot; observed resolver outputs only",
+  "resolver_only_sha256": "74a912b67500008e1dac0de8828a98bb2a4fadafc63fc353c1403eba67cc846b",
+  "schema": "issue174-continuation-context-v1",
+  "shared_code_sha256": {
+    "archive.py": "224e748846138261c2d709b2932764ffeaabfd90378ccf2a8ffa7476e6630100",
+    "compare.py": "2cea4cc96279f75f0b1f1194639c7b6285f4e17403f8d49e587143ce2b1974ae"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+    "database",
+    "init",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/db",
+    "--language=ucode",
+    "--search-path=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/extractor-pack",
+    "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/cache/database",
+    "--source-root=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/stage"
+  ],
+  "cwd": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/producer",
+  "elapsed_seconds": 0.44435979099944234,
+  "env": {
+    "CODEQL_UCODE_STAGED_ROOT": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/stage",
+    "HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/cache"
+  },
+  "exit": 0,
+  "label": "database-init",
+  "peak_rss_bytes": null,
+  "rss_note": "not measured on this run",
+  "stderr_path": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-init.stderr",
+  "stderr_sha256": "ca3a5f51734ff539cc6abfbf12983e6bba4f88c942b5982a9cbe8f8315a4db39",
+  "stdout_path": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-init.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
