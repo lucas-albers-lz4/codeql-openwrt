@@ -1,0 +1,220 @@
+[
+  {
+    "label": "codeql-version",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "version"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 0.327,
+    "stdout": "output/codeql-version.stdout",
+    "stderr": "output/codeql-version.stderr",
+    "peak_rss_kb": 87952,
+    "time_report": "output/codeql-version.time"
+  },
+  {
+    "label": "install-ql-lib",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "pack",
+      "install",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/lib"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 5.042,
+    "stdout": "output/install-ql-lib.stdout",
+    "stderr": "output/install-ql-lib.stderr",
+    "peak_rss_kb": 150948,
+    "time_report": "output/install-ql-lib.time"
+  },
+  {
+    "label": "install-ql-src",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "pack",
+      "install",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 3.731,
+    "stdout": "output/install-ql-src.stdout",
+    "stderr": "output/install-ql-src.stderr",
+    "peak_rss_kb": 154912,
+    "time_report": "output/install-ql-src.time"
+  },
+  {
+    "label": "resolve-suite",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "resolve",
+      "queries",
+      "--format=json",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/codeql-suites/code-scanning.qls",
+      "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 0.566,
+    "stdout": "output/resolve-suite.stdout",
+    "stderr": "output/resolve-suite.stderr",
+    "peak_rss_kb": 112536,
+    "time_report": "output/resolve-suite.time"
+  },
+  {
+    "label": "database-init",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "database",
+      "init",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database",
+      "--language=ucode",
+      "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/extractor-pack",
+      "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/database",
+      "--source-root=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-base-cb87"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 0.743,
+    "stdout": "output/database-init.stdout",
+    "stderr": "output/database-init.stderr",
+    "peak_rss_kb": 115756,
+    "time_report": "output/database-init.time"
+  },
+  {
+    "label": "database-index",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "database",
+      "index-files",
+      "--language=ucode",
+      "--include=**/*",
+      "--working-dir=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-base-cb87",
+      "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/database",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 0.641,
+    "stdout": "output/database-index.stdout",
+    "stderr": "output/database-index.stderr",
+    "peak_rss_kb": 111576,
+    "time_report": "output/database-index.time"
+  },
+  {
+    "label": "database-finalize",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "database",
+      "finalize",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database",
+      "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/database"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 2.322,
+    "stdout": "output/database-finalize.stdout",
+    "stderr": "output/database-finalize.stderr",
+    "peak_rss_kb": 269232,
+    "time_report": "output/database-finalize.time"
+  },
+  {
+    "label": "success-query",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "query",
+      "run",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+      "--database=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database",
+      "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src",
+      "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/queries",
+      "--compilation-cache=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/compile",
+      "--no-default-compilation-cache",
+      "--output=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/output/success.bqrs",
+      "--threads=1",
+      "--ram=2048"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 3.236,
+    "stdout": "output/success-query.stdout",
+    "stderr": "output/success-query.stderr",
+    "peak_rss_kb": 306864,
+    "time_report": "output/success-query.time"
+  },
+  {
+    "label": "success-decode",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "bqrs",
+      "decode",
+      "--format=json",
+      "--entities=url,string",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/output/success.bqrs"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 0.339,
+    "stdout": "output/success-decode.stdout",
+    "stderr": "output/success-decode.stderr",
+    "peak_rss_kb": 91984,
+    "time_report": "output/success-decode.time"
+  },
+  {
+    "label": "errors-query",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "query",
+      "run",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/ExtractionErrors.ql",
+      "--database=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database",
+      "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src",
+      "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/queries",
+      "--compilation-cache=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/compile",
+      "--no-default-compilation-cache",
+      "--output=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/output/errors.bqrs",
+      "--threads=1",
+      "--ram=2048"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 2.453,
+    "stdout": "output/errors-query.stdout",
+    "stderr": "output/errors-query.stderr",
+    "peak_rss_kb": 267668,
+    "time_report": "output/errors-query.time"
+  },
+  {
+    "label": "errors-decode",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "bqrs",
+      "decode",
+      "--format=json",
+      "--entities=url,string",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/output/errors.bqrs"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 0.328,
+    "stdout": "output/errors-decode.stdout",
+    "stderr": "output/errors-decode.stderr",
+    "peak_rss_kb": 91536,
+    "time_report": "output/errors-decode.time"
+  },
+  {
+    "label": "default-suite-analyze",
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "database",
+      "analyze",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/codeql-suites/code-scanning.qls",
+      "--format=sarifv2.1.0",
+      "--output=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/output/default-suite.sarif",
+      "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src",
+      "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/queries",
+      "--compilation-cache=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/compile",
+      "--no-default-compilation-cache",
+      "--threads=1",
+      "--ram=2048"
+    ],
+    "exit_status": 0,
+    "elapsed_seconds": 6.334,
+    "stdout": "output/default-suite-analyze.stdout",
+    "stderr": "output/default-suite-analyze.stderr",
+    "peak_rss_kb": 454324,
+    "time_report": "output/default-suite-analyze.time"
+  }
+]

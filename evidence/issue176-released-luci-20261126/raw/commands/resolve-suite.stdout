@@ -1,0 +1,5 @@
+[
+  "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/ql/src/m4/DirectRpcShellWord.ql",
+  "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+  "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/ql/src/diagnostics/ExtractionErrors.ql"
+]

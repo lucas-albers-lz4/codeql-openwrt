@@ -1,0 +1,91 @@
+{
+  "artifact": {
+    "archive_sha256": "49367dcc1058f0ce1fec71079f64cbf42c4307de3c687c73da0e3f4c8c750807",
+    "artifact_id": 15087445880,
+    "artifact_name": "issue173-adblock-batches-45748188587-1",
+    "filename": "luci-app-adblock-fast.ipk",
+    "run_id": 45748188587,
+    "sha256": "b3d18c736a970f0ba17919e1249c837dae393b04f5ec541950a6cce737110e0f"
+  },
+  "build_condition": null,
+  "directory_entry_count": 17,
+  "excluded_paths": [
+    "etc/uci-defaults/40_luci-adblock-fast",
+    "etc/uci-defaults/95_adblock-fast-api",
+    "usr/share/luci/menu.d/luci-app-adblock-fast.json",
+    "usr/share/rpcd/acl.d/adblock-fast-api.json",
+    "usr/share/rpcd/acl.d/luci-app-adblock-fast.json",
+    "www/luci-static/resources/adblock-fast/status.js",
+    "www/luci-static/resources/view/adblock-fast/overview.js",
+    "www/luci-static/resources/view/status/include/70_adblock-fast.js"
+  ],
+  "files": [
+    {
+      "path": "etc/uci-defaults/40_luci-adblock-fast",
+      "sha256": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36"
+    },
+    {
+      "path": "etc/uci-defaults/95_adblock-fast-api",
+      "sha256": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18"
+    },
+    {
+      "path": "usr/share/luci/menu.d/luci-app-adblock-fast.json",
+      "sha256": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53"
+    },
+    {
+      "path": "usr/share/rpcd/acl.d/adblock-fast-api.json",
+      "sha256": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed"
+    },
+    {
+      "path": "usr/share/rpcd/acl.d/luci-app-adblock-fast.json",
+      "sha256": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d"
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8"
+    },
+    {
+      "path": "www/luci-static/resources/adblock-fast/status.js",
+      "sha256": "3df345eeb76fe6457a5bea665ec47b29125d765bbacdc24c58ea2211c0204fc4"
+    },
+    {
+      "path": "www/luci-static/resources/view/adblock-fast/overview.js",
+      "sha256": "6b6c886b5ea1af828bc343aa1c9de0d88722b890fdc087d161da4810926a5c80"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/70_adblock-fast.js",
+      "sha256": "5ee13d54ea08c1cb8d491422fcc8189250584e9d2c5e150476b2efa00bd05c88"
+    }
+  ],
+  "ipk_sha256": "b3d18c736a970f0ba17919e1249c837dae393b04f5ec541950a6cce737110e0f",
+  "markup_inconclusive_paths": [],
+  "oracle_sha256": "f071c8d6f37e1e873cb5c7d549458e4ff77f9a1697fb595d2eaa147e24e760dc",
+  "package": {
+    "Architecture": "all",
+    "Package": "luci-app-adblock-fast",
+    "Version": "1.2.4-r4"
+  },
+  "package_id": "luci-app-adblock-fast",
+  "package_lock_sha256": "6f3d382a9ed4a55f56a5f237bdd6b2d6022d61f62adcf1e330e24d4e6f231745",
+  "producer_fixture_commit": "d508217bfb5d31e205eb51dd797075e0277966ec",
+  "producer_runner_sha256": "0480553ff6598438bbcaf7d973f8dfef20097728480a94cdcdea0f011b0611fa",
+  "producer_stage_helper_sha256": "991c92bb72f5c7a048d25b12021ff03b28c2d3c462a977b6a596d070aa7122a9",
+  "regular_member_count": 9,
+  "route_counts": {
+    "excluded": 8,
+    "markup": 0,
+    "plain": 1
+  },
+  "schema": "openwrt-r25-package-stage-receipt-v1",
+  "selected_paths": [
+    "usr/share/rpcd/ucode/luci.adblock-fast"
+  ],
+  "source_revisions": {
+    "luci": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "luci_tree": "1d7bf89bc8708fca69d005b0690ca823c9071692",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "openwrt_tree": "328d4df01c038d365176b72753b778e10c3ff413",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+    "packages_tree": "a6b0fc0935cbfeedb810e6e991b6940f71548ea7"
+  }
+}

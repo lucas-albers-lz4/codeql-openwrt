@@ -1,0 +1,23 @@
+	Command being timed: "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql query run /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/ExtractionErrors.ql --database=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database --search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src --common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/queries --compilation-cache=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/cache/compile --no-default-compilation-cache --output=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/output/errors.bqrs --threads=1 --ram=2048"
+	User time (seconds): 5.68
+	System time (seconds): 0.31
+	Percent of CPU this job got: 244%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.45
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 267668
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 3
+	Minor (reclaiming a frame) page faults: 89199
+	Voluntary context switches: 11876
+	Involuntary context switches: 510
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 2384
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

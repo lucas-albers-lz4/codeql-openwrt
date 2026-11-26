@@ -1,0 +1,6 @@
+Calculating baseline information in /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-base-cb87
+Running command in /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-base-cb87: [/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/javascript/tools/configure-baseline.sh]
+Calculated baseline information for languages: javascript (40ms).
+Resolving extractor ucode.
+Successfully loaded extractor ucode (ucode) from /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/extractor-pack.
+Created skeleton CodeQL database at /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database. This in-progress database is ready to be populated by an extractor.

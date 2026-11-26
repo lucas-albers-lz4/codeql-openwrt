@@ -1,0 +1,104 @@
+{
+  "files": [
+    {
+      "expect_success": false,
+      "path": "etc/uci-defaults/40_luci-adblock-fast",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36"
+    },
+    {
+      "expect_success": false,
+      "path": "etc/uci-defaults/95_adblock-fast-api",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18"
+    },
+    {
+      "expect_success": false,
+      "path": "usr/share/luci/menu.d/luci-app-adblock-fast.json",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53"
+    },
+    {
+      "expect_success": false,
+      "path": "usr/share/rpcd/acl.d/adblock-fast-api.json",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed"
+    },
+    {
+      "expect_success": false,
+      "path": "usr/share/rpcd/acl.d/luci-app-adblock-fast.json",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d"
+    },
+    {
+      "expect_success": true,
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "route": {
+        "classification": "plain",
+        "inconclusive_reason": null,
+        "reason": "rpcd_raw_mode_full_path",
+        "status": "plain_route_selected"
+      },
+      "sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/adblock-fast/status.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "3df345eeb76fe6457a5bea665ec47b29125d765bbacdc24c58ea2211c0204fc4"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/adblock-fast/overview.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "6b6c886b5ea1af828bc343aa1c9de0d88722b890fdc087d161da4810926a5c80"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/70_adblock-fast.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "5ee13d54ea08c1cb8d491422fcc8189250584e9d2c5e150476b2efa00bd05c88"
+    }
+  ],
+  "schema": "ucode-installed-stage-v1"
+}

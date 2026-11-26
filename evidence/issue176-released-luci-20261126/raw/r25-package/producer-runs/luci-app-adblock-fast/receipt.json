@@ -1,0 +1,259 @@
+{
+  "schema": "ucode-installed-stage-receipt-v1",
+  "bundle_manifest_sha256": "1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9",
+  "producer_commit": "131605a726b7a79eb926886d07bf44eb721fe450",
+  "release_tag": "v0.1.0-rc.1",
+  "codeql_version": "CodeQL command-line toolchain release 2.27.4.\nCopyright (C) 2019-2026 GitHub, Inc.\nUnpacked in: /home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql\n   Analysis results depend critically on separately distributed query and\n   extractor modules. To list modules that are visible to the toolchain,\n   use 'codeql resolve packs' and 'codeql resolve languages'.",
+  "oracle_sha256": "f071c8d6f37e1e873cb5c7d549458e4ff77f9a1697fb595d2eaa147e24e760dc",
+  "codeql_archive_sha256": "393bf92b66596141ec93baf9b483f4a350f3749916c922fed0dd63c67706047d",
+  "stage_files": {
+    "etc/uci-defaults/40_luci-adblock-fast": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36",
+    "etc/uci-defaults/95_adblock-fast-api": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18",
+    "usr/share/luci/menu.d/luci-app-adblock-fast.json": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53",
+    "usr/share/rpcd/acl.d/adblock-fast-api.json": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed",
+    "usr/share/rpcd/acl.d/luci-app-adblock-fast.json": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d",
+    "usr/share/rpcd/ucode/luci.adblock-fast": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+    "www/luci-static/resources/adblock-fast/status.js": "3df345eeb76fe6457a5bea665ec47b29125d765bbacdc24c58ea2211c0204fc4",
+    "www/luci-static/resources/view/adblock-fast/overview.js": "6b6c886b5ea1af828bc343aa1c9de0d88722b890fdc087d161da4810926a5c80",
+    "www/luci-static/resources/view/status/include/70_adblock-fast.js": "5ee13d54ea08c1cb8d491422fcc8189250584e9d2c5e150476b2efa00bd05c88"
+  },
+  "routing_sha256": "a4735a87b8c8f0ea2a30a18784132af95fab75daee3dc5801ca7efb88aa6a8c3",
+  "successful_files": {
+    "usr/share/rpcd/ucode/luci.adblock-fast": 1
+  },
+  "extraction_errors": [],
+  "resolved_queries": [
+    "DirectRpcShellWord.ql",
+    "ExtractionErrors.ql",
+    "SuccessfullyExtractedFiles.ql"
+  ],
+  "resolved_suite_sha256": "f8a237bb8a4e5db76cfbd7ad895f2c0245ba0db1add5512e5c76a733e482bdec",
+  "sarif": {
+    "sha256": "5058fa4ec49677958ec27703444fadc75c6face32322d5c64db1969128a5440d",
+    "rule_ids": [
+      "ucode/m4/direct-rpc-shell-word"
+    ],
+    "result_count": 0
+  },
+  "coverage_manifest_sha256": "043eed6769e2805733acbf8b9dab33145de582ed1d4b066a234d29e0bd4fdd79",
+  "commands": [
+    {
+      "label": "codeql-version",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "version"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 0.35,
+      "stdout": "output/codeql-version.stdout",
+      "stderr": "output/codeql-version.stderr",
+      "peak_rss_kb": 87224,
+      "time_report": "output/codeql-version.time"
+    },
+    {
+      "label": "install-ql-lib",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "pack",
+        "install",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/lib"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 4.93,
+      "stdout": "output/install-ql-lib.stdout",
+      "stderr": "output/install-ql-lib.stderr",
+      "peak_rss_kb": 155352,
+      "time_report": "output/install-ql-lib.time"
+    },
+    {
+      "label": "install-ql-src",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "pack",
+        "install",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 4.26,
+      "stdout": "output/install-ql-src.stdout",
+      "stderr": "output/install-ql-src.stderr",
+      "peak_rss_kb": 148252,
+      "time_report": "output/install-ql-src.time"
+    },
+    {
+      "label": "resolve-suite",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "resolve",
+        "queries",
+        "--format=json",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src/codeql-suites/code-scanning.qls",
+        "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 0.622,
+      "stdout": "output/resolve-suite.stdout",
+      "stderr": "output/resolve-suite.stderr",
+      "peak_rss_kb": 112428,
+      "time_report": "output/resolve-suite.time"
+    },
+    {
+      "label": "database-init",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "database",
+        "init",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/database",
+        "--language=ucode",
+        "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/extractor-pack",
+        "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/database",
+        "--source-root=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-app-adblock-fast"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 0.83,
+      "stdout": "output/database-init.stdout",
+      "stderr": "output/database-init.stderr",
+      "peak_rss_kb": 121368,
+      "time_report": "output/database-init.time"
+    },
+    {
+      "label": "database-index",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "database",
+        "index-files",
+        "--language=ucode",
+        "--include=**/*",
+        "--working-dir=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-app-adblock-fast",
+        "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/database",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/database"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 0.629,
+      "stdout": "output/database-index.stdout",
+      "stderr": "output/database-index.stderr",
+      "peak_rss_kb": 111700,
+      "time_report": "output/database-index.time"
+    },
+    {
+      "label": "database-finalize",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "database",
+        "finalize",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/database",
+        "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/database"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 2.954,
+      "stdout": "output/database-finalize.stdout",
+      "stderr": "output/database-finalize.stderr",
+      "peak_rss_kb": 260404,
+      "time_report": "output/database-finalize.time"
+    },
+    {
+      "label": "success-query",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "query",
+        "run",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+        "--database=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/database",
+        "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src",
+        "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/queries",
+        "--compilation-cache=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/compile",
+        "--no-default-compilation-cache",
+        "--output=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/output/success.bqrs",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 3.382,
+      "stdout": "output/success-query.stdout",
+      "stderr": "output/success-query.stderr",
+      "peak_rss_kb": 297168,
+      "time_report": "output/success-query.time"
+    },
+    {
+      "label": "success-decode",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "bqrs",
+        "decode",
+        "--format=json",
+        "--entities=url,string",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/output/success.bqrs"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 0.372,
+      "stdout": "output/success-decode.stdout",
+      "stderr": "output/success-decode.stderr",
+      "peak_rss_kb": 91792,
+      "time_report": "output/success-decode.time"
+    },
+    {
+      "label": "errors-query",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "query",
+        "run",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src/diagnostics/ExtractionErrors.ql",
+        "--database=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/database",
+        "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src",
+        "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/queries",
+        "--compilation-cache=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/compile",
+        "--no-default-compilation-cache",
+        "--output=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/output/errors.bqrs",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 2.796,
+      "stdout": "output/errors-query.stdout",
+      "stderr": "output/errors-query.stderr",
+      "peak_rss_kb": 261480,
+      "time_report": "output/errors-query.time"
+    },
+    {
+      "label": "errors-decode",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "bqrs",
+        "decode",
+        "--format=json",
+        "--entities=url,string",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/output/errors.bqrs"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 0.358,
+      "stdout": "output/errors-decode.stdout",
+      "stderr": "output/errors-decode.stderr",
+      "peak_rss_kb": 91832,
+      "time_report": "output/errors-decode.time"
+    },
+    {
+      "label": "default-suite-analyze",
+      "argv": [
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "database",
+        "analyze",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/database",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src/codeql-suites/code-scanning.qls",
+        "--format=sarifv2.1.0",
+        "--output=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/output/default-suite.sarif",
+        "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/ql/src",
+        "--common-caches=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/queries",
+        "--compilation-cache=/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/cache/compile",
+        "--no-default-compilation-cache",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "exit_status": 0,
+      "elapsed_seconds": 6.889,
+      "stdout": "output/default-suite-analyze.stdout",
+      "stderr": "output/default-suite-analyze.stderr",
+      "peak_rss_kb": 408860,
+      "time_report": "output/default-suite-analyze.time"
+    }
+  ]
+}

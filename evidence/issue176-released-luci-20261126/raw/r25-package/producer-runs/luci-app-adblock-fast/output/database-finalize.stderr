@@ -1,0 +1,9 @@
+Running pre-finalize script /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/extractor-pack/tools/pre-finalize.sh in /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-app-adblock-fast.
+Running command in /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-app-adblock-fast: [/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/extractor-pack/tools/pre-finalize.sh]
+Pre-finalize script /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/bundle/extractor-pack/tools/pre-finalize.sh completed in 1025 ms.
+Running TRAP import for CodeQL database at /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast/database...
+Importing TRAP files
+Merging relations
+Finished writing database (relations: 87.97 KiB; string pool: 2.05 MiB).
+TRAP import complete (1.2s).
+Finished zipping source archive (8.25 KiB).

@@ -1,0 +1,9 @@
+Running pre-finalize script /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-mod-status/bundle/extractor-pack/tools/pre-finalize.sh in /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-mod-status.
+Running command in /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-mod-status: [/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-mod-status/bundle/extractor-pack/tools/pre-finalize.sh]
+Pre-finalize script /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-mod-status/bundle/extractor-pack/tools/pre-finalize.sh completed in 838 ms.
+Running TRAP import for CodeQL database at /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-mod-status/database...
+Importing TRAP files
+Merging relations
+Finished writing database (relations: 11.72 KiB; string pool: 2.05 MiB).
+TRAP import complete (423ms).
+Finished zipping source archive (3.88 KiB).
