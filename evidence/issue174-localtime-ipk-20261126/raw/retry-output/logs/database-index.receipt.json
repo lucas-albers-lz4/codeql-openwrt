@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+    "database",
+    "index-files",
+    "--language=ucode",
+    "--include=**/*",
+    "--working-dir=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/stage",
+    "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/cache/database",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/db"
+  ],
+  "artifacts": {
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/routing.json": "335775df0d812f3d1c0afb7f002f40bf109988ed09050a49987800c89ae212f0"
+  },
+  "cwd": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/producer",
+  "elapsed_seconds": 0.737573499995051,
+  "env": {
+    "CODEQL_UCODE_STAGED_ROOT": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/stage",
+    "HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/cache"
+  },
+  "exit": 0,
+  "label": "database-index",
+  "peak_rss_bytes": null,
+  "raw_routing_sha256": "335775df0d812f3d1c0afb7f002f40bf109988ed09050a49987800c89ae212f0",
+  "rss_note": "not measured on this run",
+  "stderr_path": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-index.stderr",
+  "stderr_sha256": "2931b16c321f081b9d8d9ab840c3302ed2d5ae6fcd8d2b16f995cdcc2701f672",
+  "stdout_path": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/output/logs/database-index.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,32 @@
+# #174 source-first RPC review plan: `luci.setLocaltime`
+
+Status: this source-first plan was frozen and independently reviewed before output. A later first attempt staged the audited provider and stopped at the success diagnostic query on warnings; it did not reach the target query. The attempt is retained separately and is not a completed analysis. The subsequently audited #173 IPK contains the selected provider with the pinned bytes and mode; the original plan does not establish root-image installation, runtime reachability, authorization, or exploitability.
+
+## Exact pins and source inputs
+
+- Deliberately frozen testing producer (not current main): `codeql-ucode@a7bf614e2fb59200e303f04b6255af7e6d4007e2` (the source-first plan predates later main revisions; preserve this historical pin unless independently re-reviewed). Query `ql/src/m4/RequestArgsExec.ql`, SHA-256 `0bf41049d4841a6c989425b14d7f26ba12587a94c4e2c41f4da1b053f01bbb35`. It is tagged `testing`; `code-scanning.qls` excludes it. `Models.qll` is `ql/lib/codeql/ucode/m3/Models.qll`, SHA-256 `fac64bc3b9fc232225c351c44a7985458a2fe90d87e462f1af2803b26185fd1e`.
+- Consumer source: LuCI `cb87fe60e1e2e052af36a93647f2264577829e0a`, tree `1d7bf89bc8708fca69d005b0690ca823c9071692`; #172 inventory producer `codeql-openwrt@460c6ed45c445fbe9de199e324f08fc7542dc2bc`, inventory SHA-256 `91fcf7f84e2934a1df21c7438f898fb5cd097eb9f6cfde3bc80239369c0d7cbc`.
+- Provider: `modules/luci-base/root/usr/share/rpcd/ucode/luci`, Git mode `100644`, blob `b54011a84f4f2f7b0eeb89dcb06034574cb49099`, SHA-256 `04c9cc966f9cbdd9bea942f55ab139ba11bff78e751ed3ee2e99f52be9c73dbf`, 16240 bytes. Source projection is `usr/share/rpcd/ucode/luci`; audited #173 run 45741119647 attempt 1 found the exact regular IPK member with this digest and mode; source/prepared/stage mapping was checked by its runner, while those transient stages were not uploaded.
+- ACL text supplier: `modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json`, SHA-256 `16a24f388ca457758afbea4ff2283ad5984b0146d01697a6955ea84f42cb7924`; it belongs to a different package (`luci-mod-system`). Its projection is `usr/share/rpcd/acl.d/luci-mod-system.json`; membership and effective authorization remain unknown.
+
+## Expected source observation
+
+The bounded operation is `setLocaltime` in provider lines 105–116. The query's eligible source candidate is `request.args.localtime` at line 108, columns 22–43 (CodeQL inclusive end); this value is assigned to `t`, then fields of `t` enter `sprintf`, passed to builtin `system` at line 111, columns 5–118. Expected focal tuple: source MemberExpression `usr/share/rpcd/ucode/luci:[108,22,108,43]`, label `MemberExpression`; message `setLocaltime request.args reaches system`; sink CallExpression `[111,5,111,118]`; sink label `system`.
+
+A real near miss in the same method is the fixed-literal sibling `system('/etc/init.d/sysfixtime restart >/dev/null')` at line 112, columns 5–55. It has the same sink kind and method but no `request.args` flow; expect no tuple. The separate `request.args.localtime` read at line 115 is not a sink and is not the positive.
+
+If query execution is later approved, it scans the provider file, so predeclare the six non-focal rows from the retained `request-args` projection in `codeql-ucode/ql/test/models-fs-popen-controls/pinned-production-baseline.json` (baseline SHA-256 `ace8f6ff871c3261992c9088d4065c2fdf9e5e77d391f34447fb5ebb254fa4ac`) as ambient expected rows. The JSON packet embeds their complete identities, node kinds, positions, messages, sink names, and multiplicity; these are historical expected rows, not fresh output. All six ambient source/sink lines were checked byte-identical in the current provider blob. Do not import the older col-33 duplicates from the distinct `local-taint` projection.
+
+## Entry, ACL, and effect boundaries
+
+The provider defines `methods` and returns `{ luci: methods }` at line 686. This is a source-level module shape only; it does not prove rpcd registration, HTTP reachability, or installed entrypoint behavior. `luci-mod-system.json` grants `luci.setLocaltime` to `luci-mod-system-config.write` (line 13) and `luci-mod-system-ssh.write` (line 37). This is ACL source text, not effective auth proof; package bytes plus rpcd/uhttpd/session context are required.
+
+The source passes the field through `localtime`, formats numeric date fields with `%d`, then invokes `system` to set the date and restarts sysfixtime. No UCI write/commit is visible in this method. The query models syntactic same-function name-binding flow to `BuiltinSystemCall`; it does not model CFG/SSA, the semantics of `localtime`, `%d` coercion, shell parsing safety, OS effect, or exploitability. `shellquote` is not relevant to this method and is not a sanitizer model.
+
+## Evidence reuse, dependencies, and stop conditions
+
+Reuse `codeql-ucode-ledger/claims/006-setlocaltime-construction.md` only as historical source-shape evidence and the pinned production baseline only as historical expected query rows. Do not transfer old source-stage, extraction, or query results: the full provider changed from old SHA-256 `6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e` to the current digest, though this method's snippet remains unchanged.
+
+Dependency: audited #173 run 45741119647 attempt 1 established the exact `luci-base` IPK member/provider bytes; a later run must independently bind the retained artifact and receipt by digest. Any authorization statement additionally requires exact `luci-mod-system` ACL member bytes and runtime policy context. A later extraction/query remains subject to a frozen, independently reviewed executable/pack/command configuration. #176 remains the release-pinned producer gate.
+
+Stop the provider query claim if provider membership/bytes are missing, ambiguous, duplicated, transformed without a reviewed mapping, or extracted from an unverified archive; if query identity/multiplicity differs from declared expectations; or if extraction has diagnostics affecting this file. Stop ACL/auth claims separately if ACL bytes or runtime policy context are missing. Do not let an ACL gap block an otherwise valid lexical provider query, and do not infer effective authorization or vulnerability from this source-level plan. The source-first plan was prepared before any extraction or query; later attempts are separately identified and must not alter its expected tuples.

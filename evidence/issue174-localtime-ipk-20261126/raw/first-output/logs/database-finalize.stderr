@@ -1,0 +1,9 @@
+Running pre-finalize script /Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack/tools/pre-finalize.sh in /Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/stage.
+Running command in /Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/stage: [/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack/tools/pre-finalize.sh]
+Pre-finalize script /Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack/tools/pre-finalize.sh completed in 482 ms.
+Running TRAP import for CodeQL database at /Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db...
+Importing TRAP files
+Merging relations
+Finished writing database (relations: 80.33 KiB; string pool: 2.05 MiB).
+TRAP import complete (335ms).
+Finished zipping source archive (4.91 KiB).
