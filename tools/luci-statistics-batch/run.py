@@ -105,7 +105,7 @@ def post_sources(probe, label, expected):
         if status:
             raise ValueError('source changed: ' + name)
 
-def invoke_make(probe, label, target, sources, graph_lock):
+def invoke_make(probe, label, target, sources, graph_lock, diagnostics=None):
     ow = probe.root / 'openwrt'
     frozen_metadata(probe, label + '-before', graph_lock)
     argv = ['/usr/bin/time', '-v', '-o', str(probe.out / (label + '.time')), 'make', '-j2', target, 'V=s']
@@ -137,10 +137,17 @@ def invoke_make(probe, label, target, sources, graph_lock):
                                  'peak_rss_kib': int(peak.group(1)), 'report_path': label + '.time'})
         except Exception as exc:
             post_errors.append('time-report: ' + repr(exc))
+        if label == 'statistics-compile':
+            try:
+                retain_statistics_candidates(probe)
+            except Exception as exc:
+                post_errors.append('candidate retention: ' + repr(exc))
         try:
             stderr = check.physical_file(probe.out / (label + '.stderr'), probe.out)
             stdout = check.physical_file(probe.out / (label + '.stdout'), probe.out)
-            if label == 'kernel-package-compile':
+            if diagnostics is not None:
+                diagnostics(stdout, stderr)
+            elif label == 'kernel-package-compile':
                 kernel.reject_missing_module(stdout)
                 kernel.reject_missing_module(stderr)
             else:
@@ -152,6 +159,45 @@ def invoke_make(probe, label, target, sources, graph_lock):
     if phase_error or post_errors:
         raise RuntimeError('phase failure: ' + repr({'phase': phase_error, 'postguard': post_errors}))
     return stdout, stderr
+
+def retain_statistics_candidates(probe):
+    ow = probe.root / 'openwrt'
+    directory = ow / 'bin/packages/x86_64/luci'
+    rows = []
+    if directory.exists() or directory.is_symlink():
+        compare.physical_directory(directory, probe.root)
+        for path in sorted(directory.glob('luci-app-statistics_*.ipk')):
+            data = check.physical_file(path, ow, True)
+            dest = probe.out / ('candidate-' + path.name)
+            with dest.open('xb') as stream:
+                stream.write(data)
+            rows.append({'name': path.name, 'size': len(data), 'sha256': check.digest(data)})
+    with (probe.out / 'statistics-candidates.json').open('x') as stream:
+        json.dump(rows, stream, indent=2, sort_keys=True)
+        stream.write('\n')
+    return rows
+
+def classify_statistics_diagnostics(probe, stdout, stderr, root, before, packages, build_config, disposition):
+    ow = probe.root / 'openwrt'
+    if kernel.inventory(root, probe.root) != before or kernel_package_inventory(probe, root) != packages:
+        raise ValueError('kernel evidence changed during Statistics target')
+    current_config = check.physical_file(ow / '.config', ow, True)
+    if current_config != build_config:
+        raise ValueError('Statistics build config changed')
+    saved = json.loads(check.physical_file(probe.out / 'kernel-warning-disposition.json', probe.out, True))
+    if saved != disposition:
+        raise ValueError('kernel warning disposition changed')
+    current_kernel = check.physical_file(root / '.config', root, True)
+    current_magic = check.physical_file(root / '.vermagic', root, True).strip().decode('ascii')
+    accepted = kernel.classify_scoped_warnings(stdout, stderr, current_config,
+                                               check.digest(current_kernel), current_magic)
+    if accepted and set(accepted) != set(saved['warnings']):
+        raise ValueError('app warnings differ from prior kernel disposition')
+    app_disposition = {'phase': 'statistics-compile', 'warnings': accepted,
+                       'kernel_warning_disposition': saved}
+    with (probe.out / 'statistics-warning-disposition.json').open('x') as f:
+        json.dump(app_disposition, f, indent=2, sort_keys=True)
+        f.write('\n')
 
 def kernel_package_inventory(probe, kernel_root):
     ow = probe.root / 'openwrt'
@@ -259,7 +305,10 @@ def run_build(probe):
         json.dump(disposition, f, indent=2, sort_keys=True)
         f.write('\n')
     result['kernel_warning_disposition'] = disposition
-    invoke_make(probe, 'statistics-compile', 'package/feeds/luci/luci-app-statistics/compile', result['source_before'], graph_lock)
+    def statistics_diagnostics(stdout, stderr):
+        classify_statistics_diagnostics(probe, stdout, stderr, roots[0], before,
+                                        kernel_packages, build_config, disposition)
+    invoke_make(probe, 'statistics-compile', 'package/feeds/luci/luci-app-statistics/compile', result['source_before'], graph_lock, statistics_diagnostics)
     config, _ = frozen_metadata(probe, 'statistics-comparison', graph_lock)
     prepared = ow / 'build_dir/target-x86_64_musl/luci-app-statistics'
     stage = prepared / 'ipkg-all/luci-app-statistics'
@@ -270,6 +319,12 @@ def run_build(probe):
     if paths != [expected]:
         raise ValueError('Statistics IPK path is missing or ambiguous')
     ipk = check.physical_file(expected, ow, True)
+    candidates = json.loads(check.physical_file(probe.out / 'statistics-candidates.json', probe.out, True))
+    if candidates != [{'name': expected.name, 'size': len(ipk), 'sha256': check.digest(ipk)}]:
+        raise ValueError('Statistics candidate inventory differs from live output')
+    retained = check.physical_file(probe.out / ('candidate-' + expected.name), probe.out, True)
+    if retained != ipk:
+        raise ValueError('Statistics candidate bytes changed after snapshot')
     with (probe.out / 'luci-app-statistics.ipk').open('xb') as f:
         f.write(ipk)
     receipt = compare.compare(probe.root / 'luci', prepared, stage, ipk, oracle, probe.root, config)
