@@ -161,6 +161,21 @@ API identity and ZIP digest, the approved workflow revision, and the exact
 queue reservation before recording a start. Completion must compare these
 early bytes with the final frozen inputs.
 
+The local read-only `tools/operator_start_observation.py` performs that
+observation for one live run. It requires `--database <private-queue>
+--private-root <operator-owned-0700-dir> --policy <policy.json> --run-id
+<number> --attempt <number>`. The policy file must be a mode `0600` regular
+file directly in that private directory with schema
+`incoming-operator-policy-v1` and exact `consumer_commit`, `workflow`, and
+`queue_id` values. The tool checks the current unstarted reservation, fetches
+canonical run/job/artifact APIs with the local authenticated `gh` session,
+verifies the downloaded ZIP and early file identities, then rechecks the run
+and job are still in progress and the policy and queue are unchanged. Its
+success status is `verified_read_only`; it neither holds a signer key nor
+starts the queue. The retained workspace preserves exact API/ZIP bytes for
+review. A later signed start must still use the current queue head under a
+transactional compare-and-swap and bind its own issuer evidence.
+
 If a manual reservation never started and the upstream PR head or base moved,
 the operator can recover that exact queue slot with
 `tools/incoming_queue_recover_stale.py`. Supply the private database, expected
