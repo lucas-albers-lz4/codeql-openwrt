@@ -1,0 +1,4 @@
+{
+  "cycle_parser": "ValueError('unparsed or noncanonical circular dependency warning: vendor/github.com/tinylib/msgp/msgp/circular.go')",
+  "diagnostics": "ValueError('empty-package diagnostic outside the exact two reviewed kernel helpers')"
+}
