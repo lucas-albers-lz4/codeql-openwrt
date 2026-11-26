@@ -7,6 +7,7 @@ on:
       - 'tools/luci-app-module-batches/**'
       - 'tools/luci-base-inventory/archive.py'
       - 'tools/luci-base-inventory/compare.py'
+      - 'tools/luci-statistics-batch/kernel.py'
 permissions:
   contents: read
 jobs:
@@ -44,5 +45,6 @@ jobs:
         with:
           name: issue173-app-module-batches-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/issue173-app-module-batches/output/
+          include-hidden-files: true
           if-no-files-found: warn
           retention-days: 14
