@@ -46,6 +46,37 @@ class FullTreeControls(unittest.TestCase):
   with self.assertRaisesRegex(selector.SelectorError,'not a regular tracked file'):
    self.result()
 
+ def test_reviewed_luci_symlink_exclusions_and_target_change(self):
+  for path in ('selected/pkg.uc','twin-a/tool.ucode','twin-b/tool.ucode'):
+   (self.root/path).unlink()
+  paths=[f'themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-{theme}' for theme in ('dark','light')]
+  pinned=json.loads((MODULE.parent.parent/'docs/current-corpus-source-v0.6.json').read_bytes())
+  pinned_links={x['source_path']:x for x in pinned['excluded'] if x['repo']=='luci' and x.get('reason')=='tracked symlink; target not followed'}
+  self.assertEqual(set(paths),set(pinned_links))
+  for path in paths:
+   target=self.root/path;target.parent.mkdir(parents=True,exist_ok=True);target.symlink_to('bootstrap')
+   self.policy['excluded'].append({'repo':'luci','source_path':path,'reason':'tracked symlink; target not followed'})
+  self.commit();base=self.sha()
+  def compare():
+   raw=json.dumps(self.policy,sort_keys=True).encode()
+   selector.EXPECTED_MANIFESTS[self.policy['schema']]=hashlib.sha256(raw).hexdigest()
+   return selector.compare(self.root,base,self.sha(),self.policy,raw,'luci')
+  initial=compare()
+  self.assertFalse(initial['fail_closed'])
+  self.assertEqual(initial['head_excluded_count'],2)
+  self.assertEqual({x['head']['mode'] for x in initial['events']},{'120000'})
+  (self.root/paths[0]).unlink();(self.root/paths[0]).symlink_to('changed-target');self.commit()
+  changed=compare()
+  self.assertTrue(changed['fail_closed'])
+  self.assertIn('excluded_content_changed_review_required',next(x for x in changed['events'] if x['source_path']==paths[0])['events'])
+
+ def test_suffix_gitlink_rejected_before_blob_read(self):
+  target=self.sha()
+  subprocess.run(['git','-C',str(self.root),'update-index','--add','--cacheinfo','160000',target,'new/module.uc'],check=True)
+  subprocess.run(['git','-C',str(self.root),'commit','-qm','gitlink'],check=True)
+  with self.assertRaisesRegex(selector.SelectorError,'not a regular tracked file'):
+   self.result()
+
  def test_nested_openwrt_and_luci_roots_match_but_fakeusr_does_not(self):
   openwrt_path='package/example/files/usr/share/ucode/tool';luci_path='modules/luci-base/root/usr/share/rpcd/ucode/luci';fake_path='package/example/files/fakeusr/share/ucode/not-a-root'
   self.put(openwrt_path,b'return 1\n');self.put(luci_path,b'return 2\n');self.put(fake_path,b'return 3\n');self.commit()

@@ -37,7 +37,7 @@ def tree(root, rev):
         meta, name = rec.split(b"\t", 1)
         mode, kind, blob = meta.decode("ascii").split()
         path = safe_path(name.decode("utf-8", "surrogateescape"))
-        if kind == "blob": rows[path] = {"mode": mode, "git_blob": blob}
+        rows[path] = {"mode": mode, "kind": kind, "git_blob": blob}
     return rows
 
 def under_installed_root(path):
@@ -80,18 +80,23 @@ def make_inventory(root, rev, policy, repository):
         name=PurePosixPath(path).name
         if name.endswith(SUFFIXES) or ("." not in name and under_installed_root(path)): candidate_paths.add(path)
     present={p:all_paths[p] for p in candidate_paths if p in all_paths}
-    data_by_blob=blob_contents(root, sorted({x["git_blob"] for x in present.values()}))
+    data_by_blob=blob_contents(root, sorted({x["git_blob"] for x in present.values() if x["kind"] == "blob"}))
     entries=[]
     for path in sorted(candidate_paths):
         info=present.get(path)
         if not info: continue
-        if info["mode"] not in ("100644", "100755"):
+        baseline=selected.get(path) or excluded.get(path)
+        reviewed_excluded_link = (
+            info["mode"] == "120000"
+            and path in excluded
+            and baseline.get("reason") == "tracked symlink; target not followed"
+        )
+        if info["kind"] != "blob" or (info["mode"] not in ("100644", "100755") and not reviewed_excluded_link):
             raise SelectorError(f"candidate is not a regular tracked file: {path} ({info['mode']})")
         data=data_by_blob[info["git_blob"]]; name=PurePosixPath(path).name; hits=[]
         if name.endswith(SUFFIXES): hits.append("ucode_suffix")
-        if path in shebang_matches and data.splitlines()[:1] and data.splitlines()[0].startswith(b"#!") and b"ucode" in data.splitlines()[0].lower(): hits.append("first_line_ucode_shebang")
+        if info["mode"] != "120000" and path in shebang_matches and data.splitlines()[:1] and data.splitlines()[0].startswith(b"#!") and b"ucode" in data.splitlines()[0].lower(): hits.append("first_line_ucode_shebang")
         if "." not in name and under_installed_root(path): hits.append("extensionless_installed_ucode_root")
-        baseline=selected.get(path) or excluded.get(path)
         if not hits and baseline is None: continue
         entries.append({"source_path":path,"git_blob":info["git_blob"],"sha256":hashlib.sha256(data).hexdigest(),"mode":info["mode"],"signals":hits,"explicit_policy":baseline is not None,"status":"selected" if path in selected else "excluded" if path in excluded else "unreviewed","policy":baseline})
     return entries

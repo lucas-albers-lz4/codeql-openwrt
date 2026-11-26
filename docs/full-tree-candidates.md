@@ -12,8 +12,11 @@ head candidate is labeled `selected`,
 removal, or source-signal change sets `fail_closed`; content edits to reviewed
 selected identities are recorded and remain scan-eligible. Excluded-file edits
 require review. A reviewed identity missing from both source revisions fails
-closed. Non-regular Git modes (including symlinks) are rejected before a
-candidate report is accepted, and a regular-file mode change requires review.
+closed. Non-regular Git modes are rejected before a candidate report is
+accepted, except explicitly reviewed excluded LuCI symlinks: their Git link
+text is hashed without following the target, and a target or mode change
+requires review. New or selected symlinks and candidate gitlinks fail closed.
+A regular-file mode change also requires review.
 
 The tool is a source candidate inventory. It does not infer package recipes,
 configuration conditions, source-to-installed rewrites, or actual installed
