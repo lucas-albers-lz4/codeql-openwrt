@@ -41,6 +41,20 @@ class SourcePolicyDriftTests(unittest.TestCase):
         result = analyze(self.manifest, self.raw, "luci", shallow, event, self.base, self.manifest_sha)
         self.assertTrue(result["fail_closed"]); self.assertEqual(result["drift"][0]["class"], "new_candidate")
         self.assertEqual(result["base_commit"], self.base); self.assertEqual(result["event_commit"], event)
+    def test_dotted_suffixless_rpc_backend_is_new_candidate(self):
+        source = self.work / "applications/pkg/root/usr/share/rpcd/ucode/luci.mtk_hqos"
+        source.parent.mkdir(parents=True)
+        source.write_text("'use strict';\nreturn {};\n")
+        outside = self.work / "applications/pkg/root/usr/share/rpcd/other/luci.mtk_hqos"
+        outside.parent.mkdir(parents=True)
+        outside.write_text("not a Ucode root\n")
+        event = self.commit_event(False)
+        result = analyze(self.manifest, self.raw, "luci", self.work, event, self.base, self.manifest_sha)
+        self.assertTrue(result["fail_closed"])
+        paths = {row["path"] for row in result["drift"] if row["class"] == "new_candidate"}
+        self.assertIn("applications/pkg/root/usr/share/rpcd/ucode/luci.mtk_hqos", paths)
+        self.assertNotIn("applications/pkg/root/usr/share/rpcd/other/luci.mtk_hqos", paths)
+
     def test_changed_selected_content_recalculates_blob_and_hash(self):
         (self.work / "applications" / "pkg" / "known.uc").write_text("let a=3;\n"); event = self.commit_event(False)
         result = analyze(self.manifest, self.raw, "luci", self.work, event, self.base, self.manifest_sha)

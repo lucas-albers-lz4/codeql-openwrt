@@ -6,6 +6,15 @@ on:
       - 'tools/luci-app-metadata-probe/**'
       - 'evidence/issue172-luci-source-inventory-20261125/inventory.json'
   workflow_dispatch:
+    inputs:
+      profile:
+        description: Fixed metadata selection
+        type: choice
+        required: true
+        default: joint
+        options:
+          - joint
+          - statistics-only
 permissions:
   contents: read
 jobs:
@@ -21,6 +30,7 @@ jobs:
           python3 -I -B -O -m unittest discover -s tools/luci-app-metadata-probe -p 'test_*.py' -v
           python3 -I -B tools/luci-app-metadata-probe/run.py --help
           python3 -I -B tools/luci-app-metadata-probe/package.py --help
+          bash -n tools/luci-app-metadata-probe/profile-path.sh
   metadata:
     if: github.event_name == 'workflow_dispatch'
     needs: offline-contract
@@ -30,24 +40,35 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+      - name: Select fixed profile paths
+        id: profile
+        env:
+          PROFILE_INPUT: ${{ inputs.profile }}
+        run: tools/luci-app-metadata-probe/profile-path.sh "$PROFILE_INPUT" "$RUNNER_TEMP" >> "$GITHUB_OUTPUT"
       - name: Capture metadata, without target or package builds
         env:
           CONSUMER_SHA: ${{ github.sha }}
+          PROFILE_INPUT: ${{ inputs.profile }}
+          PROBE_ROOT: ${{ steps.profile.outputs.root }}
         run: >-
           python3 -I -B tools/luci-app-metadata-probe/run.py
-          --root "$RUNNER_TEMP/issue173-app-metadata"
+          --root "$PROBE_ROOT"
           --consumer-commit "$CONSUMER_SHA"
+          --profile "$PROFILE_INPUT"
       - name: Package only manifest-validated files
         id: bundle
-        if: always()
+        if: always() && steps.profile.outcome == 'success'
+        env:
+          PROBE_ROOT: ${{ steps.profile.outputs.root }}
+          PROBE_ARCHIVE: ${{ steps.profile.outputs.archive }}
         run: >-
           python3 -I -B tools/luci-app-metadata-probe/package.py
-          --output-root "$RUNNER_TEMP/issue173-app-metadata/output"
-          --archive "$RUNNER_TEMP/issue173-app-metadata-evidence.tar"
+          --output-root "$PROBE_ROOT/output"
+          --archive "$PROBE_ARCHIVE"
       - name: Retain safe metadata evidence
         if: always() && steps.bundle.outcome == 'success'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: issue173-app-metadata-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/issue173-app-metadata-evidence.tar
+          name: issue173-app-metadata${{ steps.profile.outputs.suffix }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ steps.profile.outputs.archive }}
           if-no-files-found: error

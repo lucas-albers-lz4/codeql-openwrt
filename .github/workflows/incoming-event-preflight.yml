@@ -228,31 +228,20 @@ jobs:
             git init -q "$root"
             git -C "$root" remote add origin "https://github.com/openwrt/$UPSTREAM.git"
           done
-          git -C "$source_root" fetch --no-tags --depth=1 origin "refs/pull/$PR_NUMBER/head"
-          git -C "$source_root" checkout -q --detach FETCH_HEAD
+          base_sha=$(jq -er '.base.commit | select(test("^[0-9a-f]{40}$"))' "$input_root/incoming-event-receipt.json")
+          policy_sha=$(jq -er --arg repo "$UPSTREAM" '.pins[$repo] | select(test("^[0-9a-f]{40}$"))' docs/current-corpus-source-v0.6.json)
+          # Fetch all pinned objects per checkout in one shallow transaction.
+          # Replayed API/Git checks below still reject a stale or substituted pin.
+          git -C "$source_root" fetch --no-tags --depth=1 origin \
+            "refs/pull/$PR_NUMBER/head" "$base_sha" "$policy_sha"
+          git -C "$source_root" checkout -q --detach "$SOURCE_SHA"
           [[ "$(git -C "$source_root" rev-parse HEAD)" == "$SOURCE_SHA" ]]
-          # GitHub's shallow fetch can fail after updating .git/shallow. Retry only
-          # this exact pinned object; downstream commit/tree checks still apply.
-          for attempt in 1 2 3; do
-            if git -C "$control_root" fetch --no-tags --depth=1 origin "$CONTROL_SHA"; then
-              break
-            fi
-            if [[ "$attempt" -eq 3 ]]; then
-              echo 'canonical control fetch failed after three attempts' >&2
-              exit 1
-            fi
-            sleep 2
-          done
+          git -C "$control_root" fetch --no-tags --depth=1 origin "$CONTROL_SHA" "$policy_sha"
           git -C "$control_root" checkout -q --detach "$CONTROL_SHA"
           gh api -H 'Accept: application/vnd.github+json' \
             "repos/openwrt/$UPSTREAM/pulls/$PR_NUMBER" > "$input_root/scan-pull-api-response.json"
           python3 -B tools/incoming_event.py "$input_root/incoming-event.json" "$input_root/scan-pull-api-response.json" "$source_root" "$control_root" "$input_root/replayed-receipt.json"
           cmp "$input_root/incoming-event-receipt.json" "$input_root/replayed-receipt.json"
-          base_sha=$(jq -er '.base.commit' "$input_root/incoming-event-receipt.json")
-          git -C "$source_root" fetch --no-tags --depth=1 origin "$base_sha"
-          policy_sha=$(jq -er --arg repo "$UPSTREAM" '.pins[$repo]' docs/current-corpus-source-v0.6.json)
-          git -C "$source_root" fetch --no-tags --depth=1 origin "$policy_sha"
-          git -C "$control_root" fetch --no-tags --depth=1 origin "$policy_sha"
           python3 -B tools/full_tree_candidates.py docs/current-corpus-source-v0.6.json "$UPSTREAM" "$source_root" "$base_sha" "$SOURCE_SHA" "$input_root/replayed-inventory.json"
           cmp "$input_root/full-tree-candidates.json" "$input_root/replayed-inventory.json"
           python3 -B -m tools.event_corpus_manifest docs/current-corpus-source-v0.6.json "$input_root/incoming-event-receipt.json" "$input_root/full-tree-candidates.json" "$source_root" "$input_root/replayed-manifest.json"
