@@ -1,0 +1,30 @@
+WARNING: Makefile 'package/feeds/packages/bmx7-dnsupdate/Makefile' has a dependency on 'bmx7', which does not exist
+WARNING: Makefile 'package/feeds/packages/bmx7-dnsupdate/Makefile' has a dependency on 'bmx7-json', which does not exist
+WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libmesa', which does not exist
+WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libwayland', which does not exist
+WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libgraphene', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-babeld/Makefile' has a dependency on 'babeld', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-uci-config', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-json', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-tun', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-iwinfo', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd-mod-jsoninfo', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd-mod-sgwdynspeed', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr-services/Makefile' has a dependency on 'olsrd', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr-services/Makefile' has a dependency on 'olsrd-mod-nameservice', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr-viz/Makefile' has a dependency on 'olsrd', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr-viz/Makefile' has a dependency on 'olsrd-mod-txtinfo', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-proto-batman-adv/Makefile' has a dependency on 'kmod-batman-adv', which does not exist
+WARNING: Makefile 'package/feeds/packages/prometheus-node-exporter-lua/Makefile' has a dependency on 'bmx7', which does not exist
+WARNING: Makefile 'package/feeds/packages/prometheus-node-exporter-lua/Makefile' has a dependency on 'bmx7-json', which does not exist
++ mkdir -p /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl
++ cd /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl
++ mkdir -p bin lib stamp usr/include usr/lib
++ curl -f --connect-timeout 5 --retry 3 --location https://cdn.kernel.org/pub/linux/kernel/firmware/linux-firmware-20260221.tar.xz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  3  582M    3 22.6M    0     0  93.7M      0  0:00:06 --:--:--  0:00:06 93.7M 33  582M   33  194M    0     0   155M      0  0:00:03  0:00:01  0:00:02  155M 61  582M   61  358M    0     0   159M      0  0:00:03  0:00:02  0:00:01  159M 90  582M   90  524M    0     0   161M      0  0:00:03  0:00:03 --:--:--  161M100  582M  100  582M    0     0   160M      0  0:00:03  0:00:03 --:--:--  160M
+WARNING: kmod-drm-exec is not available in the kernel config - generating empty package
+WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package

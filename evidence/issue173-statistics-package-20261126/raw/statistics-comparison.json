@@ -1,0 +1,2643 @@
+{
+  "archive_control_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "conffiles",
+      "sha256": "a3be1930a2799f0c80d42a72bc492a3874fc766ce70dcfbb0f6f719b8a4050e7",
+      "size": 28,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "control",
+      "sha256": "f12b264ec31c1ce605e072a6bf3049d1b094ac6c5d014e412199cb7487137b09",
+      "size": 630,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst",
+      "sha256": "61511dd6dcc9e5ae9038f7ea8b0ecdf3bdd17612af012c3d9536e9aca03691df",
+      "size": 160,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst-pkg",
+      "sha256": "ab1fbeaaef80ce81cc4a8e403d96ff0e564088417d52e735c7c4a1adb4cc7a95",
+      "size": 138,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "prerm",
+      "sha256": "41e62438f65308026184be1d4d931ae9100923e5ae97b146fb678e5b6cd0fc6c",
+      "size": 117,
+      "type": "file"
+    }
+  ],
+  "archive_data_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/config",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "etc/config/luci_statistics",
+      "sha256": "ad454e3b3c2c01bb29c17e275aa53e81f3f16d018a950930f138c10000d1eabf",
+      "size": 4890,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/init.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/init.d/luci_statistics",
+      "sha256": "4a69928f26b80c5e73759f4ac81b78570b82451d5de77a70cd17b6dcdcc022c8",
+      "size": 5278,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/luci_statistics",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "etc/luci_statistics/README.backups",
+      "sha256": "c5ff55c4335c219c1faefc4a3ccd1de770c204d6f430d1172e46b4a863af07fc",
+      "size": 178,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/uci-defaults",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/uci-defaults/40_luci-statistics",
+      "sha256": "eab17fec4968657a679a18b2159247c935ab74f3a170a968c5c3ae80d86ad65a",
+      "size": 221,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "lib",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "lib/upgrade",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "lib/upgrade/luci_statistics-add-conffiles.sh",
+      "sha256": "c63a98186e51f0af12df2cb8f8b5b83c93c47a91f83e2fb29eeaea9601f4ce26",
+      "size": 257,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/libexec",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/libexec/stat-genconfig",
+      "sha256": "5c45628d2a6a4c9414a93e26cff9c1c5d35ea4c0160f86575ee6c2f3f92c629b",
+      "size": 6895,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci/menu.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/menu.d/luci-app-statistics.json",
+      "sha256": "58769889102b6be463240c5c8ae0577ea4ed431e26b1573715107857045295f0",
+      "size": 488,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci/statistics",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci/statistics/plugins",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/apcups.json",
+      "sha256": "14e1e0639eb0168f7b77ea92432b1f3a09577c193dd44af7df04bbeb3df95fb0",
+      "size": 96,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/chrony.json",
+      "sha256": "77fc4ba01a3f360f3d4f7b9dda57570040880b4a7ecfe4ee3a104503aecd8275",
+      "size": 106,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/conntrack.json",
+      "sha256": "aac5ee5052455c8894104d113d561933b64f6a0f34c3d9fe5c62cdf1e66ef866",
+      "size": 84,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/contextswitch.json",
+      "sha256": "eb7160c5ac7ad540902b6e06067128e222608ad4fcdae754dbb3dbda56672487",
+      "size": 91,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/cpu.json",
+      "sha256": "9da56bcd9fcf3211834c82895c0bf091f6581af5f8418f7d0b7d78d5a026e5a0",
+      "size": 134,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/cpufreq.json",
+      "sha256": "c46986fc3c6402006d70b727d0698f08f92018f26f9b488d16f568b808ad7c5d",
+      "size": 88,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/csv.json",
+      "sha256": "6d55c62f68d84d71a89a9441efd5f22fb793835e156fadbe77eff0f29bea7b95",
+      "size": 105,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/curl.json",
+      "sha256": "bbd4ac3a6bb1772a434f347b51cd84b00245c5d49e4d684c1205603fe78a015a",
+      "size": 45,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/df.json",
+      "sha256": "158586e5f5c0b039027e80524134d18016629a6dfaa009cb2f5736b153ab6a14",
+      "size": 162,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/dhcpleases.json",
+      "sha256": "5414d22957c063f60cfaaacd54e51c288fa14674d8424ad9d8e8e45276110c19",
+      "size": 91,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/disk.json",
+      "sha256": "2ee0e9f43da5dc214dad908df280bf8a08b3d82dce6b18a63b04e8abf7dd8b42",
+      "size": 108,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/dns.json",
+      "sha256": "a8ef976c60fab411090242a39e751f63ad693e86e371875537277a3b345f76ec",
+      "size": 107,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/email.json",
+      "sha256": "3d518006dd4e3a195b6ca9cb22bba88df87e98bb31783b1367494b4e44ea0b4c",
+      "size": 134,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/entropy.json",
+      "sha256": "d678c9ccd8befaf221aed4cafaf3c3db37b7e8f4cbaff6ae019814b313cc5c6e",
+      "size": 82,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/exec.json",
+      "sha256": "a7672e726f3f7ee71ecac395291c60c14fa5016166b3fcf66f465c38c4fe8db0",
+      "size": 45,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/interface.json",
+      "sha256": "aafa5c0ec826ba86b5d1c7da0754abd8cad8864f5ff02e3db038ef4ecc96f687",
+      "size": 113,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/ipstatistics.json",
+      "sha256": "4a4b55357a0b7596b093abc91a9ddc4393ec98a3d3d403ef6f14365da5fbb077",
+      "size": 88,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/iptables.json",
+      "sha256": "19e5b9171d380d7525487d767b766c88cb060e123eee837f9c801dad595c1c06",
+      "size": 49,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/irq.json",
+      "sha256": "58c48401a3990b7527375211a66797603180dcc681f9e3dd34eae1a0e810ae59",
+      "size": 107,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/iwinfo.json",
+      "sha256": "4655cd3c55bcb02d8c300eb19719fc1dbb62934565f9a0a1e1a22c543bb5f810",
+      "size": 111,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/load.json",
+      "sha256": "d26740334a04c4189ae17e573ba271fbcd47b71e8f795ff2b180904b29cfae3d",
+      "size": 86,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/memory.json",
+      "sha256": "5dd234e5d0ffeb2044d89f2757285303c58ec7829fcf1b18c8c740ab3f660a9a",
+      "size": 117,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/mqtt.json",
+      "sha256": "959ae045569b6e6db3f4a07e2d35c843d0c9c1c18ff247a6e28fcfe96da9bcd4",
+      "size": 44,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/netlink.json",
+      "sha256": "b694777e7c04a59cf3d56138f73073e9c467db7448584f53cdcef1e23755b96a",
+      "size": 163,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/network.json",
+      "sha256": "e566b94160663a3db782147cd8ef874b285cf43ac737afe5b87436d70c909a26",
+      "size": 47,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/nut.json",
+      "sha256": "c66b418cc08aa3b6cb8e117a8656afee0b5bc07b5393062fad8ea5bdcda78b50",
+      "size": 83,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/olsrd.json",
+      "sha256": "7326e0291fda2a3f8e2600381b5229cd7c65ae3a71983d6c17aba618a1c6f45e",
+      "size": 146,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/openvpn.json",
+      "sha256": "78d878e9d43925aa9e3a3df13ff5922237e26bd2f592f7d87dd22864a1970fb4",
+      "size": 184,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/ping.json",
+      "sha256": "8fcb36be05d08b396214f05169aef6f89068da50314befc24f22b4be77960b4c",
+      "size": 133,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/processes.json",
+      "sha256": "a1e7b4c17a76f3d4523ed9a8be805d65536cf9e6c599416a460310f4edf8e29e",
+      "size": 95,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/rrdtool.json",
+      "sha256": "529afc12c632f8b682add58857e8d3052e3478b29e322b342b79930922d46745",
+      "size": 188,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/sensors.json",
+      "sha256": "1a78ab2b46b7db544bf410c0683ec2418a281e57580a18901340a4683af586ff",
+      "size": 106,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/snmp6.json",
+      "sha256": "8f129aaa980699763f90a46e8f410717ae60a6149684a7b57799be125630e73f",
+      "size": 108,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/splash_leases.json",
+      "sha256": "9afaea99d4ec9c04edd11188cdf92575c23c526a58761873560f81992a9f67f2",
+      "size": 88,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/syslog.json",
+      "sha256": "e2652185a8d2caa8c048b5ba9d79e4515feebbe030eba1c09d181485ee7ac4cc",
+      "size": 127,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/tcpconns.json",
+      "sha256": "5f785485863f589ff84633a34abd0540997b624034bd2e741b65d6d125bc9023",
+      "size": 152,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/thermal.json",
+      "sha256": "eea4ea8cf9a4837da8bbb6ba4f8e67bdf0c669bfc9d41ab08dc64501bb45c1c0",
+      "size": 106,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/unixsock.json",
+      "sha256": "e7be6fe8c4c90b0b00f26d4aab04b27038d1883e0e13d429ea2c9070321fc587",
+      "size": 124,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/statistics/plugins/uptime.json",
+      "sha256": "05e2dc4eb7681204cbf32765a4ac46666874eb890744abefbace898893a7fc87",
+      "size": 81,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/acl.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/acl.d/luci-app-statistics.json",
+      "sha256": "af0a978cf8812b919b51fccffadf51c2437776dfa3eb62f0963eeabf29e52a82",
+      "size": 1074,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/statistics",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/statistics/rrdtool",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool.js",
+      "sha256": "0f07fd36fcfb3420c03688048a29ed27df55c461a2b6a07d29954c31e2e13eb1",
+      "size": 20812,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/apcups.js",
+      "sha256": "33a70feacfaeddceacbb814fb3e8fa204ab0cc36ed2843fdb4be69acd61acae0",
+      "size": 4078,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/chrony.js",
+      "sha256": "a364f1006147158fe1836f07c3d0a439a8ec0971851356c079102d38bddecd9a",
+      "size": 1115,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/conntrack.js",
+      "sha256": "15c961c11f7ed6c8216fe6958bcedf53fc1ead7674f9feb8dd612dafc583605a",
+      "size": 955,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/contextswitch.js",
+      "sha256": "dc032c9b93ab8a96e0fc8317ee0e42f4e7d7afbeb060fafb59736d2772102cb6",
+      "size": 563,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/cpu.js",
+      "sha256": "60447d97d2564f4d7bb1c79db7084331c8471d567b143cf8fc28346c4a89ce58",
+      "size": 3106,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/cpufreq.js",
+      "sha256": "ac521b14f7178e3c54845859ab652728a094bbbffca367e4e7ecfb467d807dac",
+      "size": 1362,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/curl.js",
+      "sha256": "449a050389c8e551bad8ef2ecc644bbd653fa93138d1bf63acdc3eb53ea3971e",
+      "size": 537,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/df.js",
+      "sha256": "a07a902b279e94e6ce0fbe753dbb779592dd24d4e63cab5cacc1a9081d1e92a5",
+      "size": 1535,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/dhcpleases.js",
+      "sha256": "e3b56449168d337d2fd65f10b263d3a11c6d7585b4016600f834d5edf318c307",
+      "size": 444,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/disk.js",
+      "sha256": "15105c3524a6747a9d70ccd31b9fa9b558630f827c8f6c503568221c49c78d90",
+      "size": 1158,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/dns.js",
+      "sha256": "634a202ad3e0fe8c02f60a92bb366ef063ff8d9fb69a905dde2a67c1fa3f9324",
+      "size": 2137,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/dsl.js",
+      "sha256": "c7987bd3505fb1cc2f2676db15d16f4fba53eb966e91eb3a9f4259f69c4913bb",
+      "size": 9045,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/entropy.js",
+      "sha256": "cd3ea2181d9b807e8cad44a2bd64c95d5b07f7bb7df3f6803f6f62cecf886375",
+      "size": 453,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/interface.js",
+      "sha256": "466ddbbe41818aea270de9eb28c259a3623ce408065748bacb460046e78f00a1",
+      "size": 2711,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/ip6tables.js",
+      "sha256": "9fcc805d5688d535761f21dca2f697f27f3c0eefa2167673643cfdebe1e762f7",
+      "size": 775,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/ipstatistics.js",
+      "sha256": "0213e240075e739b2689b0ecc145b09b159e08c7a00d37c88985b92124facccb",
+      "size": 1002,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/iptables.js",
+      "sha256": "022382410d85d8a23d7e1bbf77812cb153826ffb3ff69f91fc2a225688810298",
+      "size": 768,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/irq.js",
+      "sha256": "8fa2a024cf51c24523665a4731891f48f9eb39075b95773d0d537a3cd44d52ac",
+      "size": 410,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/iwinfo.js",
+      "sha256": "64712df14dacd749c4898ae114a42f94a0789e6ef7466d88f6e8f4655407a311",
+      "size": 1679,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/load.js",
+      "sha256": "2e60daba8070dc94a6237df54090aa8bdce77ccfd9210c9836ea80a5155ca603",
+      "size": 812,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/memory.js",
+      "sha256": "a3b75fbb0c72c8071efb6b1445df63810614aebe82056b892031d2a38f8d93b9",
+      "size": 1834,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/netlink.js",
+      "sha256": "f38e5fb5a695185f8a0890da6d4f0919ee2119c069f1f93c4e8febc62c8353a1",
+      "size": 5901,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/nut.js",
+      "sha256": "562f7768d02a88c11ab94c6bae6f7e1acd2aaffca9f94f2c3780701858b0f70f",
+      "size": 4297,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/olsrd.js",
+      "sha256": "8f97e4fd6b434520223b4fa74feb55a184a3dbd826ed09492809ddd34dd0ac7b",
+      "size": 3412,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/openvpn.js",
+      "sha256": "12eafcc3bdaaf694b75f51b01dbb80a97ab688878e3a3b40805eaa151b42b76a",
+      "size": 3686,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/ping.js",
+      "sha256": "04178104501124baccdd963c50e8e307c4c4e778efecfd3cc03d4990b6942b73",
+      "size": 1142,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/processes.js",
+      "sha256": "a66cdb8ff914b568fc9aa80737c6da94f378c3509b56c6c52fec1e250528c338",
+      "size": 2576,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/sensors.js",
+      "sha256": "2c5e0ff3c8c6d6bba03875ef880d6eba1a53589b55c558b58c54804546c167e7",
+      "size": 2201,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/snmp6.js",
+      "sha256": "aee87558564383f1c8771a7bcc0c3808b85ac04761f087eaadd7d02fecbe079d",
+      "size": 1497,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/splash_leases.js",
+      "sha256": "8dcf27b52f941ff3aba5f129b32b6c0ea999fa68eed0148bf11c1bd20409974d",
+      "size": 813,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/sqm.js",
+      "sha256": "c2e8446dcd995e5936141302512813a5174535a33f0aa135e87ac120beb9f473",
+      "size": 804,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/sqmcake.js",
+      "sha256": "e5dff6aa0a8a2140ba7d85b91f01776a4ae1e26c7a5de4ff527d01510414f71d",
+      "size": 2680,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/tcpconns.js",
+      "sha256": "7c6bc58b5074112771e213047c2655a16ee05cb76e3156e0218254a0423d0629",
+      "size": 754,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/thermal.js",
+      "sha256": "4d38910d4445a6be7f0cd2c24ff8bb86ddb7251f92f887d3f4b2139323dddf88",
+      "size": 500,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/uptime.js",
+      "sha256": "b1bee3cdf21bbc1a9998d51eba4f6f63860b8d093f753af869b54fcdbf2cff78",
+      "size": 638,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/users.js",
+      "sha256": "7c294c4e0b094bb96277012267df3fb60040f2f0b32d1ea66880c4185e4cdd83",
+      "size": 390,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/statistics",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/collectd.js",
+      "sha256": "32570c48253b47948e684db39612e9c15f7060869eac7391ec77cfb7fde7af59",
+      "size": 5689,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/graphs.js",
+      "sha256": "ce754b60e48220fa86099044827ab9be1aee575b28a49f87c01bb5d5880d8bfa",
+      "size": 8033,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/statistics/plugins",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/apcups.js",
+      "sha256": "77f10c81488543175fe06f7be046c94ef73ca2671f32a9e140afb95f5950871b",
+      "size": 722,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/chrony.js",
+      "sha256": "cf890511815c474630307663023178d05787e8a4bfd80c8d156e1c33091e228e",
+      "size": 906,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/conntrack.js",
+      "sha256": "9b4ff0503701488d989de27ed6a3a7de0fbd03e0222327e4dbf292c30eadf54b",
+      "size": 303,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/contextswitch.js",
+      "sha256": "71159bb90ace68d6101944eef6a8d08371999d4e6427395486f4dbd12abfcdd7",
+      "size": 307,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/cpu.js",
+      "sha256": "1ef7c98785d2c7f6e3a466eb877091a66253076f91d615dcd643308b86a2e28c",
+      "size": 1243,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/cpufreq.js",
+      "sha256": "7197c0177ffe2c63ebc62efa8bb2825f3248df7f994dcc314de83c877f7ed096",
+      "size": 658,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/csv.js",
+      "sha256": "5789877744a04b22078013f6c2dae7c19a56258d3bf3022cd69572628b250229",
+      "size": 722,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/curl.js",
+      "sha256": "d09a9119600716525bd2b75da58bbcec9743471ddfbaf27d8a859b90c2c785c4",
+      "size": 691,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/df.js",
+      "sha256": "da8926652dd494383673c9dc39f088c3a9aa48d50410af604f3386e29865b555",
+      "size": 3046,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/dhcpleases.js",
+      "sha256": "290bba4ecdd53558a711447a79adbe05606f3b8cb6c81c8df88952a82d09bfc7",
+      "size": 488,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/disk.js",
+      "sha256": "8ae30b48b86716bcc77c31b7cb86999c242313a7ddd600be218e6aa832ea45fc",
+      "size": 1381,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/dns.js",
+      "sha256": "ea5ec04c21caf3fd1b49c1eaf6089033c341c136cd4eceab42febedffeedf293",
+      "size": 1083,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/email.js",
+      "sha256": "8fbfa677ed853584e2db09f711b1a3581cb85ce373f270ae1d7447a3e9ae45aa",
+      "size": 1443,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/entropy.js",
+      "sha256": "91ee914f1d816e50754431170911daa8a57a3fcb32fb963da11a309cc0611c6f",
+      "size": 285,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/exec.js",
+      "sha256": "a349a8e9d5ad6ff4f20a048b6764bf86efee1c1858a668b791bad1482801619a",
+      "size": 1966,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/interface.js",
+      "sha256": "735c6fc223a7092177638e2a9e529941b4599f1e9a006e0fda99ce0ce445412b",
+      "size": 1087,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/ipstatistics.js",
+      "sha256": "5044603eba9a58a56494eed6bf9437b31a49f0377c76ad5d566277a95dfa0a54",
+      "size": 347,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/iptables.js",
+      "sha256": "e4138af3124035ff8eb4b47b39fee1a9cc263bc92a25d84a548fe7a9dc7e0a9f",
+      "size": 5469,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/irq.js",
+      "sha256": "bc8ea79aeb77ad20c6ca675bf0033e7ef8f8db55cc330382961158aae5af19d8",
+      "size": 1677,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/iwinfo.js",
+      "sha256": "277c3aae4c45a048ac80d4b175a6aad77e567b774a4abfec5f02e7cbbe8ebc46",
+      "size": 1359,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/load.js",
+      "sha256": "c2c1f59b4ca438897e05639d70b331cbcf05a52ff2aad0a0ea66116db6841cf1",
+      "size": 278,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/memory.js",
+      "sha256": "2c7f84d8478611aa9a837e8f5487b213ff2f4c8d6a55505f6ddba5d84d1594cb",
+      "size": 893,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/mqtt.js",
+      "sha256": "187cff648f1001123f4aca7d2e5125c789fd5c1509ca0f07455941ff9969191a",
+      "size": 3107,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/netlink.js",
+      "sha256": "751fd73678a372d354c56e939608fea964d6476f99f5947c413e79bf4d1b0c69",
+      "size": 1806,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/network.js",
+      "sha256": "d6319fbec0813de6a30f2bf8ea44954c0904b63633efbf0b17f36120ff9138f0",
+      "size": 2479,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/nut.js",
+      "sha256": "3f295cb565967910c1a376df8f68ac2c0f82a8ee6bccd711d3ae94e3a056811d",
+      "size": 553,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/olsrd.js",
+      "sha256": "19505a6449b3b8abcef6ba7a9ddc8b43725d1ef92824dcd9964e022ec7fa18fe",
+      "size": 1342,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/openvpn.js",
+      "sha256": "b18f70b94533a8b216ec3939f6046102c3aafb50bbdae50b707fad30b1ac76fd",
+      "size": 1472,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/ping.js",
+      "sha256": "46cca67646d024f7ac97c770c237517c05728dd828a8f98dff222cb07ce8a606",
+      "size": 1501,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/processes.js",
+      "sha256": "76021d107c9667e3fd6f9fd8f377dac8ee22b9b3a08b10be696664ba0ac3f7bf",
+      "size": 766,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/rrdtool.js",
+      "sha256": "7fcb04183ac821ba9e022dbb2fd863cfa9e1a1a3990e1e0f9a273f2f4bc0b3be",
+      "size": 3584,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/sensors.js",
+      "sha256": "f13a971e85d600c9edd79bd531d2f22f56312d3ef193586b9b706efa173200b8",
+      "size": 1939,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/snmp6.js",
+      "sha256": "56a2c745dfd1219285db8cd74e8018393f3efedb9db1ca4b1702fa41414fb265",
+      "size": 1080,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/splash_leases.js",
+      "sha256": "7544017ebcecee6237b20c5a039259cb7dedd6480896996679c35b4c60a628da",
+      "size": 301,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/syslog.js",
+      "sha256": "f1ef66d659b13153b3efe249487c79b39daab7da04f8fbda628ae3fcf0c62884",
+      "size": 959,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/tcpconns.js",
+      "sha256": "a217299b46124539cbb6bf4b911f02be42e15ee9fe4625c431e4fdcbec1c3470",
+      "size": 1458,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/thermal.js",
+      "sha256": "ec5f1135bbc95991c6e82d00ad6c4a6b194754dab199c3bb6d6731d11edecd59",
+      "size": 1546,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/unixsock.js",
+      "sha256": "349f877ca300f07f19747453cba9bc87689e0c9e90ebef717dd033c50ece7bc0",
+      "size": 1052,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/uptime.js",
+      "sha256": "dfe971cd3372c819d43ed9c6f49f0a92fadb093fd409fa41c5d465efd9a9fac2",
+      "size": 285,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/statistics/plugins/users.js",
+      "sha256": "374ac21f0f4a3f3888abdb2085853f5accecb420850affd83fa38fb8878126f6",
+      "size": 508,
+      "type": "file"
+    }
+  ],
+  "config_sha256": "cbff738c953271533651885c3759d6a5ba6b845c61b23a1e7aca7059f552d8ff",
+  "graph_scope_rows": 2781,
+  "graph_scope_sha256": "4d8e05cff63f11484fdacdc7b0c0adfedd3340dbedcb7bef6929b0e982cfd7f9",
+  "graph_sha256": "cff38c19fecf23fcffada008035ceda0e47f62d05059e525ee89b4f74918b3b3",
+  "ipk_sha256": "66d275801b8c28134891c20be92c79c243614107f3299270ebd9c1f56e4fc08a",
+  "kernel_inventory_sha256": "f322061b78d871e79f7f0dc22f6d197ceb1bbb0a7f00c02303b7402883e10718",
+  "members": [
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "ad454e3b3c2c01bb29c17e275aa53e81f3f16d018a950930f138c10000d1eabf",
+      "path": "etc/config/luci_statistics",
+      "prepared_mode": "0644",
+      "prepared_sha256": "ad454e3b3c2c01bb29c17e275aa53e81f3f16d018a950930f138c10000d1eabf",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/etc/config/luci_statistics",
+      "source_sha256": "ad454e3b3c2c01bb29c17e275aa53e81f3f16d018a950930f138c10000d1eabf",
+      "stage_mode": "0644",
+      "stage_sha256": "ad454e3b3c2c01bb29c17e275aa53e81f3f16d018a950930f138c10000d1eabf"
+    },
+    {
+      "ipk_mode": "0755",
+      "ipk_sha256": "4a69928f26b80c5e73759f4ac81b78570b82451d5de77a70cd17b6dcdcc022c8",
+      "path": "etc/init.d/luci_statistics",
+      "prepared_mode": "0755",
+      "prepared_sha256": "4a69928f26b80c5e73759f4ac81b78570b82451d5de77a70cd17b6dcdcc022c8",
+      "source_git_mode": "100755",
+      "source_path": "applications/luci-app-statistics/root/etc/init.d/luci_statistics",
+      "source_sha256": "4a69928f26b80c5e73759f4ac81b78570b82451d5de77a70cd17b6dcdcc022c8",
+      "stage_mode": "0755",
+      "stage_sha256": "4a69928f26b80c5e73759f4ac81b78570b82451d5de77a70cd17b6dcdcc022c8"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "c5ff55c4335c219c1faefc4a3ccd1de770c204d6f430d1172e46b4a863af07fc",
+      "path": "etc/luci_statistics/README.backups",
+      "prepared_mode": "0644",
+      "prepared_sha256": "c5ff55c4335c219c1faefc4a3ccd1de770c204d6f430d1172e46b4a863af07fc",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/etc/luci_statistics/README.backups",
+      "source_sha256": "c5ff55c4335c219c1faefc4a3ccd1de770c204d6f430d1172e46b4a863af07fc",
+      "stage_mode": "0644",
+      "stage_sha256": "c5ff55c4335c219c1faefc4a3ccd1de770c204d6f430d1172e46b4a863af07fc"
+    },
+    {
+      "ipk_mode": "0755",
+      "ipk_sha256": "eab17fec4968657a679a18b2159247c935ab74f3a170a968c5c3ae80d86ad65a",
+      "path": "etc/uci-defaults/40_luci-statistics",
+      "prepared_mode": "0755",
+      "prepared_sha256": "eab17fec4968657a679a18b2159247c935ab74f3a170a968c5c3ae80d86ad65a",
+      "source_git_mode": "100755",
+      "source_path": "applications/luci-app-statistics/root/etc/uci-defaults/40_luci-statistics",
+      "source_sha256": "eab17fec4968657a679a18b2159247c935ab74f3a170a968c5c3ae80d86ad65a",
+      "stage_mode": "0755",
+      "stage_sha256": "eab17fec4968657a679a18b2159247c935ab74f3a170a968c5c3ae80d86ad65a"
+    },
+    {
+      "ipk_mode": "0755",
+      "ipk_sha256": "c63a98186e51f0af12df2cb8f8b5b83c93c47a91f83e2fb29eeaea9601f4ce26",
+      "path": "lib/upgrade/luci_statistics-add-conffiles.sh",
+      "prepared_mode": "0755",
+      "prepared_sha256": "c63a98186e51f0af12df2cb8f8b5b83c93c47a91f83e2fb29eeaea9601f4ce26",
+      "source_git_mode": "100755",
+      "source_path": "applications/luci-app-statistics/root/lib/upgrade/luci_statistics-add-conffiles.sh",
+      "source_sha256": "c63a98186e51f0af12df2cb8f8b5b83c93c47a91f83e2fb29eeaea9601f4ce26",
+      "stage_mode": "0755",
+      "stage_sha256": "c63a98186e51f0af12df2cb8f8b5b83c93c47a91f83e2fb29eeaea9601f4ce26"
+    },
+    {
+      "ipk_mode": "0755",
+      "ipk_sha256": "5c45628d2a6a4c9414a93e26cff9c1c5d35ea4c0160f86575ee6c2f3f92c629b",
+      "path": "usr/libexec/stat-genconfig",
+      "prepared_mode": "0755",
+      "prepared_sha256": "5c45628d2a6a4c9414a93e26cff9c1c5d35ea4c0160f86575ee6c2f3f92c629b",
+      "source_git_mode": "100755",
+      "source_path": "applications/luci-app-statistics/root/usr/libexec/stat-genconfig",
+      "source_sha256": "5c45628d2a6a4c9414a93e26cff9c1c5d35ea4c0160f86575ee6c2f3f92c629b",
+      "stage_mode": "0755",
+      "stage_sha256": "5c45628d2a6a4c9414a93e26cff9c1c5d35ea4c0160f86575ee6c2f3f92c629b"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "58769889102b6be463240c5c8ae0577ea4ed431e26b1573715107857045295f0",
+      "path": "usr/share/luci/menu.d/luci-app-statistics.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "58769889102b6be463240c5c8ae0577ea4ed431e26b1573715107857045295f0",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/menu.d/luci-app-statistics.json",
+      "source_sha256": "58769889102b6be463240c5c8ae0577ea4ed431e26b1573715107857045295f0",
+      "stage_mode": "0644",
+      "stage_sha256": "58769889102b6be463240c5c8ae0577ea4ed431e26b1573715107857045295f0"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "14e1e0639eb0168f7b77ea92432b1f3a09577c193dd44af7df04bbeb3df95fb0",
+      "path": "usr/share/luci/statistics/plugins/apcups.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "14e1e0639eb0168f7b77ea92432b1f3a09577c193dd44af7df04bbeb3df95fb0",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/apcups.json",
+      "source_sha256": "14e1e0639eb0168f7b77ea92432b1f3a09577c193dd44af7df04bbeb3df95fb0",
+      "stage_mode": "0644",
+      "stage_sha256": "14e1e0639eb0168f7b77ea92432b1f3a09577c193dd44af7df04bbeb3df95fb0"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "77fc4ba01a3f360f3d4f7b9dda57570040880b4a7ecfe4ee3a104503aecd8275",
+      "path": "usr/share/luci/statistics/plugins/chrony.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "77fc4ba01a3f360f3d4f7b9dda57570040880b4a7ecfe4ee3a104503aecd8275",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/chrony.json",
+      "source_sha256": "77fc4ba01a3f360f3d4f7b9dda57570040880b4a7ecfe4ee3a104503aecd8275",
+      "stage_mode": "0644",
+      "stage_sha256": "77fc4ba01a3f360f3d4f7b9dda57570040880b4a7ecfe4ee3a104503aecd8275"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "aac5ee5052455c8894104d113d561933b64f6a0f34c3d9fe5c62cdf1e66ef866",
+      "path": "usr/share/luci/statistics/plugins/conntrack.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "aac5ee5052455c8894104d113d561933b64f6a0f34c3d9fe5c62cdf1e66ef866",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/conntrack.json",
+      "source_sha256": "aac5ee5052455c8894104d113d561933b64f6a0f34c3d9fe5c62cdf1e66ef866",
+      "stage_mode": "0644",
+      "stage_sha256": "aac5ee5052455c8894104d113d561933b64f6a0f34c3d9fe5c62cdf1e66ef866"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "eb7160c5ac7ad540902b6e06067128e222608ad4fcdae754dbb3dbda56672487",
+      "path": "usr/share/luci/statistics/plugins/contextswitch.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "eb7160c5ac7ad540902b6e06067128e222608ad4fcdae754dbb3dbda56672487",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/contextswitch.json",
+      "source_sha256": "eb7160c5ac7ad540902b6e06067128e222608ad4fcdae754dbb3dbda56672487",
+      "stage_mode": "0644",
+      "stage_sha256": "eb7160c5ac7ad540902b6e06067128e222608ad4fcdae754dbb3dbda56672487"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "9da56bcd9fcf3211834c82895c0bf091f6581af5f8418f7d0b7d78d5a026e5a0",
+      "path": "usr/share/luci/statistics/plugins/cpu.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "9da56bcd9fcf3211834c82895c0bf091f6581af5f8418f7d0b7d78d5a026e5a0",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/cpu.json",
+      "source_sha256": "9da56bcd9fcf3211834c82895c0bf091f6581af5f8418f7d0b7d78d5a026e5a0",
+      "stage_mode": "0644",
+      "stage_sha256": "9da56bcd9fcf3211834c82895c0bf091f6581af5f8418f7d0b7d78d5a026e5a0"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "c46986fc3c6402006d70b727d0698f08f92018f26f9b488d16f568b808ad7c5d",
+      "path": "usr/share/luci/statistics/plugins/cpufreq.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "c46986fc3c6402006d70b727d0698f08f92018f26f9b488d16f568b808ad7c5d",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/cpufreq.json",
+      "source_sha256": "c46986fc3c6402006d70b727d0698f08f92018f26f9b488d16f568b808ad7c5d",
+      "stage_mode": "0644",
+      "stage_sha256": "c46986fc3c6402006d70b727d0698f08f92018f26f9b488d16f568b808ad7c5d"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "6d55c62f68d84d71a89a9441efd5f22fb793835e156fadbe77eff0f29bea7b95",
+      "path": "usr/share/luci/statistics/plugins/csv.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "6d55c62f68d84d71a89a9441efd5f22fb793835e156fadbe77eff0f29bea7b95",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/csv.json",
+      "source_sha256": "6d55c62f68d84d71a89a9441efd5f22fb793835e156fadbe77eff0f29bea7b95",
+      "stage_mode": "0644",
+      "stage_sha256": "6d55c62f68d84d71a89a9441efd5f22fb793835e156fadbe77eff0f29bea7b95"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "bbd4ac3a6bb1772a434f347b51cd84b00245c5d49e4d684c1205603fe78a015a",
+      "path": "usr/share/luci/statistics/plugins/curl.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "bbd4ac3a6bb1772a434f347b51cd84b00245c5d49e4d684c1205603fe78a015a",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/curl.json",
+      "source_sha256": "bbd4ac3a6bb1772a434f347b51cd84b00245c5d49e4d684c1205603fe78a015a",
+      "stage_mode": "0644",
+      "stage_sha256": "bbd4ac3a6bb1772a434f347b51cd84b00245c5d49e4d684c1205603fe78a015a"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "158586e5f5c0b039027e80524134d18016629a6dfaa009cb2f5736b153ab6a14",
+      "path": "usr/share/luci/statistics/plugins/df.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "158586e5f5c0b039027e80524134d18016629a6dfaa009cb2f5736b153ab6a14",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/df.json",
+      "source_sha256": "158586e5f5c0b039027e80524134d18016629a6dfaa009cb2f5736b153ab6a14",
+      "stage_mode": "0644",
+      "stage_sha256": "158586e5f5c0b039027e80524134d18016629a6dfaa009cb2f5736b153ab6a14"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "5414d22957c063f60cfaaacd54e51c288fa14674d8424ad9d8e8e45276110c19",
+      "path": "usr/share/luci/statistics/plugins/dhcpleases.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "5414d22957c063f60cfaaacd54e51c288fa14674d8424ad9d8e8e45276110c19",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/dhcpleases.json",
+      "source_sha256": "5414d22957c063f60cfaaacd54e51c288fa14674d8424ad9d8e8e45276110c19",
+      "stage_mode": "0644",
+      "stage_sha256": "5414d22957c063f60cfaaacd54e51c288fa14674d8424ad9d8e8e45276110c19"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "2ee0e9f43da5dc214dad908df280bf8a08b3d82dce6b18a63b04e8abf7dd8b42",
+      "path": "usr/share/luci/statistics/plugins/disk.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "2ee0e9f43da5dc214dad908df280bf8a08b3d82dce6b18a63b04e8abf7dd8b42",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/disk.json",
+      "source_sha256": "2ee0e9f43da5dc214dad908df280bf8a08b3d82dce6b18a63b04e8abf7dd8b42",
+      "stage_mode": "0644",
+      "stage_sha256": "2ee0e9f43da5dc214dad908df280bf8a08b3d82dce6b18a63b04e8abf7dd8b42"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a8ef976c60fab411090242a39e751f63ad693e86e371875537277a3b345f76ec",
+      "path": "usr/share/luci/statistics/plugins/dns.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a8ef976c60fab411090242a39e751f63ad693e86e371875537277a3b345f76ec",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/dns.json",
+      "source_sha256": "a8ef976c60fab411090242a39e751f63ad693e86e371875537277a3b345f76ec",
+      "stage_mode": "0644",
+      "stage_sha256": "a8ef976c60fab411090242a39e751f63ad693e86e371875537277a3b345f76ec"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "3d518006dd4e3a195b6ca9cb22bba88df87e98bb31783b1367494b4e44ea0b4c",
+      "path": "usr/share/luci/statistics/plugins/email.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "3d518006dd4e3a195b6ca9cb22bba88df87e98bb31783b1367494b4e44ea0b4c",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/email.json",
+      "source_sha256": "3d518006dd4e3a195b6ca9cb22bba88df87e98bb31783b1367494b4e44ea0b4c",
+      "stage_mode": "0644",
+      "stage_sha256": "3d518006dd4e3a195b6ca9cb22bba88df87e98bb31783b1367494b4e44ea0b4c"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "d678c9ccd8befaf221aed4cafaf3c3db37b7e8f4cbaff6ae019814b313cc5c6e",
+      "path": "usr/share/luci/statistics/plugins/entropy.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "d678c9ccd8befaf221aed4cafaf3c3db37b7e8f4cbaff6ae019814b313cc5c6e",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/entropy.json",
+      "source_sha256": "d678c9ccd8befaf221aed4cafaf3c3db37b7e8f4cbaff6ae019814b313cc5c6e",
+      "stage_mode": "0644",
+      "stage_sha256": "d678c9ccd8befaf221aed4cafaf3c3db37b7e8f4cbaff6ae019814b313cc5c6e"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a7672e726f3f7ee71ecac395291c60c14fa5016166b3fcf66f465c38c4fe8db0",
+      "path": "usr/share/luci/statistics/plugins/exec.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a7672e726f3f7ee71ecac395291c60c14fa5016166b3fcf66f465c38c4fe8db0",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/exec.json",
+      "source_sha256": "a7672e726f3f7ee71ecac395291c60c14fa5016166b3fcf66f465c38c4fe8db0",
+      "stage_mode": "0644",
+      "stage_sha256": "a7672e726f3f7ee71ecac395291c60c14fa5016166b3fcf66f465c38c4fe8db0"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "aafa5c0ec826ba86b5d1c7da0754abd8cad8864f5ff02e3db038ef4ecc96f687",
+      "path": "usr/share/luci/statistics/plugins/interface.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "aafa5c0ec826ba86b5d1c7da0754abd8cad8864f5ff02e3db038ef4ecc96f687",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/interface.json",
+      "source_sha256": "aafa5c0ec826ba86b5d1c7da0754abd8cad8864f5ff02e3db038ef4ecc96f687",
+      "stage_mode": "0644",
+      "stage_sha256": "aafa5c0ec826ba86b5d1c7da0754abd8cad8864f5ff02e3db038ef4ecc96f687"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "4a4b55357a0b7596b093abc91a9ddc4393ec98a3d3d403ef6f14365da5fbb077",
+      "path": "usr/share/luci/statistics/plugins/ipstatistics.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "4a4b55357a0b7596b093abc91a9ddc4393ec98a3d3d403ef6f14365da5fbb077",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/ipstatistics.json",
+      "source_sha256": "4a4b55357a0b7596b093abc91a9ddc4393ec98a3d3d403ef6f14365da5fbb077",
+      "stage_mode": "0644",
+      "stage_sha256": "4a4b55357a0b7596b093abc91a9ddc4393ec98a3d3d403ef6f14365da5fbb077"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "19e5b9171d380d7525487d767b766c88cb060e123eee837f9c801dad595c1c06",
+      "path": "usr/share/luci/statistics/plugins/iptables.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "19e5b9171d380d7525487d767b766c88cb060e123eee837f9c801dad595c1c06",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/iptables.json",
+      "source_sha256": "19e5b9171d380d7525487d767b766c88cb060e123eee837f9c801dad595c1c06",
+      "stage_mode": "0644",
+      "stage_sha256": "19e5b9171d380d7525487d767b766c88cb060e123eee837f9c801dad595c1c06"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "58c48401a3990b7527375211a66797603180dcc681f9e3dd34eae1a0e810ae59",
+      "path": "usr/share/luci/statistics/plugins/irq.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "58c48401a3990b7527375211a66797603180dcc681f9e3dd34eae1a0e810ae59",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/irq.json",
+      "source_sha256": "58c48401a3990b7527375211a66797603180dcc681f9e3dd34eae1a0e810ae59",
+      "stage_mode": "0644",
+      "stage_sha256": "58c48401a3990b7527375211a66797603180dcc681f9e3dd34eae1a0e810ae59"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "4655cd3c55bcb02d8c300eb19719fc1dbb62934565f9a0a1e1a22c543bb5f810",
+      "path": "usr/share/luci/statistics/plugins/iwinfo.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "4655cd3c55bcb02d8c300eb19719fc1dbb62934565f9a0a1e1a22c543bb5f810",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/iwinfo.json",
+      "source_sha256": "4655cd3c55bcb02d8c300eb19719fc1dbb62934565f9a0a1e1a22c543bb5f810",
+      "stage_mode": "0644",
+      "stage_sha256": "4655cd3c55bcb02d8c300eb19719fc1dbb62934565f9a0a1e1a22c543bb5f810"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "d26740334a04c4189ae17e573ba271fbcd47b71e8f795ff2b180904b29cfae3d",
+      "path": "usr/share/luci/statistics/plugins/load.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "d26740334a04c4189ae17e573ba271fbcd47b71e8f795ff2b180904b29cfae3d",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/load.json",
+      "source_sha256": "d26740334a04c4189ae17e573ba271fbcd47b71e8f795ff2b180904b29cfae3d",
+      "stage_mode": "0644",
+      "stage_sha256": "d26740334a04c4189ae17e573ba271fbcd47b71e8f795ff2b180904b29cfae3d"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "5dd234e5d0ffeb2044d89f2757285303c58ec7829fcf1b18c8c740ab3f660a9a",
+      "path": "usr/share/luci/statistics/plugins/memory.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "5dd234e5d0ffeb2044d89f2757285303c58ec7829fcf1b18c8c740ab3f660a9a",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/memory.json",
+      "source_sha256": "5dd234e5d0ffeb2044d89f2757285303c58ec7829fcf1b18c8c740ab3f660a9a",
+      "stage_mode": "0644",
+      "stage_sha256": "5dd234e5d0ffeb2044d89f2757285303c58ec7829fcf1b18c8c740ab3f660a9a"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "959ae045569b6e6db3f4a07e2d35c843d0c9c1c18ff247a6e28fcfe96da9bcd4",
+      "path": "usr/share/luci/statistics/plugins/mqtt.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "959ae045569b6e6db3f4a07e2d35c843d0c9c1c18ff247a6e28fcfe96da9bcd4",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/mqtt.json",
+      "source_sha256": "959ae045569b6e6db3f4a07e2d35c843d0c9c1c18ff247a6e28fcfe96da9bcd4",
+      "stage_mode": "0644",
+      "stage_sha256": "959ae045569b6e6db3f4a07e2d35c843d0c9c1c18ff247a6e28fcfe96da9bcd4"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "b694777e7c04a59cf3d56138f73073e9c467db7448584f53cdcef1e23755b96a",
+      "path": "usr/share/luci/statistics/plugins/netlink.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "b694777e7c04a59cf3d56138f73073e9c467db7448584f53cdcef1e23755b96a",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/netlink.json",
+      "source_sha256": "b694777e7c04a59cf3d56138f73073e9c467db7448584f53cdcef1e23755b96a",
+      "stage_mode": "0644",
+      "stage_sha256": "b694777e7c04a59cf3d56138f73073e9c467db7448584f53cdcef1e23755b96a"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "e566b94160663a3db782147cd8ef874b285cf43ac737afe5b87436d70c909a26",
+      "path": "usr/share/luci/statistics/plugins/network.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "e566b94160663a3db782147cd8ef874b285cf43ac737afe5b87436d70c909a26",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/network.json",
+      "source_sha256": "e566b94160663a3db782147cd8ef874b285cf43ac737afe5b87436d70c909a26",
+      "stage_mode": "0644",
+      "stage_sha256": "e566b94160663a3db782147cd8ef874b285cf43ac737afe5b87436d70c909a26"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "c66b418cc08aa3b6cb8e117a8656afee0b5bc07b5393062fad8ea5bdcda78b50",
+      "path": "usr/share/luci/statistics/plugins/nut.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "c66b418cc08aa3b6cb8e117a8656afee0b5bc07b5393062fad8ea5bdcda78b50",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/nut.json",
+      "source_sha256": "c66b418cc08aa3b6cb8e117a8656afee0b5bc07b5393062fad8ea5bdcda78b50",
+      "stage_mode": "0644",
+      "stage_sha256": "c66b418cc08aa3b6cb8e117a8656afee0b5bc07b5393062fad8ea5bdcda78b50"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "7326e0291fda2a3f8e2600381b5229cd7c65ae3a71983d6c17aba618a1c6f45e",
+      "path": "usr/share/luci/statistics/plugins/olsrd.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "7326e0291fda2a3f8e2600381b5229cd7c65ae3a71983d6c17aba618a1c6f45e",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/olsrd.json",
+      "source_sha256": "7326e0291fda2a3f8e2600381b5229cd7c65ae3a71983d6c17aba618a1c6f45e",
+      "stage_mode": "0644",
+      "stage_sha256": "7326e0291fda2a3f8e2600381b5229cd7c65ae3a71983d6c17aba618a1c6f45e"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "78d878e9d43925aa9e3a3df13ff5922237e26bd2f592f7d87dd22864a1970fb4",
+      "path": "usr/share/luci/statistics/plugins/openvpn.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "78d878e9d43925aa9e3a3df13ff5922237e26bd2f592f7d87dd22864a1970fb4",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/openvpn.json",
+      "source_sha256": "78d878e9d43925aa9e3a3df13ff5922237e26bd2f592f7d87dd22864a1970fb4",
+      "stage_mode": "0644",
+      "stage_sha256": "78d878e9d43925aa9e3a3df13ff5922237e26bd2f592f7d87dd22864a1970fb4"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "8fcb36be05d08b396214f05169aef6f89068da50314befc24f22b4be77960b4c",
+      "path": "usr/share/luci/statistics/plugins/ping.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "8fcb36be05d08b396214f05169aef6f89068da50314befc24f22b4be77960b4c",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/ping.json",
+      "source_sha256": "8fcb36be05d08b396214f05169aef6f89068da50314befc24f22b4be77960b4c",
+      "stage_mode": "0644",
+      "stage_sha256": "8fcb36be05d08b396214f05169aef6f89068da50314befc24f22b4be77960b4c"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a1e7b4c17a76f3d4523ed9a8be805d65536cf9e6c599416a460310f4edf8e29e",
+      "path": "usr/share/luci/statistics/plugins/processes.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a1e7b4c17a76f3d4523ed9a8be805d65536cf9e6c599416a460310f4edf8e29e",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/processes.json",
+      "source_sha256": "a1e7b4c17a76f3d4523ed9a8be805d65536cf9e6c599416a460310f4edf8e29e",
+      "stage_mode": "0644",
+      "stage_sha256": "a1e7b4c17a76f3d4523ed9a8be805d65536cf9e6c599416a460310f4edf8e29e"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "529afc12c632f8b682add58857e8d3052e3478b29e322b342b79930922d46745",
+      "path": "usr/share/luci/statistics/plugins/rrdtool.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "529afc12c632f8b682add58857e8d3052e3478b29e322b342b79930922d46745",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/rrdtool.json",
+      "source_sha256": "529afc12c632f8b682add58857e8d3052e3478b29e322b342b79930922d46745",
+      "stage_mode": "0644",
+      "stage_sha256": "529afc12c632f8b682add58857e8d3052e3478b29e322b342b79930922d46745"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "1a78ab2b46b7db544bf410c0683ec2418a281e57580a18901340a4683af586ff",
+      "path": "usr/share/luci/statistics/plugins/sensors.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "1a78ab2b46b7db544bf410c0683ec2418a281e57580a18901340a4683af586ff",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/sensors.json",
+      "source_sha256": "1a78ab2b46b7db544bf410c0683ec2418a281e57580a18901340a4683af586ff",
+      "stage_mode": "0644",
+      "stage_sha256": "1a78ab2b46b7db544bf410c0683ec2418a281e57580a18901340a4683af586ff"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "8f129aaa980699763f90a46e8f410717ae60a6149684a7b57799be125630e73f",
+      "path": "usr/share/luci/statistics/plugins/snmp6.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "8f129aaa980699763f90a46e8f410717ae60a6149684a7b57799be125630e73f",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/snmp6.json",
+      "source_sha256": "8f129aaa980699763f90a46e8f410717ae60a6149684a7b57799be125630e73f",
+      "stage_mode": "0644",
+      "stage_sha256": "8f129aaa980699763f90a46e8f410717ae60a6149684a7b57799be125630e73f"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "9afaea99d4ec9c04edd11188cdf92575c23c526a58761873560f81992a9f67f2",
+      "path": "usr/share/luci/statistics/plugins/splash_leases.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "9afaea99d4ec9c04edd11188cdf92575c23c526a58761873560f81992a9f67f2",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/splash_leases.json",
+      "source_sha256": "9afaea99d4ec9c04edd11188cdf92575c23c526a58761873560f81992a9f67f2",
+      "stage_mode": "0644",
+      "stage_sha256": "9afaea99d4ec9c04edd11188cdf92575c23c526a58761873560f81992a9f67f2"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "e2652185a8d2caa8c048b5ba9d79e4515feebbe030eba1c09d181485ee7ac4cc",
+      "path": "usr/share/luci/statistics/plugins/syslog.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "e2652185a8d2caa8c048b5ba9d79e4515feebbe030eba1c09d181485ee7ac4cc",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/syslog.json",
+      "source_sha256": "e2652185a8d2caa8c048b5ba9d79e4515feebbe030eba1c09d181485ee7ac4cc",
+      "stage_mode": "0644",
+      "stage_sha256": "e2652185a8d2caa8c048b5ba9d79e4515feebbe030eba1c09d181485ee7ac4cc"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "5f785485863f589ff84633a34abd0540997b624034bd2e741b65d6d125bc9023",
+      "path": "usr/share/luci/statistics/plugins/tcpconns.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "5f785485863f589ff84633a34abd0540997b624034bd2e741b65d6d125bc9023",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/tcpconns.json",
+      "source_sha256": "5f785485863f589ff84633a34abd0540997b624034bd2e741b65d6d125bc9023",
+      "stage_mode": "0644",
+      "stage_sha256": "5f785485863f589ff84633a34abd0540997b624034bd2e741b65d6d125bc9023"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "eea4ea8cf9a4837da8bbb6ba4f8e67bdf0c669bfc9d41ab08dc64501bb45c1c0",
+      "path": "usr/share/luci/statistics/plugins/thermal.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "eea4ea8cf9a4837da8bbb6ba4f8e67bdf0c669bfc9d41ab08dc64501bb45c1c0",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/thermal.json",
+      "source_sha256": "eea4ea8cf9a4837da8bbb6ba4f8e67bdf0c669bfc9d41ab08dc64501bb45c1c0",
+      "stage_mode": "0644",
+      "stage_sha256": "eea4ea8cf9a4837da8bbb6ba4f8e67bdf0c669bfc9d41ab08dc64501bb45c1c0"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "e7be6fe8c4c90b0b00f26d4aab04b27038d1883e0e13d429ea2c9070321fc587",
+      "path": "usr/share/luci/statistics/plugins/unixsock.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "e7be6fe8c4c90b0b00f26d4aab04b27038d1883e0e13d429ea2c9070321fc587",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/unixsock.json",
+      "source_sha256": "e7be6fe8c4c90b0b00f26d4aab04b27038d1883e0e13d429ea2c9070321fc587",
+      "stage_mode": "0644",
+      "stage_sha256": "e7be6fe8c4c90b0b00f26d4aab04b27038d1883e0e13d429ea2c9070321fc587"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "05e2dc4eb7681204cbf32765a4ac46666874eb890744abefbace898893a7fc87",
+      "path": "usr/share/luci/statistics/plugins/uptime.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "05e2dc4eb7681204cbf32765a4ac46666874eb890744abefbace898893a7fc87",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/luci/statistics/plugins/uptime.json",
+      "source_sha256": "05e2dc4eb7681204cbf32765a4ac46666874eb890744abefbace898893a7fc87",
+      "stage_mode": "0644",
+      "stage_sha256": "05e2dc4eb7681204cbf32765a4ac46666874eb890744abefbace898893a7fc87"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "af0a978cf8812b919b51fccffadf51c2437776dfa3eb62f0963eeabf29e52a82",
+      "path": "usr/share/rpcd/acl.d/luci-app-statistics.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "af0a978cf8812b919b51fccffadf51c2437776dfa3eb62f0963eeabf29e52a82",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/root/usr/share/rpcd/acl.d/luci-app-statistics.json",
+      "source_sha256": "af0a978cf8812b919b51fccffadf51c2437776dfa3eb62f0963eeabf29e52a82",
+      "stage_mode": "0644",
+      "stage_sha256": "af0a978cf8812b919b51fccffadf51c2437776dfa3eb62f0963eeabf29e52a82"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "0f07fd36fcfb3420c03688048a29ed27df55c461a2b6a07d29954c31e2e13eb1",
+      "path": "www/luci-static/resources/statistics/rrdtool.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "0f07fd36fcfb3420c03688048a29ed27df55c461a2b6a07d29954c31e2e13eb1",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool.js",
+      "source_sha256": "0f07fd36fcfb3420c03688048a29ed27df55c461a2b6a07d29954c31e2e13eb1",
+      "stage_mode": "0644",
+      "stage_sha256": "0f07fd36fcfb3420c03688048a29ed27df55c461a2b6a07d29954c31e2e13eb1"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "33a70feacfaeddceacbb814fb3e8fa204ab0cc36ed2843fdb4be69acd61acae0",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/apcups.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "33a70feacfaeddceacbb814fb3e8fa204ab0cc36ed2843fdb4be69acd61acae0",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/apcups.js",
+      "source_sha256": "33a70feacfaeddceacbb814fb3e8fa204ab0cc36ed2843fdb4be69acd61acae0",
+      "stage_mode": "0644",
+      "stage_sha256": "33a70feacfaeddceacbb814fb3e8fa204ab0cc36ed2843fdb4be69acd61acae0"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a364f1006147158fe1836f07c3d0a439a8ec0971851356c079102d38bddecd9a",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/chrony.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a364f1006147158fe1836f07c3d0a439a8ec0971851356c079102d38bddecd9a",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/chrony.js",
+      "source_sha256": "a364f1006147158fe1836f07c3d0a439a8ec0971851356c079102d38bddecd9a",
+      "stage_mode": "0644",
+      "stage_sha256": "a364f1006147158fe1836f07c3d0a439a8ec0971851356c079102d38bddecd9a"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "15c961c11f7ed6c8216fe6958bcedf53fc1ead7674f9feb8dd612dafc583605a",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/conntrack.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "15c961c11f7ed6c8216fe6958bcedf53fc1ead7674f9feb8dd612dafc583605a",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/conntrack.js",
+      "source_sha256": "15c961c11f7ed6c8216fe6958bcedf53fc1ead7674f9feb8dd612dafc583605a",
+      "stage_mode": "0644",
+      "stage_sha256": "15c961c11f7ed6c8216fe6958bcedf53fc1ead7674f9feb8dd612dafc583605a"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "dc032c9b93ab8a96e0fc8317ee0e42f4e7d7afbeb060fafb59736d2772102cb6",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/contextswitch.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "dc032c9b93ab8a96e0fc8317ee0e42f4e7d7afbeb060fafb59736d2772102cb6",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/contextswitch.js",
+      "source_sha256": "dc032c9b93ab8a96e0fc8317ee0e42f4e7d7afbeb060fafb59736d2772102cb6",
+      "stage_mode": "0644",
+      "stage_sha256": "dc032c9b93ab8a96e0fc8317ee0e42f4e7d7afbeb060fafb59736d2772102cb6"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "60447d97d2564f4d7bb1c79db7084331c8471d567b143cf8fc28346c4a89ce58",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/cpu.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "60447d97d2564f4d7bb1c79db7084331c8471d567b143cf8fc28346c4a89ce58",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/cpu.js",
+      "source_sha256": "60447d97d2564f4d7bb1c79db7084331c8471d567b143cf8fc28346c4a89ce58",
+      "stage_mode": "0644",
+      "stage_sha256": "60447d97d2564f4d7bb1c79db7084331c8471d567b143cf8fc28346c4a89ce58"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "ac521b14f7178e3c54845859ab652728a094bbbffca367e4e7ecfb467d807dac",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/cpufreq.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "ac521b14f7178e3c54845859ab652728a094bbbffca367e4e7ecfb467d807dac",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/cpufreq.js",
+      "source_sha256": "ac521b14f7178e3c54845859ab652728a094bbbffca367e4e7ecfb467d807dac",
+      "stage_mode": "0644",
+      "stage_sha256": "ac521b14f7178e3c54845859ab652728a094bbbffca367e4e7ecfb467d807dac"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "449a050389c8e551bad8ef2ecc644bbd653fa93138d1bf63acdc3eb53ea3971e",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/curl.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "449a050389c8e551bad8ef2ecc644bbd653fa93138d1bf63acdc3eb53ea3971e",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/curl.js",
+      "source_sha256": "449a050389c8e551bad8ef2ecc644bbd653fa93138d1bf63acdc3eb53ea3971e",
+      "stage_mode": "0644",
+      "stage_sha256": "449a050389c8e551bad8ef2ecc644bbd653fa93138d1bf63acdc3eb53ea3971e"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a07a902b279e94e6ce0fbe753dbb779592dd24d4e63cab5cacc1a9081d1e92a5",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/df.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a07a902b279e94e6ce0fbe753dbb779592dd24d4e63cab5cacc1a9081d1e92a5",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/df.js",
+      "source_sha256": "a07a902b279e94e6ce0fbe753dbb779592dd24d4e63cab5cacc1a9081d1e92a5",
+      "stage_mode": "0644",
+      "stage_sha256": "a07a902b279e94e6ce0fbe753dbb779592dd24d4e63cab5cacc1a9081d1e92a5"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "e3b56449168d337d2fd65f10b263d3a11c6d7585b4016600f834d5edf318c307",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/dhcpleases.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "e3b56449168d337d2fd65f10b263d3a11c6d7585b4016600f834d5edf318c307",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/dhcpleases.js",
+      "source_sha256": "e3b56449168d337d2fd65f10b263d3a11c6d7585b4016600f834d5edf318c307",
+      "stage_mode": "0644",
+      "stage_sha256": "e3b56449168d337d2fd65f10b263d3a11c6d7585b4016600f834d5edf318c307"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "15105c3524a6747a9d70ccd31b9fa9b558630f827c8f6c503568221c49c78d90",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/disk.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "15105c3524a6747a9d70ccd31b9fa9b558630f827c8f6c503568221c49c78d90",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/disk.js",
+      "source_sha256": "15105c3524a6747a9d70ccd31b9fa9b558630f827c8f6c503568221c49c78d90",
+      "stage_mode": "0644",
+      "stage_sha256": "15105c3524a6747a9d70ccd31b9fa9b558630f827c8f6c503568221c49c78d90"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "634a202ad3e0fe8c02f60a92bb366ef063ff8d9fb69a905dde2a67c1fa3f9324",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/dns.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "634a202ad3e0fe8c02f60a92bb366ef063ff8d9fb69a905dde2a67c1fa3f9324",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/dns.js",
+      "source_sha256": "634a202ad3e0fe8c02f60a92bb366ef063ff8d9fb69a905dde2a67c1fa3f9324",
+      "stage_mode": "0644",
+      "stage_sha256": "634a202ad3e0fe8c02f60a92bb366ef063ff8d9fb69a905dde2a67c1fa3f9324"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "c7987bd3505fb1cc2f2676db15d16f4fba53eb966e91eb3a9f4259f69c4913bb",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/dsl.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "c7987bd3505fb1cc2f2676db15d16f4fba53eb966e91eb3a9f4259f69c4913bb",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/dsl.js",
+      "source_sha256": "c7987bd3505fb1cc2f2676db15d16f4fba53eb966e91eb3a9f4259f69c4913bb",
+      "stage_mode": "0644",
+      "stage_sha256": "c7987bd3505fb1cc2f2676db15d16f4fba53eb966e91eb3a9f4259f69c4913bb"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "cd3ea2181d9b807e8cad44a2bd64c95d5b07f7bb7df3f6803f6f62cecf886375",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/entropy.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "cd3ea2181d9b807e8cad44a2bd64c95d5b07f7bb7df3f6803f6f62cecf886375",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/entropy.js",
+      "source_sha256": "cd3ea2181d9b807e8cad44a2bd64c95d5b07f7bb7df3f6803f6f62cecf886375",
+      "stage_mode": "0644",
+      "stage_sha256": "cd3ea2181d9b807e8cad44a2bd64c95d5b07f7bb7df3f6803f6f62cecf886375"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "466ddbbe41818aea270de9eb28c259a3623ce408065748bacb460046e78f00a1",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/interface.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "466ddbbe41818aea270de9eb28c259a3623ce408065748bacb460046e78f00a1",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/interface.js",
+      "source_sha256": "466ddbbe41818aea270de9eb28c259a3623ce408065748bacb460046e78f00a1",
+      "stage_mode": "0644",
+      "stage_sha256": "466ddbbe41818aea270de9eb28c259a3623ce408065748bacb460046e78f00a1"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "9fcc805d5688d535761f21dca2f697f27f3c0eefa2167673643cfdebe1e762f7",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/ip6tables.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "9fcc805d5688d535761f21dca2f697f27f3c0eefa2167673643cfdebe1e762f7",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/ip6tables.js",
+      "source_sha256": "9fcc805d5688d535761f21dca2f697f27f3c0eefa2167673643cfdebe1e762f7",
+      "stage_mode": "0644",
+      "stage_sha256": "9fcc805d5688d535761f21dca2f697f27f3c0eefa2167673643cfdebe1e762f7"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "0213e240075e739b2689b0ecc145b09b159e08c7a00d37c88985b92124facccb",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/ipstatistics.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "0213e240075e739b2689b0ecc145b09b159e08c7a00d37c88985b92124facccb",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/ipstatistics.js",
+      "source_sha256": "0213e240075e739b2689b0ecc145b09b159e08c7a00d37c88985b92124facccb",
+      "stage_mode": "0644",
+      "stage_sha256": "0213e240075e739b2689b0ecc145b09b159e08c7a00d37c88985b92124facccb"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "022382410d85d8a23d7e1bbf77812cb153826ffb3ff69f91fc2a225688810298",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/iptables.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "022382410d85d8a23d7e1bbf77812cb153826ffb3ff69f91fc2a225688810298",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/iptables.js",
+      "source_sha256": "022382410d85d8a23d7e1bbf77812cb153826ffb3ff69f91fc2a225688810298",
+      "stage_mode": "0644",
+      "stage_sha256": "022382410d85d8a23d7e1bbf77812cb153826ffb3ff69f91fc2a225688810298"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "8fa2a024cf51c24523665a4731891f48f9eb39075b95773d0d537a3cd44d52ac",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/irq.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "8fa2a024cf51c24523665a4731891f48f9eb39075b95773d0d537a3cd44d52ac",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/irq.js",
+      "source_sha256": "8fa2a024cf51c24523665a4731891f48f9eb39075b95773d0d537a3cd44d52ac",
+      "stage_mode": "0644",
+      "stage_sha256": "8fa2a024cf51c24523665a4731891f48f9eb39075b95773d0d537a3cd44d52ac"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "64712df14dacd749c4898ae114a42f94a0789e6ef7466d88f6e8f4655407a311",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/iwinfo.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "64712df14dacd749c4898ae114a42f94a0789e6ef7466d88f6e8f4655407a311",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/iwinfo.js",
+      "source_sha256": "64712df14dacd749c4898ae114a42f94a0789e6ef7466d88f6e8f4655407a311",
+      "stage_mode": "0644",
+      "stage_sha256": "64712df14dacd749c4898ae114a42f94a0789e6ef7466d88f6e8f4655407a311"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "2e60daba8070dc94a6237df54090aa8bdce77ccfd9210c9836ea80a5155ca603",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/load.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "2e60daba8070dc94a6237df54090aa8bdce77ccfd9210c9836ea80a5155ca603",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/load.js",
+      "source_sha256": "2e60daba8070dc94a6237df54090aa8bdce77ccfd9210c9836ea80a5155ca603",
+      "stage_mode": "0644",
+      "stage_sha256": "2e60daba8070dc94a6237df54090aa8bdce77ccfd9210c9836ea80a5155ca603"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a3b75fbb0c72c8071efb6b1445df63810614aebe82056b892031d2a38f8d93b9",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/memory.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a3b75fbb0c72c8071efb6b1445df63810614aebe82056b892031d2a38f8d93b9",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/memory.js",
+      "source_sha256": "a3b75fbb0c72c8071efb6b1445df63810614aebe82056b892031d2a38f8d93b9",
+      "stage_mode": "0644",
+      "stage_sha256": "a3b75fbb0c72c8071efb6b1445df63810614aebe82056b892031d2a38f8d93b9"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "f38e5fb5a695185f8a0890da6d4f0919ee2119c069f1f93c4e8febc62c8353a1",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/netlink.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "f38e5fb5a695185f8a0890da6d4f0919ee2119c069f1f93c4e8febc62c8353a1",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/netlink.js",
+      "source_sha256": "f38e5fb5a695185f8a0890da6d4f0919ee2119c069f1f93c4e8febc62c8353a1",
+      "stage_mode": "0644",
+      "stage_sha256": "f38e5fb5a695185f8a0890da6d4f0919ee2119c069f1f93c4e8febc62c8353a1"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "562f7768d02a88c11ab94c6bae6f7e1acd2aaffca9f94f2c3780701858b0f70f",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/nut.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "562f7768d02a88c11ab94c6bae6f7e1acd2aaffca9f94f2c3780701858b0f70f",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/nut.js",
+      "source_sha256": "562f7768d02a88c11ab94c6bae6f7e1acd2aaffca9f94f2c3780701858b0f70f",
+      "stage_mode": "0644",
+      "stage_sha256": "562f7768d02a88c11ab94c6bae6f7e1acd2aaffca9f94f2c3780701858b0f70f"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "8f97e4fd6b434520223b4fa74feb55a184a3dbd826ed09492809ddd34dd0ac7b",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/olsrd.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "8f97e4fd6b434520223b4fa74feb55a184a3dbd826ed09492809ddd34dd0ac7b",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/olsrd.js",
+      "source_sha256": "8f97e4fd6b434520223b4fa74feb55a184a3dbd826ed09492809ddd34dd0ac7b",
+      "stage_mode": "0644",
+      "stage_sha256": "8f97e4fd6b434520223b4fa74feb55a184a3dbd826ed09492809ddd34dd0ac7b"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "12eafcc3bdaaf694b75f51b01dbb80a97ab688878e3a3b40805eaa151b42b76a",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/openvpn.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "12eafcc3bdaaf694b75f51b01dbb80a97ab688878e3a3b40805eaa151b42b76a",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/openvpn.js",
+      "source_sha256": "12eafcc3bdaaf694b75f51b01dbb80a97ab688878e3a3b40805eaa151b42b76a",
+      "stage_mode": "0644",
+      "stage_sha256": "12eafcc3bdaaf694b75f51b01dbb80a97ab688878e3a3b40805eaa151b42b76a"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "04178104501124baccdd963c50e8e307c4c4e778efecfd3cc03d4990b6942b73",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/ping.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "04178104501124baccdd963c50e8e307c4c4e778efecfd3cc03d4990b6942b73",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/ping.js",
+      "source_sha256": "04178104501124baccdd963c50e8e307c4c4e778efecfd3cc03d4990b6942b73",
+      "stage_mode": "0644",
+      "stage_sha256": "04178104501124baccdd963c50e8e307c4c4e778efecfd3cc03d4990b6942b73"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a66cdb8ff914b568fc9aa80737c6da94f378c3509b56c6c52fec1e250528c338",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/processes.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a66cdb8ff914b568fc9aa80737c6da94f378c3509b56c6c52fec1e250528c338",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/processes.js",
+      "source_sha256": "a66cdb8ff914b568fc9aa80737c6da94f378c3509b56c6c52fec1e250528c338",
+      "stage_mode": "0644",
+      "stage_sha256": "a66cdb8ff914b568fc9aa80737c6da94f378c3509b56c6c52fec1e250528c338"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "2c5e0ff3c8c6d6bba03875ef880d6eba1a53589b55c558b58c54804546c167e7",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/sensors.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "2c5e0ff3c8c6d6bba03875ef880d6eba1a53589b55c558b58c54804546c167e7",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/sensors.js",
+      "source_sha256": "2c5e0ff3c8c6d6bba03875ef880d6eba1a53589b55c558b58c54804546c167e7",
+      "stage_mode": "0644",
+      "stage_sha256": "2c5e0ff3c8c6d6bba03875ef880d6eba1a53589b55c558b58c54804546c167e7"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "aee87558564383f1c8771a7bcc0c3808b85ac04761f087eaadd7d02fecbe079d",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/snmp6.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "aee87558564383f1c8771a7bcc0c3808b85ac04761f087eaadd7d02fecbe079d",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/snmp6.js",
+      "source_sha256": "aee87558564383f1c8771a7bcc0c3808b85ac04761f087eaadd7d02fecbe079d",
+      "stage_mode": "0644",
+      "stage_sha256": "aee87558564383f1c8771a7bcc0c3808b85ac04761f087eaadd7d02fecbe079d"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "8dcf27b52f941ff3aba5f129b32b6c0ea999fa68eed0148bf11c1bd20409974d",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/splash_leases.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "8dcf27b52f941ff3aba5f129b32b6c0ea999fa68eed0148bf11c1bd20409974d",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/splash_leases.js",
+      "source_sha256": "8dcf27b52f941ff3aba5f129b32b6c0ea999fa68eed0148bf11c1bd20409974d",
+      "stage_mode": "0644",
+      "stage_sha256": "8dcf27b52f941ff3aba5f129b32b6c0ea999fa68eed0148bf11c1bd20409974d"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "c2e8446dcd995e5936141302512813a5174535a33f0aa135e87ac120beb9f473",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/sqm.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "c2e8446dcd995e5936141302512813a5174535a33f0aa135e87ac120beb9f473",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/sqm.js",
+      "source_sha256": "c2e8446dcd995e5936141302512813a5174535a33f0aa135e87ac120beb9f473",
+      "stage_mode": "0644",
+      "stage_sha256": "c2e8446dcd995e5936141302512813a5174535a33f0aa135e87ac120beb9f473"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "e5dff6aa0a8a2140ba7d85b91f01776a4ae1e26c7a5de4ff527d01510414f71d",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/sqmcake.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "e5dff6aa0a8a2140ba7d85b91f01776a4ae1e26c7a5de4ff527d01510414f71d",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/sqmcake.js",
+      "source_sha256": "e5dff6aa0a8a2140ba7d85b91f01776a4ae1e26c7a5de4ff527d01510414f71d",
+      "stage_mode": "0644",
+      "stage_sha256": "e5dff6aa0a8a2140ba7d85b91f01776a4ae1e26c7a5de4ff527d01510414f71d"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "7c6bc58b5074112771e213047c2655a16ee05cb76e3156e0218254a0423d0629",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/tcpconns.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "7c6bc58b5074112771e213047c2655a16ee05cb76e3156e0218254a0423d0629",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/tcpconns.js",
+      "source_sha256": "7c6bc58b5074112771e213047c2655a16ee05cb76e3156e0218254a0423d0629",
+      "stage_mode": "0644",
+      "stage_sha256": "7c6bc58b5074112771e213047c2655a16ee05cb76e3156e0218254a0423d0629"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "4d38910d4445a6be7f0cd2c24ff8bb86ddb7251f92f887d3f4b2139323dddf88",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/thermal.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "4d38910d4445a6be7f0cd2c24ff8bb86ddb7251f92f887d3f4b2139323dddf88",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/thermal.js",
+      "source_sha256": "4d38910d4445a6be7f0cd2c24ff8bb86ddb7251f92f887d3f4b2139323dddf88",
+      "stage_mode": "0644",
+      "stage_sha256": "4d38910d4445a6be7f0cd2c24ff8bb86ddb7251f92f887d3f4b2139323dddf88"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "b1bee3cdf21bbc1a9998d51eba4f6f63860b8d093f753af869b54fcdbf2cff78",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/uptime.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "b1bee3cdf21bbc1a9998d51eba4f6f63860b8d093f753af869b54fcdbf2cff78",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/uptime.js",
+      "source_sha256": "b1bee3cdf21bbc1a9998d51eba4f6f63860b8d093f753af869b54fcdbf2cff78",
+      "stage_mode": "0644",
+      "stage_sha256": "b1bee3cdf21bbc1a9998d51eba4f6f63860b8d093f753af869b54fcdbf2cff78"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "7c294c4e0b094bb96277012267df3fb60040f2f0b32d1ea66880c4185e4cdd83",
+      "path": "www/luci-static/resources/statistics/rrdtool/definitions/users.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "7c294c4e0b094bb96277012267df3fb60040f2f0b32d1ea66880c4185e4cdd83",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/statistics/rrdtool/definitions/users.js",
+      "source_sha256": "7c294c4e0b094bb96277012267df3fb60040f2f0b32d1ea66880c4185e4cdd83",
+      "stage_mode": "0644",
+      "stage_sha256": "7c294c4e0b094bb96277012267df3fb60040f2f0b32d1ea66880c4185e4cdd83"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "32570c48253b47948e684db39612e9c15f7060869eac7391ec77cfb7fde7af59",
+      "path": "www/luci-static/resources/view/statistics/collectd.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "32570c48253b47948e684db39612e9c15f7060869eac7391ec77cfb7fde7af59",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/collectd.js",
+      "source_sha256": "32570c48253b47948e684db39612e9c15f7060869eac7391ec77cfb7fde7af59",
+      "stage_mode": "0644",
+      "stage_sha256": "32570c48253b47948e684db39612e9c15f7060869eac7391ec77cfb7fde7af59"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "ce754b60e48220fa86099044827ab9be1aee575b28a49f87c01bb5d5880d8bfa",
+      "path": "www/luci-static/resources/view/statistics/graphs.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "ce754b60e48220fa86099044827ab9be1aee575b28a49f87c01bb5d5880d8bfa",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/graphs.js",
+      "source_sha256": "ce754b60e48220fa86099044827ab9be1aee575b28a49f87c01bb5d5880d8bfa",
+      "stage_mode": "0644",
+      "stage_sha256": "ce754b60e48220fa86099044827ab9be1aee575b28a49f87c01bb5d5880d8bfa"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "77f10c81488543175fe06f7be046c94ef73ca2671f32a9e140afb95f5950871b",
+      "path": "www/luci-static/resources/view/statistics/plugins/apcups.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "77f10c81488543175fe06f7be046c94ef73ca2671f32a9e140afb95f5950871b",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/apcups.js",
+      "source_sha256": "77f10c81488543175fe06f7be046c94ef73ca2671f32a9e140afb95f5950871b",
+      "stage_mode": "0644",
+      "stage_sha256": "77f10c81488543175fe06f7be046c94ef73ca2671f32a9e140afb95f5950871b"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "cf890511815c474630307663023178d05787e8a4bfd80c8d156e1c33091e228e",
+      "path": "www/luci-static/resources/view/statistics/plugins/chrony.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "cf890511815c474630307663023178d05787e8a4bfd80c8d156e1c33091e228e",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/chrony.js",
+      "source_sha256": "cf890511815c474630307663023178d05787e8a4bfd80c8d156e1c33091e228e",
+      "stage_mode": "0644",
+      "stage_sha256": "cf890511815c474630307663023178d05787e8a4bfd80c8d156e1c33091e228e"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "9b4ff0503701488d989de27ed6a3a7de0fbd03e0222327e4dbf292c30eadf54b",
+      "path": "www/luci-static/resources/view/statistics/plugins/conntrack.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "9b4ff0503701488d989de27ed6a3a7de0fbd03e0222327e4dbf292c30eadf54b",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/conntrack.js",
+      "source_sha256": "9b4ff0503701488d989de27ed6a3a7de0fbd03e0222327e4dbf292c30eadf54b",
+      "stage_mode": "0644",
+      "stage_sha256": "9b4ff0503701488d989de27ed6a3a7de0fbd03e0222327e4dbf292c30eadf54b"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "71159bb90ace68d6101944eef6a8d08371999d4e6427395486f4dbd12abfcdd7",
+      "path": "www/luci-static/resources/view/statistics/plugins/contextswitch.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "71159bb90ace68d6101944eef6a8d08371999d4e6427395486f4dbd12abfcdd7",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/contextswitch.js",
+      "source_sha256": "71159bb90ace68d6101944eef6a8d08371999d4e6427395486f4dbd12abfcdd7",
+      "stage_mode": "0644",
+      "stage_sha256": "71159bb90ace68d6101944eef6a8d08371999d4e6427395486f4dbd12abfcdd7"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "1ef7c98785d2c7f6e3a466eb877091a66253076f91d615dcd643308b86a2e28c",
+      "path": "www/luci-static/resources/view/statistics/plugins/cpu.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "1ef7c98785d2c7f6e3a466eb877091a66253076f91d615dcd643308b86a2e28c",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/cpu.js",
+      "source_sha256": "1ef7c98785d2c7f6e3a466eb877091a66253076f91d615dcd643308b86a2e28c",
+      "stage_mode": "0644",
+      "stage_sha256": "1ef7c98785d2c7f6e3a466eb877091a66253076f91d615dcd643308b86a2e28c"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "7197c0177ffe2c63ebc62efa8bb2825f3248df7f994dcc314de83c877f7ed096",
+      "path": "www/luci-static/resources/view/statistics/plugins/cpufreq.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "7197c0177ffe2c63ebc62efa8bb2825f3248df7f994dcc314de83c877f7ed096",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/cpufreq.js",
+      "source_sha256": "7197c0177ffe2c63ebc62efa8bb2825f3248df7f994dcc314de83c877f7ed096",
+      "stage_mode": "0644",
+      "stage_sha256": "7197c0177ffe2c63ebc62efa8bb2825f3248df7f994dcc314de83c877f7ed096"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "5789877744a04b22078013f6c2dae7c19a56258d3bf3022cd69572628b250229",
+      "path": "www/luci-static/resources/view/statistics/plugins/csv.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "5789877744a04b22078013f6c2dae7c19a56258d3bf3022cd69572628b250229",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/csv.js",
+      "source_sha256": "5789877744a04b22078013f6c2dae7c19a56258d3bf3022cd69572628b250229",
+      "stage_mode": "0644",
+      "stage_sha256": "5789877744a04b22078013f6c2dae7c19a56258d3bf3022cd69572628b250229"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "d09a9119600716525bd2b75da58bbcec9743471ddfbaf27d8a859b90c2c785c4",
+      "path": "www/luci-static/resources/view/statistics/plugins/curl.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "d09a9119600716525bd2b75da58bbcec9743471ddfbaf27d8a859b90c2c785c4",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/curl.js",
+      "source_sha256": "d09a9119600716525bd2b75da58bbcec9743471ddfbaf27d8a859b90c2c785c4",
+      "stage_mode": "0644",
+      "stage_sha256": "d09a9119600716525bd2b75da58bbcec9743471ddfbaf27d8a859b90c2c785c4"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "da8926652dd494383673c9dc39f088c3a9aa48d50410af604f3386e29865b555",
+      "path": "www/luci-static/resources/view/statistics/plugins/df.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "da8926652dd494383673c9dc39f088c3a9aa48d50410af604f3386e29865b555",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/df.js",
+      "source_sha256": "da8926652dd494383673c9dc39f088c3a9aa48d50410af604f3386e29865b555",
+      "stage_mode": "0644",
+      "stage_sha256": "da8926652dd494383673c9dc39f088c3a9aa48d50410af604f3386e29865b555"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "290bba4ecdd53558a711447a79adbe05606f3b8cb6c81c8df88952a82d09bfc7",
+      "path": "www/luci-static/resources/view/statistics/plugins/dhcpleases.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "290bba4ecdd53558a711447a79adbe05606f3b8cb6c81c8df88952a82d09bfc7",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/dhcpleases.js",
+      "source_sha256": "290bba4ecdd53558a711447a79adbe05606f3b8cb6c81c8df88952a82d09bfc7",
+      "stage_mode": "0644",
+      "stage_sha256": "290bba4ecdd53558a711447a79adbe05606f3b8cb6c81c8df88952a82d09bfc7"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "8ae30b48b86716bcc77c31b7cb86999c242313a7ddd600be218e6aa832ea45fc",
+      "path": "www/luci-static/resources/view/statistics/plugins/disk.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "8ae30b48b86716bcc77c31b7cb86999c242313a7ddd600be218e6aa832ea45fc",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/disk.js",
+      "source_sha256": "8ae30b48b86716bcc77c31b7cb86999c242313a7ddd600be218e6aa832ea45fc",
+      "stage_mode": "0644",
+      "stage_sha256": "8ae30b48b86716bcc77c31b7cb86999c242313a7ddd600be218e6aa832ea45fc"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "ea5ec04c21caf3fd1b49c1eaf6089033c341c136cd4eceab42febedffeedf293",
+      "path": "www/luci-static/resources/view/statistics/plugins/dns.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "ea5ec04c21caf3fd1b49c1eaf6089033c341c136cd4eceab42febedffeedf293",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/dns.js",
+      "source_sha256": "ea5ec04c21caf3fd1b49c1eaf6089033c341c136cd4eceab42febedffeedf293",
+      "stage_mode": "0644",
+      "stage_sha256": "ea5ec04c21caf3fd1b49c1eaf6089033c341c136cd4eceab42febedffeedf293"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "8fbfa677ed853584e2db09f711b1a3581cb85ce373f270ae1d7447a3e9ae45aa",
+      "path": "www/luci-static/resources/view/statistics/plugins/email.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "8fbfa677ed853584e2db09f711b1a3581cb85ce373f270ae1d7447a3e9ae45aa",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/email.js",
+      "source_sha256": "8fbfa677ed853584e2db09f711b1a3581cb85ce373f270ae1d7447a3e9ae45aa",
+      "stage_mode": "0644",
+      "stage_sha256": "8fbfa677ed853584e2db09f711b1a3581cb85ce373f270ae1d7447a3e9ae45aa"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "91ee914f1d816e50754431170911daa8a57a3fcb32fb963da11a309cc0611c6f",
+      "path": "www/luci-static/resources/view/statistics/plugins/entropy.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "91ee914f1d816e50754431170911daa8a57a3fcb32fb963da11a309cc0611c6f",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/entropy.js",
+      "source_sha256": "91ee914f1d816e50754431170911daa8a57a3fcb32fb963da11a309cc0611c6f",
+      "stage_mode": "0644",
+      "stage_sha256": "91ee914f1d816e50754431170911daa8a57a3fcb32fb963da11a309cc0611c6f"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a349a8e9d5ad6ff4f20a048b6764bf86efee1c1858a668b791bad1482801619a",
+      "path": "www/luci-static/resources/view/statistics/plugins/exec.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a349a8e9d5ad6ff4f20a048b6764bf86efee1c1858a668b791bad1482801619a",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/exec.js",
+      "source_sha256": "a349a8e9d5ad6ff4f20a048b6764bf86efee1c1858a668b791bad1482801619a",
+      "stage_mode": "0644",
+      "stage_sha256": "a349a8e9d5ad6ff4f20a048b6764bf86efee1c1858a668b791bad1482801619a"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "735c6fc223a7092177638e2a9e529941b4599f1e9a006e0fda99ce0ce445412b",
+      "path": "www/luci-static/resources/view/statistics/plugins/interface.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "735c6fc223a7092177638e2a9e529941b4599f1e9a006e0fda99ce0ce445412b",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/interface.js",
+      "source_sha256": "735c6fc223a7092177638e2a9e529941b4599f1e9a006e0fda99ce0ce445412b",
+      "stage_mode": "0644",
+      "stage_sha256": "735c6fc223a7092177638e2a9e529941b4599f1e9a006e0fda99ce0ce445412b"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "5044603eba9a58a56494eed6bf9437b31a49f0377c76ad5d566277a95dfa0a54",
+      "path": "www/luci-static/resources/view/statistics/plugins/ipstatistics.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "5044603eba9a58a56494eed6bf9437b31a49f0377c76ad5d566277a95dfa0a54",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/ipstatistics.js",
+      "source_sha256": "5044603eba9a58a56494eed6bf9437b31a49f0377c76ad5d566277a95dfa0a54",
+      "stage_mode": "0644",
+      "stage_sha256": "5044603eba9a58a56494eed6bf9437b31a49f0377c76ad5d566277a95dfa0a54"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "e4138af3124035ff8eb4b47b39fee1a9cc263bc92a25d84a548fe7a9dc7e0a9f",
+      "path": "www/luci-static/resources/view/statistics/plugins/iptables.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "e4138af3124035ff8eb4b47b39fee1a9cc263bc92a25d84a548fe7a9dc7e0a9f",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/iptables.js",
+      "source_sha256": "e4138af3124035ff8eb4b47b39fee1a9cc263bc92a25d84a548fe7a9dc7e0a9f",
+      "stage_mode": "0644",
+      "stage_sha256": "e4138af3124035ff8eb4b47b39fee1a9cc263bc92a25d84a548fe7a9dc7e0a9f"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "bc8ea79aeb77ad20c6ca675bf0033e7ef8f8db55cc330382961158aae5af19d8",
+      "path": "www/luci-static/resources/view/statistics/plugins/irq.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "bc8ea79aeb77ad20c6ca675bf0033e7ef8f8db55cc330382961158aae5af19d8",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/irq.js",
+      "source_sha256": "bc8ea79aeb77ad20c6ca675bf0033e7ef8f8db55cc330382961158aae5af19d8",
+      "stage_mode": "0644",
+      "stage_sha256": "bc8ea79aeb77ad20c6ca675bf0033e7ef8f8db55cc330382961158aae5af19d8"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "277c3aae4c45a048ac80d4b175a6aad77e567b774a4abfec5f02e7cbbe8ebc46",
+      "path": "www/luci-static/resources/view/statistics/plugins/iwinfo.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "277c3aae4c45a048ac80d4b175a6aad77e567b774a4abfec5f02e7cbbe8ebc46",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/iwinfo.js",
+      "source_sha256": "277c3aae4c45a048ac80d4b175a6aad77e567b774a4abfec5f02e7cbbe8ebc46",
+      "stage_mode": "0644",
+      "stage_sha256": "277c3aae4c45a048ac80d4b175a6aad77e567b774a4abfec5f02e7cbbe8ebc46"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "c2c1f59b4ca438897e05639d70b331cbcf05a52ff2aad0a0ea66116db6841cf1",
+      "path": "www/luci-static/resources/view/statistics/plugins/load.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "c2c1f59b4ca438897e05639d70b331cbcf05a52ff2aad0a0ea66116db6841cf1",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/load.js",
+      "source_sha256": "c2c1f59b4ca438897e05639d70b331cbcf05a52ff2aad0a0ea66116db6841cf1",
+      "stage_mode": "0644",
+      "stage_sha256": "c2c1f59b4ca438897e05639d70b331cbcf05a52ff2aad0a0ea66116db6841cf1"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "2c7f84d8478611aa9a837e8f5487b213ff2f4c8d6a55505f6ddba5d84d1594cb",
+      "path": "www/luci-static/resources/view/statistics/plugins/memory.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "2c7f84d8478611aa9a837e8f5487b213ff2f4c8d6a55505f6ddba5d84d1594cb",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/memory.js",
+      "source_sha256": "2c7f84d8478611aa9a837e8f5487b213ff2f4c8d6a55505f6ddba5d84d1594cb",
+      "stage_mode": "0644",
+      "stage_sha256": "2c7f84d8478611aa9a837e8f5487b213ff2f4c8d6a55505f6ddba5d84d1594cb"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "187cff648f1001123f4aca7d2e5125c789fd5c1509ca0f07455941ff9969191a",
+      "path": "www/luci-static/resources/view/statistics/plugins/mqtt.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "187cff648f1001123f4aca7d2e5125c789fd5c1509ca0f07455941ff9969191a",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/mqtt.js",
+      "source_sha256": "187cff648f1001123f4aca7d2e5125c789fd5c1509ca0f07455941ff9969191a",
+      "stage_mode": "0644",
+      "stage_sha256": "187cff648f1001123f4aca7d2e5125c789fd5c1509ca0f07455941ff9969191a"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "751fd73678a372d354c56e939608fea964d6476f99f5947c413e79bf4d1b0c69",
+      "path": "www/luci-static/resources/view/statistics/plugins/netlink.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "751fd73678a372d354c56e939608fea964d6476f99f5947c413e79bf4d1b0c69",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/netlink.js",
+      "source_sha256": "751fd73678a372d354c56e939608fea964d6476f99f5947c413e79bf4d1b0c69",
+      "stage_mode": "0644",
+      "stage_sha256": "751fd73678a372d354c56e939608fea964d6476f99f5947c413e79bf4d1b0c69"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "d6319fbec0813de6a30f2bf8ea44954c0904b63633efbf0b17f36120ff9138f0",
+      "path": "www/luci-static/resources/view/statistics/plugins/network.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "d6319fbec0813de6a30f2bf8ea44954c0904b63633efbf0b17f36120ff9138f0",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/network.js",
+      "source_sha256": "d6319fbec0813de6a30f2bf8ea44954c0904b63633efbf0b17f36120ff9138f0",
+      "stage_mode": "0644",
+      "stage_sha256": "d6319fbec0813de6a30f2bf8ea44954c0904b63633efbf0b17f36120ff9138f0"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "3f295cb565967910c1a376df8f68ac2c0f82a8ee6bccd711d3ae94e3a056811d",
+      "path": "www/luci-static/resources/view/statistics/plugins/nut.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "3f295cb565967910c1a376df8f68ac2c0f82a8ee6bccd711d3ae94e3a056811d",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/nut.js",
+      "source_sha256": "3f295cb565967910c1a376df8f68ac2c0f82a8ee6bccd711d3ae94e3a056811d",
+      "stage_mode": "0644",
+      "stage_sha256": "3f295cb565967910c1a376df8f68ac2c0f82a8ee6bccd711d3ae94e3a056811d"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "19505a6449b3b8abcef6ba7a9ddc8b43725d1ef92824dcd9964e022ec7fa18fe",
+      "path": "www/luci-static/resources/view/statistics/plugins/olsrd.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "19505a6449b3b8abcef6ba7a9ddc8b43725d1ef92824dcd9964e022ec7fa18fe",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/olsrd.js",
+      "source_sha256": "19505a6449b3b8abcef6ba7a9ddc8b43725d1ef92824dcd9964e022ec7fa18fe",
+      "stage_mode": "0644",
+      "stage_sha256": "19505a6449b3b8abcef6ba7a9ddc8b43725d1ef92824dcd9964e022ec7fa18fe"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "b18f70b94533a8b216ec3939f6046102c3aafb50bbdae50b707fad30b1ac76fd",
+      "path": "www/luci-static/resources/view/statistics/plugins/openvpn.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "b18f70b94533a8b216ec3939f6046102c3aafb50bbdae50b707fad30b1ac76fd",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/openvpn.js",
+      "source_sha256": "b18f70b94533a8b216ec3939f6046102c3aafb50bbdae50b707fad30b1ac76fd",
+      "stage_mode": "0644",
+      "stage_sha256": "b18f70b94533a8b216ec3939f6046102c3aafb50bbdae50b707fad30b1ac76fd"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "46cca67646d024f7ac97c770c237517c05728dd828a8f98dff222cb07ce8a606",
+      "path": "www/luci-static/resources/view/statistics/plugins/ping.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "46cca67646d024f7ac97c770c237517c05728dd828a8f98dff222cb07ce8a606",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/ping.js",
+      "source_sha256": "46cca67646d024f7ac97c770c237517c05728dd828a8f98dff222cb07ce8a606",
+      "stage_mode": "0644",
+      "stage_sha256": "46cca67646d024f7ac97c770c237517c05728dd828a8f98dff222cb07ce8a606"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "76021d107c9667e3fd6f9fd8f377dac8ee22b9b3a08b10be696664ba0ac3f7bf",
+      "path": "www/luci-static/resources/view/statistics/plugins/processes.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "76021d107c9667e3fd6f9fd8f377dac8ee22b9b3a08b10be696664ba0ac3f7bf",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/processes.js",
+      "source_sha256": "76021d107c9667e3fd6f9fd8f377dac8ee22b9b3a08b10be696664ba0ac3f7bf",
+      "stage_mode": "0644",
+      "stage_sha256": "76021d107c9667e3fd6f9fd8f377dac8ee22b9b3a08b10be696664ba0ac3f7bf"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "7fcb04183ac821ba9e022dbb2fd863cfa9e1a1a3990e1e0f9a273f2f4bc0b3be",
+      "path": "www/luci-static/resources/view/statistics/plugins/rrdtool.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "7fcb04183ac821ba9e022dbb2fd863cfa9e1a1a3990e1e0f9a273f2f4bc0b3be",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/rrdtool.js",
+      "source_sha256": "7fcb04183ac821ba9e022dbb2fd863cfa9e1a1a3990e1e0f9a273f2f4bc0b3be",
+      "stage_mode": "0644",
+      "stage_sha256": "7fcb04183ac821ba9e022dbb2fd863cfa9e1a1a3990e1e0f9a273f2f4bc0b3be"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "f13a971e85d600c9edd79bd531d2f22f56312d3ef193586b9b706efa173200b8",
+      "path": "www/luci-static/resources/view/statistics/plugins/sensors.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "f13a971e85d600c9edd79bd531d2f22f56312d3ef193586b9b706efa173200b8",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/sensors.js",
+      "source_sha256": "f13a971e85d600c9edd79bd531d2f22f56312d3ef193586b9b706efa173200b8",
+      "stage_mode": "0644",
+      "stage_sha256": "f13a971e85d600c9edd79bd531d2f22f56312d3ef193586b9b706efa173200b8"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "56a2c745dfd1219285db8cd74e8018393f3efedb9db1ca4b1702fa41414fb265",
+      "path": "www/luci-static/resources/view/statistics/plugins/snmp6.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "56a2c745dfd1219285db8cd74e8018393f3efedb9db1ca4b1702fa41414fb265",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/snmp6.js",
+      "source_sha256": "56a2c745dfd1219285db8cd74e8018393f3efedb9db1ca4b1702fa41414fb265",
+      "stage_mode": "0644",
+      "stage_sha256": "56a2c745dfd1219285db8cd74e8018393f3efedb9db1ca4b1702fa41414fb265"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "7544017ebcecee6237b20c5a039259cb7dedd6480896996679c35b4c60a628da",
+      "path": "www/luci-static/resources/view/statistics/plugins/splash_leases.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "7544017ebcecee6237b20c5a039259cb7dedd6480896996679c35b4c60a628da",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/splash_leases.js",
+      "source_sha256": "7544017ebcecee6237b20c5a039259cb7dedd6480896996679c35b4c60a628da",
+      "stage_mode": "0644",
+      "stage_sha256": "7544017ebcecee6237b20c5a039259cb7dedd6480896996679c35b4c60a628da"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "f1ef66d659b13153b3efe249487c79b39daab7da04f8fbda628ae3fcf0c62884",
+      "path": "www/luci-static/resources/view/statistics/plugins/syslog.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "f1ef66d659b13153b3efe249487c79b39daab7da04f8fbda628ae3fcf0c62884",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/syslog.js",
+      "source_sha256": "f1ef66d659b13153b3efe249487c79b39daab7da04f8fbda628ae3fcf0c62884",
+      "stage_mode": "0644",
+      "stage_sha256": "f1ef66d659b13153b3efe249487c79b39daab7da04f8fbda628ae3fcf0c62884"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "a217299b46124539cbb6bf4b911f02be42e15ee9fe4625c431e4fdcbec1c3470",
+      "path": "www/luci-static/resources/view/statistics/plugins/tcpconns.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "a217299b46124539cbb6bf4b911f02be42e15ee9fe4625c431e4fdcbec1c3470",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/tcpconns.js",
+      "source_sha256": "a217299b46124539cbb6bf4b911f02be42e15ee9fe4625c431e4fdcbec1c3470",
+      "stage_mode": "0644",
+      "stage_sha256": "a217299b46124539cbb6bf4b911f02be42e15ee9fe4625c431e4fdcbec1c3470"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "ec5f1135bbc95991c6e82d00ad6c4a6b194754dab199c3bb6d6731d11edecd59",
+      "path": "www/luci-static/resources/view/statistics/plugins/thermal.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "ec5f1135bbc95991c6e82d00ad6c4a6b194754dab199c3bb6d6731d11edecd59",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/thermal.js",
+      "source_sha256": "ec5f1135bbc95991c6e82d00ad6c4a6b194754dab199c3bb6d6731d11edecd59",
+      "stage_mode": "0644",
+      "stage_sha256": "ec5f1135bbc95991c6e82d00ad6c4a6b194754dab199c3bb6d6731d11edecd59"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "349f877ca300f07f19747453cba9bc87689e0c9e90ebef717dd033c50ece7bc0",
+      "path": "www/luci-static/resources/view/statistics/plugins/unixsock.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "349f877ca300f07f19747453cba9bc87689e0c9e90ebef717dd033c50ece7bc0",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/unixsock.js",
+      "source_sha256": "349f877ca300f07f19747453cba9bc87689e0c9e90ebef717dd033c50ece7bc0",
+      "stage_mode": "0644",
+      "stage_sha256": "349f877ca300f07f19747453cba9bc87689e0c9e90ebef717dd033c50ece7bc0"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "dfe971cd3372c819d43ed9c6f49f0a92fadb093fd409fa41c5d465efd9a9fac2",
+      "path": "www/luci-static/resources/view/statistics/plugins/uptime.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "dfe971cd3372c819d43ed9c6f49f0a92fadb093fd409fa41c5d465efd9a9fac2",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/uptime.js",
+      "source_sha256": "dfe971cd3372c819d43ed9c6f49f0a92fadb093fd409fa41c5d465efd9a9fac2",
+      "stage_mode": "0644",
+      "stage_sha256": "dfe971cd3372c819d43ed9c6f49f0a92fadb093fd409fa41c5d465efd9a9fac2"
+    },
+    {
+      "ipk_mode": "0644",
+      "ipk_sha256": "374ac21f0f4a3f3888abdb2085853f5accecb420850affd83fa38fb8878126f6",
+      "path": "www/luci-static/resources/view/statistics/plugins/users.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "374ac21f0f4a3f3888abdb2085853f5accecb420850affd83fa38fb8878126f6",
+      "source_git_mode": "100644",
+      "source_path": "applications/luci-app-statistics/htdocs/luci-static/resources/view/statistics/plugins/users.js",
+      "source_sha256": "374ac21f0f4a3f3888abdb2085853f5accecb420850affd83fa38fb8878126f6",
+      "stage_mode": "0644",
+      "stage_sha256": "374ac21f0f4a3f3888abdb2085853f5accecb420850affd83fa38fb8878126f6"
+    }
+  ],
+  "oracle_sha256": "a5ab0a2b8f0099073a040b57ec4be3324a874d2f67ec3951a62a18cfa886cf4f",
+  "outer_member_sha256": {
+    "control.tar.gz": "3b7884ce3ff2efe233c622d03f4c4b68dd3367f314dc4f1c61c1358b2a81fa6d",
+    "data.tar.gz": "2fbaa04e33b80c9549766c8beecfaaeaccc75bcccd6c8d79ae57dcb3926d870f",
+    "debian-binary": "d526eb4e878a23ef26ae190031b4efd2d58ed66789ac049ea3dbaf74c9df7402"
+  },
+  "package": {
+    "Architecture": "all",
+    "Package": "luci-app-statistics",
+    "Version": "26.205.85817~58d43e5"
+  }
+}

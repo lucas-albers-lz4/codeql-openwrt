@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/time",
+    "-v",
+    "-o",
+    "/home/runner/work/_temp/issue173-statistics-build/output/statistics-compile.time",
+    "make",
+    "-j2",
+    "package/feeds/luci/luci-app-statistics/compile",
+    "V=s"
+  ],
+  "cwd": "/home/runner/work/_temp/issue173-statistics-build/openwrt",
+  "elapsed_seconds": 146.7681972729997,
+  "env": {
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "HOME": "/home/runner/work/_temp/issue173-statistics-build/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TMPDIR": "/home/runner/work/_temp/issue173-statistics-build/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "failure": null,
+  "finished_utc": "2026-11-26T11:26:21.765395+00:00",
+  "label": "statistics-compile",
+  "peak_rss_bytes": null,
+  "rss_note": "not measured",
+  "started_utc": "2026-11-26T11:23:54.997194+00:00",
+  "stderr_sha256": "526c031b1078cf11ead62bf8e74f7d68ed01470a175fa6058bc99a7f5c029014",
+  "stdout_sha256": "2e61bbf56d6c7d0d31271329a0a5ede7e79350b995570c6035030888f89bd912"
+}

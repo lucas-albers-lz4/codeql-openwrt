@@ -1,0 +1,17 @@
+{
+  "kernel_warning_disposition": {
+    "build_config_sha256": "cbff738c953271533651885c3759d6a5ba6b845c61b23a1e7aca7059f552d8ff",
+    "kernel_config_sha256": "10bcab859188cc3602488c42507780a0de7c6336e537494a475db9526476591f",
+    "kernel_vermagic": "d06fc8e744142971fdfa96b50c6d006f",
+    "scope": "known globally selected DRM packages outside audited Statistics dependency overapproximation; not an image completeness claim",
+    "warnings": [
+      "WARNING: kmod-drm-exec is not available in the kernel config - generating empty package",
+      "WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package"
+    ]
+  },
+  "phase": "statistics-compile",
+  "warnings": [
+    "WARNING: kmod-drm-exec is not available in the kernel config - generating empty package",
+    "WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package"
+  ]
+}

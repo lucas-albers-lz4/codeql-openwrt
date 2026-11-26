@@ -1,0 +1,319 @@
+{
+  "kernel_6.12.116~d06fc8e744142971fdfa96b50c6d006f-r1_x86_64.ipk": {
+    "builtin_metadata": {
+      "lib/modules/6.12.116/modules.builtin": {
+        "mode": "0644",
+        "sha256": "d97b9bb697cff77ecdc1f29fbf00e6ae9f56faa86341aeb5c0528d44ae38db82",
+        "size": 4127
+      },
+      "lib/modules/6.12.116/modules.builtin.modinfo": {
+        "mode": "0644",
+        "sha256": "911a93bcabbd2c6f54d5c37e6477ef3c614fb875d85f698ae66584b1db7c7a0b",
+        "size": 13400
+      }
+    },
+    "bytes": 5254,
+    "control": {
+      "Architecture": "x86_64",
+      "Package": "kernel",
+      "Version": "6.12.116~d06fc8e744142971fdfa96b50c6d006f-r1"
+    },
+    "sha256": "3f45007bbdbad6d0c171adc06cb1b7e667ff1895d9ce909986fbe3f9a78ab25e"
+  },
+  "kmod-acpi-video_6.12.116-r1_x86_64.ipk": {
+    "bytes": 21756,
+    "sha256": "1f37380520809423a3380fbabc04f15e2cf9b1c2c3de8f0f440719a80b2a72c3"
+  },
+  "kmod-amazon-ena_6.12.116-r1_x86_64.ipk": {
+    "bytes": 45533,
+    "sha256": "c04c359ce4ac54f95b095c263532a36c09aebd088e8cad59e68f4edd84fece4b"
+  },
+  "kmod-amd-xgbe_6.12.116-r1_x86_64.ipk": {
+    "bytes": 61442,
+    "sha256": "ebea6ec1175ced0dac0086e6dd327124617c7b2cd1902806d3b1076685982b4a"
+  },
+  "kmod-backlight_6.12.116-r1_x86_64.ipk": {
+    "bytes": 967,
+    "sha256": "875f594af4819562bd861351b4431b3ac1e0dbf814a6a81c273e4f68122c19ce"
+  },
+  "kmod-bnx2_6.12.116-r1_x86_64.ipk": {
+    "bytes": 41440,
+    "sha256": "10e1f655798079bda69826d21a861c131a143f28ea1cbbd88103e38aec1179d0"
+  },
+  "kmod-crypto-crc32c_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1013,
+    "sha256": "a73809e2699e155b9e5b468f50d7b7f9e12692c767cd8580eee5ac89ec4b87d3"
+  },
+  "kmod-crypto-hash_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1012,
+    "sha256": "f630fe7b2f45628acd55f748c296e40d64071ee651def62dd63cb7ce1127974e"
+  },
+  "kmod-dma-buf_6.12.116-r1_x86_64.ipk": {
+    "bytes": 969,
+    "sha256": "a81ec42bea15fcc1e2482d810dc6058bca14c1ad56a3bacbc2f9c3f66d63d265"
+  },
+  "kmod-drm-buddy_6.12.116-r1_x86_64.ipk": {
+    "bytes": 2296,
+    "sha256": "0149cef16e938dde93b96ba92e2ee101ef8dbecf18e1288831cb9de9edd0d826"
+  },
+  "kmod-drm-display-helper_6.12.116-r1_x86_64.ipk": {
+    "bytes": 61550,
+    "sha256": "9d003c4a8b4d90c854ab99d6ec870e15545b2723c1d5f35d17bc986a0877efa8"
+  },
+  "kmod-drm-exec_6.12.116-r1_x86_64.ipk": {
+    "bytes": 879,
+    "sha256": "8a9873f19e4ebdd6dad96d538b01479e7b5f918bdf1be7b31eef39c6c7d875a9"
+  },
+  "kmod-drm-i915_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1213521,
+    "sha256": "abb75e44500b47708ec728879459e89587f4fa5e86f397b802128471c15a7e5a"
+  },
+  "kmod-drm-kms-helper_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1021,
+    "sha256": "c2516b22d0393d1ad73b9dd9a7d6af0049a259addbfc54be13b69a89093ec089"
+  },
+  "kmod-drm-suballoc-helper_6.12.116-r1_x86_64.ipk": {
+    "bytes": 874,
+    "sha256": "8718f6e7fdc9f40f944cc9caee797ea33d93a6e74caa1eb861a2705ea9aa80b5"
+  },
+  "kmod-drm-ttm-helper_6.12.116-r1_x86_64.ipk": {
+    "bytes": 988,
+    "sha256": "2ef3a71bf614f705780140f8d2226f114df92bb328d18a24eb1790204780df56"
+  },
+  "kmod-drm-ttm_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1027,
+    "sha256": "20b059749ac9f25b6e9a375f0e8d4356ee1da299e645fb53528e6dbaf2a9fbbf"
+  },
+  "kmod-drm_6.12.116-r1_x86_64.ipk": {
+    "bytes": 993,
+    "sha256": "c3a03a6140ba47f1c7ca00a509a7d4ef700c58c496b501bff9c9033e0df1033c"
+  },
+  "kmod-dwmac-intel_6.12.116-r1_x86_64.ipk": {
+    "bytes": 7081,
+    "sha256": "7f7a0e26ba1074014fc297c365eabc7e9af86ee15474e6492ca9525fe1f10dc6"
+  },
+  "kmod-e1000_6.12.116-r1_x86_64.ipk": {
+    "bytes": 51400,
+    "sha256": "13fc63b3eec4126c78ecd021c51beb949f4bcc023685fd77d790f5e756f68fbc"
+  },
+  "kmod-e1000e_6.12.116-r1_x86_64.ipk": {
+    "bytes": 90158,
+    "sha256": "945d9822ae4a985c5ee64e0a781381941fe0af1498a50d5834a7ee0699a84939"
+  },
+  "kmod-fb-cfb-copyarea_6.12.116-r1_x86_64.ipk": {
+    "bytes": 976,
+    "sha256": "90a00a9dfc12589a6d0cc5d21ba246b696184b98ce0a38dbf4c0a7c9565d24e1"
+  },
+  "kmod-fb-cfb-fillrect_6.12.116-r1_x86_64.ipk": {
+    "bytes": 987,
+    "sha256": "f49a385f1df90e3890150b64a4d96d9872ccd50973bd33ee856d43507c81bfcb"
+  },
+  "kmod-fb-cfb-imgblt_6.12.116-r1_x86_64.ipk": {
+    "bytes": 979,
+    "sha256": "968d80a8a92629c4db01aa5f69857293e0e239b30a0712613f56f91a0165d270"
+  },
+  "kmod-fb-sys-fops_6.12.116-r1_x86_64.ipk": {
+    "bytes": 976,
+    "sha256": "2321b599d269e39d4aa5f17137d123a5483926ba08233aee0f37a91503401bc3"
+  },
+  "kmod-fb-sys-ram_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1003,
+    "sha256": "8aad6db79af75d332bd6da13efc41c6dfce52368d235962aa6d9bc61e44c3c17"
+  },
+  "kmod-fb_6.12.116-r1_x86_64.ipk": {
+    "bytes": 974,
+    "sha256": "89c5a1fc8d134280b34e53160ea0daabb04e2f41f89de3d33cf5728f310cf49c"
+  },
+  "kmod-forcedeth_6.12.116-r1_x86_64.ipk": {
+    "bytes": 28740,
+    "sha256": "044e187a2483b4e2358ff550decd9fdac7500876a09fa5f31b3c28a74cd45bf4"
+  },
+  "kmod-fs-vfat_6.12.116-r1_x86_64.ipk": {
+    "bytes": 45210,
+    "sha256": "586d8738825fdbe6ddc29916b40d7e4de7afcef3721493e85006c186a501384e"
+  },
+  "kmod-hwmon-core_6.12.116-r1_x86_64.ipk": {
+    "bytes": 884,
+    "sha256": "f6044a443d5dbfef3cc61052fcd4699607818d0a03a9f458f07d9515345dafd6"
+  },
+  "kmod-i2c-algo-bit_6.12.116-r1_x86_64.ipk": {
+    "bytes": 986,
+    "sha256": "8fbd7bf28485b83558ab6ddfb87749ac6a866b835ef7cf47ada325fd9111a8f1"
+  },
+  "kmod-i2c-core_6.12.116-r1_x86_64.ipk": {
+    "bytes": 5776,
+    "sha256": "0f71a9b4c6dd47132d4b9d6b4472d52061065d4130117fae01e99722135d7443"
+  },
+  "kmod-igb_6.12.116-r1_x86_64.ipk": {
+    "bytes": 91415,
+    "sha256": "6d732d91c6ae451c6c728beef1d69a19ec5931e2c3a9334a5bd708bc2bdb24b9"
+  },
+  "kmod-igc_6.12.116-r1_x86_64.ipk": {
+    "bytes": 61034,
+    "sha256": "b3d049c5f58259de23608b3ef5581c8f35efe73a19ace91822829e416bfafe4e"
+  },
+  "kmod-input-core_6.12.116-r1_x86_64.ipk": {
+    "bytes": 883,
+    "sha256": "18b669de1d90ea7758117a1a8087f646887bffcda38870eb60c5bb58ddb6e36e"
+  },
+  "kmod-ixgbe_6.12.116-r1_x86_64.ipk": {
+    "bytes": 132275,
+    "sha256": "4c793439227c04c448a2270af9bc94226f0e739bf5cebb7cf1e085fd534650b5"
+  },
+  "kmod-lib-crc-ccitt_6.12.116-r1_x86_64.ipk": {
+    "bytes": 2302,
+    "sha256": "1e5e0b94218bdb1c277a82e392d93ab969d24629ecac522429e641208635958e"
+  },
+  "kmod-lib-crc32c_6.12.116-r1_x86_64.ipk": {
+    "bytes": 2073,
+    "sha256": "ac6d1653d48b6fe3c61fa1ed2d5a56d957fbf1bc0211c8c42020a40e048ea47d"
+  },
+  "kmod-libphy_6.12.116-r1_x86_64.ipk": {
+    "bytes": 46837,
+    "sha256": "e2c881ae9e26df313be00159265c73a5072948598c5da3072d60dba3b21b51dc"
+  },
+  "kmod-mdio-devres_6.12.116-r1_x86_64.ipk": {
+    "bytes": 2174,
+    "sha256": "e785e9fa216865a1a9ce4c6c45291aa8f6b391d72945fbd2c9ac0862bb4bce67"
+  },
+  "kmod-mdio_6.12.116-r1_x86_64.ipk": {
+    "bytes": 4211,
+    "sha256": "300304d0b23f63376d695ca2b1befee460ee3267c0d707581ea27558c2b0e351"
+  },
+  "kmod-mii_6.12.116-r1_x86_64.ipk": {
+    "bytes": 5144,
+    "sha256": "dede623fbef960139922dc454c0066ddcb0f8a62e91c6433a73b4665968b0356"
+  },
+  "kmod-nf-conntrack6_6.12.116-r1_x86_64.ipk": {
+    "bytes": 877,
+    "sha256": "b64a38bf9a3fe00d9978583d0abd091eacc6ad416475712953034a28b4387aa4"
+  },
+  "kmod-nf-conntrack_6.12.116-r1_x86_64.ipk": {
+    "bytes": 48676,
+    "sha256": "cdd7dbd3a095df7d6146cf8d87c048a951f9922b7bdad9e8142a1b21be1a714f"
+  },
+  "kmod-nf-flow_6.12.116-r1_x86_64.ipk": {
+    "bytes": 17517,
+    "sha256": "a23d0475fd7757c21885f1b7a8a23a5fe3f7ef0588bfdc4af394433bcf5b46bc"
+  },
+  "kmod-nf-log6_6.12.116-r1_x86_64.ipk": {
+    "bytes": 867,
+    "sha256": "0982f0baf976228098f82015b13ef20d5235f232d4a98baed05d5b9fa230f5b6"
+  },
+  "kmod-nf-log_6.12.116-r1_x86_64.ipk": {
+    "bytes": 8040,
+    "sha256": "dc66f6a5131934e2e8ac8d69fa4c2c3de39458c12552b660a30d698a440da2dc"
+  },
+  "kmod-nf-nat_6.12.116-r1_x86_64.ipk": {
+    "bytes": 14586,
+    "sha256": "a4fab1eeba578a1c6486a12b1f2a603c30b0299065be75a6cd228fdd162fbe6e"
+  },
+  "kmod-nf-reject6_6.12.116-r1_x86_64.ipk": {
+    "bytes": 4576,
+    "sha256": "39cefe6a635700a15c5523d27540c47eb039b39029a801f35e8f184f6ced2a8f"
+  },
+  "kmod-nf-reject_6.12.116-r1_x86_64.ipk": {
+    "bytes": 4428,
+    "sha256": "3e80f55c8de844ed18b3a30677a413922b60db4df1a1a0d94a844696f6b5d1f0"
+  },
+  "kmod-nfnetlink_6.12.116-r1_x86_64.ipk": {
+    "bytes": 6179,
+    "sha256": "75f5b6d30d06292e4af6b58928404f5cf6499df4829a3901f23e656ba2fc98f6"
+  },
+  "kmod-nft-core_6.12.116-r1_x86_64.ipk": {
+    "bytes": 131824,
+    "sha256": "d68d4037cca3ae04c3d3c7cdbd618912c5294d4f1f0cd2ae1699ed5217c59c42"
+  },
+  "kmod-nft-fib_6.12.116-r1_x86_64.ipk": {
+    "bytes": 7146,
+    "sha256": "a9e26e855125b8d9385394678f1164c4789dbc9ce9f60a002998a2852c066078"
+  },
+  "kmod-nft-nat_6.12.116-r1_x86_64.ipk": {
+    "bytes": 5268,
+    "sha256": "a73aaa988b8cabea1aed63cf2742a119aa610d87e80221c2d7bd04e2eb7b5a1c"
+  },
+  "kmod-nft-offload_6.12.116-r1_x86_64.ipk": {
+    "bytes": 5567,
+    "sha256": "2f99bc426f8be20aeb422240b80d97ea7816549d27e883e17ee9a34220f3f4f5"
+  },
+  "kmod-nls-base_6.12.116-r1_x86_64.ipk": {
+    "bytes": 882,
+    "sha256": "fe97765f37b37d0c094c674411c5626c137fa22fc939aef09aedaec144b801f2"
+  },
+  "kmod-nls-cp437_6.12.116-r1_x86_64.ipk": {
+    "bytes": 3077,
+    "sha256": "e64e6edabe96b99189562ed8c561b2456d25e91c1fdc64a1dae36c21fb986242"
+  },
+  "kmod-nls-iso8859-1_6.12.116-r1_x86_64.ipk": {
+    "bytes": 2752,
+    "sha256": "ba4cd8980634afbba934c0c66ac30276e527f4b11852fa31b375afc33ca41af3"
+  },
+  "kmod-nls-utf8_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1984,
+    "sha256": "b65065c798a2423dc88919096046fb43fbf43a38e66a02b02a9c5d9df0890fd7"
+  },
+  "kmod-pcs-xpcs_6.12.116-r1_x86_64.ipk": {
+    "bytes": 10851,
+    "sha256": "2877915f627f0eeb36db3a0fdfb8a4844994c14f5df13d67fbb7944d6b5cb63f"
+  },
+  "kmod-phy-realtek_6.12.116-r1_x86_64.ipk": {
+    "bytes": 10178,
+    "sha256": "d4293cd6dce0eaa45cd8e1169145fa4106ead5f16529a3af0735d1f04d992f31"
+  },
+  "kmod-phylink_6.12.116-r1_x86_64.ipk": {
+    "bytes": 20040,
+    "sha256": "fcbf80c54f31a7fb12ce398759919581ed0390955cd73d1e84947e9e1cf53ef8"
+  },
+  "kmod-ppp_6.12.116-r1_x86_64.ipk": {
+    "bytes": 25121,
+    "sha256": "8a37e33035173c6e8b4490550ff5775c923848f7f188515218a2066ab6f454fc"
+  },
+  "kmod-pppoe_6.12.116-r1_x86_64.ipk": {
+    "bytes": 8473,
+    "sha256": "5f3ab5da638cef24aac5ca5d324662f6792ebf9898216d9173ba343d943220cd"
+  },
+  "kmod-pppox_6.12.116-r1_x86_64.ipk": {
+    "bytes": 2811,
+    "sha256": "22ac4a373e739a0f206b28f2be5813d9f45be0e69a6c27c131a455637fbab818"
+  },
+  "kmod-pps_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1073,
+    "sha256": "55dd80bb2b0a9228808689c50e29012e8d01b84d23c6c8dde4a7c7829ea81d10"
+  },
+  "kmod-ptp_6.12.116-r1_x86_64.ipk": {
+    "bytes": 1066,
+    "sha256": "c9d2cb43fb1edd90c1742703d553ab9c0a1af718d38f456cd201d49850a60907"
+  },
+  "kmod-r8169_6.12.116-r1_x86_64.ipk": {
+    "bytes": 38997,
+    "sha256": "e63db9e4d413a7b5198defe449a7d23abcee3eb279164e04dcc480f359583563"
+  },
+  "kmod-slhc_6.12.116-r1_x86_64.ipk": {
+    "bytes": 4671,
+    "sha256": "a88ad3b28d5ab5c5875d9c356786392732946e6df84ae33e87fa48cdf66bb5d1"
+  },
+  "kmod-stmmac-core_6.12.116-r1_x86_64.ipk": {
+    "bytes": 99824,
+    "sha256": "741427875107cbff7cbcb5ad10a6bbc7b817c240c4ec2a560ceebe9e8a98c2b9"
+  },
+  "kmod-tg3_6.12.116-r1_x86_64.ipk": {
+    "bytes": 85603,
+    "sha256": "e905ce29c5f3b0a9ca81c54db4e2e0912b34a841205d10bdb4eed477abb60f0a"
+  },
+  "libc_1.2.5-r5_x86_64.ipk": {
+    "bytes": 287700,
+    "sha256": "805fb0735fc9ad85d1fa28079573322f68b4a4a59ee23986fc0f796df11dce8a"
+  },
+  "libgcc1_14.3.0-r5_x86_64.ipk": {
+    "bytes": 53788,
+    "sha256": "2b5b10691029eb530c87be89cec0f61c7ea3947a3404c0e56fa42c8b5e074f6a"
+  },
+  "libpthread_1.2.5-r5_x86_64.ipk": {
+    "bytes": 912,
+    "sha256": "4569914ae28d02f1bff0adf3ebd7b488120e3f0331a88904cf1a56f6528433cb"
+  },
+  "librt_1.2.5-r5_x86_64.ipk": {
+    "bytes": 923,
+    "sha256": "4943e0b752d165658c0fcb37c1dd04b3857376c4675e2c622a424eb4484e35af"
+  }
+}
