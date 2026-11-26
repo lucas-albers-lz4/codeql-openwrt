@@ -280,11 +280,13 @@ def _write_receipt(workspace: Path, receipt_path: Path, data: bytes) -> None:
     _write_new_file(receipt_path, data)
 
 
-def _load_lock(path: Path) -> tuple[dict, bytes]:
+def _load_lock(path: Path, *, profile_set: str = "historical") -> tuple[dict, bytes]:
     raw = path.read_bytes()
     lock = json.loads(raw)
-    need(isinstance(lock, dict) and lock.get("schema") == "openwrt-r25-package-lock-v1",
-         "unsupported R2.5 package lock")
+    expected_schema = ("openwrt-r25-package-lock-v1" if profile_set == "historical" else
+                       "openwrt-r25-current-luci-package-lock-v1" if profile_set == "current-luci" else None)
+    need(expected_schema is not None and isinstance(lock, dict) and lock.get("schema") == expected_schema,
+         "unsupported R2.5 package lock/profile set")
     need(lock.get("artifact_repository") == "lucas-albers-lz4/codeql-openwrt",
          "package artifact repository is not the reviewed consumer")
     producer = lock.get("producer")
@@ -293,7 +295,9 @@ def _load_lock(path: Path) -> tuple[dict, bytes]:
          HEX64.fullmatch(producer.get("runner", {}).get("sha256", "")),
          "producer interface source pins are incomplete")
     packages = lock.get("packages")
-    need(isinstance(packages, dict) and set(packages) == {"luci-base", "wifi-scripts-ucode-y"},
+    allowed = ({"luci-base", "wifi-scripts-ucode-y"} if profile_set == "historical" else
+               {"luci-base-cb87", "luci-app-adblock-fast", "luci-mod-status"})
+    need(isinstance(packages, dict) and set(packages) == allowed,
          "package lock profile set changed")
     for package_id, profile in packages.items():
         need(isinstance(profile, dict) and isinstance(profile.get("ipk"), dict),
@@ -343,7 +347,7 @@ def stage_package_bytes(package_id: str, raw_ipk: bytes, profile: dict,
     need(not receipt_lexical.is_relative_to(stage_lexical) and
          not stage_lexical.is_relative_to(receipt_lexical),
          "package-stage receipt and stage directory must be disjoint")
-    stage_abs = _check_workspace_path(stage_lexical, workspace, must_exist=False)
+    _check_workspace_path(stage_lexical, workspace, must_exist=False)
     receipt_abs = _check_workspace_path(receipt_lexical, workspace, must_exist=False)
     _write_stage(workspace, stage_root, regular)
     route_counts = dict(profile["oracle"]["route_counts"])
@@ -376,8 +380,9 @@ def stage_package_bytes(package_id: str, raw_ipk: bytes, profile: dict,
 
 def stage_locked_package(package_id: str, ipk_path: Path, workspace: Path,
                          stage_root: Path, receipt_path: Path,
-                         *, lock_path: Path = LOCK_PATH) -> dict:
-    lock, lock_raw = _load_lock(lock_path)
+                         *, lock_path: Path = LOCK_PATH,
+                         profile_set: str = "historical") -> dict:
+    lock, lock_raw = _load_lock(lock_path, profile_set=profile_set)
     profile = lock["packages"].get(package_id)
     need(isinstance(profile, dict), f"unknown package profile: {package_id}")
     oracle_info = profile.get("oracle", {})
@@ -388,8 +393,10 @@ def stage_locked_package(package_id: str, ipk_path: Path, workspace: Path,
     # Parse and pin the source-first expectation before opening artifact bytes.
     validate_oracle(oracle_raw, oracle_info.get("sha256", ""), profile)
     raw_ipk = _read_owned_ipk(ipk_path, workspace)
+    source_revisions = (profile.get("source_revisions") if profile_set == "current-luci"
+                        else lock["producer"]["source_revisions"])
     provenance = {
-        "source_revisions": lock["producer"]["source_revisions"],
+        "source_revisions": source_revisions,
         "producer_fixture_commit": lock["producer"]["r25_fixture_commit"],
         "producer_stage_helper_sha256": lock["producer"]["stage_helper"]["sha256"],
         "producer_runner_sha256": lock["producer"]["runner"]["sha256"],

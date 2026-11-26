@@ -1,0 +1,75 @@
+name: R2.5 current LuCI package contract
+on:
+  workflow_dispatch:
+    inputs:
+      run_scan:
+        description: Run the released producer against the exact three-package lock
+        required: true
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - '.github/workflows/r25-current-luci-handoff.yml'
+      - 'docs/r25-current-luci-package-lock.json'
+      - 'docs/r25-current-luci-oracles/**'
+      - 'tools/r25_current_luci_handoff.py'
+      - 'tools/r3_linux_handoff.py'
+      - 'tools/r25_package_handoff.py'
+      - 'tools/r25_package_stage.py'
+      - 'policy/tests/test_r25_current_luci.py'
+      - 'policy/tests/test_r3_linux_handoff.py'
+permissions:
+  actions: read
+  contents: read
+jobs:
+  offline-contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Check R3 release boundary and current package contract offline
+        run: |
+          python3 -B -m unittest policy.tests.test_r3_linux_handoff policy.tests.test_r25_current_luci tools.test_r25_package_stage tools.test_r25_package_handoff -v
+          python3 -O -B -m unittest policy.tests.test_r3_linux_handoff policy.tests.test_r25_current_luci tools.test_r25_package_stage tools.test_r25_package_handoff -v
+  released-current-luci:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_scan
+    needs: offline-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Run immutable R3 bootstrap and exact current LuCI package lane
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_root="$RUNNER_TEMP/r25-current-luci-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B -m tools.r25_current_luci_handoff docs/r3-release-lock.json docs/r25-current-luci-package-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Retain only run-owned package and producer evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/preflight.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/receipt.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/commands.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/commands/**
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/receipt.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/commands.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/commands/**
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/incoming/**/artifact.zip
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/incoming/**/*.ipk
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/stages/**
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/stage-receipts/*.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/stage-archives/**
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/stage-preservation.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/producer-runs/**/receipt.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/producer-runs/**/commands.json
+            ${{ runner.temp }}/r25-current-luci-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/producer-runs/**/output/**

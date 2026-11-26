@@ -5,7 +5,8 @@ import tempfile
 import unittest
 import zipfile
 
-from tools.r3_linux_handoff import historical_event_manifest, pinned, run_handoff, safe_unzip, validate_release_state
+from tools.r3_linux_handoff import (bootstrap_verified_release, historical_event_manifest,
+                                    pinned, run_handoff, safe_unzip, validate_release_state)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -54,6 +55,18 @@ class R3LinuxHandoffTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "unpopulated/invalid release commit"):
                 run_handoff(lock_path, run_root, "test")
             self.assertFalse(run_root.exists())
+
+    def test_shared_bootstrap_rejects_invalid_lock_before_network_or_queries(self):
+        class NoCalls:
+            root = Path("/unused")
+
+            def call(self, *args, **kwargs):
+                raise AssertionError("bootstrap performed an external operation")
+
+        lock = populated_lock()
+        lock["release"]["expected_prerelease"] = "true"
+        with self.assertRaisesRegex(RuntimeError, "expected prerelease status"):
+            bootstrap_verified_release(NoCalls(), lock)
 
     def test_candidate_kind_cannot_satisfy_release_lock(self):
         lock = populated_lock(artifact_kind="ci-candidate")

@@ -9,7 +9,6 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import selectors
-import shutil
 import stat
 import subprocess
 import sys
@@ -411,7 +410,8 @@ def verify_bundle_inputs(r3_root: Path, release_lock: dict,
 
 
 def verify_coverage(package_id: str, profile: dict, oracle: dict,
-                    run_root: Path, release_lock: dict) -> dict:
+                    run_root: Path, release_lock: dict, *,
+                    profile_set: str = "historical") -> dict:
     coverage_path = run_root / "output/coverage-manifest.json"
     receipt_path = run_root / "receipt.json"
     sarif_path = run_root / "output/default-suite.sarif"
@@ -420,7 +420,18 @@ def verify_coverage(package_id: str, profile: dict, oracle: dict,
         need(path.is_file() and not path.is_symlink(), f"producer output missing or nonregular: {path.name}")
     coverage = json.loads(coverage_path.read_text())
     receipt = json.loads(receipt_path.read_text())
-    want_profile = EXPECTED_COUNTS[package_id]
+    if profile_set == "historical":
+        need(package_id in EXPECTED_COUNTS,
+             f"historical profile is not independently expected: {package_id}")
+        want_profile = EXPECTED_COUNTS[package_id]
+    elif profile_set == "current-luci":
+        route_counts = profile.get("oracle", {}).get("route_counts", {})
+        want_profile = {"files": profile.get("oracle", {}).get("regular_member_count"),
+                        "plain": route_counts.get("plain"), "markup": route_counts.get("markup"),
+                        "excluded": route_counts.get("excluded"),
+                        "successful": route_counts.get("plain", 0) + route_counts.get("markup", 0)}
+    else:
+        raise ValueError(f"unsupported package profile set: {profile_set}")
     need(coverage.get("schema") == "ucode-installed-stage-coverage-v1",
          f"unexpected coverage schema: {package_id}")
     need(coverage.get("bundle_manifest_sha256") == release_lock["release"]["manifest_sha256"] and
@@ -547,14 +558,15 @@ def verify_coverage(package_id: str, profile: dict, oracle: dict,
 
 
 def run_package_lane(r3_root: Path, run_id: str,
-                     release_lock_path: Path, package_lock_path: Path) -> dict:
+                     release_lock_path: Path, package_lock_path: Path, *,
+                     profile_set: str = "historical", after_stage=None) -> dict:
     release_lock = json.loads(release_lock_path.read_text())
     validate_release_lock(release_lock)
     consumer_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     consumer_dirty = subprocess.check_output(["git", "status", "--porcelain=v1"], cwd=ROOT, text=True).strip()
     need(HEX40.fullmatch(consumer_sha) is not None and not consumer_dirty,
          "consumer source checkout must be clean for released package handoff")
-    package_lock, package_lock_raw = _load_lock(package_lock_path)
+    package_lock, package_lock_raw = _load_lock(package_lock_path, profile_set=profile_set)
     oracle_data = {}
     for package_id, profile in package_lock["packages"].items():
         oracle_path = ROOT / profile["oracle"]["path"]
@@ -579,7 +591,7 @@ def run_package_lane(r3_root: Path, run_id: str,
         stage_started = time.monotonic()
         try:
             staged = stage_locked_package(package_id, ipk_path, root, stage, stage_receipt,
-                                          lock_path=package_lock_path)
+                                          lock_path=package_lock_path, profile_set=profile_set)
         except Exception as error:
             records.append({"label": f"{package_id}-consumer-stage", "exit_status": 1,
                             "elapsed_seconds": round(time.monotonic() - stage_started, 3),
@@ -592,6 +604,21 @@ def run_package_lane(r3_root: Path, run_id: str,
                         "operation": "tools.r25_package_stage.stage_locked_package",
                         "stage_receipt_sha256": sha_file(stage_receipt)})
         write_json(root / "commands.json", records)
+        if after_stage is not None:
+            preserve_started = time.monotonic()
+            try:
+                after_stage(package_id, stage, stage_receipt, staged)
+            except Exception as error:
+                records.append({"label": f"{package_id}-stage-preservation", "exit_status": 1,
+                                "elapsed_seconds": round(time.monotonic() - preserve_started, 3),
+                                "operation": "current-luci-hidden-stage-preservation",
+                                "error": str(error)})
+                write_json(root / "commands.json", records)
+                raise
+            records.append({"label": f"{package_id}-stage-preservation", "exit_status": 0,
+                            "elapsed_seconds": round(time.monotonic() - preserve_started, 3),
+                            "operation": "current-luci-hidden-stage-preservation"})
+            write_json(root / "commands.json", records)
         oracle_path = ROOT / profile["oracle"]["path"]
         output = root / "producer-runs" / package_id
         command = [sys.executable, "-B", bundle / "runner/run-installed-stage.py",
@@ -630,7 +657,7 @@ def run_package_lane(r3_root: Path, run_id: str,
         verification_started = time.monotonic()
         try:
             summaries[package_id] = verify_coverage(package_id, profile, oracle_data[package_id],
-                                                    output, release_lock)
+                                                    output, release_lock, profile_set=profile_set)
         except Exception as error:
             records.append({"label": f"{package_id}-consumer-acceptance", "exit_status": 1,
                             "elapsed_seconds": round(time.monotonic() - verification_started, 3),
