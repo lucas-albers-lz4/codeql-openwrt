@@ -20,13 +20,30 @@ on:
         description: Full clean control commit SHA from canonical upstream
         type: string
         required: true
+  pull_request:
+    paths:
+      - '.github/workflows/incoming-event-preflight.yml'
+      - 'tools/incoming_event.py'
+      - 'tools/full_tree_candidates.py'
+      - 'tools/test_full_tree_candidates.py'
+      - 'policy/tests/test_incoming_event.py'
+      - 'docs/current-corpus-source-v0.6.json'
 
 permissions:
   contents: read
   pull-requests: read
 
 jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Test incoming event and full-tree candidate contracts
+        run: |
+          python3 -B -m unittest policy.tests.test_incoming_event -v
+          python3 -B tools/test_full_tree_candidates.py -v
   resolve-pins:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -101,7 +118,15 @@ jobs:
           git -C upstream-source fetch --no-tags --depth=1 origin "$BASE_SHA"
           [[ "$(git -C upstream-source rev-parse --verify "$BASE_SHA^{commit}")" == "$BASE_SHA" ]]
           python3 -B tools/source_policy_drift.py docs/current-corpus-source-v0.4.json "$UPSTREAM" upstream-source "$SOURCE_SHA" "$BASE_SHA" source-policy-drift.json
-      - name: Retain exact API response, identity receipt and drift report
+      - name: Inventory full-tree Ucode candidates against reviewed v0.6 policy
+        env:
+          BASE_SHA: ${{ steps.pull.outputs.base_sha }}
+          SOURCE_SHA: ${{ steps.pull.outputs.source_sha }}
+          UPSTREAM: ${{ inputs.upstream }}
+        run: |
+          set -euo pipefail
+          python3 -B tools/full_tree_candidates.py docs/current-corpus-source-v0.6.json "$UPSTREAM" upstream-source "$BASE_SHA" "$SOURCE_SHA" full-tree-candidates.json
+      - name: Retain exact API response, identity receipt and candidate reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -111,3 +136,4 @@ jobs:
             pull-api-response.json
             incoming-event*.json
             source-policy-drift.json
+            full-tree-candidates.json

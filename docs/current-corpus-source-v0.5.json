@@ -1,0 +1,2434 @@
+{
+  "boundaries": [
+    "No actual package-installed byte mapping or fresh combined Linux scan is established.",
+    "The 17 wifi-scripts sources are selected only under CONFIG_WIFI_SCRIPTS_UCODE=y; a shell alternative at the same proposed installed path is excluded under that condition.",
+    "Successful extraction of markup is distinct from modeled markup support.",
+    "Remaining OpenWrt core and packages-feed candidates are outside this denominator.",
+    "Source route expectations require comparison with a fresh run before Gate 6 completion.",
+    "Six unetmsg routes are expected from source and recipe inspection; no fresh run has checked them yet.",
+    "Eight separate optional Prometheus collector packages are excluded from the base-package denominator.",
+    "The 12 added OpenWrt paths are source-staged candidates with recipe-derived package/target conditions; no configured package, prepared package bytes, or image bytes were inspected.",
+    "Five inventory candidates absent at the pinned source SHA remain unresolved and are not selected.",
+    "The initial v0.5 attempt failed at the route oracle comparison before finalize; this corrected source-first oracle was prepared before the new run and its two revised reasons were confirmed from pinned first-line shebang bytes."
+  ],
+  "counts": {
+    "excluded": 13,
+    "excluded_competing_wifi_shell": 1,
+    "excluded_luci": 4,
+    "excluded_optional_prometheus_collectors": 8,
+    "luci_selected": 65,
+    "markup_inconclusive": 34,
+    "openwrt_cli_selected": 11,
+    "openwrt_full_tree_candidates_selected": 12,
+    "openwrt_unetmsg_selected": 6,
+    "openwrt_v0_5_added": 12,
+    "openwrt_wifi_scripts_selected": 17,
+    "packages_prometheus_base_selected": 12,
+    "plain_route_observed": 59,
+    "plain_route_source_expected_unetmsg": 6,
+    "route_classes": {
+      "markup": 35,
+      "plain": 88
+    },
+    "selected": 123,
+    "source_expected_prometheus_base": 12
+  },
+  "excluded": [
+    {
+      "reason": "test fixture; no package install mapping",
+      "repo": "luci",
+      "sha256": "815ee104836279eaeb0befec3bbbcef678f7780a8c25938a4c9dc8b420faf7f5",
+      "source_path": "applications/luci-app-advanced-reboot/tests/lib/mocklib.uc"
+    },
+    {
+      "reason": "test fixture; no package install mapping",
+      "repo": "luci",
+      "sha256": "458bd29a36003bf799e8d449a3049c78af18b12c58de24b17e92769ed27e829a",
+      "source_path": "applications/luci-app-advanced-reboot/tests/lib/mocklib/fs.uc"
+    },
+    {
+      "reason": "tracked symlink; target not followed",
+      "repo": "luci",
+      "sha256": "333c04dd151a2a6831c039cb9a651df29198be8a04e16ce861d4b6a34a11c954",
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark"
+    },
+    {
+      "reason": "tracked symlink; target not followed",
+      "repo": "luci",
+      "sha256": "333c04dd151a2a6831c039cb9a651df29198be8a04e16ce861d4b6a34a11c954",
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "git_blob": "30d08a301547ffe71794eefc8f3c4884cc1c3a4f",
+      "proposed_installed_path": "lib/netifd/wireless/mac80211.sh",
+      "reason": "competing shell source overwritten when CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "repo": "openwrt",
+      "sha256": "5f87f07cca56b20b0cf08cf02711c1c4fc4ddbbb17de7c8780282625c8d3be07",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/config/wifi-scripts/files/lib/netifd/wireless/mac80211.sh"
+    },
+    {
+      "git_blob": "3644b20f29f856f22284deb5ba59a48c1fefec6a",
+      "package_owner": "prometheus-node-exporter-ucode-dnsmasq",
+      "reason": "separate optional collector package, not selected with base prometheus-node-exporter-ucode package",
+      "repo": "packages",
+      "sha256": "1fa541fd9d747544570831fa907d4d1ca0898bd5f1a1f4b846915f15fda06244",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/extra/dnsmasq.uc"
+    },
+    {
+      "git_blob": "164449722edabc1e71b4e7b56371e3b489e2e89b",
+      "package_owner": "prometheus-node-exporter-ucode-ltq-dsl",
+      "reason": "separate optional collector package, not selected with base prometheus-node-exporter-ucode package",
+      "repo": "packages",
+      "sha256": "af463015c580a26b2e7e0df45ffcaf01d823908548c3c5ad17d6200acbcd8b8a",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/extra/ltq-dsl.uc"
+    },
+    {
+      "git_blob": "7449305145366ac4ad9ecc5f1edb9dfca288b365",
+      "package_owner": "prometheus-node-exporter-ucode-netstat",
+      "reason": "separate optional collector package, not selected with base prometheus-node-exporter-ucode package",
+      "repo": "packages",
+      "sha256": "8c13e6f951b71f78b751dde48eb5849e520b422e3ad29d43ce82e5e863b38eb9",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/extra/netstat.uc"
+    },
+    {
+      "git_blob": "10c15a10ca59138701c204b82f9864728a81d291",
+      "package_owner": "prometheus-node-exporter-ucode-openwrt",
+      "reason": "separate optional collector package, not selected with base prometheus-node-exporter-ucode package",
+      "repo": "packages",
+      "sha256": "1cbc508f0a82958a9e6a5b55ad89afe5f5ab9af1d1073bd7e5cd6919a1811db6",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/extra/openwrt.uc"
+    },
+    {
+      "git_blob": "d440a889e28ac99a086884dfadf664c7286dd0ca",
+      "package_owner": "prometheus-node-exporter-ucode-snmp6",
+      "reason": "separate optional collector package, not selected with base prometheus-node-exporter-ucode package",
+      "repo": "packages",
+      "sha256": "b0224a7b23242d4791c8de1db8516b99087adaa8daf4101cb1f2833f455cf460",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/extra/snmp6.uc"
+    },
+    {
+      "git_blob": "0d55724f9778b3e7b243959054329cd84e6b902b",
+      "package_owner": "prometheus-node-exporter-ucode-uci_dhcp_host",
+      "reason": "separate optional collector package, not selected with base prometheus-node-exporter-ucode package",
+      "repo": "packages",
+      "sha256": "d0ff8fd6f527686fcac80fdb09632560e94edcf0779c1a378d9cfc1ee5b7c527",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/extra/uci_dhcp_host.uc"
+    },
+    {
+      "git_blob": "fb46b5509168e93976c50ce691f4c7a7b9548ea0",
+      "package_owner": "prometheus-node-exporter-ucode-wifi",
+      "reason": "separate optional collector package, not selected with base prometheus-node-exporter-ucode package",
+      "repo": "packages",
+      "sha256": "c33e01d8946e980802ed2489f34433d8686a82dee2ea7ceae167c46ec942a26e",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/extra/wifi.uc"
+    },
+    {
+      "git_blob": "12ae56af9127dd71c2a83ce16095230a99db4416",
+      "package_owner": "prometheus-node-exporter-ucode-wireguard",
+      "reason": "separate optional collector package, not selected with base prometheus-node-exporter-ucode package",
+      "repo": "packages",
+      "sha256": "adf5d92fe3c48a40813fa0ab6aba7e96f96d85f86246a6010947c889a357bcc3",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/extra/wireguard.uc"
+    }
+  ],
+  "pins": {
+    "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4"
+  },
+  "schema": "mvp-bounded-corpus-v0.5-source-staged",
+  "selected": [
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "f7062814454328a5dd0bdbe7d7e724c410c95ae3",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-adblock-fast",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-adblock-fast/root/usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "f903b6297ea68b43398f5e091e2409f5e162edf7",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-advanced-reboot",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.advanced-reboot",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-advanced-reboot/root/usr/share/rpcd/ucode/luci.advanced-reboot",
+      "source_sha256": "b6b5562036c1f2f93ec9ea9261943a17d667d5a742c71ce128ec4859279d4b11"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "032f1060d835459ba0c07ba41a13a4c8f2d2f20c",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-bmx7",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/bmx7/bmxnodes.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxnodes.ut",
+      "source_sha256": "76a832d90e6e382189259320416d577ac6600e6a14d82e5f81edaaac7cffcf7a"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "12a85187e4c335d1c06c11fa13cf7417748e5b40",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-bmx7",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/bmx7/bmxstatus.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxstatus.ut",
+      "source_sha256": "13945589b4b0ee743dc7b97c3085bad87eb7ede2d6028aafb9cb9cd6df0e0430"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "8af2a885e0bea69d870b330e404b3b51d889935d",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-bmx7",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/bmx7/bmxtopology.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxtopology.ut",
+      "source_sha256": "7a5991e80585c2e4ec73054bb0dcab67c81c42fb40c0801d6d0e19869f718363"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "81b9f5b73a26f27b92e3877e99b2b8b518fc38e9",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-bmx7",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/bmx7/bmxtunnels.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxtunnels.ut",
+      "source_sha256": "c811f8701453f02870652580d2de6577ed5f159c3e7de6f5b5d51f2aaa7de7e9"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "9126d59eb0d051ef2d82ed20f495b2e744f44a0c",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-commands",
+      "prior_claims": [
+        "084"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/controller/commands.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-commands/ucode/controller/commands.uc",
+      "source_sha256": "13364aaed67c906c0102ca1bb5b9e611cb394022ebc3ab1714b7bb38cd4b1b6e"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "5191e4b953dbce2b90aacea32055d2a53a3926c1",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-commands",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/commands.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-commands/ucode/template/commands.ut",
+      "source_sha256": "67ab30c1252df2dc8b3bdfeb4b19a2544ffac296b9c9bf8f0aca8c922b165a77"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "aef072f8026a3e89e78a8e1e499dad7a995404d6",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-commands",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/commands_public.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-commands/ucode/template/commands_public.ut",
+      "source_sha256": "ebe4ec5f703db4707b0239a121f5d227178b4c44ca3ae5789356ddfe55579ab3"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "32d1da738b4932159a39bcda7ee6c72b5c58a8fd",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-ddns",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/ddns.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-ddns/root/usr/share/rpcd/ucode/ddns.uc",
+      "source_sha256": "924bd2b53fbc64d2a00a479e36ef3c9239488445fc1ced70122e8ac3735fdc2b"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "5fb85394d77466f0cfa3961b31f442182c809a10",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-dockerman",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/docker_rpc.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-dockerman/root/usr/share/rpcd/ucode/docker_rpc.uc",
+      "source_sha256": "f9c8482fb58d6d56d9b749f9206513b24c169fd8cb59e0619a29b7f2a2b55381"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "b2ca046145ca7b3b96ac2f5b72448c8d0ce321ac",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-dockerman",
+      "prior_claims": [
+        "084"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/controller/docker.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-dockerman/ucode/controller/docker.uc",
+      "source_sha256": "efe000bce54b6c946a20a7ee0950075bdd555ec92d3158dffc150ec0b4a53981"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "ab4d149e8f0f8717c2b32bbb6fb30aecbbf0e8e6",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-dockerman",
+      "prior_claims": [
+        "084"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/docker_socket.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-dockerman/ucode/docker_socket.uc",
+      "source_sha256": "21ec950f71e6448c72f2b652695d0742804ab942da55c18009ca9be49a382989"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "d6e21fcfeb8ff49d0387a605313b2b6f11fed56f",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-example",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/example.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-example/root/usr/share/rpcd/ucode/example.uc",
+      "source_sha256": "8108ebde4152d186b33f9e7447adf7dee6350e3b1ecc673d0bce2bda72fda927"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "3774e222cec2f43f73edb6fb07978dab14ed6d36",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-lldpd",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.lldpd",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-lldpd/root/usr/share/rpcd/ucode/luci.lldpd",
+      "source_sha256": "a9d6e6477307408a130ce20ad9f92813dfeca611e5c8a5a7a86f2ca746081eac"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "1f4f041c7da60886c0e8b6696632e553ab86cc1b",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-lxc",
+      "prior_claims": [
+        "084"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/controller/lxc.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-lxc/ucode/controller/lxc.uc",
+      "source_sha256": "19b5dc5d2db606ac90053409eaf9031c1fc69b229b4c0e875ddfcbbbf2a9ca70"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "184bb2f0b42ca70ee7e1f2fe16a43c476a7602dd",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-rustdesk-server",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/rustdesk-server.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-rustdesk-server/root/usr/share/rpcd/ucode/rustdesk-server.uc",
+      "source_sha256": "16c86ab0d8537eb6def1130e4fd28f9597b5d37a4e499dbd8d9d2774c2c7da7e"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "68c9b09e889356ce3e678f2789f608e270208d1e",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-statistics",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/libexec/stat-genconfig",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-statistics/root/usr/libexec/stat-genconfig",
+      "source_sha256": "5c45628d2a6a4c9414a93e26cff9c1c5d35ea4c0160f86575ee6c2f3f92c629b"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "2a30bdbfbadc285133c25b3d50dd6ae4b5317bf4",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-tailscale-community",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/tailscale.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-tailscale-community/root/usr/share/rpcd/ucode/tailscale.uc",
+      "source_sha256": "353f00bed64f81c74689ff2297704c4ba87ad9563abd60d265c61711c88441a4"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "f72b57b7ba84188b9b78854bf7ad0711394a0045",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-upnp",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.upnp",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-upnp/root/usr/share/rpcd/ucode/luci.upnp",
+      "source_sha256": "e149db4350cdfa2e3f3ccc529244d3a3143d72016fa4216f72cf2792f3fd202d"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "9f17ae3718a278eab2813ccfae4f2c732a9118e8",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-weechat",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/weechat.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-weechat/root/usr/share/rpcd/ucode/weechat.uc",
+      "source_sha256": "548213868a38bd84d8a9cb9b9842c647d4e79fa9df21b815b6b869f26a54e44e"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "c0cfcd2a6fdddba2a5b52cd798a979b851489b08",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-wifihistory",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/sbin/wifihistory",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-wifihistory/root/usr/sbin/wifihistory",
+      "source_sha256": "e58a3d2bace9aa188ec4c0a0272fa462f88138e0639587326ab72a99f1c45200"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "918ad9818b2e769d7b5a95f3855cb180fb8e82a7",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-wifihistory",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/wifihistory.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-wifihistory/root/usr/share/rpcd/ucode/wifihistory.uc",
+      "source_sha256": "b9ce671467adf519ac61e0f18e134856c4704497457949d774cb1af68830397c"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "fd9e9f0485ab6baec96ae089caf1089a6d471c99",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-app-wol",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.wol",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "applications/luci-app-wol/root/usr/share/rpcd/ucode/luci.wol",
+      "source_sha256": "51214ec57bcbd8d50e65016efda2a05e8eb7822dc7e510d014965834c61ef92b"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "442e427d410f1824b7b07d48bab8a2730012989b",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "www/cgi-bin/luci",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/htdocs/cgi-bin/luci",
+      "source_sha256": "aced6c9b2e621bb6e1dd1bb7d675925e9325ed901f49b1aabb0696a06942dacb"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "64caf75c08bc0fa54520a0ef262dfd6f339dc89e",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077",
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+      "source_sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "d433e1161ea1069a72d7ace916915e82df3ce4b8",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/controller/admin/index.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/controller/admin/index.uc",
+      "source_sha256": "7d7a5dc3e694ad232e4e0f3d01db17c2f5502338aa8c4fc44fa714b0b1147620"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "c38a42b10bfefbaa31741feae9395abd8a1f8e40",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/controller/admin/uci.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/controller/admin/uci.uc",
+      "source_sha256": "ac75cfef7d74f87ed7f957778004a7bf486c76df699398c215795b4947e0c93e"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "99712b85e7bd1a22f300b00403bd66621b3d40f4",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/dispatcher.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/dispatcher.uc",
+      "source_sha256": "4f9923cf569aeebb956343d208bcc38f40d8a26d2f46f12c5539a9582fa4f037"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "e7f64ae6e9fe00bd1981518927565829a14b11ba",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/http.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/http.uc",
+      "source_sha256": "68f8a7dffc7bccdfe98956cb3b6e0e087592c86049a2b83d061e5be3585fa5fa"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "e5f11690dfbdb2fe2a7fed6531d66cc7e25a331f",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/runtime.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/runtime.uc",
+      "source_sha256": "b15afce07020e2a7ad50718d49a874da30d0582ede7de65e54acaceb6e9d0926"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "35b5fcdebfaf1210be16ab1552752cb249346899",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/sys.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/sys.uc",
+      "source_sha256": "0380fba5d843a8950bab0ef70982cb40ab8f475e8d267c873e4199a736b55656"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "4e96eebe905758bb607a324cd10d0cf43e4eec6e",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/csrftoken.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/template/csrftoken.ut",
+      "source_sha256": "a2f223208d9ff2c3e1bfa808f11d74636028b4902973afb5b7f336328f7e2160"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "90c3d3784bb60ec8c4c6c189cf2eebd7cda9076d",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/error404.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/template/error404.ut",
+      "source_sha256": "8fa2306435be3aca3ca59b09adaaa0190292c6cfe2fecda9df4eb3eeac5b8552"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "e0d4d48ab741cb5fd9416de17ef9030a7a757bc1",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/error500.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/template/error500.ut",
+      "source_sha256": "6c7a519229524d7a34b18c5da97cb8b05f622ee0938fe1a4b2d2516a6adf1887"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "0ab06ae0b9380b12c6351061b089a397a14ff0d7",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/footer.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/template/footer.ut",
+      "source_sha256": "5625f938d625ff406e53434d37aa7643cc09e11f74379887a4ba154021240495"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "f23e5e45c88211d3d500193407f9277f1912c784",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/header.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/template/header.ut",
+      "source_sha256": "67132f2d1c1cf743f3e4ce11d660a5a2569b461804a63914061fe956171be6c2"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "babba2ecb522b7acec2e20e4ea071c15b74c307f",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/sysauth.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/template/sysauth.ut",
+      "source_sha256": "8c1dcf98cd29410021ed4f5f9dc668f8c70c0227f39f97f60f7205f9d52fa5bb"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "a8562844baf7d155c8cd682939f26e67a2a208ac",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/view.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/template/view.ut",
+      "source_sha256": "785bf7d4cceb5cdd9f113cbede0bde5b69e35b69cc1b51d2e498665d50091d62"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "markup_tag_content"
+      },
+      "git_blob": "df1ecc78657d9db618ab253c71497db4c66335fc",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/uhttpd.uc",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/uhttpd.uc",
+      "source_sha256": "a2b2694f52c021af16dd06ac8c988b8a0a726d9e8186d308708268ebb8849493"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "d54041752e2e168cd7b9d744c36530ea6ed5f8a2",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-base",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/zoneinfo.uc",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-base/ucode/zoneinfo.uc",
+      "source_sha256": "54162a073660ea65706aa920a10cfbd3ee4d345e1e4ab3bed8a8d56c9cab3863"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "d87679d9b0273fdf2f682e7e58092a29f8d3cc90",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-mod-dashboard",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.dashboard",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-mod-dashboard/root/usr/share/rpcd/ucode/luci.dashboard",
+      "source_sha256": "45be5fbe337a5dcdec88480d147bfb388ca8cb98919499fc3cf608220f2c2fa5"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "dafb427bf48b4da1e09ead45b97e55791804f20d",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-mod-status",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/admin_status/index.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "modules/luci-mod-status/ucode/template/admin_status/index.ut",
+      "source_sha256": "652842b1e54f8a2904458ae1f5693ddfc68b97f106d8b8ff48a4d8747d673019"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "1bc13a17068aaba4f30e58e3c76d9e7ca955c931",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-proto-openconnect",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.openconnect",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "protocols/luci-proto-openconnect/root/usr/share/rpcd/ucode/luci.openconnect",
+      "source_sha256": "03cc44e87879ef0acac11db7a5e303b83e00c3abc6b4a244cb55db4188761053"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "8588f7453288ff47159b6d7859a8286b73cf3e7f",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-proto-openfortivpn",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.openfortivpn",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "protocols/luci-proto-openfortivpn/root/usr/share/rpcd/ucode/luci.openfortivpn",
+      "source_sha256": "b1da8fcb811651037a7f2dbbd3db0c99ea4ebad82f8d923456448e3358dee2af"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "git_blob": "b8e20daf94c2d4fa5d133c227f8882dd0b23eb2e",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-proto-wireguard",
+      "prior_claims": [
+        "081"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/rpcd/ucode/luci.wireguard",
+      "repo": "luci",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "protocols/luci-proto-wireguard/root/usr/share/rpcd/ucode/luci.wireguard",
+      "source_sha256": "8b5784a6d0df8c945e5df15ee37365c90d078706b58d160fd92f44c114d4f458"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "d51079b6fa8e89e5119514c7730f982a5cd671a3",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-bootstrap",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/bootstrap/footer.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+      "source_sha256": "b5cb417ca73c02226679ab2412e272dcf6851eee134c521fc316c39a81ecfa4e"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "3486a412078c9fe5df3159b4691ffeb7de8794c0",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-bootstrap",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/bootstrap/header.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+      "source_sha256": "eca05b1e4d8391e36a08bcd0b3d0135d2addb37b9e574bd7db98d56f4835e0a3"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "e311f2d03fe28bccddf91c860ff66219b5415d50",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-bootstrap",
+      "prior_claims": [
+        "021"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/bootstrap/sysauth.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut",
+      "source_sha256": "7e4702c063c95734ec3157121dc59802ff51ed2c1b73c405cd9831ddd2e0c337"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "6ae667d6163ff424c12f09911c20438ade88eb4d",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/footer.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/footer.ut",
+      "source_sha256": "782321244ddba4219764db707b6906c7be7f04a12510330da023c9bb0f248d4d"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "ed60435eeb98c71c192ffe98b638765a87934445",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/header.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/header.ut",
+      "source_sha256": "7653f8353e5bb1062b3f5a901e6b2488af5ed59b530f3c5721169f0e8fa32977"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "835a2cebdd8378c8f716f690e9150ca0e8e5118e",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/brand.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/brand.ut",
+      "source_sha256": "97213de5baf09a12d65fd65dfa6df2f65ac619a23df9e7b2a83f124e39413387"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "2a6d01c5f6c07ffd7ec61f5a03d972d276f28823",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/head.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/head.ut",
+      "source_sha256": "0ead14d53ec238ced1ddeaa6e0d09f7403475d0e5b4a87ffc294c9ba8bff360d"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "20288acac0a70469ccfa3a8486320241bc0d4616",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/icon.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/icon.ut",
+      "source_sha256": "c9d806d43871227ed6164a1c55aaf8d4c48627cb2a8ef427da122ddc6a3e1735"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "4477f31c6858dfe87210742c33a894ae96818107",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/logout.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/logout.ut",
+      "source_sha256": "01cbe49c9098a749fa92e5d2332614344967c80d5c7d0912495aeb65f772fe9a"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "349ad31b0700a829ead6841c050f4e33278b3c48",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/notice.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notice.ut",
+      "source_sha256": "23b7c066ae794476ecfd0f63898d89b82908cc8096eaa149eb824bbd70a26e5d"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "e643c7c4cf58cdd7c211aa644e133c4a0c99e4c3",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/notices.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notices.ut",
+      "source_sha256": "6ada593c435f0064da58974668ec3e0688843ac657171397686f5c58f52505f5"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "dda1fd168b197d81a69f8743196bb5a2ffd3c7ef",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/search.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/search.ut",
+      "source_sha256": "785656c054b02cd8539ad805860cf498c939a404884a582519edefe48109d956"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "5100ecc2d1d50c696846062ab004ff592b78da8d",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-footstrap",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/footstrap/sysauth.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/sysauth.ut",
+      "source_sha256": "2428e3762f029bbe64b34d2416edf6ddf1228671c04907ec9f7d85643c0c5345"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "8b3c7f728b01f1bc3b02f6cfec5e6f5aa65e1cea",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-material",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/material/footer.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-material/ucode/template/themes/material/footer.ut",
+      "source_sha256": "11645e45340e970b78039dcd242b0381d7e34c3604f4a1e4db9201621952ef2b"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "1aeca61f39970ad0210a0b261c55dcab7b4992ae",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-material",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/material/header.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-material/ucode/template/themes/material/header.ut",
+      "source_sha256": "1650823a3ee8218525b7de4a01fe28eb1e4b34d8b7691c78f8de49c806a7babe"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "6d165f15021f82b649e667ce27f84316b038767f",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-openwrt-2020",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/openwrt2020/footer.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/footer.ut",
+      "source_sha256": "9a9bcb8168db705f5d1816943b58cbfdacb2bae2dbb46fe2bf66bffad5429316"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "17734e487e6b3527d55794ff05d9161f71e72d7c",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-openwrt-2020",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/openwrt2020/header.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/header.ut",
+      "source_sha256": "61c541f0bcac66a60d132975f78d7368a683753e72e2b430607d2e804f938a5e"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "12249ed75e50cc93c6581146bcce001086ae7ca1",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-openwrt",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/openwrt.org/footer.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/footer.ut",
+      "source_sha256": "26a157017e3d7afe52486760b737e590e98ac3faf52659a4b413d68e1c4c37a7"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "git_blob": "8cc6cc02553d4879e0f966b3f33350f2d35700de",
+      "installed_bytes_verified": false,
+      "package_owner": "luci-theme-openwrt",
+      "prior_claims": [
+        "086"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/luci/template/themes/openwrt.org/header.ut",
+      "repo": "luci",
+      "route_support": "markup_inconclusive",
+      "source_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+      "source_path": "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/header.ut",
+      "source_sha256": "e637d00a1ad5efc15d2f54a0e296775edf1175a4c49f73521b2dd86cb05f8844"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "6b709e4593ba768f88d8c2ae3226565fcd8db3a9",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "lib/netifd/wireless/mac80211.sh",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/lib/netifd/wireless/mac80211.sh",
+      "source_sha256": "f7d6ae091777a8eb77ba55c2c1f09bf8caff1a4364dc6de4f19a1ecb322801aa"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "d36268b06e96c9c6a4e08957d65260742facb97a",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/bin/iwinfo",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/bin/iwinfo",
+      "source_sha256": "c279f6cc7000ee1cb7609a0a60f77a63500a85d6be1b1fe32afa333fe176ff1c"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "7fa5291de19c5d26ecf8612d59e2d6e7ad090131",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/iwinfo.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/share/ucode/iwinfo.uc",
+      "source_sha256": "df56c258702cb3bf60d4657031a2abf371df9ced2952da6ad13c04021fd4c3ea"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "57cacff14ab80aa3f0059d2afe7251c45ffd8de4",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/wifi/ap.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/share/ucode/wifi/ap.uc",
+      "source_sha256": "d036c64e14ae75297487ac4e572ee4e2504d5795e0c907267341d7b14931275a"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "de939b0c2f1385c2c7c1076f44ada6fdfbcf5b7c",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/wifi/common.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/share/ucode/wifi/common.uc",
+      "source_sha256": "92ecc237251e6dcb32ba0d230b339850adb9848cd7d6e1073e043bc3ae5d790d"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "2742552cc199ac3e6ddb83ee991761c0a5c34115",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/wifi/hostapd.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/share/ucode/wifi/hostapd.uc",
+      "source_sha256": "5fd200d76efb0a087ecb067003cae80819ee62a37cabf2a788a1daea9c80177e"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "ff72f5b677051b9ba5edefa342b4c3e0ce99285c",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/wifi/iface.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/share/ucode/wifi/iface.uc",
+      "source_sha256": "be89c76e55e9f838421b99328a9e84ac10b76dac64f4f8950660014123bdfc5f"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "5a4a9fafb37f25a9070d5cac4139446e1600e4f2",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/wifi/netifd.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/share/ucode/wifi/netifd.uc",
+      "source_sha256": "2a5f4c94d186d1be150c4bb8ba308810af41a4930fd1287636de3274595d7af6"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "a8fc00cd03fe11cd2c51da8599682ef89ca0a641",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/wifi/supplicant.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/share/ucode/wifi/supplicant.uc",
+      "source_sha256": "8bdbd9d2688f0ed008ad00e5d19c4baf589020853b615bafd9e9586dcc79e78d"
+    },
+    {
+      "config_condition": "CONFIG_WIFI_SCRIPTS_UCODE=y",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "e675b7a6ca089364a0a1b333ba0e31b76a24f640",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/wifi/validate.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files-ucode/usr/share/ucode/wifi/validate.uc",
+      "source_sha256": "2710fca796071133b30abedb28a8615ad0172af2b66a7c47580dde2f804eb4ee"
+    },
+    {
+      "config_condition": "always under inspected install recipe",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "8e6250e5cdb165b7d4ad99531743e17bedc053c9",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "lib/netifd/wireless-device.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files/lib/netifd/wireless-device.uc",
+      "source_sha256": "d3e106d2fbc288d0af36c95bb97b9eae77630c4972c927c8d67a68a8822fa754"
+    },
+    {
+      "config_condition": "always under inspected install recipe",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "41f48848e48ece61ee29d7d9bef7df33541e039d",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "lib/netifd/wireless.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files/lib/netifd/wireless.uc",
+      "source_sha256": "36888bcfbf04c8b35c30e10b3b186bc4295c1c5f3d7403779eedb51a450f557d"
+    },
+    {
+      "config_condition": "always under inspected install recipe",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "c6c973040eb8c01f8fb8618337f9d1cf3cce4447",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "lib/wifi/mac80211.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc",
+      "source_sha256": "36da7b5286c98b8e82433c3656e2c4f02e12648ba7cb75899ab5546702b2ec1c"
+    },
+    {
+      "config_condition": "always under inspected install recipe",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "f801c4940c2b76947d34705e80305463b609768a",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/hostap/common.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files/usr/share/hostap/common.uc",
+      "source_sha256": "8f489d3c4fdde92b6dd027aadffc96880837664f3c2a1b1f6f3aeb9fdd484c0c"
+    },
+    {
+      "config_condition": "always under inspected install recipe",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "a4f9bf7b8448cca2d04f17b8e4e098c7c9adda54",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/hostap/wdev.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files/usr/share/hostap/wdev.uc",
+      "source_sha256": "84e0de1089f253d65272f1c29254ec890b46576565b4a92fd48ecc2f9b5156d2"
+    },
+    {
+      "config_condition": "always under inspected install recipe",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "db862d40c2a901a83c08d06ce937905a2248a22e",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/hostap/wifi-detect.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files/usr/share/hostap/wifi-detect.uc",
+      "source_sha256": "1b21c13ef3e8df83575303c9b75609f22b3e359e66128abc43ebd369652270ab"
+    },
+    {
+      "config_condition": "always under inspected install recipe",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "147c16205aa8dc64706bbdc17d3ae33edb20faca",
+      "installed_bytes_verified": false,
+      "package_owner": "wifi-scripts",
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/wifi/utils.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_wifi_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_oracle": "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+      "source_path": "package/network/config/wifi-scripts/files/usr/share/ucode/wifi/utils.uc",
+      "source_sha256": "bffaaff3e9ad9962206fb15aec190cd0fc2747990392885d346e0f6b3f5d61af"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "727ac3be3fa17b5ecb3df82a0346eb735a734aa8",
+      "install_recipe": "package/network/services/unetmsg/Makefile:31-33",
+      "installed_bytes_verified": false,
+      "package_owner": "unetmsg",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/sbin/unetmsgd",
+      "repo": "openwrt",
+      "route_support": "plain_route_source_expected_unetmsg",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/unetmsg/files/usr/sbin/unetmsgd",
+      "source_sha256": "26cec8f7966a5a961518cc9360b3202716c197dd70c8f1f692887372d466ea9a"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "6519eac560c3a657dc390c1844e34dcd6cd0418b",
+      "install_recipe": "package/network/services/unetmsg/Makefile:31-33",
+      "installed_bytes_verified": false,
+      "package_owner": "unetmsg",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/unetmsg/client.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_source_expected_unetmsg",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/unetmsg/files/usr/share/ucode/unetmsg/client.uc",
+      "source_sha256": "72d3f45e4a91ecfe829e410e8c935c5d15fd592fba220b95a872a17d1add8b04"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "6d38909347e0eee21aeca272fdb83e02853e840e",
+      "install_recipe": "package/network/services/unetmsg/Makefile:31-33",
+      "installed_bytes_verified": false,
+      "package_owner": "unetmsg",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/unetmsg/unetmsgd-client.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_source_expected_unetmsg",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/unetmsg/files/usr/share/ucode/unetmsg/unetmsgd-client.uc",
+      "source_sha256": "d853535f70b7a43940beb6096a6ba9abbee7af3716d1819ad6aa3ca5714ceffe"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "a02ba08c671a18c8914b4db279336ae114769f41",
+      "install_recipe": "package/network/services/unetmsg/Makefile:31-33",
+      "installed_bytes_verified": false,
+      "package_owner": "unetmsg",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/unetmsg/unetmsgd-remote.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_source_expected_unetmsg",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/unetmsg/files/usr/share/ucode/unetmsg/unetmsgd-remote.uc",
+      "source_sha256": "78e666b350f5d4e6177b4103786ec592578f3e08429c9af6f3f6d477b1861e95"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "775d87b9c0bbee83cbefcc93c75026cdc11c4d02",
+      "install_recipe": "package/network/services/unetmsg/Makefile:31-33",
+      "installed_bytes_verified": false,
+      "package_owner": "unetmsg",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/unetmsg/unetmsgd.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_source_expected_unetmsg",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/unetmsg/files/usr/share/ucode/unetmsg/unetmsgd.uc",
+      "source_sha256": "e225e37f9f78f202c9b891eaee63550169f8c1439c908bfc7b722180b8a7e92b"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "3bad212e4133782819f5512b1092c97631a7852e",
+      "install_recipe": "package/network/services/unetmsg/Makefile:31-33",
+      "installed_bytes_verified": false,
+      "package_owner": "unetmsg",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/unetmsg/utils.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_source_expected_unetmsg",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/unetmsg/files/usr/share/ucode/unetmsg/utils.uc",
+      "source_sha256": "4003b2ec8667473e29264e106794f605dcc5456eaa11918d1f4239600881b228"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "90889f996a3805e86e910ab9eec951549146c6ec",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/sbin/cli",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/sbin/cli",
+      "source_sha256": "f71b2a73fd6b2bd4a44cdb4fcbab896c5d2a945954c035a244d49603e4d87707"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "27cc049f73ffbee099931352db1eb24de71eaf17",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/cache.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/cache.uc",
+      "source_sha256": "4f9c21ab7517480ba50c7e7a41fcc17a788152d797abe99cdfd5ac748ee57c72"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "39e5863533a73984affcd1f927b236893ab007c9",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/color.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/color.uc",
+      "source_sha256": "89ab6b082fc5e41567f70b88bd644f80f96a439ada5f9295ef2e1c37772b5d4d"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "18d6eb202ec44b7fd42d1ad54255b2562ea5ca47",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/context-call.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/context-call.uc",
+      "source_sha256": "fad2f165e6f78c9d310a912832e0cfa585e3341c34b240da6051e3179e0258c0"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "53b5f57047fd15b5bce9e65794cabf3e1716725c",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/context.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/context.uc",
+      "source_sha256": "190d5186e277eacfac80c1c3e80eaa483465f24ec19f0faefea08c318a1698d3"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "f6d9454dd7e3db5cb3ef575f09e5f8f2ed435bbf",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/datamodel.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/datamodel.uc",
+      "source_sha256": "0e271bdfff8da423e2e87f8fff95203f74e53aa1433d84a9b16d09f213500065"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "3d5ef5b058ee6fcab9c658e1321f8c7f7eafe574",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/modules/network.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/modules/network.uc",
+      "source_sha256": "9d1fbe9682cafff2d4e55d89944de6b204130b82c272bba7f747623df106b19b"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "a280f6559e862943b71b248cc1fd61036a3c3c2f",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/modules/service.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/modules/service.uc",
+      "source_sha256": "d0daab4ea0754ab059072a949b3ccc99e9a33c911396679be0c8055269522a75"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "639313b72f4315b95ddf7755cef03a95a3f54138",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/object-editor.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/object-editor.uc",
+      "source_sha256": "e2cd1b56ca4468ab2d1ebf629c9fa2b5511e4f2775212dcde8ba6c6847f71e2a"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "62f9683b45dae6a5b7305895a4e52634ab6b4890",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/types.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/types.uc",
+      "source_sha256": "124c3a1e35955492502bbe301ef8466de67480438f143ffd514020636baec2d5"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "f299ad361d667963f2c91d701cd8b42ec4d88d07",
+      "installed_bytes_verified": false,
+      "package_owner": "cli",
+      "prior_claims": [
+        "077"
+      ],
+      "prior_local_extraction": "success_once_zero_errors",
+      "proposed_installed_path": "usr/share/ucode/cli/utils.uc",
+      "repo": "openwrt",
+      "route_support": "plain_route_observed_in_prior_slice",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/cli/files/usr/share/ucode/cli/utils.uc",
+      "source_sha256": "72d6ef87319f6658885f989e834fd1193175c3dafdca2dfb4aa2a4d1e16ccd53"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "b3ee3f3bc94938c14fed46022a28b0d47d98ac2a",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/conntrack.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/conntrack.uc",
+      "source_sha256": "4024c9b34c57c4b1cf9f6079834ddb99a23ec36823125f8ab82096468905b98b"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "574655df8e5a0c5c3affc7904994a8a93335df52",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/cpu.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/cpu.uc",
+      "source_sha256": "cf383d336f4e5b9a3a1d6b2c1e76d1b3779f341a90c613b7ffda535d216207a9"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "2df44261a323ca22d2ee41fc0893f28f3e3bfdee",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/entropy.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/entropy.uc",
+      "source_sha256": "d0077072760c216d55a35c1e212bf3dca93cf5f287e2b47fc0198506a608c942"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "359cffd4ebc059059cea5363c7a30f1531a5ea2f",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/filefd.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/filefd.uc",
+      "source_sha256": "271f7dfc8b36ff678a8a2b2eed9133d1acb494bb9b18bce4de16106f59f9bb82"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "ba67dafe34878de07e6c106d5e0ce3377084b68e",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/loadavg.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/loadavg.uc",
+      "source_sha256": "03a49b6acb5dcab4f813c23029b233318aafc96496090f5edaaed5c8684c225e"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "3cecb124dcd87a96f5263913b94088d5c8d1050f",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/meminfo.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/meminfo.uc",
+      "source_sha256": "4feb8531e2c24059e8036cc2d5b6c9731307af980d4fe7008e5d859b34b33bea"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "10b3cfd34391748d5a1e949507e86f9c311398bb",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/netclass.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/netclass.uc",
+      "source_sha256": "0af2dac8c378df529c053528a89041795618b327ea8c8de5af0b5294536662e9"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "f8fc68de44f4354970bdf3969d0a5d300ccddc76",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/netdev.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/netdev.uc",
+      "source_sha256": "2d48f65884df951910121e62df3161487d9c305ea657b8da435b8fbcf34fadc6"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "11840a8305b8b794786cdb22b04a565c5a3d2714",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/selinux.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/selinux.uc",
+      "source_sha256": "6e73a1c2863e92e09c4e5703eb25c5785e5ee0c736be11daa0452921e7f09312"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "7d13ea841a195ff72f36d519f241b3a23a780031",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/time.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/time.uc",
+      "source_sha256": "08fdaff56569c0d1a2b94b8b635bfc47400904ee303537d86f05b6c2fced705c"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "50cb352ac12d98ae6e3b29c5b4684770a3743e8f",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/lib/uname.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/base/uname.uc",
+      "source_sha256": "c08111908e0adb80b4feae82c202e65d9060f396cfb8d7edcdb891ed4d830722"
+    },
+    {
+      "expected_route": {
+        "classification": "markup",
+        "reason": "markup_tag_content"
+      },
+      "git_blob": "3dce77accb520ca2b92e44ff14ea2ec7abd2abd6",
+      "install_recipe": "utils/prometheus-node-exporter-ucode/Makefile:30-39",
+      "installed_bytes_verified": false,
+      "package_owner": "prometheus-node-exporter-ucode",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/node-exporter/metrics.uc",
+      "repo": "packages",
+      "route_support": "source_expected_prometheus_base",
+      "source_commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/prometheus-node-exporter-ucode/files/metrics.uc",
+      "source_sha256": "13acb074a41b16ebac4b5cbe287d5921d4f6cdd86a18bcbc68a2fee83b1fc44d"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "9fe302ce892315c2bcc36f0855e93a72ff296745",
+      "install_recipe": "package/boot/uboot-tools/Makefile:105-111",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "package selected: uboot-envtools; ipq806x default package list includes it, but image config not established",
+      "package_owner": "uboot-envtools",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/sbin/fw_loadenv",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/boot/uboot-tools/uboot-envtools/files/fw_loadenv",
+      "source_sha256": "6a03dcf045db393a2bfbd94ca6dd56d635c425730f2118ff409d8c69f556d26a"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "69677bb159acaae8479e1aac0f19cbf7e472458e",
+      "install_recipe": "package/network/config/netifd/Makefile:42-45",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "package selected: netifd",
+      "package_owner": "netifd",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "lib/netifd/main.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/config/netifd/files/lib/netifd/main.uc",
+      "source_sha256": "f1a16867ac640108182e6fe2b5a02b18e66d302c55e2b9cd21ffefff3ee0cbf2"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "84db69d2fae2dd1bbf64019315b18a43fe76912e",
+      "install_recipe": "package/network/config/netifd/Makefile:42-45",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "package selected: netifd",
+      "package_owner": "netifd",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "lib/netifd/utils.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/config/netifd/files/lib/netifd/utils.uc",
+      "source_sha256": "9601c500d498103eb3b22010fd6fba0885840f10f32d8c8db7f05911e4aedeb9"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "34df46d18ef5d894c75da599e8ac958c59b225c7",
+      "install_recipe": "package/network/config/netifd/Makefile:42-45",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "package selected: netifd",
+      "package_owner": "netifd",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/libexec/network/packet-steering.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/config/netifd/files/usr/libexec/network/packet-steering.uc",
+      "source_sha256": "f3621cb1b931cdff9f5359f9de043370f4c0014771a893a0f9324a4633026e60"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "7f8c55da70c296adf6b6a5fe4683def4904b605c",
+      "install_recipe": "package/network/services/hostapd/Makefile:719-723,743-780",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "one applicable hostapd/wpad package variant selected",
+      "package_owner": "hostapd build family",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/hostap/hostapd.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/hostapd/files/hostapd.uc",
+      "source_sha256": "05f8881eb9f3d4458a7d5143f26396822fc43e8b560f1ee456de0480fa0694aa"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "c7da3bc1c4f30a1ca61b84e891112fc5db5a7630",
+      "install_recipe": "package/network/services/hostapd/Makefile:725-728,763-794",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "one applicable wpad or wpa-supplicant package variant selected",
+      "package_owner": "hostapd/supplicant build family",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/hostap/wpa_supplicant.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/hostapd/files/wpa_supplicant.uc",
+      "source_sha256": "d6726b52e3825489ce267e3aaea2fa0c3aa23daad5b6affcc7384e68d6bf0b66"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "5b767847aae059f3d6c8840b7cb9deb9fc783533",
+      "install_recipe": "package/network/services/umdns/Makefile:39-49",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "package selected: umdns",
+      "package_owner": "umdns",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/cli/modules/mdns.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/umdns/files/mdns.uc",
+      "source_sha256": "f2b409874d5e6370bf187806da0bd1e3bd120fe41de0e9f67b9ac92f74996a31"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "44d1c83e5db23871c5495eff241a3fb967acdefa",
+      "install_recipe": "package/network/services/unetd/Makefile:81-98",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "package selected: unetd; CONFIG_UNETD_VXLAN_SUPPORT affects separate BPF object only",
+      "package_owner": "unetd",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/cli/modules/unet.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/network/services/unetd/files/unet.uc",
+      "source_sha256": "bfa969fe226982529551163433615a87e91bee9620176ec7138314093b43d6e1"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "49542e5b8d2247260b19d851d5b261a992e4e5cb",
+      "install_recipe": "package/utils/provision/Makefile:18-30",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "package selected: provision",
+      "package_owner": "provision",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/sbin/provision",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/provision/files/usr/sbin/provision",
+      "source_sha256": "1f520a39df42a6ff3b6316e5fd51c7a1758e2c73cc27c595dc65bfb253df879b"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "git_blob": "3f43331d00e76b933c7abf8af7f7e535c85c148a",
+      "install_recipe": "package/utils/provision/Makefile:18-30",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "package selected: provision",
+      "package_owner": "provision",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/share/ucode/provision.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/provision/files/usr/share/ucode/provision.uc",
+      "source_sha256": "4fe7b27fa214871b3042976d15f5eadebd2ab57830025852377f8f86f4c780d5"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "e37e5f5329d100b374bb4dcbd48a6f4aef6ccfdf",
+      "install_recipe": "package/utils/ucode-mod-pkgen/Makefile:26-43",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "pkgen selected; distinct from ucode-mod-pkgen shared module and depends on ucode/module/fs",
+      "package_owner": "pkgen (script package)",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/bin/pkgen",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/ucode-mod-pkgen/files/pkgen",
+      "source_sha256": "5927d4050793b5f5b68ebcd87ff0f26dae695b31e2a16933945645752bd350dd"
+    },
+    {
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "git_blob": "7dcf30986c045dd92b6ea010319d6f6dee026ed6",
+      "install_recipe": "package/base-files/Makefile:169-185; target/linux/ipq806x/Makefile:5-17",
+      "installed_bytes_verified": false,
+      "package_or_target_condition": "target condition: building ipq806x image",
+      "package_owner": "ipq806x target base-files overlay",
+      "prior_local_extraction": "not_run",
+      "proposed_installed_path": "usr/bin/base64decode.uc",
+      "repo": "openwrt",
+      "route_support": "source_expected_v0.5_not_yet_run",
+      "source_commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "target/linux/ipq806x/base-files/usr/bin/base64decode.uc",
+      "source_sha256": "1ca194eb61dd9ed6a8e1954a7dc057c4b40e153d2da306b8e69d6db0ab909562"
+    }
+  ],
+  "selection_scope": "65 LuCI, 11 OpenWrt CLI, 17 conditional OpenWrt wifi-scripts, six OpenWrt unetmsg, 12 packages-feed base prometheus-node-exporter-ucode paths; source-staged; 12 package/target-conditional OpenWrt full-tree source paths",
+  "source_evidence": [
+    "evidence/085-20261124-luci-source-census/inventory.json",
+    "evidence/077-20261124-current-slice-extraction/source-identities.json",
+    "evidence/081-20261124-luci-rpcd-slice/run-receipt.json",
+    "evidence/084-20261124-luci-package-ucode-slice/source-first-oracle.json",
+    "evidence/086-20261124-luci-markup-shebang-slice/source-first-oracle.json",
+    "evidence/021-template-extraction/source-first-manifest.json",
+    "evidence/mvp-wifi-scripts-extraction-20261124/source-first-oracle.json",
+    "evidence/mvp-wifi-scripts-extraction-20261124/run-receipt.json",
+    "planning/mvp-openwrt-packages-candidates-v0.1.json",
+    "planning/mvp-openwrt-full-tree-candidates-v0.5-mapping-20261124.md",
+    "evidence/mvp-full-tree-inventory-20261124/openwrt-pinned-summary.json",
+    "evidence/mvp-corpus-v0.5-source-first-oracle.json",
+    "evidence/mvp-corpus-v0.5-controls.json"
+  ],
+  "status": "proposed SOURCE-STAGED manifest; 12 source-verified OpenWrt additions; no CodeQL run"
+}
