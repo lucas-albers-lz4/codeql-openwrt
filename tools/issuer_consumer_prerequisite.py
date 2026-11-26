@@ -85,12 +85,12 @@ def check_scan(root: Path, manifest_path: Path, manifest: dict, lock: dict, run_
         argv = by_label[label]['argv']
         need(argv[:len(prefix)+1] == [codeql] + prefix, 'command executable or operation mismatch: ' + label)
     need('--source-root=' + str(root / 'stage') in by_label['db-init']['argv'] and '--working-dir=' + str(root / 'stage') in by_label['db-index']['argv'] and db in by_label['db-index']['argv'], 'database path mismatch')
-    suite = str(root / 'bundle/ql/src/codeql-suites/code-scanning.qls')
+    suite = str(root / 'bundle/codeql-ucode-linux/ql/src/codeql-suites/code-scanning.qls')
     need(suite in by_label['resolve-suite']['argv'] and suite in by_label['analyze']['argv'], 'suite path mismatch')
     need('--output=' + str(paths['out/default-suite.sarif']) in by_label['analyze']['argv'], 'SARIF output path mismatch')
     for label, query in [('errors', 'ExtractionErrors.ql'), ('successful', 'SuccessfullyExtractedFiles.ql')]:
         argv = by_label[label + '-query']['argv']
-        need(str(root / 'bundle/ql/src/diagnostics' / query) in argv and '--database=' + db in argv and '--output=' + str(root / 'out' / (label + '.bqrs')) in argv, 'diagnostic query path mismatch')
+        need(str(root / 'bundle/codeql-ucode-linux/ql/src/diagnostics' / query) in argv and '--database=' + db in argv and '--output=' + str(root / 'out' / (label + '.bqrs')) in argv, 'diagnostic query path mismatch')
         need(str(root / 'out' / (label + '.bqrs')) in by_label[label + '-decode']['argv'], 'diagnostic decode path mismatch')
         need(by_label[label + '-decode'].get('stdout') == 'commands/' + label + '-decode.stdout', 'diagnostic stdout path mismatch')
         need(_file(root, 'commands/' + label + '-decode.stdout').read_bytes() == paths['out/' + label + '.json'].read_bytes(), 'diagnostic stdout mismatch')
