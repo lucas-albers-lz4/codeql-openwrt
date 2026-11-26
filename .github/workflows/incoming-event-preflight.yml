@@ -36,6 +36,8 @@ on:
     paths:
       - '.github/workflows/incoming-event-preflight.yml'
       - 'tools/incoming_event.py'
+      - 'tools/incoming_dispatch_record.py'
+      - 'tools/test_incoming_dispatch_record.py'
       - 'tools/full_tree_candidates.py'
       - 'tools/test_full_tree_candidates.py'
       - 'tools/event_corpus_manifest.py'
@@ -79,6 +81,7 @@ jobs:
           python3 -B -m unittest tools.test_event_corpus_manifest tools.test_event_control_scan -v
           python3 -B -m unittest policy.tests.test_issuer_consumer_prerequisite policy.tests.test_issuer_control_graph policy.tests.test_issuer_workflow_graph policy.tests.test_issuer_artifact_freeze -v
           python3 -B tools/test_reservation_claim.py -v
+          python3 -B tools/test_incoming_dispatch_record.py -v
           python3 -B tools/test_queue_scan_link.py -v
           python3 -B -m unittest policy.tests.test_event_corpus_linux policy.tests.test_current_corpus_linux policy.tests.test_sarif_accept policy.tests.test_r3_linux_handoff -v
   resolve-pins:
@@ -90,6 +93,17 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+      - name: Retain manual dispatch inputs before PR resolution
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          UPSTREAM: ${{ inputs.upstream }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          CONTROL_SHA: ${{ inputs.control_sha }}
+          QUEUE_ID: ${{ inputs.queue_id }}
+          RESERVATION_SEQUENCE: ${{ inputs.reservation_sequence }}
+          RESERVATION_SHA256: ${{ inputs.reservation_sha256 }}
+        run: python3 -B tools/incoming_dispatch_record.py dispatch-inputs.json
       - name: Fetch exact GitHub pull API response
         id: pull
         env:
@@ -189,6 +203,7 @@ jobs:
           if-no-files-found: warn
           path: |
             pull-api-response.json
+            dispatch-inputs.json
             incoming-event*.json
             source-policy-drift.json
             full-tree-candidates.json

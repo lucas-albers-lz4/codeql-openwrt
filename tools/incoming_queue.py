@@ -281,6 +281,117 @@ def reserve_exact_pr(db, expected, prepared, now):
         db.execute('ROLLBACK'); raise
 
 
+def recover_stale_reserved_pr(db, expected, raw_files, now):
+    """Operator-only recovery of an unstarted PR reservation after head/base drift.
+
+    The supplied hosted API files are checked for internal consistency, not
+    authenticated by this offline queue. This never signs or completes a scan.
+    """
+    check(isinstance(raw_files, dict) and set(raw_files) == {'pull', 'run', 'jobs', 'dispatch'} and
+          all(isinstance(value, bytes) and 0 < len(value) <= 65_536
+              for value in raw_files.values()), 'invalid recovery evidence bytes')
+    pull, run, jobs, dispatch = (json.loads(raw_files[key], object_pairs_hook=unique_object)
+                                 for key in ('pull', 'run', 'jobs', 'dispatch'))
+    evidence = {key + '_sha256': hashlib.sha256(value).hexdigest()
+                for key, value in raw_files.items()}
+    timestamp = datetime.fromisoformat(now.replace('Z', '+00:00'))
+    check(timestamp.tzinfo is not None, 'recovery time needs timezone')
+    db.execute('BEGIN IMMEDIATE')
+    try:
+        head = db.execute('SELECT seq,digest,document FROM history ORDER BY seq DESC LIMIT 1').fetchone()
+        check(head is not None and head[:2] == expected and
+              hashlib.sha256(head[2]).hexdigest() == head[1],
+              'stale or invalid queue predecessor')
+        reservation = json.loads(head[2], object_pairs_hook=unique_object)
+        check(reservation.get('schema') == 'incoming-queue-manual-reservation-v1' and
+              reservation.get('status') == 'reserved_only',
+              'queue head is not a manual exact PR reservation')
+        check(timestamp >= datetime.fromisoformat(reservation['observed_at'].replace('Z', '+00:00')),
+              'recovery time moved backwards')
+        queue_id = db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
+        check(reservation['queue_id'] == queue_id, 'queue identity mismatch')
+        row = db.execute('SELECT event,status,attempts,reservation,reservation_digest,started_job FROM events WHERE id=?',
+                         (reservation['event_id'],)).fetchone()
+        check(row is not None and row[1:] == ('reserved', 0, head[0], head[1], None),
+              'reservation has started or changed')
+        queued = json.loads(row[0], object_pairs_hook=unique_object)
+        event_id = json.loads(reservation['event_id'])
+        check(isinstance(event_id, list) and len(event_id) == 4 and event_id[1] == 'pull_request' and
+              event_id[0] in ('openwrt/openwrt', 'openwrt/luci') and
+              event_id[3] == queued['source']['commit'] == reservation['source']['commit'] and
+              queued['base_commit'] == reservation['control_sha'],
+              'invalid queued PR reservation')
+        repo, _, number, old_head = event_id
+        new_head, new_base = pull.get('head', {}).get('sha'), pull.get('base', {}).get('sha')
+        check(pull.get('number') == number and pull.get('state') == 'open' and
+              pull.get('base', {}).get('repo', {}).get('full_name') == repo and
+              all(isinstance(value, str) and re.fullmatch(r'[0-9a-f]{40}', value)
+                  for value in (new_head, new_base)) and
+              (new_head, new_base) != (old_head, reservation['control_sha']),
+              'canonical PR response does not show head/base drift')
+        check(run.get('repository', {}).get('full_name') == 'lucas-albers-lz4/codeql-openwrt' and
+              type(run.get('id')) is int and run['id'] > 0 and
+              type(run.get('run_attempt')) is int and run['run_attempt'] > 0 and
+              run.get('path') == '.github/workflows/incoming-event-preflight.yml' and
+              run.get('event') == 'workflow_dispatch' and run.get('status') == 'completed' and
+              run.get('conclusion') == 'failure',
+              'invalid failed workflow identity')
+        started_at = datetime.fromisoformat(run['created_at'].replace('Z', '+00:00'))
+        check(started_at.tzinfo is not None and
+              started_at >= datetime.fromisoformat(reservation['observed_at'].replace('Z', '+00:00')) and
+              timestamp >= started_at, 'failed run predates reservation or recovery')
+        check(dispatch.get('schema') == 'incoming-dispatch-inputs-v1' and
+              dispatch.get('status') == 'claimed_unverified' and
+              dispatch.get('run_id') == str(run['id']) + '-' + str(run['run_attempt']) and
+              dispatch.get('upstream') == repo.split('/')[1] and
+              dispatch.get('pr_number') == number and
+              dispatch.get('source_sha') == old_head and
+              dispatch.get('control_sha') == reservation['control_sha'] and
+              dispatch.get('queue_id') == queue_id and
+              dispatch.get('reservation_sequence') == head[0] and
+              dispatch.get('reservation_sha256') == head[1],
+              'failed workflow dispatch does not match reservation')
+        listed = jobs.get('jobs')
+        check(isinstance(listed, list) and jobs.get('total_count') == len(listed) == 3 and
+              {job.get('name'): (job.get('status'), job.get('conclusion')) for job in listed} ==
+              {'contract': ('completed', 'success'), 'resolve-pins': ('completed', 'failure'),
+               'released-event-scan': ('completed', 'skipped')} and
+              all(job.get('run_id') == run['id'] and
+                  job.get('run_attempt') == run['run_attempt'] and
+                  job.get('head_sha') == run.get('head_sha') for job in listed) and
+              [step.get('name') for job in listed if job.get('name') == 'resolve-pins'
+               for step in job.get('steps', []) if step.get('conclusion') == 'failure'] ==
+              ['Fetch exact GitHub pull API response'],
+              'failed run did not stop before released scan')
+        sequence = head[0] + 1
+        result = {'schema': 'incoming-queue-manual-stale-recovery-v1',
+                  'status': 'recovered_unstarted', 'authority': 'local_operator',
+                  'sequence': sequence, 'previous_sha256': head[1],
+                  'queue_id': queue_id, 'event_id': reservation['event_id'],
+                  'reservation_sequence': head[0], 'reservation_sha256': head[1],
+                  'observed_at': now, 'old_head': old_head,
+                  'old_base': reservation['control_sha'], 'observed_head': new_head,
+                  'observed_base': new_base,
+                  'failed_run_id': run['id'], 'failed_run_attempt': run['run_attempt'],
+                  'evidence': evidence,
+                  'evidence_source': {
+                      'pull_artifact': 'incoming-event-' + str(run['id']) + '-' + str(run['run_attempt']) + '/pull-api-response.json',
+                      'dispatch_artifact': 'incoming-event-' + str(run['id']) + '-' + str(run['run_attempt']) + '/dispatch-inputs.json',
+                      'run_api': 'repos/lucas-albers-lz4/codeql-openwrt/actions/runs/' + str(run['id']),
+                      'jobs_api': 'repos/lucas-albers-lz4/codeql-openwrt/actions/runs/' + str(run['id']) + '/jobs'},
+                  'limitations': ['Operator-supplied API files are not authenticated by this queue.']}
+        raw = encoded(result)
+        digest = hashlib.sha256(raw).hexdigest()
+        changed = db.execute("UPDATE events SET status='inactive',reason='manual_stale_head_recovery',reservation=NULL,reservation_digest=NULL,started_job=NULL WHERE id=? AND status='reserved' AND attempts=0 AND reservation=? AND reservation_digest=?",
+                             (reservation['event_id'], head[0], head[1])).rowcount
+        check(changed == 1, 'stale reservation changed before recovery')
+        db.execute('INSERT INTO history VALUES (?,?,?)', (sequence, digest, raw))
+        db.execute('COMMIT')
+        return result, digest
+    except BaseException:
+        db.execute('ROLLBACK'); raise
+
+
 def apply_attested(db, expected, payload, mac, secret, now):
     """Apply a trusted signer's start or outcome. MAC authenticates the issuer,
     not the truth of its claims; production needs a reviewed same-job signer.
