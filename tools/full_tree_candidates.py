@@ -8,6 +8,7 @@ EXPECTED_MANIFESTS = {
     "mvp-bounded-corpus-v0.4": "1e25cf9c2adc40c854502fed8d1ccc0977a3c4825d6ee4a1c0a543ffe0a76699",
     "mvp-bounded-corpus-v0.5-source-staged": "70ba39e2307b7c5c9905d572d85b0cca320214e48c0dc64065bad668cddb08fc",
     "mvp-bounded-corpus-v0.6": "9c004ed477665f6567a071eac45051445c61019af927bfa4e51bae4c50ebd490",
+    "mvp-openvpn-historical-source-v0.1": "16d372ac21d87576c3ed3cd90036059e54f3cb0d8082f3094a032bd33190403a",
 }
 ROOTS = ("usr/share/ucode/", "usr/share/rpcd/ucode/", "usr/lib/ucode/")
 SUFFIXES = (".uc", ".ucode", ".ut")
@@ -111,6 +112,17 @@ def compare(root, base, head, policy, raw_manifest, repository="openwrt"):
         if not re.fullmatch(r"[0-9a-f]{40}", rev) or git(root,"rev-parse","--verify",f"{rev}^{{commit}}") != rev: raise SelectorError(f"revision must resolve as exact full SHA: {rev}")
     bi, hi = make_inventory(root, base, policy, repository), make_inventory(root, head, policy, repository)
     bm, hm = {x["source_path"]:x for x in bi}, {x["source_path"]:x for x in hi}
+    if schema == "mvp-openvpn-historical-source-v0.1":
+        historical_rows=[row for row in policy.get("selected",[])+policy.get("excluded",[])
+                         if row.get("repo")==repository]
+        if len(historical_rows)!=len(hm) or {row["source_path"] for row in historical_rows}!=set(hm):
+            raise SelectorError("historical policy path census differs")
+        for row in historical_rows:
+            found=hm[row["source_path"]]
+            if (row.get("source_commit")!=head or row.get("git_blob")!=found["git_blob"] or
+                    row.get("source_sha256")!=found["sha256"] or
+                    ("sha256" in row and row["sha256"]!=found["sha256"])):
+                raise SelectorError("historical policy source identity differs: "+row["source_path"])
     events = []
     selected_paths = {x["source_path"] for x in policy.get("selected",[]) if x.get("repo")==repository}
     base_policy = {x["source_path"]:x for x in policy.get("selected",[])+policy.get("excluded",[]) if x.get("repo")==repository}
@@ -130,14 +142,44 @@ def compare(root, base, head, policy, raw_manifest, repository="openwrt"):
             else: reasons.append("unreviewed_candidate_content_changed")
         if h and h["status"]=="unreviewed": reasons.append("no_reviewed_disposition")
         events.append({"source_path":p,"status":status,"baseline_policy":baseline,"base":b,"head":h,"events":reasons})
-    fail = any((e["status"]=="unreviewed") or any(x in e["events"] for x in ("baseline_identity_missing_at_base_and_head","candidate_removed_or_signal_lost","candidate_added","candidate_signal_changed","candidate_mode_changed","excluded_content_changed_review_required","unreviewed_candidate_content_changed")) for e in events)
-    return {"schema":"full-tree-ucode-candidates-v1","policy_schema":policy["schema"],"policy_sha256":hashlib.sha256(raw_manifest).hexdigest(),
+    admitted = set()
+    if schema == "mvp-openvpn-historical-source-v0.1":
+        approvals = policy.get("admitted_additions")
+        if not isinstance(approvals,list) or len(approvals)!=1: raise SelectorError("historical addition approval missing")
+        approval=approvals[0]
+        path=approval.get("path")
+        event=next((item for item in events if item["source_path"]==path),None)
+        if not (repository==approval.get("repository")=="luci" and
+                base==approval.get("base_commit") and head==approval.get("head_commit") and
+                event is not None and event["status"]=="selected" and event["base"] is None and
+                event["events"]==["candidate_added"] and
+                event["head"]["mode"]==approval.get("mode")=="100644" and
+                event["head"]["git_blob"]==approval.get("git_blob") and
+                event["head"]["sha256"]==approval.get("sha256") and
+                approval.get("admission_oracle_sha256")=="28e74f60ebc0dc8076ea3e92c8f5795817caf0f23aae03845a9d78c6cb77c1bd"):
+            raise SelectorError("historical addition identity differs")
+        for name in ("package_recipe", "shared_recipe"):
+            recipe=approval.get(name+"_path")
+            blob=approval.get(name+"_blob")
+            if not isinstance(recipe,str) or not isinstance(blob,str) or not HEX40.fullmatch(blob):
+                raise SelectorError("historical recipe identity malformed")
+            if git(root,"rev-parse",f"{head}:{recipe}")!=blob:
+                raise SelectorError("historical recipe identity differs")
+        if git(root,"ls-tree",base,"--",approval["package_recipe_path"]):
+            raise SelectorError("historical package recipe was present at parent")
+        admitted.add(path)
+    fail = any((e["status"]=="unreviewed") or any(x in e["events"] for x in ("baseline_identity_missing_at_base_and_head","candidate_removed_or_signal_lost","candidate_signal_changed","candidate_mode_changed","excluded_content_changed_review_required","unreviewed_candidate_content_changed")) or ("candidate_added" in e["events"] and e["source_path"] not in admitted) for e in events)
+    result={"schema":"full-tree-ucode-candidates-v1","policy_schema":policy["schema"],"policy_sha256":hashlib.sha256(raw_manifest).hexdigest(),
             "repository":repository,"base_commit":base,"base_tree":git(root,"rev-parse",f"{base}^{{tree}}"),"head_commit":head,"head_tree":git(root,"rev-parse",f"{head}^{{tree}}"),
             "base_candidate_count":len(bi),"head_candidate_count":len(hi),"head_selected_count":sum(x["status"]=="selected" for x in hi),
             "head_excluded_count":sum(x["status"]=="excluded" for x in hi),"head_unreviewed_count":sum(x["status"]=="unreviewed" for x in hi),
             "missing_baseline_count":sum("baseline_identity_missing_at_base_and_head" in x["events"] for x in events),
             "events":events,"fail_closed":fail,"status":"review_required" if fail else "inventory_ready",
             "limitations":["Candidate signals do not prove installability or installed bytes.","Recipe mapping/configuration inference is not implemented; policy rows only preserve dispositions in the selected pinned manifest.","Each invocation covers one repository. Package-feed mapping, CodeQL execution, producer-to-consumer handoff, and Gate 8 remain out of scope."]}
+    if schema == "mvp-openvpn-historical-source-v0.1":
+        result["admitted_additions"]=sorted(admitted)
+        result["limitations"].append("Historical approval covers only the exact pinned OpenVPN source/recipe objects; this selector does not bind a direct-commit identity/admission receipt, installed bytes or live event custody.")
+    return result
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__); ap.add_argument("manifest",type=Path); ap.add_argument("repository",choices=("openwrt","luci")); ap.add_argument("checkout",type=Path); ap.add_argument("base_sha"); ap.add_argument("head_sha"); ap.add_argument("output",type=Path); a=ap.parse_args()
