@@ -111,9 +111,11 @@ must verify the signed head, policy, and queue state before treating the
 receipt as evidence for an issuer action.
 
 Run the capture on the private operator host with a dedicated Actions-read
-`GH_TOKEN` and trusted local `gh` and system `curl`. The collector fixes the
+`GH_TOKEN` and trusted system `curl`. The collector fixes the
 GitHub repository and workflow IDs and takes two run, attempt-jobs, and
-run-artifacts observations. Listings are bounded to one full page of 100
+run-artifacts observations. Metadata requests require direct HTTP 200
+responses without a redirect. The token is passed to curl through stdin
+on the fixed GitHub API requests. Listings are bounded to one full page of 100
 unique IDs. Both observations must identify the same successful terminal
 run and the expected scan job, an unexpired early artifact matching the
 retained bytes and a distinct unexpired final artifact matching the
@@ -132,8 +134,11 @@ The maximum raw retention is 160 MiB across six 16 MiB API bodies and one
 60-second ZIP transfer bound. The private custody directory under
 `terminal-captures/default-branch-final-RUN-ATTEMPT` is exclusive. It
 contains the exact raw bodies and a digest inventory, with a create-only
-receipt written after the second observation. Files and directory entries
-are synced and each saved body is reread. A rejected or interrupted
+receipt published atomically after the second observation, raw digest
+readback and directory revalidation. Files and directory entries are
+synced. The pending receipt is never a completed capture. A crash during
+final publication requires manual reconciliation of the receipt, its full
+raw inventory and the failed invocation. A rejected or interrupted
 capture may leave partial raw custody without a receipt. Leave the queue
 unchanged. The operator must reconcile the preserved bytes and move the
 entire incomplete directory to private archival custody before explicitly

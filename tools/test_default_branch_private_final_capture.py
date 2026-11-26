@@ -154,9 +154,8 @@ class PrivateFinalCaptureTests(unittest.TestCase):
             },
         }
 
-    def network(self, directory):
-        self.assertEqual(directory, self.capture_path / 'gh-config')
-        self.assertEqual(list(directory.iterdir()), [])
+    def network(self):
+        self.assertEqual(list(self.capture_path.iterdir()), [])
         self.network_opened = True
 
         def fetch(url, limit):
@@ -209,8 +208,8 @@ class PrivateFinalCaptureTests(unittest.TestCase):
     def test_interrupted_fetch_leaves_partial_custody_and_blocks_implicit_retry(self):
         network = self.network
 
-        def interrupted(directory):
-            fetch, download = network(directory)
+        def interrupted():
+            fetch, download = network()
 
             def fail_on_jobs(url, limit):
                 if url.endswith('/jobs?per_page=100'):
@@ -230,6 +229,60 @@ class PrivateFinalCaptureTests(unittest.TestCase):
             self.run_capture()
         self.assertEqual(first_path.read_bytes(), expected)
         self.assertEqual(self.requests, [self.endpoint])
+
+    def test_receipt_readback_failure_never_publishes_marker(self):
+        read = capture._read
+
+        def fail_readback(parent, name, limit, **kwargs):
+            raw = read(parent, name, limit, **kwargs)
+            if name == capture.PENDING_RECEIPT:
+                raise OSError('fixture receipt readback error')
+            return raw
+
+        with patch.object(capture, '_read', side_effect=fail_readback):
+            with self.assertRaises(capture.CaptureError):
+                self.run_capture()
+        self.assertTrue((self.capture_path / capture.PENDING_RECEIPT).exists())
+        self.assertFalse((self.capture_path / capture.RECEIPT).exists())
+        self.assertTrue((self.capture_path / 'final-artifact.zip').exists())
+
+    def test_parent_replacement_after_staging_never_publishes_marker(self):
+        write = capture._write
+        original = self.capture_path.parent
+        moved = original.with_name('terminal-captures-moved')
+
+        def replace_parent(parent, name, raw, limit):
+            record = write(parent, name, raw, limit)
+            if name == capture.PENDING_RECEIPT:
+                original.rename(moved)
+                original.mkdir(mode=0o700)
+            return record
+
+        with patch.object(capture, '_write', side_effect=replace_parent):
+            with self.assertRaisesRegex(capture.CaptureError, 'directory changed during use'):
+                self.run_capture()
+        retained = moved / self.capture_path.name
+        self.assertTrue((retained / capture.PENDING_RECEIPT).exists())
+        self.assertFalse((retained / capture.RECEIPT).exists())
+        self.assertEqual(list(original.iterdir()), [])
+
+    def test_publication_sync_error_removes_final_marker(self):
+        sync = os.fsync
+        failed = False
+
+        def fail_sync(descriptor):
+            nonlocal failed
+            if (self.capture_path / capture.RECEIPT).exists() and not failed:
+                failed = True
+                raise OSError('fixture final directory sync error')
+            sync(descriptor)
+
+        with patch.object(capture.os, 'fsync', side_effect=fail_sync):
+            with self.assertRaises(capture.CaptureError):
+                self.run_capture()
+        self.assertTrue(failed)
+        self.assertFalse((self.capture_path / capture.RECEIPT).exists())
+        self.assertTrue((self.capture_path / 'final-artifact.zip').exists())
 
     def test_wrong_job_at_same_name_is_ineligible(self):
         self.terminal['jobs']['jobs'][0]['id'] = JOB_ID + 1
@@ -329,11 +382,28 @@ class RedirectTests(unittest.TestCase):
             url = 'https://api.github.com/' + ZIP_ENDPOINT if supplied_token else SIGNED_URL
             expected = f'url = "{url}"\n'.encode()
             if supplied_token:
-                expected += f'header = "Authorization: Bearer {supplied_token}"\n'.encode()
+                expected += (f'header = "Authorization: Bearer {supplied_token}"\n'
+                             'header = "Accept: application/vnd.github+json"\n').encode()
             with self.subTest(credential=bool(supplied_token)):
                 with patch.object(capture.subprocess, 'Popen', side_effect=fixture):
                     self.assertEqual(capture._curl(url, 3, 2, token=supplied_token),
                                      (200, [], b'zip'))
+
+    def test_metadata_requires_direct_success_without_location(self):
+        endpoint = 'repos/' + reconcile.REPOSITORY + '/actions/runs/9'
+        for status, locations in ((302, [SIGNED_URL.encode()]),
+                                  (200, [SIGNED_URL.encode()]), (410, [])):
+            with self.subTest(status=status, locations=bool(locations)):
+                with patch.object(capture, '_curl', return_value=(status, locations, b'{}')) as req:
+                    with self.assertRaisesRegex(capture.CaptureError, 'direct HTTP 200'):
+                        capture._fetch_metadata(endpoint, 2, 'fixture-token')
+                    req.assert_called_once_with('https://api.github.com/' + endpoint, 2,
+                                                capture.REQUEST_TIMEOUT, token='fixture-token')
+        with patch.object(capture, '_curl', return_value=(200, [], b'{}')):
+            raw, receipt = capture._fetch_metadata(endpoint, 2, 'fixture-token')
+        self.assertEqual(raw, b'{}')
+        self.assertEqual(receipt['sha256'], sha(raw))
+        self.assertNotIn('fixture-token', str(receipt))
 
     def test_only_api_request_receives_credential(self):
         responses = [(302, [SIGNED_URL.encode()], b''), (200, [], b'zip')]

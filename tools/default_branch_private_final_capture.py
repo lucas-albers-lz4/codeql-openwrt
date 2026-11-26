@@ -3,7 +3,7 @@
 This in-process stage has no queue, key, ZIP extraction or signing interface.
 Its result is a custody receipt for later verification.
 """
-from contextlib import ExitStack, contextmanager
+from contextlib import ExitStack, contextmanager, suppress
 from datetime import datetime, timezone
 import os
 from pathlib import Path
@@ -30,6 +30,8 @@ MAX_HEADERS = 64 * 1024
 REQUEST_TIMEOUT = 30
 DOWNLOAD_TIMEOUT = 60
 CAPTURE_DIR = 'terminal-captures'
+PENDING_RECEIPT = '.receipt.pending'
+RECEIPT = 'receipt.json'
 TOKEN_RE = re.compile(r'[A-Za-z0-9_-]{1,512}\Z')
 DOWNLOAD_HOST = re.compile(r'productionresultssa[0-9]+\.blob\.core\.windows\.net\Z')
 DIRECTORY_FLAGS = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
@@ -275,7 +277,8 @@ def _curl(url, limit, timeout, *, token=None):
     # environment, retained logs or exception text.
     config = f'url = "{url}"\n'
     if token is not None:
-        config += f'header = "Authorization: Bearer {token}"\n'
+        config += (f'header = "Authorization: Bearer {token}"\n'
+                   'header = "Accept: application/vnd.github+json"\n')
     argv = ['/usr/bin/curl', '--disable', '--config', '-', '--silent', '--include',
             '--http1.1', '--globoff', '--proto', '=https', '--noproxy', '*', '--max-time',
             str(timeout), '--max-filesize', str(limit)]
@@ -332,22 +335,47 @@ def _download_zip(endpoint, limit, token):
     }
 
 
-def _network(directory):
-    # Inherit neither operator gh config nor proxy/custom CA/trace settings.
-    # Require the operator's separately provisioned Actions-read token.
+def _fetch_metadata(endpoint, limit, token):
+    started = time.monotonic()
+    status, locations, raw = _curl('https://api.github.com/' + endpoint,
+                                    limit, REQUEST_TIMEOUT, token=token)
+    _require(status == 200 and not locations,
+             'canonical metadata endpoint did not return direct HTTP 200')
+    return raw, {
+        'endpoint': endpoint, 'http_status': status, 'exit_status': 0,
+        'elapsed_seconds': round(time.monotonic() - started, 3),
+        'size': len(raw), 'sha256': reconcile.digest(raw),
+    }
+
+
+def _network():
+    # The token stays in memory and in stdin for canonical API requests.
     _require(os.environ.get('GITHUB_ACTIONS', '').lower() != 'true',
              'private capture must run outside GitHub Actions')
     token = os.environ.get('GH_TOKEN', '')
     _require(TOKEN_RE.fullmatch(token) is not None, 'a scoped GitHub token is required')
-    gh = private._resolve_gh()
-    env = {'PATH': '/usr/bin:/bin', 'HOME': str(directory), 'GH_CONFIG_DIR': str(directory),
-           'GH_PROMPT_DISABLED': '1', 'GH_NO_UPDATE_NOTIFIER': '1', 'GH_TOKEN': token,
-           'GH_TELEMETRY': 'false'}
     return (
-        lambda endpoint, limit: private._fetch(endpoint, limit, gh, env,
-                                                timeout=REQUEST_TIMEOUT, cwd=directory),
+        lambda endpoint, limit: _fetch_metadata(endpoint, limit, token),
         lambda endpoint, limit: _download_zip(endpoint, limit, token),
     )
+
+
+def _publish_receipt(directory, expected):
+    # Link is atomic and fails if the destination already exists. The pending
+    # bytes were synced and reread before any directory context closed.
+    _require(_read(directory, PENDING_RECEIPT, MAX_RECEIPT) == expected,
+             'pending receipt changed after directory revalidation')
+    os.link(PENDING_RECEIPT, RECEIPT, src_dir_fd=directory, dst_dir_fd=directory,
+            follow_symlinks=False)
+    try:
+        os.unlink(PENDING_RECEIPT, dir_fd=directory)
+        os.fsync(directory)
+    except BaseException:
+        # Compensate for reported publication failures. An uncatchable process
+        # or host failure still requires recovery from the raw inventory.
+        os.unlink(RECEIPT, dir_fd=directory)
+        os.fsync(directory)
+        raise
 
 
 def _capture(root, start_raw, run_id, attempt, network):
@@ -361,57 +389,72 @@ def _capture(root, start_raw, run_id, attempt, network):
         'jobs': f'{endpoint}/attempts/{attempt}/jobs?per_page=100',
         'artifacts': f'{endpoint}/artifacts?per_page=100',
     }
-    with ExitStack() as stack:
-        root_fd = stack.enter_context(_directory(None, root))
-        start = _start_evidence(root_fd, start_raw, run_id, attempt)
-        parent = stack.enter_context(_directory(root_fd, CAPTURE_DIR, create=True))
-        capture = stack.enter_context(_directory(parent, name, create=True, exclusive=True))
-        stack.enter_context(_directory(capture, 'gh-config', create=True, exclusive=True))
-        fetch, download = network(root / CAPTURE_DIR / name / 'gh-config')
-        files, requests, observations = {}, [], []
+    with ExitStack() as publisher:
+        with ExitStack() as stack:
+            root_fd = stack.enter_context(_directory(None, root))
+            start = _start_evidence(root_fd, start_raw, run_id, attempt)
+            parent = stack.enter_context(_directory(root_fd, CAPTURE_DIR, create=True))
+            capture = stack.enter_context(_directory(parent, name, create=True, exclusive=True))
+            fetch, download = network()
+            files, requests, observations = {}, [], []
 
-        def retain(filename, raw, limit):
-            files[filename] = _write(capture, filename, raw, limit)
+            def retain(filename, raw, limit):
+                files[filename] = _write(capture, filename, raw, limit)
 
-        def observe(prefix):
-            bodies = {}
-            for role, url in endpoints.items():
-                raw, request = fetch(url, reconcile.MAX_API)
-                retain(f'{prefix}-{role}-api.json', raw, reconcile.MAX_API)
-                requests.append(request)
-                bodies[role] = reconcile.parse_json(raw, 'canonical terminal ' + role)
-            now = _now()
-            observations.append(_utc(now))
-            return _terminal(bodies, start, run_id, attempt, now)
+            def observe(prefix):
+                bodies = {}
+                for role, url in endpoints.items():
+                    raw, request = fetch(url, reconcile.MAX_API)
+                    retain(f'{prefix}-{role}-api.json', raw, reconcile.MAX_API)
+                    requests.append(request)
+                    bodies[role] = reconcile.parse_json(raw, 'canonical terminal ' + role)
+                now = _now()
+                observations.append(_utc(now))
+                return _terminal(bodies, start, run_id, attempt, now)
 
-        first = observe('first')
-        final = first['identity']['final_artifact']
-        zip_endpoint = f'repos/{reconcile.REPOSITORY}/actions/artifacts/{final["id"]}/zip'
-        raw, request = download(zip_endpoint, final['size'])
-        retain('final-artifact.zip', raw, final['size'])
-        _require(len(raw) == final['size'] and reconcile.digest(raw) == final['sha256'],
-                 'downloaded final ZIP differs from metadata')
-        requests.append(request)
-        second = observe('second')
-        _require(first == second, 'canonical terminal observations differ')
-        _require(observations[0] <= observations[1], 'terminal observation clock moved backwards')
+            first = observe('first')
+            final = first['identity']['final_artifact']
+            zip_endpoint = f'repos/{reconcile.REPOSITORY}/actions/artifacts/{final["id"]}/zip'
+            raw, request = download(zip_endpoint, final['size'])
+            retain('final-artifact.zip', raw, final['size'])
+            _require(len(raw) == final['size'] and reconcile.digest(raw) == final['sha256'],
+                     'downloaded final ZIP differs from metadata')
+            requests.append(request)
+            second = observe('second')
+            _require(first == second, 'canonical terminal observations differ')
+            _require(observations[0] <= observations[1], 'terminal observation clock moved backwards')
 
-        receipt = {
-            'schema': SCHEMA, 'status': 'captured_bytes_only',
-            'repository': reconcile.REPOSITORY, 'workflow': reconcile.SCAN_WORKFLOW,
-            'run_id': run_id, 'attempt': attempt, **first['identity'],
-            'supplied_start_sha256': reconcile.digest(start_raw),
-            'supplied_start_observation_sha256': start[0]['observation_sha256'],
-            'start_authenticated': False,
-            'observed_at': observations, 'raw_files': files, 'fetches': requests,
-        }
-        receipt_file = _write(capture, 'receipt.json', issued.canonical_bytes(receipt), MAX_RECEIPT)
-        return {**receipt, 'receipt_sha256': receipt_file['sha256'],
-                'capture_path': f'{CAPTURE_DIR}/{name}'}
+            receipt = {
+                'schema': SCHEMA, 'status': 'captured_bytes_only',
+                'repository': reconcile.REPOSITORY, 'workflow': reconcile.SCAN_WORKFLOW,
+                'run_id': run_id, 'attempt': attempt, **first['identity'],
+                'supplied_start_sha256': reconcile.digest(start_raw),
+                'supplied_start_observation_sha256': start[0]['observation_sha256'],
+                'start_authenticated': False,
+                'observed_at': observations, 'raw_files': files, 'fetches': requests,
+            }
+            for filename, record in files.items():
+                limit = final['size'] if filename == 'final-artifact.zip' else reconcile.MAX_API
+                retained = _read(capture, filename, limit)
+                _require(record == {'size': len(retained), 'sha256': reconcile.digest(retained)},
+                         'retained raw inventory changed before receipt publication')
+            receipt_bytes = issued.canonical_bytes(receipt)
+            receipt_file = _write(capture, PENDING_RECEIPT, receipt_bytes, MAX_RECEIPT)
+            publish_fd = os.dup(capture)
+            # Closing the duplicated read-only descriptor carries no custody state.
+            @publisher.callback
+            def close_publish_fd():
+                with suppress(OSError):
+                    os.close(publish_fd)
+            result = {**receipt, 'receipt_sha256': receipt_file['sha256'],
+                      'capture_path': f'{CAPTURE_DIR}/{name}'}
+
+        _publish_receipt(publish_fd, receipt_bytes)
+        return result
 
 
 def capture(private_root: Path, start_raw: bytes, run_id: int, attempt: int) -> dict:
-    """Fetch and retain bytes in an approved operator root, with no issuer access."""
+    """Fetch and retain bytes in a private operator root, with no issuer access."""
     try:
         root = private._root_is_durable(private_root, Path(__file__).resolve().parents[1])
         return _capture(root, start_raw, run_id, attempt, _network)
