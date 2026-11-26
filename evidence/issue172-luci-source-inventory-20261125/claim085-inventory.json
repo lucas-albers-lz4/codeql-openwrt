@@ -1,0 +1,2763 @@
+{
+  "schema": "luci-ucode-candidate-inventory/v1",
+  "purpose": "All tracked LuCI Ucode and markup candidate paths at locked LuCI commit; source inventory and routing-policy projection only, no extraction or security claim.",
+  "source_revision": {
+    "repo": "https://github.com/openwrt/luci.git",
+    "ref": "openwrt-25.12",
+    "commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "expected_commit": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "dirty": [],
+    "clean": true,
+    "checkout": "work/claim020/luci"
+  },
+  "consumer_lock": {
+    "path": "work/pkg1-codeql-openwrt/corpus/lock.json",
+    "sha256": "b4cbdabb76df90a807aba7d42ae675198c7b7b09c3b84db259a3a4c941b0ea9a",
+    "profile": "luci-ssl-25.12",
+    "pinned_luci_sha": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
+    "consumer_checkout_commit": "48c6a65b7578234644c6b06780fc82ccf6d61a8b",
+    "consumer_dirty": false
+  },
+  "selection_policy": {
+    "source_selection": "Unique tracked source path selected once if it has suffix .uc/.ucode/.ut; is a tracked .uc.in/.ucode.in generator input; is under package root/usr/share/rpcd/ucode; carries a recognized Ucode shebang anywhere; is extensionless inside a package ucode subtree, rpcd raw-mode tree, or root/usr/share/ucode; or has markup tag syntax inside a package ucode subtree or rpcd raw-mode tree. Generic extensionless htdocs assets are excluded absent Ucode evidence. This is a candidate superset, not an installed corpus count.",
+    "route_order_from_inspected_extractor": "rpcd raw-mode installed path => plain; .ut => markup; ucode shebang => plain; markup tag => markup; .uc/.ucode => plain; remaining usr/share/ucode => uncertain; otherwise no route. Symlink targets are recorded but not followed.",
+    "source_to_installed_mapping": "Inspected extractor `installed_path_for_source` maps applications/modules/protocols/themes `<package>/root/<tail>` to `<tail>` and `<package>/ucode/<tail>` to usr/share/ucode/luci/<tail>. `luci.mk` also documents root/ and ucode/ installation; libs category may not be recognized by extractor path mapper. htdocs maps through luci.mk to /www, but producer mapper does not map that source layout. Unmapped paths remain qualified. Extensionless htdocs files are candidates only with a recognized Ucode shebang. No htdocs static assets are retained solely because they are extensionless.",
+    "markup": "Any `.ut` candidate is markup by suffix; content marker is checked after raw-mode and shebang and before `.uc` fallback. Classification is not evidence that markup is modeled.",
+    "generated": "Tracked `.uc.in` / `.ucode.in` are generator inputs; generated installed files are not counted as tracked source candidates."
+  },
+  "selection_counts": {
+    "tracked_tree_entry_count": 5323,
+    "unique_candidate_path_count": 69,
+    "unique_candidate_blob_count": 68,
+    "unique_paths_by_mutually_exclusive_group": {
+      "rpcd_raw_mode_package_root": 17,
+      "tests_or_fixtures": 2,
+      "luci_mk_package_ucode_subtree": 47,
+      "other_package_source": 2,
+      "htdocs_ucode_shebang": 1
+    },
+    "overlapping_policy_flag_counts": {
+      "rpcd_raw_mode_path": 17,
+      "suffix_uc": 21,
+      "suffix_ut_markup": 33,
+      "markup_tag_content": 34,
+      "ucode_shebang": 12,
+      "extensionless_ucode_shebang": 1,
+      "extensionless_under_ucode_or_installed_root": 3
+    },
+    "expected_route_counts": {
+      "plain:rpcd_raw_mode_full_path": 17,
+      "plain:ucode_extension": 13,
+      "markup:ut_markup_extension": 33,
+      "plain:ucode_shebang": 3,
+      "markup:markup_tag_content": 1,
+      "uncertain:unclassified_usr_share_ucode_path": 2
+    },
+    "files_by_claim_selection_overlap": {
+      "037": {
+        "selected_path_count": 21,
+        "candidate_overlap_count": 10,
+        "selected_paths_not_in_candidate_policy": [
+          "package/utils/cli/files/usr/sbin/cli",
+          "package/utils/cli/files/usr/share/ucode/cli/cache.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/color.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/context-call.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/context.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/datamodel.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/modules/network.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/modules/service.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/object-editor.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/types.uc",
+          "package/utils/cli/files/usr/share/ucode/cli/utils.uc"
+        ],
+        "candidate_paths_from_selection": [
+          "modules/luci-base/htdocs/cgi-bin/luci",
+          "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+          "modules/luci-base/ucode/controller/admin/index.uc",
+          "modules/luci-base/ucode/controller/admin/uci.uc",
+          "modules/luci-base/ucode/dispatcher.uc",
+          "modules/luci-base/ucode/http.uc",
+          "modules/luci-base/ucode/runtime.uc",
+          "modules/luci-base/ucode/sys.uc",
+          "modules/luci-base/ucode/uhttpd.uc",
+          "modules/luci-base/ucode/zoneinfo.uc"
+        ]
+      },
+      "041": {
+        "selected_path_count": 17,
+        "candidate_overlap_count": 17,
+        "selected_paths_not_in_candidate_policy": [],
+        "candidate_paths_from_selection": [
+          "applications/luci-app-adblock-fast/root/usr/share/rpcd/ucode/luci.adblock-fast",
+          "applications/luci-app-advanced-reboot/root/usr/share/rpcd/ucode/luci.advanced-reboot",
+          "applications/luci-app-ddns/root/usr/share/rpcd/ucode/ddns.uc",
+          "applications/luci-app-dockerman/root/usr/share/rpcd/ucode/docker_rpc.uc",
+          "applications/luci-app-example/root/usr/share/rpcd/ucode/example.uc",
+          "applications/luci-app-lldpd/root/usr/share/rpcd/ucode/luci.lldpd",
+          "applications/luci-app-rustdesk-server/root/usr/share/rpcd/ucode/rustdesk-server.uc",
+          "applications/luci-app-tailscale-community/root/usr/share/rpcd/ucode/tailscale.uc",
+          "applications/luci-app-upnp/root/usr/share/rpcd/ucode/luci.upnp",
+          "applications/luci-app-weechat/root/usr/share/rpcd/ucode/weechat.uc",
+          "applications/luci-app-wifihistory/root/usr/share/rpcd/ucode/wifihistory.uc",
+          "applications/luci-app-wol/root/usr/share/rpcd/ucode/luci.wol",
+          "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+          "modules/luci-mod-dashboard/root/usr/share/rpcd/ucode/luci.dashboard",
+          "protocols/luci-proto-openconnect/root/usr/share/rpcd/ucode/luci.openconnect",
+          "protocols/luci-proto-openfortivpn/root/usr/share/rpcd/ucode/luci.openfortivpn",
+          "protocols/luci-proto-wireguard/root/usr/share/rpcd/ucode/luci.wireguard"
+        ]
+      },
+      "044": {
+        "selected_path_count": 4,
+        "candidate_overlap_count": 4,
+        "selected_paths_not_in_candidate_policy": [],
+        "candidate_paths_from_selection": [
+          "applications/luci-app-commands/ucode/controller/commands.uc",
+          "applications/luci-app-dockerman/ucode/controller/docker.uc",
+          "applications/luci-app-dockerman/ucode/docker_socket.uc",
+          "applications/luci-app-lxc/ucode/controller/lxc.uc"
+        ]
+      },
+      "021": {
+        "selected_path_count": 11,
+        "candidate_overlap_count": 11,
+        "selected_paths_not_in_candidate_policy": [],
+        "candidate_paths_from_selection": [
+          "modules/luci-base/ucode/template/csrftoken.ut",
+          "modules/luci-base/ucode/template/error404.ut",
+          "modules/luci-base/ucode/template/error500.ut",
+          "modules/luci-base/ucode/template/footer.ut",
+          "modules/luci-base/ucode/template/header.ut",
+          "modules/luci-base/ucode/template/sysauth.ut",
+          "modules/luci-base/ucode/template/view.ut",
+          "modules/luci-mod-status/ucode/template/admin_status/index.ut",
+          "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+          "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+          "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut"
+        ]
+      }
+    },
+    "pairwise_claim_selection_overlap_counts": {
+      "037": {
+        "037": 21,
+        "041": 1,
+        "044": 0,
+        "021": 0
+      },
+      "041": {
+        "037": 1,
+        "041": 17,
+        "044": 0,
+        "021": 0
+      },
+      "044": {
+        "037": 0,
+        "041": 0,
+        "044": 4,
+        "021": 0
+      },
+      "021": {
+        "037": 0,
+        "041": 0,
+        "044": 0,
+        "021": 11
+      }
+    },
+    "remaining_after_claims_037_041_044_count": 39,
+    "remaining_package_mapping_route_groups": {
+      "luci_mk_package_ucode_subtree | luci-app-bmx7 | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "applications/luci-app-bmx7/ucode/template/bmx7/bmxnodes.ut",
+        "applications/luci-app-bmx7/ucode/template/bmx7/bmxstatus.ut",
+        "applications/luci-app-bmx7/ucode/template/bmx7/bmxtopology.ut",
+        "applications/luci-app-bmx7/ucode/template/bmx7/bmxtunnels.ut"
+      ],
+      "luci_mk_package_ucode_subtree | luci-app-commands | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "applications/luci-app-commands/ucode/template/commands.ut",
+        "applications/luci-app-commands/ucode/template/commands_public.ut"
+      ],
+      "luci_mk_package_ucode_subtree | luci-base | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "modules/luci-base/ucode/template/csrftoken.ut",
+        "modules/luci-base/ucode/template/error404.ut",
+        "modules/luci-base/ucode/template/error500.ut",
+        "modules/luci-base/ucode/template/footer.ut",
+        "modules/luci-base/ucode/template/header.ut",
+        "modules/luci-base/ucode/template/sysauth.ut",
+        "modules/luci-base/ucode/template/view.ut"
+      ],
+      "luci_mk_package_ucode_subtree | luci-mod-status | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "modules/luci-mod-status/ucode/template/admin_status/index.ut"
+      ],
+      "luci_mk_package_ucode_subtree | luci-theme-bootstrap | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+        "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+        "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut"
+      ],
+      "luci_mk_package_ucode_subtree | luci-theme-bootstrap | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | uncertain | unclassified_usr_share_ucode_path": [
+        "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
+        "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light"
+      ],
+      "luci_mk_package_ucode_subtree | luci-theme-footstrap | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/footer.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/header.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/brand.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/head.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/icon.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/logout.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notice.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notices.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/search.ut",
+        "themes/luci-theme-footstrap/ucode/template/themes/footstrap/sysauth.ut"
+      ],
+      "luci_mk_package_ucode_subtree | luci-theme-material | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "themes/luci-theme-material/ucode/template/themes/material/footer.ut",
+        "themes/luci-theme-material/ucode/template/themes/material/header.ut"
+      ],
+      "luci_mk_package_ucode_subtree | luci-theme-openwrt | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/footer.ut",
+        "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/header.ut"
+      ],
+      "luci_mk_package_ucode_subtree | luci-theme-openwrt-2020 | luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category | markup | ut_markup_extension": [
+        "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/footer.ut",
+        "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/header.ut"
+      ],
+      "other_package_source | luci-app-statistics | luci.mk root/ -> /; extractor source-path map recognizes this category | plain | ucode_shebang": [
+        "applications/luci-app-statistics/root/usr/libexec/stat-genconfig"
+      ],
+      "other_package_source | luci-app-wifihistory | luci.mk root/ -> /; extractor source-path map recognizes this category | plain | ucode_shebang": [
+        "applications/luci-app-wifihistory/root/usr/sbin/wifihistory"
+      ],
+      "tests_or_fixtures | luci-app-advanced-reboot | no install path established by inspected luci.mk source-layout rule | plain | ucode_extension": [
+        "applications/luci-app-advanced-reboot/tests/lib/mocklib.uc",
+        "applications/luci-app-advanced-reboot/tests/lib/mocklib/fs.uc"
+      ]
+    },
+    "remaining_after_claims_037_041_044_021_count": 28,
+    "next_install_shaped_batch_count": 24,
+    "next_install_shaped_batch_route_counts": {
+      "markup:ut_markup_extension": 22,
+      "plain:ucode_shebang": 2
+    },
+    "remaining_non_install_fixture_count": 2
+  },
+  "selected_path_sets": {
+    "037": [
+      "modules/luci-base/htdocs/cgi-bin/luci",
+      "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+      "modules/luci-base/ucode/controller/admin/index.uc",
+      "modules/luci-base/ucode/controller/admin/uci.uc",
+      "modules/luci-base/ucode/dispatcher.uc",
+      "modules/luci-base/ucode/http.uc",
+      "modules/luci-base/ucode/runtime.uc",
+      "modules/luci-base/ucode/sys.uc",
+      "modules/luci-base/ucode/uhttpd.uc",
+      "modules/luci-base/ucode/zoneinfo.uc",
+      "package/utils/cli/files/usr/sbin/cli",
+      "package/utils/cli/files/usr/share/ucode/cli/cache.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/color.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/context-call.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/context.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/datamodel.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/modules/network.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/modules/service.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/object-editor.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/types.uc",
+      "package/utils/cli/files/usr/share/ucode/cli/utils.uc"
+    ],
+    "041": [
+      "applications/luci-app-adblock-fast/root/usr/share/rpcd/ucode/luci.adblock-fast",
+      "applications/luci-app-advanced-reboot/root/usr/share/rpcd/ucode/luci.advanced-reboot",
+      "applications/luci-app-ddns/root/usr/share/rpcd/ucode/ddns.uc",
+      "applications/luci-app-dockerman/root/usr/share/rpcd/ucode/docker_rpc.uc",
+      "applications/luci-app-example/root/usr/share/rpcd/ucode/example.uc",
+      "applications/luci-app-lldpd/root/usr/share/rpcd/ucode/luci.lldpd",
+      "applications/luci-app-rustdesk-server/root/usr/share/rpcd/ucode/rustdesk-server.uc",
+      "applications/luci-app-tailscale-community/root/usr/share/rpcd/ucode/tailscale.uc",
+      "applications/luci-app-upnp/root/usr/share/rpcd/ucode/luci.upnp",
+      "applications/luci-app-weechat/root/usr/share/rpcd/ucode/weechat.uc",
+      "applications/luci-app-wifihistory/root/usr/share/rpcd/ucode/wifihistory.uc",
+      "applications/luci-app-wol/root/usr/share/rpcd/ucode/luci.wol",
+      "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+      "modules/luci-mod-dashboard/root/usr/share/rpcd/ucode/luci.dashboard",
+      "protocols/luci-proto-openconnect/root/usr/share/rpcd/ucode/luci.openconnect",
+      "protocols/luci-proto-openfortivpn/root/usr/share/rpcd/ucode/luci.openfortivpn",
+      "protocols/luci-proto-wireguard/root/usr/share/rpcd/ucode/luci.wireguard"
+    ],
+    "044": [
+      "applications/luci-app-commands/ucode/controller/commands.uc",
+      "applications/luci-app-dockerman/ucode/controller/docker.uc",
+      "applications/luci-app-dockerman/ucode/docker_socket.uc",
+      "applications/luci-app-lxc/ucode/controller/lxc.uc"
+    ],
+    "021": [
+      "modules/luci-base/ucode/template/csrftoken.ut",
+      "modules/luci-base/ucode/template/error404.ut",
+      "modules/luci-base/ucode/template/error500.ut",
+      "modules/luci-base/ucode/template/footer.ut",
+      "modules/luci-base/ucode/template/header.ut",
+      "modules/luci-base/ucode/template/sysauth.ut",
+      "modules/luci-base/ucode/template/view.ut",
+      "modules/luci-mod-status/ucode/template/admin_status/index.ut",
+      "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+      "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+      "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut"
+    ]
+  },
+  "candidates": [
+    {
+      "source_path": "applications/luci-app-adblock-fast/root/usr/share/rpcd/ucode/luci.adblock-fast",
+      "package_owner": "luci-app-adblock-fast",
+      "git_mode": "100644",
+      "git_object": "f7062814454328a5dd0bdbe7d7e724c410c95ae3",
+      "git_blob": "f7062814454328a5dd0bdbe7d7e724c410c95ae3",
+      "sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+      "bytes": 23660,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".adblock-fast"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-advanced-reboot/root/usr/share/rpcd/ucode/luci.advanced-reboot",
+      "package_owner": "luci-app-advanced-reboot",
+      "git_mode": "100644",
+      "git_object": "f903b6297ea68b43398f5e091e2409f5e162edf7",
+      "git_blob": "f903b6297ea68b43398f5e091e2409f5e162edf7",
+      "sha256": "b6b5562036c1f2f93ec9ea9261943a17d667d5a742c71ce128ec4859279d4b11",
+      "bytes": 21454,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.advanced-reboot",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".advanced-reboot"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-advanced-reboot/tests/lib/mocklib.uc",
+      "package_owner": "luci-app-advanced-reboot",
+      "git_mode": "100644",
+      "git_object": "152160bd8f43ce267da96b2ec875b7da35e887b5",
+      "git_blob": "152160bd8f43ce267da96b2ec875b7da35e887b5",
+      "sha256": "815ee104836279eaeb0befec3bbbcef678f7780a8c25938a4c9dc8b420faf7f5",
+      "bytes": 4481,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "tests_or_fixtures",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": false,
+      "installed_path_mapping": null,
+      "mapping_basis": "no install path established by inspected luci.mk source-layout rule",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [],
+      "route_basis_qualification": "No package install mapping; producer source-path fallback retains .uc extension for routing.",
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-advanced-reboot/tests/lib/mocklib/fs.uc",
+      "package_owner": "luci-app-advanced-reboot",
+      "git_mode": "100644",
+      "git_object": "3c531b9ba51643bae8840988eeb97213170f4327",
+      "git_blob": "3c531b9ba51643bae8840988eeb97213170f4327",
+      "sha256": "458bd29a36003bf799e8d449a3049c78af18b12c58de24b17e92769ed27e829a",
+      "bytes": 2849,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "tests_or_fixtures",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": false,
+      "installed_path_mapping": null,
+      "mapping_basis": "no install path established by inspected luci.mk source-layout rule",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [],
+      "route_basis_qualification": "No package install mapping; producer source-path fallback retains .uc extension for routing.",
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxnodes.ut",
+      "package_owner": "luci-app-bmx7",
+      "git_mode": "100644",
+      "git_object": "032f1060d835459ba0c07ba41a13a4c8f2d2f20c",
+      "git_blob": "032f1060d835459ba0c07ba41a13a4c8f2d2f20c",
+      "sha256": "76a832d90e6e382189259320416d577ac6600e6a14d82e5f81edaaac7cffcf7a",
+      "bytes": 4765,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/bmx7/bmxnodes.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxstatus.ut",
+      "package_owner": "luci-app-bmx7",
+      "git_mode": "100644",
+      "git_object": "12a85187e4c335d1c06c11fa13cf7417748e5b40",
+      "git_blob": "12a85187e4c335d1c06c11fa13cf7417748e5b40",
+      "sha256": "13945589b4b0ee743dc7b97c3085bad87eb7ede2d6028aafb9cb9cd6df0e0430",
+      "bytes": 4039,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/bmx7/bmxstatus.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxtopology.ut",
+      "package_owner": "luci-app-bmx7",
+      "git_mode": "100644",
+      "git_object": "8af2a885e0bea69d870b330e404b3b51d889935d",
+      "git_blob": "8af2a885e0bea69d870b330e404b3b51d889935d",
+      "sha256": "7a5991e80585c2e4ec73054bb0dcab67c81c42fb40c0801d6d0e19869f718363",
+      "bytes": 1306,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/bmx7/bmxtopology.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxtunnels.ut",
+      "package_owner": "luci-app-bmx7",
+      "git_mode": "100644",
+      "git_object": "81b9f5b73a26f27b92e3877e99b2b8b518fc38e9",
+      "git_blob": "81b9f5b73a26f27b92e3877e99b2b8b518fc38e9",
+      "sha256": "c811f8701453f02870652580d2de6577ed5f159c3e7de6f5b5d51f2aaa7de7e9",
+      "bytes": 2779,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/bmx7/bmxtunnels.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-commands/ucode/controller/commands.uc",
+      "package_owner": "luci-app-commands",
+      "git_mode": "100644",
+      "git_object": "9126d59eb0d051ef2d82ed20f495b2e744f44a0c",
+      "git_blob": "9126d59eb0d051ef2d82ed20f495b2e744f44a0c",
+      "sha256": "13364aaed67c906c0102ca1bb5b9e611cb394022ebc3ab1714b7bb38cd4b1b6e",
+      "bytes": 5260,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/controller/commands.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "044"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-commands/ucode/template/commands.ut",
+      "package_owner": "luci-app-commands",
+      "git_mode": "100644",
+      "git_object": "5191e4b953dbce2b90aacea32055d2a53a3926c1",
+      "git_blob": "5191e4b953dbce2b90aacea32055d2a53a3926c1",
+      "sha256": "67ab30c1252df2dc8b3bdfeb4b19a2544ffac296b9c9bf8f0aca8c922b165a77",
+      "bytes": 4631,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/commands.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-commands/ucode/template/commands_public.ut",
+      "package_owner": "luci-app-commands",
+      "git_mode": "100644",
+      "git_object": "aef072f8026a3e89e78a8e1e499dad7a995404d6",
+      "git_blob": "aef072f8026a3e89e78a8e1e499dad7a995404d6",
+      "sha256": "ebe4ec5f703db4707b0239a121f5d227178b4c44ca3ae5789356ddfe55579ab3",
+      "bytes": 1184,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/commands_public.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-ddns/root/usr/share/rpcd/ucode/ddns.uc",
+      "package_owner": "luci-app-ddns",
+      "git_mode": "100644",
+      "git_object": "32d1da738b4932159a39bcda7ee6c72b5c58a8fd",
+      "git_blob": "32d1da738b4932159a39bcda7ee6c72b5c58a8fd",
+      "sha256": "924bd2b53fbc64d2a00a479e36ef3c9239488445fc1ced70122e8ac3735fdc2b",
+      "bytes": 9093,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "suffix_uc",
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/ddns.uc",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-dockerman/root/usr/share/rpcd/ucode/docker_rpc.uc",
+      "package_owner": "luci-app-dockerman",
+      "git_mode": "100755",
+      "git_object": "5fb85394d77466f0cfa3961b31f442182c809a10",
+      "git_blob": "5fb85394d77466f0cfa3961b31f442182c809a10",
+      "sha256": "f9c8482fb58d6d56d9b749f9206513b24c169fd8cb59e0619a29b7f2a2b55381",
+      "bytes": 20186,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "suffix_uc",
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/docker_rpc.uc",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-dockerman/ucode/controller/docker.uc",
+      "package_owner": "luci-app-dockerman",
+      "git_mode": "100644",
+      "git_object": "b2ca046145ca7b3b96ac2f5b72448c8d0ce321ac",
+      "git_blob": "b2ca046145ca7b3b96ac2f5b72448c8d0ce321ac",
+      "sha256": "efe000bce54b6c946a20a7ee0950075bdd555ec92d3158dffc150ec0b4a53981",
+      "bytes": 11638,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/controller/docker.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "044"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-dockerman/ucode/docker_socket.uc",
+      "package_owner": "luci-app-dockerman",
+      "git_mode": "100644",
+      "git_object": "ab4d149e8f0f8717c2b32bbb6fb30aecbbf0e8e6",
+      "git_blob": "ab4d149e8f0f8717c2b32bbb6fb30aecbbf0e8e6",
+      "sha256": "21ec950f71e6448c72f2b652695d0742804ab942da55c18009ca9be49a382989",
+      "bytes": 2408,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/docker_socket.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "044"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-example/root/usr/share/rpcd/ucode/example.uc",
+      "package_owner": "luci-app-example",
+      "git_mode": "100755",
+      "git_object": "d6e21fcfeb8ff49d0387a605313b2b6f11fed56f",
+      "git_blob": "d6e21fcfeb8ff49d0387a605313b2b6f11fed56f",
+      "sha256": "8108ebde4152d186b33f9e7447adf7dee6350e3b1ecc673d0bce2bda72fda927",
+      "bytes": 949,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "suffix_uc",
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/example.uc",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-lldpd/root/usr/share/rpcd/ucode/luci.lldpd",
+      "package_owner": "luci-app-lldpd",
+      "git_mode": "100644",
+      "git_object": "3774e222cec2f43f73edb6fb07978dab14ed6d36",
+      "git_blob": "3774e222cec2f43f73edb6fb07978dab14ed6d36",
+      "sha256": "a9d6e6477307408a130ce20ad9f92813dfeca611e5c8a5a7a86f2ca746081eac",
+      "bytes": 451,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.lldpd",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".lldpd"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-lxc/ucode/controller/lxc.uc",
+      "package_owner": "luci-app-lxc",
+      "git_mode": "100644",
+      "git_object": "1f4f041c7da60886c0e8b6696632e553ab86cc1b",
+      "git_blob": "1f4f041c7da60886c0e8b6696632e553ab86cc1b",
+      "sha256": "19b5dc5d2db606ac90053409eaf9031c1fc69b229b4c0e875ddfcbbbf2a9ca70",
+      "bytes": 6008,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/controller/lxc.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "044"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-rustdesk-server/root/usr/share/rpcd/ucode/rustdesk-server.uc",
+      "package_owner": "luci-app-rustdesk-server",
+      "git_mode": "100644",
+      "git_object": "184bb2f0b42ca70ee7e1f2fe16a43c476a7602dd",
+      "git_blob": "184bb2f0b42ca70ee7e1f2fe16a43c476a7602dd",
+      "sha256": "16c86ab0d8537eb6def1130e4fd28f9597b5d37a4e499dbd8d9d2774c2c7da7e",
+      "bytes": 3919,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "suffix_uc",
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/rustdesk-server.uc",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-statistics/root/usr/libexec/stat-genconfig",
+      "package_owner": "luci-app-statistics",
+      "git_mode": "100755",
+      "git_object": "68c9b09e889356ce3e678f2789f608e270208d1e",
+      "git_blob": "68c9b09e889356ce3e678f2789f608e270208d1e",
+      "sha256": "5c45628d2a6a4c9414a93e26cff9c1c5d35ea4c0160f86575ee6c2f3f92c629b",
+      "bytes": 6895,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "other_package_source",
+      "selection_flags": [
+        "ucode_shebang"
+      ],
+      "package_subtree_ucode": false,
+      "installed_path_mapping": "usr/libexec/stat-genconfig",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": null
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-tailscale-community/root/usr/share/rpcd/ucode/tailscale.uc",
+      "package_owner": "luci-app-tailscale-community",
+      "git_mode": "100644",
+      "git_object": "2a30bdbfbadc285133c25b3d50dd6ae4b5317bf4",
+      "git_blob": "2a30bdbfbadc285133c25b3d50dd6ae4b5317bf4",
+      "sha256": "353f00bed64f81c74689ff2297704c4ba87ad9563abd60d265c61711c88441a4",
+      "bytes": 12204,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "suffix_uc",
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/tailscale.uc",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-upnp/root/usr/share/rpcd/ucode/luci.upnp",
+      "package_owner": "luci-app-upnp",
+      "git_mode": "100644",
+      "git_object": "f72b57b7ba84188b9b78854bf7ad0711394a0045",
+      "git_blob": "f72b57b7ba84188b9b78854bf7ad0711394a0045",
+      "sha256": "e149db4350cdfa2e3f3ccc529244d3a3143d72016fa4216f72cf2792f3fd202d",
+      "bytes": 3330,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.upnp",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".upnp"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-weechat/root/usr/share/rpcd/ucode/weechat.uc",
+      "package_owner": "luci-app-weechat",
+      "git_mode": "100755",
+      "git_object": "9f17ae3718a278eab2813ccfae4f2c732a9118e8",
+      "git_blob": "9f17ae3718a278eab2813ccfae4f2c732a9118e8",
+      "sha256": "548213868a38bd84d8a9cb9b9842c647d4e79fa9df21b815b6b869f26a54e44e",
+      "bytes": 11315,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "suffix_uc",
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/weechat.uc",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-wifihistory/root/usr/sbin/wifihistory",
+      "package_owner": "luci-app-wifihistory",
+      "git_mode": "100755",
+      "git_object": "c0cfcd2a6fdddba2a5b52cd798a979b851489b08",
+      "git_blob": "c0cfcd2a6fdddba2a5b52cd798a979b851489b08",
+      "sha256": "e58a3d2bace9aa188ec4c0a0272fa462f88138e0639587326ab72a99f1c45200",
+      "bytes": 2398,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "other_package_source",
+      "selection_flags": [
+        "ucode_shebang"
+      ],
+      "package_subtree_ucode": false,
+      "installed_path_mapping": "usr/sbin/wifihistory",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": null
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-wifihistory/root/usr/share/rpcd/ucode/wifihistory.uc",
+      "package_owner": "luci-app-wifihistory",
+      "git_mode": "100644",
+      "git_object": "918ad9818b2e769d7b5a95f3855cb180fb8e82a7",
+      "git_blob": "918ad9818b2e769d7b5a95f3855cb180fb8e82a7",
+      "sha256": "b9ce671467adf519ac61e0f18e134856c4704497457949d774cb1af68830397c",
+      "bytes": 554,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "suffix_uc",
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/wifihistory.uc",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "applications/luci-app-wol/root/usr/share/rpcd/ucode/luci.wol",
+      "package_owner": "luci-app-wol",
+      "git_mode": "100644",
+      "git_object": "fd9e9f0485ab6baec96ae089caf1089a6d471c99",
+      "git_blob": "fd9e9f0485ab6baec96ae089caf1089a6d471c99",
+      "sha256": "51214ec57bcbd8d50e65016efda2a05e8eb7822dc7e510d014965834c61ef92b",
+      "bytes": 1074,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.wol",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".wol"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/htdocs/cgi-bin/luci",
+      "package_owner": "luci-base",
+      "git_mode": "100755",
+      "git_object": "442e427d410f1824b7b07d48bab8a2730012989b",
+      "git_blob": "442e427d410f1824b7b07d48bab8a2730012989b",
+      "sha256": "aced6c9b2e621bb6e1dd1bb7d675925e9325ed901f49b1aabb0696a06942dacb",
+      "bytes": 660,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "htdocs_ucode_shebang",
+      "selection_flags": [
+        "ucode_shebang",
+        "extensionless_ucode_shebang"
+      ],
+      "package_subtree_ucode": false,
+      "installed_path_mapping": "www/cgi-bin/luci",
+      "mapping_basis": "luci.mk htdocs/ -> /www; extractor source-path mapper does not map htdocs",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_shebang"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": null
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "64caf75c08bc0fa54520a0ef262dfd6f339dc89e",
+      "git_blob": "64caf75c08bc0fa54520a0ef262dfd6f339dc89e",
+      "sha256": "6f9d972958d9cfb8a7ba421f38f0a5b03718ffeb0e30d460b64c9faf725fc54e",
+      "bytes": 16161,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "extensionless_under_ucode_or_installed_root",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": null
+      },
+      "selected_by_claims": [
+        "037",
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/ucode/controller/admin/index.uc",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "d433e1161ea1069a72d7ace916915e82df3ce4b8",
+      "git_blob": "d433e1161ea1069a72d7ace916915e82df3ce4b8",
+      "sha256": "7d7a5dc3e694ad232e4e0f3d01db17c2f5502338aa8c4fc44fa714b0b1147620",
+      "bytes": 4033,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/controller/admin/index.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/ucode/controller/admin/uci.uc",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "c38a42b10bfefbaa31741feae9395abd8a1f8e40",
+      "git_blob": "c38a42b10bfefbaa31741feae9395abd8a1f8e40",
+      "sha256": "ac75cfef7d74f87ed7f957778004a7bf486c76df699398c215795b4947e0c93e",
+      "bytes": 3304,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/controller/admin/uci.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/ucode/dispatcher.uc",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "99712b85e7bd1a22f300b00403bd66621b3d40f4",
+      "git_blob": "99712b85e7bd1a22f300b00403bd66621b3d40f4",
+      "sha256": "4f9923cf569aeebb956343d208bcc38f40d8a26d2f46f12c5539a9582fa4f037",
+      "bytes": 23113,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/dispatcher.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/ucode/http.uc",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "e7f64ae6e9fe00bd1981518927565829a14b11ba",
+      "git_blob": "e7f64ae6e9fe00bd1981518927565829a14b11ba",
+      "sha256": "68f8a7dffc7bccdfe98956cb3b6e0e087592c86049a2b83d061e5be3585fa5fa",
+      "bytes": 13202,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/http.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/ucode/runtime.uc",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "e5f11690dfbdb2fe2a7fed6531d66cc7e25a331f",
+      "git_blob": "e5f11690dfbdb2fe2a7fed6531d66cc7e25a331f",
+      "sha256": "b15afce07020e2a7ad50718d49a874da30d0582ede7de65e54acaceb6e9d0926",
+      "bytes": 4631,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/runtime.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/ucode/sys.uc",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "35b5fcdebfaf1210be16ab1552752cb249346899",
+      "git_blob": "35b5fcdebfaf1210be16ab1552752cb249346899",
+      "sha256": "0380fba5d843a8950bab0ef70982cb40ab8f475e8d267c873e4199a736b55656",
+      "bytes": 3443,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/sys.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/ucode/template/csrftoken.ut",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "4e96eebe905758bb607a324cd10d0cf43e4eec6e",
+      "git_blob": "4e96eebe905758bb607a324cd10d0cf43e4eec6e",
+      "sha256": "a2f223208d9ff2c3e1bfa808f11d74636028b4902973afb5b7f336328f7e2160",
+      "bytes": 603,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/csrftoken.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "modules/luci-base/ucode/template/error404.ut",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "90c3d3784bb60ec8c4c6c189cf2eebd7cda9076d",
+      "git_blob": "90c3d3784bb60ec8c4c6c189cf2eebd7cda9076d",
+      "sha256": "8fa2306435be3aca3ca59b09adaaa0190292c6cfe2fecda9df4eb3eeac5b8552",
+      "bytes": 435,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/error404.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "modules/luci-base/ucode/template/error500.ut",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "e0d4d48ab741cb5fd9416de17ef9030a7a757bc1",
+      "git_blob": "e0d4d48ab741cb5fd9416de17ef9030a7a757bc1",
+      "sha256": "6c7a519229524d7a34b18c5da97cb8b05f622ee0938fe1a4b2d2516a6adf1887",
+      "bytes": 1127,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/error500.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "modules/luci-base/ucode/template/footer.ut",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "0ab06ae0b9380b12c6351061b089a397a14ff0d7",
+      "git_blob": "0ab06ae0b9380b12c6351061b089a397a14ff0d7",
+      "sha256": "5625f938d625ff406e53434d37aa7643cc09e11f74379887a4ba154021240495",
+      "bytes": 1271,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/footer.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "modules/luci-base/ucode/template/header.ut",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "f23e5e45c88211d3d500193407f9277f1912c784",
+      "git_blob": "f23e5e45c88211d3d500193407f9277f1912c784",
+      "sha256": "67132f2d1c1cf743f3e4ce11d660a5a2569b461804a63914061fe956171be6c2",
+      "bytes": 1052,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/header.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "modules/luci-base/ucode/template/sysauth.ut",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "babba2ecb522b7acec2e20e4ea071c15b74c307f",
+      "git_blob": "babba2ecb522b7acec2e20e4ea071c15b74c307f",
+      "sha256": "8c1dcf98cd29410021ed4f5f9dc668f8c70c0227f39f97f60f7205f9d52fa5bb",
+      "bytes": 2096,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/sysauth.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "modules/luci-base/ucode/template/view.ut",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "a8562844baf7d155c8cd682939f26e67a2a208ac",
+      "git_blob": "a8562844baf7d155c8cd682939f26e67a2a208ac",
+      "sha256": "785bf7d4cceb5cdd9f113cbede0bde5b69e35b69cc1b51d2e498665d50091d62",
+      "bytes": 231,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/view.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "modules/luci-base/ucode/uhttpd.uc",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "df1ecc78657d9db618ab253c71497db4c66335fc",
+      "git_blob": "df1ecc78657d9db618ab253c71497db4c66335fc",
+      "sha256": "a2b2694f52c021af16dd06ac8c988b8a0a726d9e8186d308708268ebb8849493",
+      "bytes": 204,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/uhttpd.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "markup_tag_content"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-base/ucode/zoneinfo.uc",
+      "package_owner": "luci-base",
+      "git_mode": "100644",
+      "git_object": "d54041752e2e168cd7b9d744c36530ea6ed5f8a2",
+      "git_blob": "d54041752e2e168cd7b9d744c36530ea6ed5f8a2",
+      "sha256": "54162a073660ea65706aa920a10cfbd3ee4d345e1e4ab3bed8a8d56c9cab3863",
+      "bytes": 15882,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_uc"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/zoneinfo.uc",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "ucode_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".uc"
+      },
+      "selected_by_claims": [
+        "037"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-mod-dashboard/root/usr/share/rpcd/ucode/luci.dashboard",
+      "package_owner": "luci-mod-dashboard",
+      "git_mode": "100644",
+      "git_object": "d87679d9b0273fdf2f682e7e58092a29f8d3cc90",
+      "git_blob": "d87679d9b0273fdf2f682e7e58092a29f8d3cc90",
+      "sha256": "45be5fbe337a5dcdec88480d147bfb388ca8cb98919499fc3cf608220f2c2fa5",
+      "bytes": 1823,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.dashboard",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".dashboard"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "modules/luci-mod-status/ucode/template/admin_status/index.ut",
+      "package_owner": "luci-mod-status",
+      "git_mode": "100644",
+      "git_object": "dafb427bf48b4da1e09ead45b97e55791804f20d",
+      "git_blob": "dafb427bf48b4da1e09ead45b97e55791804f20d",
+      "sha256": "652842b1e54f8a2904458ae1f5693ddfc68b97f106d8b8ff48a4d8747d673019",
+      "bytes": 1626,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/admin_status/index.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "protocols/luci-proto-openconnect/root/usr/share/rpcd/ucode/luci.openconnect",
+      "package_owner": "luci-proto-openconnect",
+      "git_mode": "100644",
+      "git_object": "1bc13a17068aaba4f30e58e3c76d9e7ca955c931",
+      "git_blob": "1bc13a17068aaba4f30e58e3c76d9e7ca955c931",
+      "sha256": "03cc44e87879ef0acac11db7a5e303b83e00c3abc6b4a244cb55db4188761053",
+      "bytes": 1701,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.openconnect",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".openconnect"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "protocols/luci-proto-openfortivpn/root/usr/share/rpcd/ucode/luci.openfortivpn",
+      "package_owner": "luci-proto-openfortivpn",
+      "git_mode": "100644",
+      "git_object": "8588f7453288ff47159b6d7859a8286b73cf3e7f",
+      "git_blob": "8588f7453288ff47159b6d7859a8286b73cf3e7f",
+      "sha256": "b1da8fcb811651037a7f2dbbd3db0c99ea4ebad82f8d923456448e3358dee2af",
+      "bytes": 2500,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "ucode_shebang",
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.openfortivpn",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": true,
+        "markup_tag_line": false,
+        "suffix": ".openfortivpn"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "protocols/luci-proto-wireguard/root/usr/share/rpcd/ucode/luci.wireguard",
+      "package_owner": "luci-proto-wireguard",
+      "git_mode": "100644",
+      "git_object": "b8e20daf94c2d4fa5d133c227f8882dd0b23eb2e",
+      "git_blob": "b8e20daf94c2d4fa5d133c227f8882dd0b23eb2e",
+      "sha256": "8b5784a6d0df8c945e5df15ee37365c90d078706b58d160fd92f44c114d4f458",
+      "bytes": 3116,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "rpcd_raw_mode_package_root",
+      "selection_flags": [
+        "rpcd_raw_mode_path"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/rpcd/ucode/luci.wireguard",
+      "mapping_basis": "luci.mk root/ -> /; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": ".wireguard"
+      },
+      "selected_by_claims": [
+        "041"
+      ],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
+      "package_owner": "luci-theme-bootstrap",
+      "git_mode": "120000",
+      "git_object": "ac7bcbbf37b1b7f6e3ac6402a29f844f6de1ca43",
+      "git_blob": "ac7bcbbf37b1b7f6e3ac6402a29f844f6de1ca43",
+      "sha256": "333c04dd151a2a6831c039cb9a651df29198be8a04e16ce861d4b6a34a11c954",
+      "bytes": 9,
+      "symlink": true,
+      "symlink_target": "bootstrap",
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "extensionless_under_ucode_or_installed_root"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/bootstrap-dark",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "uncertain",
+        "reason": "unclassified_usr_share_ucode_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": null
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light",
+      "package_owner": "luci-theme-bootstrap",
+      "git_mode": "120000",
+      "git_object": "ac7bcbbf37b1b7f6e3ac6402a29f844f6de1ca43",
+      "git_blob": "ac7bcbbf37b1b7f6e3ac6402a29f844f6de1ca43",
+      "sha256": "333c04dd151a2a6831c039cb9a651df29198be8a04e16ce861d4b6a34a11c954",
+      "bytes": 9,
+      "symlink": true,
+      "symlink_target": "bootstrap",
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "extensionless_under_ucode_or_installed_root"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/bootstrap-light",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "uncertain",
+        "reason": "unclassified_usr_share_ucode_path"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": false,
+        "suffix": null
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+      "package_owner": "luci-theme-bootstrap",
+      "git_mode": "100644",
+      "git_object": "d51079b6fa8e89e5119514c7730f982a5cd671a3",
+      "git_blob": "d51079b6fa8e89e5119514c7730f982a5cd671a3",
+      "sha256": "b5cb417ca73c02226679ab2412e272dcf6851eee134c521fc316c39a81ecfa4e",
+      "bytes": 671,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/bootstrap/footer.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+      "package_owner": "luci-theme-bootstrap",
+      "git_mode": "100644",
+      "git_object": "3486a412078c9fe5df3159b4691ffeb7de8794c0",
+      "git_blob": "3486a412078c9fe5df3159b4691ffeb7de8794c0",
+      "sha256": "eca05b1e4d8391e36a08bcd0b3d0135d2addb37b9e574bd7db98d56f4835e0a3",
+      "bytes": 3636,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/bootstrap/header.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut",
+      "package_owner": "luci-theme-bootstrap",
+      "git_mode": "100644",
+      "git_object": "e311f2d03fe28bccddf91c860ff66219b5415d50",
+      "git_blob": "e311f2d03fe28bccddf91c860ff66219b5415d50",
+      "sha256": "7e4702c063c95734ec3157121dc59802ff51ed2c1b73c405cd9831ddd2e0c337",
+      "bytes": 1345,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/bootstrap/sysauth.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": true
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/footer.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "6ae667d6163ff424c12f09911c20438ade88eb4d",
+      "git_blob": "6ae667d6163ff424c12f09911c20438ade88eb4d",
+      "sha256": "782321244ddba4219764db707b6906c7be7f04a12510330da023c9bb0f248d4d",
+      "bytes": 1480,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/footer.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/header.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "ed60435eeb98c71c192ffe98b638765a87934445",
+      "git_blob": "ed60435eeb98c71c192ffe98b638765a87934445",
+      "sha256": "7653f8353e5bb1062b3f5a901e6b2488af5ed59b530f3c5721169f0e8fa32977",
+      "bytes": 11191,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/header.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/brand.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "835a2cebdd8378c8f716f690e9150ca0e8e5118e",
+      "git_blob": "835a2cebdd8378c8f716f690e9150ca0e8e5118e",
+      "sha256": "97213de5baf09a12d65fd65dfa6df2f65ac619a23df9e7b2a83f124e39413387",
+      "bytes": 1096,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/partials/brand.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/head.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "2a6d01c5f6c07ffd7ec61f5a03d972d276f28823",
+      "git_blob": "2a6d01c5f6c07ffd7ec61f5a03d972d276f28823",
+      "sha256": "0ead14d53ec238ced1ddeaa6e0d09f7403475d0e5b4a87ffc294c9ba8bff360d",
+      "bytes": 28951,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/partials/head.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/icon.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "20288acac0a70469ccfa3a8486320241bc0d4616",
+      "git_blob": "20288acac0a70469ccfa3a8486320241bc0d4616",
+      "sha256": "c9d806d43871227ed6164a1c55aaf8d4c48627cb2a8ef427da122ddc6a3e1735",
+      "bytes": 925,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/partials/icon.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/logout.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "4477f31c6858dfe87210742c33a894ae96818107",
+      "git_blob": "4477f31c6858dfe87210742c33a894ae96818107",
+      "sha256": "01cbe49c9098a749fa92e5d2332614344967c80d5c7d0912495aeb65f772fe9a",
+      "bytes": 938,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/partials/logout.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notice.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "349ad31b0700a829ead6841c050f4e33278b3c48",
+      "git_blob": "349ad31b0700a829ead6841c050f4e33278b3c48",
+      "sha256": "23b7c066ae794476ecfd0f63898d89b82908cc8096eaa149eb824bbd70a26e5d",
+      "bytes": 897,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/partials/notice.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notices.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "e643c7c4cf58cdd7c211aa644e133c4a0c99e4c3",
+      "git_blob": "e643c7c4cf58cdd7c211aa644e133c4a0c99e4c3",
+      "sha256": "6ada593c435f0064da58974668ec3e0688843ac657171397686f5c58f52505f5",
+      "bytes": 1518,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/partials/notices.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/search.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "dda1fd168b197d81a69f8743196bb5a2ffd3c7ef",
+      "git_blob": "dda1fd168b197d81a69f8743196bb5a2ffd3c7ef",
+      "sha256": "785656c054b02cd8539ad805860cf498c939a404884a582519edefe48109d956",
+      "bytes": 1100,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/partials/search.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/sysauth.ut",
+      "package_owner": "luci-theme-footstrap",
+      "git_mode": "100644",
+      "git_object": "5100ecc2d1d50c696846062ab004ff592b78da8d",
+      "git_blob": "5100ecc2d1d50c696846062ab004ff592b78da8d",
+      "sha256": "2428e3762f029bbe64b34d2416edf6ddf1228671c04907ec9f7d85643c0c5345",
+      "bytes": 10778,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/footstrap/sysauth.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-material/ucode/template/themes/material/footer.ut",
+      "package_owner": "luci-theme-material",
+      "git_mode": "100644",
+      "git_object": "8b3c7f728b01f1bc3b02f6cfec5e6f5aa65e1cea",
+      "git_blob": "8b3c7f728b01f1bc3b02f6cfec5e6f5aa65e1cea",
+      "sha256": "11645e45340e970b78039dcd242b0381d7e34c3604f4a1e4db9201621952ef2b",
+      "bytes": 900,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/material/footer.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-material/ucode/template/themes/material/header.ut",
+      "package_owner": "luci-theme-material",
+      "git_mode": "100644",
+      "git_object": "1aeca61f39970ad0210a0b261c55dcab7b4992ae",
+      "git_blob": "1aeca61f39970ad0210a0b261c55dcab7b4992ae",
+      "sha256": "1650823a3ee8218525b7de4a01fe28eb1e4b34d8b7691c78f8de49c806a7babe",
+      "bytes": 3863,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/material/header.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/footer.ut",
+      "package_owner": "luci-theme-openwrt-2020",
+      "git_mode": "100644",
+      "git_object": "6d165f15021f82b649e667ce27f84316b038767f",
+      "git_blob": "6d165f15021f82b649e667ce27f84316b038767f",
+      "sha256": "9a9bcb8168db705f5d1816943b58cbfdacb2bae2dbb46fe2bf66bffad5429316",
+      "bytes": 272,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/openwrt2020/footer.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/header.ut",
+      "package_owner": "luci-theme-openwrt-2020",
+      "git_mode": "100644",
+      "git_object": "17734e487e6b3527d55794ff05d9161f71e72d7c",
+      "git_blob": "17734e487e6b3527d55794ff05d9161f71e72d7c",
+      "sha256": "61c541f0bcac66a60d132975f78d7368a683753e72e2b430607d2e804f938a5e",
+      "bytes": 2844,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/openwrt2020/header.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/footer.ut",
+      "package_owner": "luci-theme-openwrt",
+      "git_mode": "100644",
+      "git_object": "12249ed75e50cc93c6581146bcce001086ae7ca1",
+      "git_blob": "12249ed75e50cc93c6581146bcce001086ae7ca1",
+      "sha256": "26a157017e3d7afe52486760b737e590e98ac3faf52659a4b413d68e1c4c37a7",
+      "bytes": 349,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/openwrt.org/footer.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    },
+    {
+      "source_path": "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/header.ut",
+      "package_owner": "luci-theme-openwrt",
+      "git_mode": "100644",
+      "git_object": "8cc6cc02553d4879e0f966b3f33350f2d35700de",
+      "git_blob": "8cc6cc02553d4879e0f966b3f33350f2d35700de",
+      "sha256": "e637d00a1ad5efc15d2f54a0e296775edf1175a4c49f73521b2dd86cb05f8844",
+      "bytes": 3230,
+      "symlink": false,
+      "symlink_target": null,
+      "candidate_group": "luci_mk_package_ucode_subtree",
+      "selection_flags": [
+        "suffix_ut_markup",
+        "markup_tag_content"
+      ],
+      "package_subtree_ucode": true,
+      "installed_path_mapping": "usr/share/ucode/luci/template/themes/openwrt.org/header.ut",
+      "mapping_basis": "luci.mk ucode/ -> /usr/share/ucode/luci; extractor source-path map recognizes this category",
+      "expected_route": {
+        "classification": "markup",
+        "reason": "ut_markup_extension"
+      },
+      "content_observation": {
+        "ucode_shebang": false,
+        "markup_tag_line": true,
+        "suffix": ".ut"
+      },
+      "selected_by_claims": [],
+      "selected_by_claim021_real_template": false
+    }
+  ],
+  "limits": [
+    "Luci-ssl profile is a config/profile-specific installed-file inventory and is not the complete tracked LuCI source universe.",
+    "Tracked source candidates and source-derived mappings do not establish package selection, built IPK contents, installed bytes, active runtime loading, query semantics, vulnerability or safety.",
+    "The source checkout is pinned and clean; the consumer lock pins the same LuCI source commit. No CodeQL run was performed."
+  ],
+  "source_policy_producer": {
+    "repo": "codeql-ucode producer checkout used to inspect installed_path_for_source and route classification",
+    "commit": "977331713b4b8b5574813bee0884245bf6db2752",
+    "dirty": false,
+    "extractor_file": "extractor/src/extractor.rs"
+  },
+  "model_route": {
+    "requested": "gpt-6-luna",
+    "attestation": "Unavailable in this worker context; no Luna route attestation claimed."
+  },
+  "next_feasible_larger_disjoint_batch": {
+    "selection": "Remaining package-mapped candidates after exact source-path exclusion of claims 037, 041, 044 and the 11 real templates selected by claim 021; additionally excludes its two known extensionless symlink exclusions and two tracked test fixtures with no package install mapping.",
+    "unique_file_count": 24,
+    "route_counts": {
+      "markup:ut_markup_extension": 22,
+      "plain:ucode_shebang": 2
+    },
+    "source_paths": [
+      "applications/luci-app-bmx7/ucode/template/bmx7/bmxnodes.ut",
+      "applications/luci-app-bmx7/ucode/template/bmx7/bmxstatus.ut",
+      "applications/luci-app-bmx7/ucode/template/bmx7/bmxtopology.ut",
+      "applications/luci-app-bmx7/ucode/template/bmx7/bmxtunnels.ut",
+      "applications/luci-app-commands/ucode/template/commands.ut",
+      "applications/luci-app-commands/ucode/template/commands_public.ut",
+      "applications/luci-app-statistics/root/usr/libexec/stat-genconfig",
+      "applications/luci-app-wifihistory/root/usr/sbin/wifihistory",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/footer.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/header.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/brand.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/head.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/icon.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/logout.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notice.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notices.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/search.ut",
+      "themes/luci-theme-footstrap/ucode/template/themes/footstrap/sysauth.ut",
+      "themes/luci-theme-material/ucode/template/themes/material/footer.ut",
+      "themes/luci-theme-material/ucode/template/themes/material/header.ut",
+      "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/footer.ut",
+      "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/header.ut",
+      "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/footer.ut",
+      "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/header.ut"
+    ],
+    "file_details": [
+      {
+        "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxnodes.ut",
+        "git_blob": "032f1060d835459ba0c07ba41a13a4c8f2d2f20c",
+        "sha256": "76a832d90e6e382189259320416d577ac6600e6a14d82e5f81edaaac7cffcf7a",
+        "expected_installed_path": "usr/share/ucode/luci/template/bmx7/bmxnodes.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxstatus.ut",
+        "git_blob": "12a85187e4c335d1c06c11fa13cf7417748e5b40",
+        "sha256": "13945589b4b0ee743dc7b97c3085bad87eb7ede2d6028aafb9cb9cd6df0e0430",
+        "expected_installed_path": "usr/share/ucode/luci/template/bmx7/bmxstatus.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxtopology.ut",
+        "git_blob": "8af2a885e0bea69d870b330e404b3b51d889935d",
+        "sha256": "7a5991e80585c2e4ec73054bb0dcab67c81c42fb40c0801d6d0e19869f718363",
+        "expected_installed_path": "usr/share/ucode/luci/template/bmx7/bmxtopology.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "applications/luci-app-bmx7/ucode/template/bmx7/bmxtunnels.ut",
+        "git_blob": "81b9f5b73a26f27b92e3877e99b2b8b518fc38e9",
+        "sha256": "c811f8701453f02870652580d2de6577ed5f159c3e7de6f5b5d51f2aaa7de7e9",
+        "expected_installed_path": "usr/share/ucode/luci/template/bmx7/bmxtunnels.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "applications/luci-app-commands/ucode/template/commands.ut",
+        "git_blob": "5191e4b953dbce2b90aacea32055d2a53a3926c1",
+        "sha256": "67ab30c1252df2dc8b3bdfeb4b19a2544ffac296b9c9bf8f0aca8c922b165a77",
+        "expected_installed_path": "usr/share/ucode/luci/template/commands.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "applications/luci-app-commands/ucode/template/commands_public.ut",
+        "git_blob": "aef072f8026a3e89e78a8e1e499dad7a995404d6",
+        "sha256": "ebe4ec5f703db4707b0239a121f5d227178b4c44ca3ae5789356ddfe55579ab3",
+        "expected_installed_path": "usr/share/ucode/luci/template/commands_public.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "applications/luci-app-statistics/root/usr/libexec/stat-genconfig",
+        "git_blob": "68c9b09e889356ce3e678f2789f608e270208d1e",
+        "sha256": "5c45628d2a6a4c9414a93e26cff9c1c5d35ea4c0160f86575ee6c2f3f92c629b",
+        "expected_installed_path": "usr/libexec/stat-genconfig",
+        "expected_route": {
+          "classification": "plain",
+          "reason": "ucode_shebang"
+        }
+      },
+      {
+        "source_path": "applications/luci-app-wifihistory/root/usr/sbin/wifihistory",
+        "git_blob": "c0cfcd2a6fdddba2a5b52cd798a979b851489b08",
+        "sha256": "e58a3d2bace9aa188ec4c0a0272fa462f88138e0639587326ab72a99f1c45200",
+        "expected_installed_path": "usr/sbin/wifihistory",
+        "expected_route": {
+          "classification": "plain",
+          "reason": "ucode_shebang"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/footer.ut",
+        "git_blob": "6ae667d6163ff424c12f09911c20438ade88eb4d",
+        "sha256": "782321244ddba4219764db707b6906c7be7f04a12510330da023c9bb0f248d4d",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/footer.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/header.ut",
+        "git_blob": "ed60435eeb98c71c192ffe98b638765a87934445",
+        "sha256": "7653f8353e5bb1062b3f5a901e6b2488af5ed59b530f3c5721169f0e8fa32977",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/header.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/brand.ut",
+        "git_blob": "835a2cebdd8378c8f716f690e9150ca0e8e5118e",
+        "sha256": "97213de5baf09a12d65fd65dfa6df2f65ac619a23df9e7b2a83f124e39413387",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/brand.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/head.ut",
+        "git_blob": "2a6d01c5f6c07ffd7ec61f5a03d972d276f28823",
+        "sha256": "0ead14d53ec238ced1ddeaa6e0d09f7403475d0e5b4a87ffc294c9ba8bff360d",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/head.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/icon.ut",
+        "git_blob": "20288acac0a70469ccfa3a8486320241bc0d4616",
+        "sha256": "c9d806d43871227ed6164a1c55aaf8d4c48627cb2a8ef427da122ddc6a3e1735",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/icon.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/logout.ut",
+        "git_blob": "4477f31c6858dfe87210742c33a894ae96818107",
+        "sha256": "01cbe49c9098a749fa92e5d2332614344967c80d5c7d0912495aeb65f772fe9a",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/logout.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notice.ut",
+        "git_blob": "349ad31b0700a829ead6841c050f4e33278b3c48",
+        "sha256": "23b7c066ae794476ecfd0f63898d89b82908cc8096eaa149eb824bbd70a26e5d",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/notice.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/notices.ut",
+        "git_blob": "e643c7c4cf58cdd7c211aa644e133c4a0c99e4c3",
+        "sha256": "6ada593c435f0064da58974668ec3e0688843ac657171397686f5c58f52505f5",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/notices.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/partials/search.ut",
+        "git_blob": "dda1fd168b197d81a69f8743196bb5a2ffd3c7ef",
+        "sha256": "785656c054b02cd8539ad805860cf498c939a404884a582519edefe48109d956",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/partials/search.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-footstrap/ucode/template/themes/footstrap/sysauth.ut",
+        "git_blob": "5100ecc2d1d50c696846062ab004ff592b78da8d",
+        "sha256": "2428e3762f029bbe64b34d2416edf6ddf1228671c04907ec9f7d85643c0c5345",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/footstrap/sysauth.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-material/ucode/template/themes/material/footer.ut",
+        "git_blob": "8b3c7f728b01f1bc3b02f6cfec5e6f5aa65e1cea",
+        "sha256": "11645e45340e970b78039dcd242b0381d7e34c3604f4a1e4db9201621952ef2b",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/material/footer.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-material/ucode/template/themes/material/header.ut",
+        "git_blob": "1aeca61f39970ad0210a0b261c55dcab7b4992ae",
+        "sha256": "1650823a3ee8218525b7de4a01fe28eb1e4b34d8b7691c78f8de49c806a7babe",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/material/header.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/footer.ut",
+        "git_blob": "6d165f15021f82b649e667ce27f84316b038767f",
+        "sha256": "9a9bcb8168db705f5d1816943b58cbfdacb2bae2dbb46fe2bf66bffad5429316",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/openwrt2020/footer.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-openwrt-2020/ucode/template/themes/openwrt2020/header.ut",
+        "git_blob": "17734e487e6b3527d55794ff05d9161f71e72d7c",
+        "sha256": "61c541f0bcac66a60d132975f78d7368a683753e72e2b430607d2e804f938a5e",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/openwrt2020/header.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/footer.ut",
+        "git_blob": "12249ed75e50cc93c6581146bcce001086ae7ca1",
+        "sha256": "26a157017e3d7afe52486760b737e590e98ac3faf52659a4b413d68e1c4c37a7",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/openwrt.org/footer.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      },
+      {
+        "source_path": "themes/luci-theme-openwrt/ucode/template/themes/openwrt.org/header.ut",
+        "git_blob": "8cc6cc02553d4879e0f966b3f33350f2d35700de",
+        "sha256": "e637d00a1ad5efc15d2f54a0e296775edf1175a4c49f73521b2dd86cb05f8844",
+        "expected_installed_path": "usr/share/ucode/luci/template/themes/openwrt.org/header.ut",
+        "expected_route": {
+          "classification": "markup",
+          "reason": "ut_markup_extension"
+        }
+      }
+    ],
+    "other_remaining_exclusions": {
+      "claim021_symlink_exclusions": [
+        "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
+        "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light"
+      ],
+      "noninstalled_tests_or_fixtures": [
+        "applications/luci-app-advanced-reboot/tests/lib/mocklib.uc",
+        "applications/luci-app-advanced-reboot/tests/lib/mocklib/fs.uc"
+      ]
+    },
+    "known_limit": "22 `.ut` paths are markup routes (consumer marks markup_not_modeled); two are plain Ucode-shebang package scripts. This is a source inventory/routing batch, with no predeclared query positive/near-miss pair and no security interpretation."
+  },
+  "known_prior_real_template_overlap": {
+    "claim": "021",
+    "evidence_manifest": "evidence/021-template-extraction/source-first-manifest.json",
+    "selection_count": 11,
+    "candidate_overlap_count": 11,
+    "exact_paths": [
+      "modules/luci-base/ucode/template/csrftoken.ut",
+      "modules/luci-base/ucode/template/error404.ut",
+      "modules/luci-base/ucode/template/error500.ut",
+      "modules/luci-base/ucode/template/footer.ut",
+      "modules/luci-base/ucode/template/header.ut",
+      "modules/luci-base/ucode/template/sysauth.ut",
+      "modules/luci-base/ucode/template/view.ut",
+      "modules/luci-mod-status/ucode/template/admin_status/index.ut",
+      "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/footer.ut",
+      "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/header.ut",
+      "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap/sysauth.ut"
+    ],
+    "note": "These 11 pinned `.ut` paths were already source-staged and investigated at the same LuCI commit; excluded from the proposed next batch."
+  },
+  "claim021_inventory_exclusions": {
+    "manifest": "evidence/021-template-extraction/source-first-manifest.json",
+    "count": 2,
+    "paths": [
+      {
+        "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-dark",
+        "git_blob": "ac7bcbbf37b1b7f6e3ac6402a29f844f6de1ca43",
+        "sha256": "333c04dd151a2a6831c039cb9a651df29198be8a04e16ce861d4b6a34a11c954",
+        "reason": "extensionless symlink explicitly excluded by claim 021 source-first inventory"
+      },
+      {
+        "source_path": "themes/luci-theme-bootstrap/ucode/template/themes/bootstrap-light",
+        "git_blob": "ac7bcbbf37b1b7f6e3ac6402a29f844f6de1ca43",
+        "sha256": "333c04dd151a2a6831c039cb9a651df29198be8a04e16ce861d4b6a34a11c954",
+        "reason": "extensionless symlink explicitly excluded by claim 021 source-first inventory"
+      }
+    ]
+  }
+}
