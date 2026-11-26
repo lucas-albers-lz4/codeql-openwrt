@@ -195,8 +195,9 @@ def run_handoff(lock_path: Path, run_root: Path, run_id: str) -> None:
     need(tag_commit == release["commit"], "release tag resolves to wrong producer commit")
     api = f"https://api.github.com/repos/lucas-albers-lz4/codeql-ucode/releases/tags/{release['tag']}"
     release_json = run.root / "downloads/release.json"
-    run.call("release-api", ["curl", "--fail", "--location", "--retry", "3", "-H", "Accept: application/vnd.github+json", "--output", release_json, api])
-    published = json.loads(release_json.read_text())
+    release_response = run.call("release-api", ["gh", "api", api])
+    release_json.write_text(release_response)
+    published = json.loads(release_response)
     immutable = json.loads(run.call("release-immutability", ["gh", "release", "view", release["tag"],
                        "--repo", "lucas-albers-lz4/codeql-ucode", "--json", "isImmutable"]))
     validate_release_state(release, published, immutable)
