@@ -1,0 +1,43 @@
+name: Pinned LuCI base package inventory
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/luci-base-inventory.yml'
+      - 'tools/luci-base-inventory/**'
+permissions:
+  contents: read
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Test archive and comparison contracts
+        run: |
+          python3 -B -m unittest discover -s tools/luci-base-inventory -p 'test_*.py' -v
+          bash -n tools/luci-base-inventory/run.sh
+  experiment:
+    if: github.event_name == 'workflow_dispatch'
+    needs: contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Install OpenWrt host prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang flex bison g++ gawk gcc-multilib g++-multilib gettext git libncurses-dev libssl-dev python3 python3-setuptools rsync swig unzip zlib1g-dev file wget time
+      - name: Build and compare source-first package inventory
+        run: tools/luci-base-inventory/run.sh "$RUNNER_TEMP/issue173-lucibase"
+      - name: Retain raw IPK, receipt and logs, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: issue173-lucibase-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/issue173-lucibase/output/
+          if-no-files-found: warn
+          retention-days: 14
