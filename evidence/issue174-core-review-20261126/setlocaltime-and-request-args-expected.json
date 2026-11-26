@@ -1,0 +1,221 @@
+{
+  "status": "source-first; no query or extraction run",
+  "consumer": {
+    "repo": "openwrt/luci",
+    "commit": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "inventory_commit": "460c6ed45c445fbe9de199e324f08fc7542dc2bc",
+    "inventory_sha256": "91fcf7f84e2934a1df21c7438f898fb5cd097eb9f6cfde3bc80239369c0d7cbc"
+  },
+  "producer": {
+    "repo": "lucas-albers-lz4/codeql-ucode",
+    "commit": "a7bf614e2fb59200e303f04b6255af7e6d4007e2",
+    "query": "ql/src/m4/RequestArgsExec.ql",
+    "query_sha256": "0bf41049d4841a6c989425b14d7f26ba12587a94c4e2c41f4da1b053f01bbb35",
+    "query_status": "testing; excluded from code-scanning.qls",
+    "models_sha256": "fac64bc3b9fc232225c351c44a7985458a2fe90d87e462f1af2803b26185fd1e",
+    "models_path": "ql/lib/codeql/ucode/m3/Models.qll"
+  },
+  "file": "usr/share/rpcd/ucode/luci",
+  "positive": {
+    "source": {
+      "kind": "MemberExpression",
+      "start": [
+        108,
+        22
+      ],
+      "end_inclusive": [
+        108,
+        43
+      ],
+      "text": "request.args.localtime"
+    },
+    "method": "setLocaltime",
+    "sink": {
+      "kind": "CallExpression",
+      "name": "system",
+      "start": [
+        111,
+        5
+      ],
+      "end_inclusive": [
+        111,
+        118
+      ]
+    },
+    "expected_message": "setLocaltime request.args reaches system",
+    "interpretation_limit": "syntactic same-function binding only"
+  },
+  "near_miss": {
+    "kind": "CallExpression",
+    "method": "setLocaltime",
+    "callee": "system",
+    "start": [
+      112,
+      5
+    ],
+    "end_inclusive": [
+      112,
+      55
+    ],
+    "text": "system('/etc/init.d/sysfixtime restart >/dev/null')",
+    "expected": "no request.args tuple"
+  },
+  "ambient_historical_expectations": [
+    [
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          343,
+          49,
+          343,
+          67
+        ],
+        "label": "MemberExpression"
+      },
+      "getSwconfigFeatures request.args reaches popen via shellquote",
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          343,
+          16,
+          343,
+          88
+        ],
+        "label": "CallExpression"
+      },
+      "popen"
+    ],
+    [
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          400,
+          49,
+          400,
+          67
+        ],
+        "label": "MemberExpression"
+      },
+      "getSwconfigPortState request.args reaches popen via shellquote",
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          400,
+          16,
+          400,
+          88
+        ],
+        "label": "CallExpression"
+      },
+      "popen"
+    ],
+    [
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          470,
+          25,
+          470,
+          45
+        ],
+        "label": "MemberExpression"
+      },
+      "setPassword request.args reaches system via shellquote",
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          474,
+          13,
+          474,
+          96
+        ],
+        "label": "CallExpression"
+      },
+      "system"
+    ],
+    [
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          471,
+          25,
+          471,
+          45
+        ],
+        "label": "MemberExpression"
+      },
+      "setPassword request.args reaches system via shellquote",
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          474,
+          13,
+          474,
+          96
+        ],
+        "label": "CallExpression"
+      },
+      "system"
+    ],
+    [
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          575,
+          30,
+          575,
+          48
+        ],
+        "label": "MemberExpression"
+      },
+      "getRealtimeStats request.args reaches popen via shellquote",
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          585,
+          15,
+          585,
+          45
+        ],
+        "label": "CallExpression"
+      },
+      "popen"
+    ],
+    [
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          577,
+          30,
+          577,
+          48
+        ],
+        "label": "MemberExpression"
+      },
+      "getRealtimeStats request.args reaches popen via shellquote",
+      {
+        "entity": [
+          "usr/share/rpcd/ucode/luci",
+          585,
+          15,
+          585,
+          45
+        ],
+        "label": "CallExpression"
+      },
+      "popen"
+    ]
+  ],
+  "package_and_acl": {
+    "provider_member": "unknown until #173",
+    "acl_source": "modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json",
+    "acl_member": "unknown until #173",
+    "effective_authorization": "unknown without member bytes and rpcd/uhttpd/session context"
+  },
+  "historical_baseline": {
+    "path": "ql/test/models-fs-popen-controls/pinned-production-baseline.json",
+    "projection": "request-args",
+    "sha256": "ace8f6ff871c3261992c9088d4065c2fdf9e5e77d391f34447fb5ebb254fa4ac",
+    "meaning": "historical expected rows only; not fresh output"
+  }
+}
