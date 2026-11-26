@@ -1,0 +1,113 @@
+name: Incoming source event identity preflight
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream:
+        description: Upstream repository containing the PR base
+        type: choice
+        required: true
+        options: [openwrt, luci]
+      pr_number:
+        description: Open upstream PR number
+        type: number
+        required: true
+      source_sha:
+        description: Full expected PR head commit SHA
+        type: string
+        required: true
+      control_sha:
+        description: Full clean control commit SHA from canonical upstream
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  resolve-pins:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Fetch exact GitHub pull API response
+        id: pull
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM: ${{ inputs.upstream }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          set -euo pipefail
+          case "$UPSTREAM" in
+            openwrt|luci) ;;
+            *) echo 'unsupported upstream' >&2; exit 2 ;;
+          esac
+          [[ "$PR_NUMBER" =~ ^[1-9][0-9]*$ ]]
+          gh api -H 'Accept: application/vnd.github+json' \
+            "repos/openwrt/$UPSTREAM/pulls/$PR_NUMBER" > pull-api-response.json
+          source_sha=$(jq -er '.head.sha | select(test("^[0-9a-f]{40}$"))' pull-api-response.json)
+          base_sha=$(jq -er '.base.sha | select(test("^[0-9a-f]{40}$"))' pull-api-response.json)
+          api_number=$(jq -er '.number' pull-api-response.json)
+          [[ "$api_number" == "$PR_NUMBER" ]]
+          [[ "$source_sha" == "$SOURCE_SHA" ]]
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+          echo "base_sha=$base_sha" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: openwrt/${{ inputs.upstream }}
+          ref: refs/pull/${{ inputs.pr_number }}/head
+          path: upstream-source
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: openwrt/${{ inputs.upstream }}
+          ref: ${{ inputs.control_sha }}
+          path: upstream-control
+          persist-credentials: false
+      - name: Resolve API-bound PR source and canonical control identities
+        env:
+          UPSTREAM: ${{ inputs.upstream }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          SOURCE_SHA: ${{ steps.pull.outputs.source_sha }}
+          BASE_SHA: ${{ steps.pull.outputs.base_sha }}
+          CONTROL_SHA: ${{ inputs.control_sha }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from datetime import datetime, timezone
+          import json, os
+          from pathlib import Path
+          event = {
+              "schema": "incoming-event-v1",
+              "repository": os.environ["UPSTREAM"],
+              "event_type": "manual_sha_drill",
+              "pr_number": int(os.environ["PR_NUMBER"]),
+              "event_time": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+              "source_sha": os.environ["SOURCE_SHA"],
+              "base_sha": os.environ["BASE_SHA"],
+              "control_sha": os.environ["CONTROL_SHA"],
+          }
+          Path("incoming-event.json").write_text(json.dumps(event, indent=2) + "\n")
+          PY
+          python3 -B tools/incoming_event.py incoming-event.json pull-api-response.json upstream-source upstream-control incoming-event-receipt.json
+      - name: Fetch exact PR base and compare bounded v0.4 source policy
+        env:
+          BASE_SHA: ${{ steps.pull.outputs.base_sha }}
+          SOURCE_SHA: ${{ steps.pull.outputs.source_sha }}
+          UPSTREAM: ${{ inputs.upstream }}
+        run: |
+          set -euo pipefail
+          git -C upstream-source fetch --no-tags --depth=1 origin "$BASE_SHA"
+          [[ "$(git -C upstream-source rev-parse --verify "$BASE_SHA^{commit}")" == "$BASE_SHA" ]]
+          python3 -B tools/source_policy_drift.py docs/current-corpus-source-v0.4.json "$UPSTREAM" upstream-source "$SOURCE_SHA" "$BASE_SHA" source-policy-drift.json
+      - name: Retain exact API response, identity receipt and drift report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: incoming-event-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          path: |
+            pull-api-response.json
+            incoming-event*.json
+            source-policy-drift.json
