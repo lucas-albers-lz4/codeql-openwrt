@@ -264,6 +264,33 @@ def read_checkpoint(path):
     check((doc['genesis'] and doc['previous_sha256'] is None) or (not doc['genesis'] and isinstance(doc['previous_sha256'], str) and bool(re.fullmatch(r'[0-9a-f]{64}', doc['previous_sha256']))), 'invalid checkpoint predecessor')
     return doc['decisions'], hashlib.sha256(raw).hexdigest()
 
+
+def replay_observed(path, expected_digest):
+    """Reconstruct current observations from retained requests, without network.
+
+    This checks internal consistency only; it does not authenticate the original
+    API fetch, the checkpoint artifact, or predecessor history.
+    """
+    with Path(path).open('rb') as handle:
+        raw = handle.read(MAX_RECORD + 1)
+    check(len(raw) <= MAX_RECORD and hashlib.sha256(raw).hexdigest() == expected_digest,
+          'checkpoint changed after validation')
+    doc = json.loads(raw, object_pairs_hook=unique_object)
+    requests = iter(doc['requests'])
+
+    def get(requested_path):
+        request = next(requests, None)
+        check(request is not None and request['path'] == requested_path,
+              'retained API request order or path differs from replay')
+        body = base64.b64decode(request['body_base64'], validate=True)
+        return json.loads(body, object_pairs_hook=unique_object), request['link']
+
+    observed = []
+    for repo in REPOS:
+        observed.extend(snapshot(repo, get, 401))
+    check(next(requests, None) is None, 'unused API request in checkpoint')
+    return observed
+
 def atomic_write(path, value):
     raw = (json.dumps(value, indent=2) + '\n').encode()
     check(len(raw) <= MAX_RECORD, 'output exceeds byte limit')

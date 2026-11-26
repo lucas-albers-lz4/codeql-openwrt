@@ -7,15 +7,14 @@ workflow must fetch and verify a new canonical response and source tree.
 from __future__ import annotations
 
 import argparse
-import base64
 import hashlib
 import json
 from pathlib import Path
 import re
 import sys
 
-from tools.incoming_poll import (MAX_RECORD, REPOS as POLL_REPOS, PollError,
-                                 plan, read_checkpoint, snapshot, unique_object)
+from tools.incoming_poll import (PollError, plan, read_checkpoint,
+                                 replay_observed, unique_object)
 
 SHA = re.compile(r'[0-9a-f]{40}\Z')
 REPOS = {'openwrt/openwrt': 'openwrt', 'openwrt/luci': 'luci'}
@@ -24,28 +23,6 @@ REPOS = {'openwrt/openwrt': 'openwrt', 'openwrt/luci': 'luci'}
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise PollError(message)
-
-
-def replay_observed(checkpoint: Path, expected_digest: str) -> list[dict]:
-    with checkpoint.open('rb') as handle:
-        raw = handle.read(MAX_RECORD + 1)
-    require(len(raw) <= MAX_RECORD and hashlib.sha256(raw).hexdigest() == expected_digest,
-            'checkpoint changed after validation')
-    doc = json.loads(raw, object_pairs_hook=unique_object)
-    requests = iter(doc['requests'])
-
-    def get(path: str):
-        request = next(requests, None)
-        require(request is not None and request['path'] == path,
-                'retained API request order or path differs from replay')
-        body = base64.b64decode(request['body_base64'], validate=True)
-        return json.loads(body, object_pairs_hook=unique_object), request['link']
-
-    observed = []
-    for repo in POLL_REPOS:
-        observed.extend(snapshot(repo, get, 401))
-    require(next(requests, None) is None, 'unused API request in checkpoint')
-    return observed
 
 
 def prepare(checkpoint: Path, api_response: Path, repository: str,
