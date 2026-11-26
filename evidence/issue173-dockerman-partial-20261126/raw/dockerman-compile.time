@@ -1,0 +1,23 @@
+	Command being timed: "make -j2 package/feeds/luci/luci-app-dockerman/compile V=s"
+	User time (seconds): 2692.03
+	System time (seconds): 537.53
+	Percent of CPU this job got: 322%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 16:41.79
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1303196
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 6162
+	Minor (reclaiming a frame) page faults: 158006760
+	Voluntary context switches: 3446223
+	Involuntary context switches: 2868055
+	Swaps: 0
+	File system inputs: 126280
+	File system outputs: 48431256
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

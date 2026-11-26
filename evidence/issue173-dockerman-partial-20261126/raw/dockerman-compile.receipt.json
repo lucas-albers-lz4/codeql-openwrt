@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/time",
+    "-v",
+    "-o",
+    "/home/runner/work/_temp/issue173-dockerman-build/output/dockerman-compile.time",
+    "make",
+    "-j2",
+    "package/feeds/luci/luci-app-dockerman/compile",
+    "V=s"
+  ],
+  "cwd": "/home/runner/work/_temp/issue173-dockerman-build/openwrt",
+  "elapsed_seconds": 1001.8385155119995,
+  "env": {
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "HOME": "/home/runner/work/_temp/issue173-dockerman-build/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TMPDIR": "/home/runner/work/_temp/issue173-dockerman-build/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "failure": null,
+  "finished_utc": "2026-11-26T10:32:11.939464+00:00",
+  "label": "dockerman-compile",
+  "peak_rss_bytes": null,
+  "rss_note": "not measured",
+  "started_utc": "2026-11-26T10:15:30.100960+00:00",
+  "stderr_sha256": "ff8e631ca68cd235c45adaf5ce7089fce886bd0d074412a1a6b3c9cbe358d18c",
+  "stdout_sha256": "8013d52d5655c9bb453a998f5fa2cfc1409fb089c94d5a1ac59d5d10c8a87c4f"
+}

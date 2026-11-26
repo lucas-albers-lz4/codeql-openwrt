@@ -1,0 +1,11 @@
+{
+  "disposition": "candidate only; kernel IPK validation and package-recipe dependency comparison remain required",
+  "kernel_config_sha256": "3723a6cb9153dc0683defc4fc724b92ddb69e534b66acf1afeb4dc7f39ec4492",
+  "kernel_vermagic_sha256": "246f14a2f7273b4720dc6162c176e80adbff30eeaeaa4e2e3de0abb775ef5140",
+  "phase": "kernel-package-compile",
+  "raw_empty_package_lines": [
+    "WARNING: kmod-drm-exec is not available in the kernel config - generating empty package",
+    "WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package"
+  ],
+  "source_scoped_exception_candidate": true
+}

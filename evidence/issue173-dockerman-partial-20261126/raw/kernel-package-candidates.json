@@ -1,0 +1,16 @@
+{
+  "directory_status": "present",
+  "ipks": [
+    {
+      "path": "bin/targets/x86/64/packages/kernel_6.12.116~7df1a98339a37dfe41af7485d026e004-r1_x86_64.ipk",
+      "sha256": "88490a59d5be9be9bee9f6582efe8bf20fd6df4e52933abd324763cda96f1caa",
+      "size": 5253
+    }
+  ],
+  "kernel_version": {
+    "sha256": "588c1a96472fd6c5c1ebcae7a48b6311876c07380aafda6ba7cf8479c6f72c69",
+    "size": 45,
+    "status": "present"
+  },
+  "schema": "luci-app-kernel-package-candidates-v1"
+}

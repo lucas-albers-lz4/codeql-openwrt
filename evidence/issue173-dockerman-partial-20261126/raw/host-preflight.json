@@ -1,0 +1,19 @@
+{
+  "cpu_count": 4,
+  "disk_free_bytes": 91107041280,
+  "limits": {
+    "disk_min_bytes": 64424509440,
+    "job_timeout_minutes": 360,
+    "memory_min_bytes": 16106127360,
+    "phase_timeouts_seconds": {
+      "dockerman-compile": 10500,
+      "kernel-compile": 2700,
+      "kernel-package-compile": 1500,
+      "toolchain-install": 2700,
+      "tools-install": 1800
+    }
+  },
+  "machine": "x86_64",
+  "memory_total_bytes": 16760344576,
+  "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39"
+}
