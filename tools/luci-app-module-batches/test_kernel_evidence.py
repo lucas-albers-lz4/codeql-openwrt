@@ -6,6 +6,7 @@ import json
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -160,6 +161,44 @@ class KernelEvidenceTests(unittest.TestCase):
         ):
             with self.subTest(text=text), self.assertRaisesRegex(ValueError, message):
                 evidence.kernel.reject_empty_package_diagnostic(text)
+
+    def test_scoped_warnings_require_exact_identity_and_pair(self):
+        config = (b'CONFIG_PACKAGE_kmod-drm-exec=y\nCONFIG_PACKAGE_kmod-drm-suballoc-helper=y\n'
+                  b'CONFIG_PACKAGE_kmod-drm-i915=y\n')
+        (self.ow / '.config').write_bytes(config)
+        retained = self.run / 'output/kernel-evidence'
+        retained.mkdir()
+        (retained / '.config').write_bytes(self.config)
+        (retained / '.vermagic').write_text(self.magic + '\n')
+        stdout = self.run / 'output/kernel-package-compile.stdout'
+        stderr = self.run / 'output/kernel-package-compile.stderr'
+        stdout.write_bytes(b"for x in y; do echo \"ERROR: module '$mod' is missing.\"; done\n")
+        pair = b'\n'.join(sorted(evidence.kernel.KNOWN_EMPTY)) + b'\n'
+        stderr.write_bytes(pair)
+        with patch.object(evidence, 'AUDITED_BUILD_CONFIG', evidence.digest(config)), \
+             patch.object(evidence, 'AUDITED_KERNEL_CONFIG', evidence.digest(self.config)), \
+             patch.object(evidence, 'AUDITED_VERMAGIC', self.magic):
+            self.assertEqual(len(evidence.reject_diagnostics(self.run, 'kernel-package-compile')), 2)
+            stdout.write_bytes(pair)
+            with self.assertRaisesRegex(ValueError, 'unapproved empty kernel package diagnostic'):
+                evidence.reject_diagnostics(self.run, 'kernel-package-compile')
+            stdout.write_bytes(b'')
+            (self.run / 'output/kernel-compile.stdout').write_bytes(b'')
+            (self.run / 'output/kernel-compile.stderr').write_bytes(pair)
+            with self.assertRaisesRegex(ValueError, 'outside kernel package phase'):
+                evidence.reject_diagnostics(self.run, 'kernel-compile')
+            for value in (pair + pair, pair.splitlines()[0] + b'\n',
+                          pair + b'WARNING: other is not available in the kernel config - generating empty package\n'):
+                stderr.write_bytes(value)
+                with self.assertRaisesRegex(ValueError, 'unapproved empty kernel package diagnostic'):
+                    evidence.reject_diagnostics(self.run, 'kernel-package-compile')
+            stderr.write_bytes(pair + b"ERROR: module '/kernel/example.ko' is missing.\n")
+            with self.assertRaisesRegex(ValueError, 'required kernel module missing'):
+                evidence.reject_diagnostics(self.run, 'kernel-package-compile')
+            stderr.write_bytes(pair)
+            (retained / '.config').write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError, 'lack audited config or kernel identity'):
+                evidence.reject_diagnostics(self.run, 'kernel-package-compile')
 
 
 if __name__ == '__main__':
