@@ -124,11 +124,13 @@ class IncomingEventTests(unittest.TestCase):
         with self.assertRaisesRegex(InvalidEvent, "base SHA disagrees"):
             validate(bad, self.api_pr, self.repo, self.control_repo)
 
-    def test_rejects_cross_repository_head_not_marked_as_fork(self):
-        bad = {**self.api_pr, "head": {**self.api_pr["head"],
+    def test_accepts_cross_repository_head_with_fork_false(self):
+        api = {**self.api_pr, "head": {**self.api_pr["head"],
                                          "repo": {"full_name": "contributor/openwrt", "fork": False}}}
-        with self.assertRaisesRegex(InvalidEvent, "not identified as a fork"):
-            validate(self.event, bad, self.repo, self.control_repo)
+        result = validate(self.event, api, self.repo, self.control_repo)
+        self.assertEqual(result["source"]["commit"], self.source)
+        self.assertEqual(result["head_repository"], "contributor/openwrt")
+        self.assertFalse(result["head_repository_is_fork"])
 
     def test_accepts_same_repository_pull_head(self):
         same_repo = {**self.api_pr, "head": {**self.api_pr["head"],

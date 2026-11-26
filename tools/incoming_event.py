@@ -83,8 +83,9 @@ def validate(event: dict, api_pr: dict, source_checkout: Path,
             "GitHub pull base repository does not match selected upstream")
     require(isinstance(head_repo, str) and head_repo and isinstance(head_fork, bool),
             "GitHub pull head repository identity is missing or malformed")
-    require(head_repo.lower() == expected_full_name or head_fork,
-            "cross-repository PR head is not identified as a fork")
+    # GitHub can report fork=false for a valid cross-repository pull head.
+    # PR membership is established by the canonical pull response and fetched
+    # refs/pull/<number>/head, not by this repository metadata flag.
     require(isinstance(head_sha, str) and bool(SHA.fullmatch(head_sha)),
             "GitHub pull response head SHA is not a full commit SHA")
     require(event.get("source_sha") == head_sha,

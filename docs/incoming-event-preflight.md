@@ -3,10 +3,12 @@
 This workflow is a bounded `workflow_dispatch` drill for resolving an open
 OpenWrt or LuCI PR and a clean control revision. It fetches and retains the
 exact GitHub pull API response, checks the response's PR number, open state,
-base repository, head repository identity, fork flag and full head SHA against
+base repository, head repository identity and full head SHA against
 the dispatch's explicit expected `source_sha`, then
 checks out `refs/pull/<number>/head` from the canonical base repository. This
 supports fork PRs without trusting a caller-supplied source repository URL.
+The API fork flag is retained as descriptive metadata; a valid cross-repository
+pull head may report it as false.
 The resolver requires the fetched PR ref's HEAD to equal the API head SHA and
 the control checkout's clean HEAD to equal its full input SHA; both tree SHAs
 are recorded. The control revision is always checked out from canonical
