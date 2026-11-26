@@ -54,8 +54,40 @@ def inventory(kernel, run):
     return {'kernel_root': str(kernel), 'files': result, 'modules': modules,
             'limitation': 'inventory only; selected package FILES and builtin applicability require review'}
 
-def reject_empty_package_diagnostic(data):
-    if b'is not available in the kernel config - generating empty package' in data:
-        raise ValueError('selected kernel package generated empty')
-    if re.search(rb"ERROR: module '[^\n]*' is missing\.", data):
+EMPTY_WARNING = re.compile(rb'^WARNING: .+ is not available in the kernel config - generating empty package$')
+MISSING_ERROR = re.compile(rb"^ERROR: module '[^\r\n]+' is missing\.$")
+KNOWN_EMPTY = {
+    b'WARNING: kmod-drm-exec is not available in the kernel config - generating empty package',
+    b'WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package',
+}
+AUDITED_KERNEL_CONFIG = '10bcab859188cc3602488c42507780a0de7c6336e537494a475db9526476591f'
+AUDITED_VERMAGIC = 'd06fc8e744142971fdfa96b50c6d006f'
+AUDITED_BUILD_CONFIG = 'cbff738c953271533651885c3759d6a5ba6b845c61b23a1e7aca7059f552d8ff'
+
+def reject_missing_module(data):
+    if any(MISSING_ERROR.fullmatch(line) for line in data.splitlines()):
         raise ValueError('required kernel module missing')
+
+def empty_warnings(data):
+    return [line for line in data.splitlines() if EMPTY_WARNING.fullmatch(line)]
+
+def reject_empty_package_diagnostic(data):
+    reject_missing_module(data)
+    if empty_warnings(data):
+        raise ValueError('selected kernel package generated empty')
+
+def classify_scoped_warnings(stdout, stderr, build_config, kernel_config_sha, vermagic):
+    reject_missing_module(stdout)
+    reject_missing_module(stderr)
+    out, err = empty_warnings(stdout), empty_warnings(stderr)
+    if out or len(err) != len(set(err)) or (err and set(err) != KNOWN_EMPTY):
+        raise ValueError('unapproved empty kernel package diagnostic')
+    if err:
+        selected = build_config.splitlines()
+        if (hashlib.sha256(build_config).hexdigest() != AUDITED_BUILD_CONFIG or
+                selected.count(b'CONFIG_PACKAGE_kmod-drm-exec=y') != 1 or
+                selected.count(b'CONFIG_PACKAGE_kmod-drm-suballoc-helper=y') != 1 or
+                selected.count(b'CONFIG_PACKAGE_kmod-drm-i915=y') != 1 or
+                kernel_config_sha != AUDITED_KERNEL_CONFIG or vermagic != AUDITED_VERMAGIC):
+            raise ValueError('known empty warnings lack audited config or kernel identity')
+    return [line.decode('ascii') for line in err]

@@ -143,13 +143,18 @@ def invoke_make(probe, label, target, sources, graph_lock):
         try:
             stderr = check.physical_file(probe.out / (label + '.stderr'), probe.out)
             stdout = check.physical_file(probe.out / (label + '.stdout'), probe.out)
-            kernel.reject_empty_package_diagnostic(stdout + b'\n' + stderr)
+            if label == 'kernel-package-compile':
+                kernel.reject_missing_module(stdout)
+                kernel.reject_missing_module(stderr)
+            else:
+                kernel.reject_empty_package_diagnostic(stdout + b'\n' + stderr)
         except Exception as exc:
             post_errors.append('diagnostics: ' + repr(exc))
     else:
         post_errors.append('postguard withheld: process group may still be active')
     if phase_error or post_errors:
         raise RuntimeError('phase failure: ' + repr({'phase': phase_error, 'postguard': post_errors}))
+    return stdout, stderr
 
 def kernel_package_inventory(probe, kernel_root):
     ow = probe.root / 'openwrt'
@@ -195,7 +200,7 @@ def run_build(probe):
     probe.metadata_result = result
     oracle = compare.load_oracle()
     source_preflight(probe, oracle)
-    _, graph_lock = frozen_metadata(probe, 'pre-build')
+    build_config, graph_lock = frozen_metadata(probe, 'pre-build')
     result['locked_graph_sha256'] = graph_lock
     for label, target in (('tools-install', 'tools/install'), ('toolchain-install', 'toolchain/install'), ('kernel-compile', 'target/linux/compile')):
         invoke_make(probe, label, target, result['source_before'], graph_lock)
@@ -207,35 +212,54 @@ def run_build(probe):
     with (probe.out / 'kernel-inventory.json').open('x') as f:
         json.dump(evidence, f, indent=2, sort_keys=True)
         f.write('\n')
-    # The selected kernel package directory resolves FILES against the compiled
-    # kernel; retain its diagnostics and reject missing/empty package messages.
-    before = evidence
-    invoke_make(probe, 'kernel-package-compile', 'package/kernel/linux/compile', result['source_before'], graph_lock)
-    after = kernel.inventory(roots[0], probe.root)
-    if after != before:
-        raise ValueError('kernel inventory changed after package/kernel/linux compile')
-    with (probe.out / 'kernel-inventory-after.json').open('x') as f:
-        json.dump(after, f, indent=2, sort_keys=True)
-        f.write('\n')
-    kernel_packages = kernel_package_inventory(probe, roots[0])
-    with (probe.out / 'kernel-packages.json').open('x') as f:
-        json.dump(kernel_packages, f, indent=2, sort_keys=True)
-        f.write('\n')
-    kernel_ipk_name = next(name for name in kernel_packages if name.startswith('kernel_'))
-    kernel_ipk = ow / 'bin/targets/x86/64/packages' / kernel_ipk_name
-    evidence_files = {
-        'kernel.ipk': check.physical_file(kernel_ipk, ow, True),
+    kernel_inputs = {
         'kernel-config': check.physical_file(roots[0] / '.config', roots[0], True),
         'kernel-modules-stamp': check.physical_file(roots[0] / '.modules', roots[0]),
         'kernel-vermagic': check.physical_file(roots[0] / '.vermagic', roots[0], True),
         'kernel-modules.builtin': check.physical_file(roots[0] / 'modules.builtin', roots[0], True),
         'kernel-modules.builtin.modinfo': check.physical_file(roots[0] / 'modules.builtin.modinfo', roots[0], True),
         'kernel-release': check.physical_file(roots[0] / 'include/config/kernel.release', roots[0], True),
+    }
+    for name, data in kernel_inputs.items():
+        with (probe.out / name).open('xb') as f:
+            f.write(data)
+    # Retain physical kernel evidence before deciding the scoped warning policy.
+    before = evidence
+    kernel_stdout, kernel_stderr = invoke_make(probe, 'kernel-package-compile', 'package/kernel/linux/compile', result['source_before'], graph_lock)
+    after = kernel.inventory(roots[0], probe.root)
+    if after != before:
+        raise ValueError('kernel inventory changed after package/kernel/linux compile')
+    with (probe.out / 'kernel-inventory-after.json').open('x') as f:
+        json.dump(after, f, indent=2, sort_keys=True)
+        f.write('\n')
+    kernel_dir = ow / 'bin/targets/x86/64/packages'
+    compare.physical_directory(kernel_dir, probe.root)
+    kernel_ipks = sorted(kernel_dir.glob('kernel_*.ipk'))
+    if len(kernel_ipks) != 1:
+        raise ValueError('kernel package output inventory missing or ambiguous')
+    evidence_files = {
+        'kernel.ipk': check.physical_file(kernel_ipks[0], ow, True),
         'kernel-version': check.physical_file(ow / 'staging_dir/target-x86_64_musl/kernel.version', ow, True),
     }
     for name, data in evidence_files.items():
         with (probe.out / name).open('xb') as f:
             f.write(data)
+    kernel_packages = kernel_package_inventory(probe, roots[0])
+    with (probe.out / 'kernel-packages.json').open('x') as f:
+        json.dump(kernel_packages, f, indent=2, sort_keys=True)
+        f.write('\n')
+    sha_kernel_config = check.digest(kernel_inputs['kernel-config'])
+    warnings = kernel.classify_scoped_warnings(kernel_stdout, kernel_stderr, build_config,
+                                               sha_kernel_config,
+                                               kernel_inputs['kernel-vermagic'].strip().decode('ascii'))
+    disposition = {'scope': 'known globally selected DRM packages outside audited Statistics dependency overapproximation; not an image completeness claim',
+                   'warnings': warnings, 'build_config_sha256': check.digest(build_config),
+                   'kernel_config_sha256': sha_kernel_config,
+                   'kernel_vermagic': kernel_inputs['kernel-vermagic'].strip().decode('ascii')}
+    with (probe.out / 'kernel-warning-disposition.json').open('x') as f:
+        json.dump(disposition, f, indent=2, sort_keys=True)
+        f.write('\n')
+    result['kernel_warning_disposition'] = disposition
     invoke_make(probe, 'statistics-compile', 'package/feeds/luci/luci-app-statistics/compile', result['source_before'], graph_lock)
     config, _ = frozen_metadata(probe, 'statistics-comparison', graph_lock)
     prepared = ow / 'build_dir/target-x86_64_musl/luci-app-statistics'

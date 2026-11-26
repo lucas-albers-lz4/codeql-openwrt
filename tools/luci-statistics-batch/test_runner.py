@@ -141,7 +141,7 @@ class RunnerTests(unittest.TestCase):
                     runner.kernel_package_inventory(probe, linux)
 
     def test_same_job_sequence_and_kernel_failure_stops_statistics(self):
-        for fail in (False, True):
+        for fail in (False, True, 'unapproved-warning'):
             with self.subTest(kernel_failure=fail), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp).resolve()
                 output = root / 'output'
@@ -166,12 +166,22 @@ class RunnerTests(unittest.TestCase):
                 calls = []
                 def invoke(probe, label, target, sources, graph_lock):
                     calls.append(target)
-                    if fail and target == 'package/kernel/linux/compile':
+                    if fail is True and target == 'package/kernel/linux/compile':
                         raise ValueError('missing kernel module')
+                    if fail == 'unapproved-warning' and target == 'package/kernel/linux/compile':
+                        return b'', b'WARNING: kmod-other is not available in the kernel config - generating empty package\n'
+                    return b'', b''
                 with patch.object(runner, 'invoke_make', side_effect=invoke), patch.object(runner, 'host_preflight'), patch.object(runner, 'source_preflight'), patch.object(runner, 'frozen_metadata', return_value=(b'config', 'locked')), patch.object(runner.compare, 'load_oracle', return_value={}), patch.object(runner.compare, 'physical_directory'), patch.object(runner.compare, 'compare', return_value={}), patch.object(runner.kernel, 'inventory', return_value={'kernel': 'same'}), patch.object(runner, 'kernel_package_inventory', return_value={'kernel_test.ipk': 'same'}):
-                    if fail:
+                    if fail is True:
                         with self.assertRaisesRegex(ValueError, 'missing kernel module'):
                             runner.run_build(probe)
+                        self.assertNotIn('package/feeds/luci/luci-app-statistics/compile', calls)
+                    elif fail == 'unapproved-warning':
+                        with self.assertRaisesRegex(ValueError, 'unapproved empty kernel package diagnostic'):
+                            runner.run_build(probe)
+                        self.assertEqual((output/'kernel.ipk').read_bytes(), b'kernel ipk')
+                        for name in ('kernel-config','kernel-vermagic','kernel-version','kernel-modules.builtin','kernel-modules.builtin.modinfo'):
+                            self.assertTrue((output/name).is_file(), name)
                         self.assertNotIn('package/feeds/luci/luci-app-statistics/compile', calls)
                     else:
                         result = runner.run_build(probe)
@@ -190,7 +200,7 @@ class RunnerTests(unittest.TestCase):
                 calls.append((label, argv, cwd, timeout))
                 (output / (label + '.time')).write_bytes(b'Maximum resident set size (kbytes): 123\n')
                 (output / (label + '.stdout')).write_bytes(b'')
-                (output / (label + '.stderr')).write_bytes(b'is not available in the kernel config - generating empty package')
+                (output / (label + '.stderr')).write_bytes(b'WARNING: kmod-example is not available in the kernel config - generating empty package\n')
             probe.invoke = invoke
             with patch.object(runner, 'frozen_metadata') as guard, patch.object(runner.check, 'validate_link'), patch.object(runner, 'post_sources'):
                 with self.assertRaisesRegex(RuntimeError, 'selected kernel package generated empty'):

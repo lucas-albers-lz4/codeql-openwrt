@@ -1,4 +1,6 @@
 import importlib.util
+import hashlib
+from unittest.mock import patch
 from pathlib import Path
 import tempfile
 import unittest
@@ -48,6 +50,34 @@ class KernelTests(unittest.TestCase):
             kernel.inventory(self.root, self.run)
         with self.assertRaisesRegex(ValueError, 'unsafe kernel path'):
             kernel.regular(self.root, '/etc/passwd')
+
+    def test_emitted_diagnostic_not_echoed_recipe(self):
+        template = b"for mod in /tmp/a; do echo \"ERROR: module '$mod' is missing.\" >&2; done;\n"
+        kernel.reject_empty_package_diagnostic(template)
+        with self.assertRaisesRegex(ValueError, 'required kernel module missing'):
+            kernel.reject_empty_package_diagnostic(template + b"ERROR: module '/kernel/example.ko' is missing.\n")
+        with self.assertRaisesRegex(ValueError, 'required kernel module missing'):
+            kernel.classify_scoped_warnings(template, b"ERROR: module '/kernel/example.ko' is missing.\n", b'', '', '')
+
+    def test_only_audited_warnings_and_kernel_identity(self):
+        config = b'CONFIG_PACKAGE_kmod-drm-exec=y\nCONFIG_PACKAGE_kmod-drm-suballoc-helper=y\nCONFIG_PACKAGE_kmod-drm-i915=y\n'
+        warnings = sorted(kernel.KNOWN_EMPTY)
+        data = b'\n'.join(warnings) + b'\n'
+        with patch.object(kernel, 'AUDITED_BUILD_CONFIG', hashlib.sha256(config).hexdigest()):
+            accepted = kernel.classify_scoped_warnings(b'', data, config, kernel.AUDITED_KERNEL_CONFIG, kernel.AUDITED_VERMAGIC)
+            self.assertEqual(accepted, [w.decode() for w in warnings])
+            with self.assertRaisesRegex(ValueError, 'audited config or kernel identity'):
+                kernel.classify_scoped_warnings(b'', data, config, 'bad', kernel.AUDITED_VERMAGIC)
+            with self.assertRaisesRegex(ValueError, 'audited config or kernel identity'):
+                kernel.classify_scoped_warnings(b'', data, config, kernel.AUDITED_KERNEL_CONFIG, 'bad')
+            with self.assertRaisesRegex(ValueError, 'unapproved empty kernel package diagnostic'):
+                kernel.classify_scoped_warnings(b'', data + warnings[0] + b'\n', config, kernel.AUDITED_KERNEL_CONFIG, kernel.AUDITED_VERMAGIC)
+            with self.assertRaisesRegex(ValueError, 'unapproved empty kernel package diagnostic'):
+                kernel.classify_scoped_warnings(b'', warnings[0] + b'\n', config, kernel.AUDITED_KERNEL_CONFIG, kernel.AUDITED_VERMAGIC)
+            with self.assertRaisesRegex(ValueError, 'unapproved empty kernel package diagnostic'):
+                kernel.classify_scoped_warnings(b'', data + b'WARNING: kmod-other is not available in the kernel config - generating empty package\n', config, kernel.AUDITED_KERNEL_CONFIG, kernel.AUDITED_VERMAGIC)
+            with self.assertRaisesRegex(ValueError, 'unapproved empty kernel package diagnostic'):
+                kernel.classify_scoped_warnings(warnings[0], b'', config, kernel.AUDITED_KERNEL_CONFIG, kernel.AUDITED_VERMAGIC)
 
     def test_empty_package_warning_fails(self):
         with self.assertRaisesRegex(ValueError, 'selected kernel package generated empty'):
