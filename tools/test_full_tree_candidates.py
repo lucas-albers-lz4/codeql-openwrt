@@ -140,4 +140,30 @@ class FullTreeControls(unittest.TestCase):
   with self.assertRaisesRegex(selector.SelectorError,'manifest digest mismatch'):
    selector.compare(self.root,self.base,self.base,changed,raw,'openwrt')
 
+ def test_v07_packages_feed_inventory_classifies_fixture_paths(self):
+  raw=(MODULE.parent.parent/'docs/current-corpus-source-v0.7.json').read_bytes();policy=json.loads(raw)
+  self.assertEqual(hashlib.sha256(raw).hexdigest(),'2ef4dc10e78b6c3aef873e3f0652b5102698cedb317c9cf96587806941c61d2e')
+  self.assertEqual(policy['schema'],'mvp-bounded-corpus-v0.7')
+  for path in (self.root/'selected/pkg.uc',self.root/'twin-a/tool.ucode',self.root/'twin-b/tool.ucode'):
+   path.unlink()
+  package_rows=[row for row in policy['selected']+policy['excluded'] if row['repo']=='packages']
+  self.assertEqual(len(package_rows),37)
+  for row in package_rows:
+   target=self.root/row['source_path'];target.parent.mkdir(parents=True,exist_ok=True)
+   route=row.get('expected_route',{})
+   content=(b'#!/usr/bin/ucode\nfixture\n' if route.get('reason')=='ucode_shebang'
+            else ('fixture '+row['source_path']+'\n').encode())
+   target.write_bytes(content)
+   if row.get('source_mode')=='100755': target.chmod(0o755)
+  self.commit();rev=self.sha()
+  expected={row['source_path'] for row in package_rows}
+  natural=selector.make_inventory(self.root,rev,{'selected':[],'excluded':[]},'packages')
+  self.assertEqual({row['source_path'] for row in natural},expected)
+  self.assertTrue(all(row['status']=='unreviewed' for row in natural))
+  inventory=selector.make_inventory(self.root,rev,policy,'packages')
+  counts={status:sum(row['status']==status for row in inventory)
+          for status in ('selected','excluded','unreviewed')}
+  self.assertEqual(len(inventory),37)
+  self.assertEqual(counts,{'selected':26,'excluded':11,'unreviewed':0})
+
 if __name__=='__main__':unittest.main()
