@@ -1,0 +1,11 @@
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1816 MB.
+Compiling query plan for /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/mutation-producer/ql/src/m3/BuiltinSystem.ql.
+WARNING: unused predicate 'systemFormalInBody' (/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/mutation-producer/ql/lib/codeql/ucode/m3/Models.qll:149,19-37)
+[1/1 comp 958ms] Compiled /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/mutation-producer/ql/src/m3/BuiltinSystem.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/m3/BuiltinSystem.ql.
+[1/1 eval 167ms] Evaluation done; writing results to /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/mutation/output/mutant.bqrs.
+Shutting down query evaluator.

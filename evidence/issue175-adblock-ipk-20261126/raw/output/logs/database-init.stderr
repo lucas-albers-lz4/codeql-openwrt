@@ -1,0 +1,5 @@
+Calculating baseline information in /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage
+Calculated baseline information for languages:  (66ms).
+Resolving extractor ucode.
+Successfully loaded extractor ucode (ucode) from /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/extractor-pack.
+Created skeleton CodeQL database at /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/db. This in-progress database is ready to be populated by an extractor.
