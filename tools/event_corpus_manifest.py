@@ -131,7 +131,11 @@ def source_route(source_path: str, installed_path: str, data: bytes) -> dict[str
     raise SelectorError(f"source has no reviewed extractor route: {source_path}")
 
 
-def build(policy: dict, receipt: dict, inventory: dict, checkout: Path) -> dict:
+def build(policy: dict, receipt: dict, inventory: dict, checkout: Path,
+          *, policy_sha256: str | None = None,
+          admitted_additions: tuple[str, ...] = ()) -> dict:
+    if policy_sha256 is None:
+        policy_sha256 = POLICY_SHA256
     repo = receipt.get("repository")
     need(repo in ("openwrt", "luci"), "unsupported event repository")
     head = receipt.get("source", {})
@@ -145,8 +149,11 @@ def build(policy: dict, receipt: dict, inventory: dict, checkout: Path) -> dict:
          inventory.get("head_tree") == head.get("tree") and
          inventory.get("base_commit") == base.get("commit") and
          inventory.get("base_tree") == base.get("tree") and
-         inventory.get("policy_sha256") == POLICY_SHA256,
+         inventory.get("policy_sha256") == policy_sha256,
          "candidate inventory and event identities differ")
+    if admitted_additions:
+        need(inventory.get("admitted_additions") == list(admitted_additions),
+             "candidate admission list differs")
     need(git(checkout, "rev-parse", "HEAD") == head["commit"] and
          git(checkout, "rev-parse", f"{head['commit']}^{{tree}}") == head["tree"] and
          not git(checkout, "status", "--porcelain=v1"), "event checkout changed")
@@ -160,6 +167,9 @@ def build(policy: dict, receipt: dict, inventory: dict, checkout: Path) -> dict:
                 for row in policy["excluded"]]
     selected_by_path = {row["source_path"]: row for row in selected if row["repo"] == repo}
     excluded_by_path = {row["source_path"]: row for row in excluded if row["repo"] == repo}
+    need(set(admitted_additions) <= set(selected_by_path) and
+         len(admitted_additions) == len(set(admitted_additions)),
+         "admitted additions must be unique selected paths")
     need(len(selected_by_path) == sum(row["repo"] == repo for row in selected) and
          len(excluded_by_path) == sum(row["repo"] == repo for row in excluded) and
          not set(selected_by_path).intersection(excluded_by_path), "duplicate reviewed source identity")
@@ -171,7 +181,8 @@ def build(policy: dict, receipt: dict, inventory: dict, checkout: Path) -> dict:
         info = event.get("head")
         need(isinstance(path, str) and path not in heads and isinstance(info, dict),
              "candidate head missing or duplicated")
-        allowed_events = (["selected_content_changed_scan_eligible"]
+        allowed_events = (["candidate_added"] if path in admitted_additions else
+                          ["selected_content_changed_scan_eligible"]
                           if path in selected_by_path else [])
         need(event.get("status") in ("selected", "excluded") and
              event.get("events") in ([], allowed_events) and info.get("source_path") == path,
@@ -206,7 +217,7 @@ def build(policy: dict, receipt: dict, inventory: dict, checkout: Path) -> dict:
                   "base_tree": base["tree"],
                   "head_commit": head["commit"], "head_tree": head["tree"],
                   "pr_number": receipt.get("pr_number"),
-                  "policy_sha256": POLICY_SHA256,
+                  "policy_sha256": policy_sha256,
                   "route_oracle_basis": {"producer_pr_head": ROUTE_PRODUCER_PR_HEAD,
                                          "extractor_source_sha256": ROUTE_EXTRACTOR_SOURCE_SHA256,
                                          "release_equivalence_verified": False}},

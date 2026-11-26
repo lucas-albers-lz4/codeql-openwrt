@@ -11,6 +11,7 @@ from tools.test_default_branch_event import DirectCommitIdentityTests  # Read-on
 from tools.test_direct_commit_admission import (DirectCommitAdmissionTests,
                                                 FrozenAdmissionArtifactTests)  # Frozen admission input controls.
 from tools.test_historical_openvpn_policy import HistoricalOpenvpnPolicyTests  # Versioned historical selector controls.
+from tools.test_direct_commit_corpus_manifest import DirectCommitCorpusManifestTests  # Historical manifest binding controls.
 
 A = 'a' * 40
 B = 'b' * 40
