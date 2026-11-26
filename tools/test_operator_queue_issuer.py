@@ -124,7 +124,7 @@ class IssuerBoundaryTests(unittest.TestCase):
                 (workspace / 'verified-observation.json').read_bytes()).hexdigest())
 
     def test_completion_payload_uses_verified_final_files(self):
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
             root = Path(directory).resolve()
             workspace = root / 'final-workspace'
             snapshot = workspace / 'extracted/issuer-freeze-123-1/snapshot'
@@ -180,7 +180,7 @@ class IssuerBoundaryTests(unittest.TestCase):
             self.assertEqual(payload['source'], {'commit': 'd'*40, 'tree': 'e'*40})
 
     def test_failure_requires_terminal_exact_job(self):
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
             root = Path(directory).resolve()
             commit = 'a'*40
             job = {'workflow': '.github/workflows/incoming-event-preflight.yml',
