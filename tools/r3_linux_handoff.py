@@ -169,24 +169,15 @@ def query_id(path: Path) -> str:
     return match.group(1)
 
 
-def run_handoff(lock_path: Path, run_root: Path, run_id: str) -> None:
-    lock = json.loads(lock_path.read_text())
+
+def bootstrap_verified_release(run: Run, lock: dict) -> dict:
+    """Verify immutable R3 release, producer bundle, CodeQL and exact default suite.
+
+    This is the shared, query-free bootstrap boundary for released package lanes.
+    It deliberately performs no database creation or query execution.
+    """
     pinned(lock)
-    oracle_path = ROOT / "docs/r3-openvpn-source-oracle.json"
-    need(digest(oracle_path) == lock["source_oracle_sha256"], "source-oracle digest mismatch")
-    oracle = json.loads(oracle_path.read_text())
-    need(oracle.get("expected_rules") == list(EXPECTED_QUERIES.values()), "source oracle rule drift")
-    need(len(oracle.get("cases", [])) == 2, "source oracle case drift")
-    consumer_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-    consumer_dirty = subprocess.check_output(["git", "status", "--porcelain=v1"], cwd=ROOT, text=True).strip()
-    need(not consumer_dirty and HEX40.fullmatch(consumer_sha), "consumer checkout must be clean")
-    need(shutil.disk_usage(run_root.parent).free >= 15 * 1024**3, "less than 15 GiB free")
-    run = Run(run_root, run_id)
     release, cli = lock["release"], lock["codeql"]
-    preflight = {"consumer_sha": consumer_sha, "consumer_dirty": False, "lock_sha256": digest(lock_path),
-                 "oracle_sha256": digest(oracle_path), "free_bytes": shutil.disk_usage(run_root).free,
-                 "run_id": run_id, "run_root": str(run.root), "actual_package_installed_bytes_verified": False}
-    write_json(run.root / "preflight.json", preflight)
     producer_git = run.root / "sources/producer.git"
     run.call("producer-init", ["git", "init", "--bare", producer_git])
     run.call("producer-remote", ["git", "--git-dir", producer_git, "remote", "add", "origin", release["repository"] + ".git"])
@@ -262,10 +253,52 @@ def run_handoff(lock_path: Path, run_root: Path, run_id: str) -> None:
     need(Counter(ids) == Counter(release["expected_rules"]), "resolved suite rule set mismatch")
     producer = {"sha": release["commit"], "pack_sha256": release["asset_sha256"],
                 "codeql_version": cli["version"], "suite_sha256": digest(suite)}
+    relative_resolved = [Path(path).resolve().relative_to((bundle / "ql/src").resolve()).as_posix()
+                         for path in resolved]
+    return {"bundle": bundle, "codeql": codeql, "codeql_archive": cli_zip,
+            "version": version, "packs": packs, "resolved_rules": ids,
+            "resolved_query_paths": relative_resolved,
+            "suite": suite, "search_path": search,
+            "producer": producer, "tag_commit": tag_commit, "archive_sha256": digest(archive),
+            "manifest_sha256": digest(manifest_path), "immutable": immutable["isImmutable"],
+            "codeql_archive_sha256": digest(cli_zip)}
+
+def run_handoff(lock_path: Path, run_root: Path, run_id: str) -> None:
+    lock = json.loads(lock_path.read_text())
+    pinned(lock)
+    oracle_path = ROOT / "docs/r3-openvpn-source-oracle.json"
+    need(digest(oracle_path) == lock["source_oracle_sha256"], "source-oracle digest mismatch")
+    oracle = json.loads(oracle_path.read_text())
+    need(oracle.get("expected_rules") == list(EXPECTED_QUERIES.values()), "source oracle rule drift")
+    need(len(oracle.get("cases", [])) == 2, "source oracle case drift")
+    consumer_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    consumer_dirty = subprocess.check_output(["git", "status", "--porcelain=v1"], cwd=ROOT, text=True).strip()
+    need(not consumer_dirty and HEX40.fullmatch(consumer_sha), "consumer checkout must be clean")
+    need(shutil.disk_usage(run_root.parent).free >= 15 * 1024**3, "less than 15 GiB free")
+    run = Run(run_root, run_id)
+    release = lock["release"]
+    preflight = {"consumer_sha": consumer_sha, "consumer_dirty": False, "lock_sha256": digest(lock_path),
+                 "oracle_sha256": digest(oracle_path), "free_bytes": shutil.disk_usage(run_root).free,
+                 "run_id": run_id, "run_root": str(run.root), "actual_package_installed_bytes_verified": False}
+    write_json(run.root / "preflight.json", preflight)
+    release_info = bootstrap_verified_release(run, lock)
+    bundle = release_info["bundle"]
+    codeql = release_info["codeql"]
+    suite = release_info["suite"]
+    search = release_info["search_path"]
+    version = release_info["version"]
+    packs = release_info["packs"]
+    ids = release_info["resolved_rules"]
+    producer = release_info["producer"]
+    tag_commit = release_info["tag_commit"]
+    immutable_value = release_info["immutable"]
+    producer_archive_sha = release_info["archive_sha256"]
+    manifest_sha = release_info["manifest_sha256"]
+    codeql_archive_sha = release_info["codeql_archive_sha256"]
     summary = {"schema": "ucode-r3-linux-handoff-v1", "preflight": preflight,
-               "release": {"tag": release["tag"], "asset_sha256": digest(archive), "manifest_sha256": digest(manifest_path),
-                           "producer_commit": tag_commit, "isImmutable": immutable["isImmutable"]},
-               "codeql": {"archive_sha256": digest(cli_zip), "binary_sha256": digest(codeql), "version": version.strip()},
+               "release": {"tag": release["tag"], "asset_sha256": producer_archive_sha, "manifest_sha256": manifest_sha,
+                           "producer_commit": tag_commit, "isImmutable": immutable_value},
+               "codeql": {"archive_sha256": codeql_archive_sha, "binary_sha256": digest(codeql), "version": version.strip()},
                "packs": packs, "resolved_rules": ids, "network_dependency_bootstrap": True, "cases": {}}
     for case in oracle["cases"]:
         name, source = case["name"], case["source"]
