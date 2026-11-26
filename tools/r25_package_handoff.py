@@ -496,7 +496,8 @@ def verify_coverage(package_id: str, profile: dict, oracle: dict,
          receipt.get("producer_commit") == coverage["producer_commit"] and
          receipt.get("release_tag") == coverage["release_tag"] and
          receipt.get("codeql_version") == coverage.get("codeql_version") and
-         coverage.get("codeql_version") ==
+         isinstance(coverage.get("codeql_version"), str) and
+         coverage["codeql_version"].splitlines()[0] ==
          f"CodeQL command-line toolchain release {release_lock['codeql']['version']}." and
          receipt.get("codeql_archive_sha256") == release_lock["codeql"]["sha256"] and
          receipt.get("oracle_sha256") == profile["oracle"]["sha256"] and

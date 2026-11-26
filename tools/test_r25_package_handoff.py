@@ -276,7 +276,7 @@ class PackageHandoffTests(unittest.TestCase):
                     "producer_commit": release_lock["release"]["commit"],
                     "release_tag": release_lock["release"]["tag"],
                     "codeql_archive_sha256": release_lock["codeql"]["sha256"],
-                    "codeql_version": "CodeQL command-line toolchain release 2.27.4.",
+                    "codeql_version": "CodeQL command-line toolchain release 2.27.4.\nCopyright (C) GitHub.\nUnpacked in: /run/cli/codeql",
                     "oracle_sha256": profile["oracle"]["sha256"],
                     "routing_sha256": handoff.sha_file(routing_path),
                     "files": files,
