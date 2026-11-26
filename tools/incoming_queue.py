@@ -4,7 +4,9 @@ import hashlib
 import hmac
 import re
 import json
+import os
 import sqlite3
+import stat
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,14 +25,65 @@ def subject(event):
     return json.dumps((event['repository'], event['kind'], event.get('number', event.get('ref'))), separators=(',', ':'))
 
 
-def open_queue(path):
-    db = sqlite3.connect(path, timeout=10, isolation_level=None)
+def _store_path(path, *, create):
+    path = Path(path)
+    check(path.is_absolute() and path.name not in ('', '.', '..', ':memory:'), 'queue path must be an absolute file path')
+    parent = path.parent
+    check(parent == parent.resolve(strict=True), 'queue parent must not contain symlinks')
+    for ancestor in (parent, *parent.parents):
+        boundary = ancestor.stat()
+        protected_sticky = boundary.st_uid == 0 and bool(boundary.st_mode & stat.S_ISVTX)
+        check(stat.S_ISDIR(boundary.st_mode) and boundary.st_uid in (0, os.getuid()) and
+              (boundary.st_mode & 0o022 == 0 or protected_sticky),
+              'queue ancestor is writable or owned outside the trusted operator boundary')
+    parent_info = parent.stat()
+    check(stat.S_ISDIR(parent_info.st_mode) and parent_info.st_uid == os.getuid() and
+          parent_info.st_mode & 0o077 == 0 and parent_info.st_mode & 0o700 == 0o700,
+          'queue parent must be an operator-owned private directory')
+    def checked_file(name):
+        info = (parent / name).lstat()
+        check(stat.S_ISREG(info.st_mode) and info.st_uid == os.getuid() and
+              info.st_nlink == 1 and info.st_mode & 0o077 == 0,
+              'queue store or sidecar is not a private unaliased regular file')
+        return info
+    for suffix in ('-journal', '-wal', '-shm'):
+        sidecar = parent / (path.name + suffix)
+        if sidecar.exists() or sidecar.is_symlink():
+            check(not create, 'new queue has preexisting sidecar')
+            checked_file(sidecar.name)
+    if create:
+        flags = os.O_CREAT | os.O_EXCL | os.O_RDWR | getattr(os, 'O_NOFOLLOW', 0)
+        descriptor = os.open(path, flags, 0o600)
+        os.close(descriptor)
+    info = checked_file(path.name)
+    if not create:
+        descriptor = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
+        try:
+            opened = os.fstat(descriptor)
+            check((opened.st_dev, opened.st_ino) == (info.st_dev, info.st_ino),
+                  'queue store changed before header read')
+            header = os.read(descriptor, 20)
+        finally:
+            os.close(descriptor)
+        check(header[:16] == b'SQLite format 3\x00' and header[18:20] == b'\x01\x01',
+              'queue store is missing, uninitialized, or uses unsupported WAL mode')
+    return path, (info.st_dev, info.st_ino)
+
+
+def open_queue(path, *, create=False):
+    path, file_identity = _store_path(path, create=create)
+    # mode=rw prevents SQLite from silently recreating a disappeared store.
+    db = sqlite3.connect(path.as_uri() + '?mode=rw', uri=True, timeout=10, isolation_level=None)
     try:
-        db.execute('PRAGMA journal_mode=DELETE')
+        current = path.lstat()
+        check((current.st_dev, current.st_ino) == file_identity and current.st_nlink == 1,
+              'queue store changed before SQLite open')
+        check(db.execute('PRAGMA journal_mode').fetchone()[0] == 'delete',
+              'unsupported queue journal mode')
         db.execute('PRAGMA synchronous=FULL')
         db.execute('BEGIN IMMEDIATE')
         tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        if tables:
+        if not create:
             # Reject old or partial stores before creating or altering any table.
             check(tables == {'metadata', 'history', 'events'}, 'unsupported queue store schema')
             version = db.execute("SELECT value FROM metadata WHERE key='schema'").fetchone()
@@ -41,6 +94,7 @@ def open_queue(path):
             check(db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone() is not None,
                   'missing queue identity')
         else:
+            check(not tables, 'new queue filename contains an existing store')
             db.execute('CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
             db.execute('CREATE TABLE history (seq INTEGER PRIMARY KEY, digest TEXT UNIQUE NOT NULL, document BLOB NOT NULL)')
             db.execute('CREATE TABLE events (id TEXT PRIMARY KEY, subject TEXT NOT NULL, event TEXT NOT NULL, first_seen TEXT NOT NULL, status TEXT NOT NULL, attempts INTEGER NOT NULL, last_attempt INTEGER, reason TEXT NOT NULL, reservation INTEGER, reservation_digest TEXT, started_job TEXT)')
@@ -209,6 +263,7 @@ def main():
     import sys
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--database', required=True)
+    parser.add_argument('--create', action='store_true', help='exclusively create a new queue store')
     parser.add_argument('--snapshot', required=True)
     parser.add_argument('--expected-sequence', required=True, type=int, help='-1 only for a new queue')
     parser.add_argument('--expected-sha256', help='required except for genesis')
@@ -217,8 +272,9 @@ def main():
     try:
         check((args.expected_sequence == -1 and args.expected_sha256 is None) or
               (args.expected_sequence >= 0 and isinstance(args.expected_sha256, str) and len(args.expected_sha256) == 64), 'invalid predecessor')
+        check(args.create == (args.expected_sequence == -1), 'create mode must match genesis predecessor')
         expected = None if args.expected_sequence == -1 else (args.expected_sequence, args.expected_sha256)
-        db = open_queue(args.database)
+        db = open_queue(args.database, create=args.create)
         try:
             result, digest = transition(db, expected, args.snapshot, args.capacity, datetime.now(timezone.utc).isoformat())
         finally:

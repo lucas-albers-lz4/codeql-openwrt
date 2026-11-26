@@ -10,6 +10,18 @@ must not be treated as a replacement genesis after loss: restore a verified
 backup. SQLite transactions do not authenticate discovery or protect against
 an operator modifying or replacing the database. Do not use multiple copies,
 unreliable network filesystems, or schedule this prototype.
+The store path must be absolute beneath an operator-owned private directory
+with no symlink components. Every ancestor must be owned by root or the
+operator and not writable by group or others, except a root-owned sticky
+temporary directory such as `/tmp`. Store and sidecar files must be
+private regular files with one hard link at open time. These checks cannot
+detect copied stores or interference by another process under the same user;
+the single-operator rule still applies. First creation requires `--create`, reserves a new filename
+exclusively, and rejects an existing store; resume requires the existing
+initialized database and never creates a replacement. SQLite opens in
+read/write existing-file mode and rejects WAL stores. An interrupted first
+creation may leave an uninitialized file that requires explicit operator
+inspection and cleanup; it is never silently treated as a new genesis.
 
 The snapshot is a complete observed set, not the poller's chained checkpoint,
 which also retains old events. An absent subject is marked `not_observed`,
@@ -38,7 +50,7 @@ scan. The first-seen timestamp is the queue's observation time, not event age.
 Capacity and interval remain unset pending Linux cost measurements.
 
 Run `python3 -B tools/incoming_queue.py --help`; genesis requires
-`--expected-sequence -1`, later transitions require the exact prior sequence
+`--create --expected-sequence -1`, later transitions omit `--create` and require the exact prior sequence
 and SHA-256 printed by the command. The complete documents and their digests
 are stored in `history`; the database is the authority, not printed output.
 Run tests with `python3 -B tools/test_incoming_queue.py -v` and

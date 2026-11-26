@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import tempfile
 import sqlite3
+import os
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
 import unittest
@@ -21,7 +22,7 @@ def snapshot(path, events):
 class QueueTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
-        self.path = Path(self.tmp.name); self.db = open_queue(self.path/'queue.db'); self.addCleanup(self.db.close)
+        self.path = Path(self.tmp.name).resolve(); self.db = open_queue(self.path/'queue.db', create=True); self.addCleanup(self.db.close)
         self.snap = self.path/'snapshot.json'
         self.events = [event('openwrt/openwrt',1,'a'),event('openwrt/luci',2,'c'),event('openwrt/openwrt',3,'d')]
         snapshot(self.snap,self.events)
@@ -116,17 +117,73 @@ class QueueTests(unittest.TestCase):
         barrier = Barrier(2)
         def open_after_barrier():
             barrier.wait()
-            db = open_queue(path)
+            try:
+                db = open_queue(path, create=True)
+            except FileExistsError:
+                return None
             try:
                 return db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
             finally:
                 db.close()
         with ThreadPoolExecutor(max_workers=2) as pool:
             ids = list(pool.map(lambda _: open_after_barrier(), range(2)))
-        self.assertEqual(ids[0], ids[1])
+        self.assertEqual(sum(x is not None for x in ids), 1)
         db = open_queue(path)
+        self.assertEqual(db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0], next(x for x in ids if x))
         self.assertEqual(db.execute("SELECT count(*) FROM metadata WHERE key='schema'").fetchone()[0], 1)
         db.close()
+    def test_store_path_requires_explicit_create_and_private_unaliased_file(self):
+        missing = self.path/'missing.db'
+        with self.assertRaises(FileNotFoundError): open_queue(missing)
+        self.assertFalse(missing.exists())
+        with self.assertRaises((OSError, PollError)): open_queue(':memory:', create=True)
+        with self.assertRaises(FileExistsError): open_queue(self.path/'queue.db', create=True)
+        alias = self.path/'alias.db'; alias.symlink_to(self.path/'queue.db')
+        with self.assertRaises(PollError): open_queue(alias)
+        link = self.path/'hardlink.db'; os.link(self.path/'queue.db', link)
+        with self.assertRaises(PollError): open_queue(link)
+        link.unlink()
+        alias.unlink()
+        fifo = self.path/'pipe.db'; os.mkfifo(fifo)
+        with self.assertRaises(PollError): open_queue(fifo)
+        fifo.unlink()
+        sidecar = self.path/'queue.db-wal'; sidecar.symlink_to(self.path/'queue.db')
+        with self.assertRaises(PollError): open_queue(self.path/'queue.db')
+        sidecar.unlink()
+        linked_parent = self.path/'alias-parent'; linked_parent.symlink_to(self.path)
+        with self.assertRaises(PollError): open_queue(linked_parent/'queue.db')
+    def test_uninitialized_and_wal_stores_reject_before_sqlite_open(self):
+        empty = self.path/'empty.db'; empty.write_bytes(b'')
+        with self.assertRaises(PollError): open_queue(empty)
+        self.assertEqual(empty.read_bytes(), b'')
+        wal = self.path/'wal.db'
+        old = sqlite3.connect(wal)
+        old.execute('PRAGMA journal_mode=WAL')
+        old.execute('CREATE TABLE old (value TEXT)')
+        old.commit(); old.close()
+        before = wal.read_bytes()
+        with self.assertRaises(PollError): open_queue(wal)
+        self.assertEqual(wal.read_bytes(), before)
+    def test_nonprivate_parent_rejected_before_create(self):
+        parent = self.path/'shared'; parent.mkdir(mode=0o755)
+        path = parent/'queue.db'
+        with self.assertRaises(PollError): open_queue(path, create=True)
+        self.assertFalse(path.exists())
+        untrusted = self.path/'writable-ancestor'; untrusted.mkdir(mode=0o700)
+        private = untrusted/'private'; private.mkdir(mode=0o700)
+        untrusted.chmod(0o777)
+        self.addCleanup(lambda: untrusted.chmod(0o700))
+        with self.assertRaises(PollError): open_queue(private/'queue.db', create=True)
+        self.assertFalse((private/'queue.db').exists())
+    def test_private_store_under_root_owned_sticky_tmp(self):
+        with tempfile.TemporaryDirectory(dir='/tmp') as temp:
+            path = Path(temp).resolve()/'queue.db'
+            db = open_queue(path, create=True)
+            queue_id = db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
+            db.close()
+            reopened = open_queue(path)
+            self.assertEqual(reopened.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0], queue_id)
+            reopened.close()
     def test_queue_cannot_authenticate_fabricated_receipt(self):
         a,p = self.advance(None)
         eid = a['selected'][0]
