@@ -77,5 +77,10 @@ After R3 verification, the control scan still runs if the event scan fails;
 the job summary reports both outcomes. Oracle and replay failures retain a
 stage-specific JSON failure record alongside any prepared inventory.
 The event and control scans are bounded source-staged observations; a clean
-control does not establish safety or actual installed bytes. With the current
-null release lock neither scan has run.
+control does not establish safety or actual installed bytes. The released
+manual clean drill on OpenWrt PR #26930 passed in run 45769923939. The graph
+recheck validates event and control, while the artifact freeze now also hashes
+and retains R3 historical event-triage files. The graph does not independently
+validate the contents of those two historical JSON files; R3 checked their
+contents earlier in the same job. This freeze is non-issuing and does not
+authenticate a future queue completion or satisfy the Gate 8 known-alert test.

@@ -213,6 +213,8 @@ class FreezeEntrypointTests(unittest.TestCase):
             output.mkdir()
             for name in freeze.R3_OUT:
                 (output / name).write_text('{}')
+        self.assertTrue({'historical-event-manifest.json',
+                         'historical-event-triage.json'} <= freeze.R3_OUT)
         self._commands(self.run)
         for role in ('event', 'control'):
             scan = self.run / (role + '-corpus')
@@ -258,6 +260,11 @@ class FreezeEntrypointTests(unittest.TestCase):
         self.assertEqual(result['status'], 'frozen')
         self.assertEqual(result['artifacts']['event']['stage']['file.uc']['sha256'],
                          hashlib.sha256(b'source').hexdigest())
+
+    def test_requires_historical_event_triage_outputs(self):
+        (self.run / 'out/openvpn-parent/historical-event-triage.json').unlink()
+        with self.assertRaisesRegex(RuntimeError, 'missing or unexpected artifacts'):
+            self.check()
 
     def test_rejects_input_fifo_before_json_read(self):
         graph = self.inputs / 'consumer-graph.json'

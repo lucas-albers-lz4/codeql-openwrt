@@ -22,7 +22,10 @@ import compare
 import kernel
 
 CONFIG_SHA = 'cbff738c953271533651885c3759d6a5ba6b845c61b23a1e7aca7059f552d8ff'
-GRAPH_SHA = '48bbf0a4525d53718fb8271f52857082e7917b09c268873706261b897ecf3b69'
+GRAPH_SHAS = frozenset({
+    '48bbf0a4525d53718fb8271f52857082e7917b09c268873706261b897ecf3b69',
+    '2f934e455a22f63289ebb82e87f59866f002167dae7418b5ed5464cf6a608a80',
+})
 PHASE_TIMEOUTS = {'tools-install': 3600, 'toolchain-install': 4800,
                   'kernel-compile': 5400, 'kernel-package-compile': 3600,
                   'statistics-compile': 2400}
@@ -57,7 +60,7 @@ def capture_prerequisites(probe, source):
         with (probe.out / name).open('xb') as output:
             output.write(data)
 
-def frozen_metadata(probe, label):
+def frozen_metadata(probe, label, expected_graph=None):
     ow = probe.root / 'openwrt'
     captured = {}
     failures = []
@@ -73,11 +76,17 @@ def frozen_metadata(probe, label):
     if failures:
         raise ValueError('metadata snapshot failed: ' + repr(failures))
     config, graph = captured['config'], captured['packagedeps']
-    if check.digest(config) != CONFIG_SHA or check.digest(graph) != GRAPH_SHA:
-        raise ValueError('frozen Statistics config or graph differs')
+    if check.digest(config) != CONFIG_SHA:
+        raise ValueError('frozen Statistics config differs')
+    graph_sha = check.digest(graph)
+    if expected_graph is None:
+        if label != 'pre-build' or graph_sha not in GRAPH_SHAS:
+            raise ValueError('initial Statistics graph not approved')
+    elif expected_graph not in GRAPH_SHAS or graph_sha != expected_graph:
+        raise ValueError('Statistics graph changed after initial lock')
     check.validate_final_config(config, 'statistics-only')
     check.validate_packagedeps(graph, 'statistics-only')
-    return config
+    return config, graph_sha
 
 def source_preflight(probe, oracle):
     luci = probe.root / 'luci'
@@ -99,9 +108,9 @@ def post_sources(probe, label, expected):
         if status:
             raise ValueError('source changed: ' + name)
 
-def invoke_make(probe, label, target, sources):
+def invoke_make(probe, label, target, sources, graph_lock):
     ow = probe.root / 'openwrt'
-    frozen_metadata(probe, label + '-before')
+    frozen_metadata(probe, label + '-before', graph_lock)
     argv = ['/usr/bin/time', '-v', '-o', str(probe.out / (label + '.time')), 'make', '-j2', target, 'V=s']
     phase_error = None
     try:
@@ -111,7 +120,7 @@ def invoke_make(probe, label, target, sources):
     post_errors = []
     if probe.quiescent:
         for name, action in (
-            ('metadata', lambda: frozen_metadata(probe, label + '-after')),
+            ('metadata', lambda: frozen_metadata(probe, label + '-after', graph_lock)),
             ('sources', lambda: post_sources(probe, label, sources)),
             ('consumer', lambda: probe.consumer_identity('after-' + label)),
             ('feed-luci', lambda: check.validate_link(ow / 'feeds/luci', probe.root / 'luci')),
@@ -186,9 +195,10 @@ def run_build(probe):
     probe.metadata_result = result
     oracle = compare.load_oracle()
     source_preflight(probe, oracle)
-    frozen_metadata(probe, 'pre-build')
+    _, graph_lock = frozen_metadata(probe, 'pre-build')
+    result['locked_graph_sha256'] = graph_lock
     for label, target in (('tools-install', 'tools/install'), ('toolchain-install', 'toolchain/install'), ('kernel-compile', 'target/linux/compile')):
-        invoke_make(probe, label, target, result['source_before'])
+        invoke_make(probe, label, target, result['source_before'], graph_lock)
     ow = probe.root / 'openwrt'
     roots = sorted({p.parent for p in (ow / 'build_dir').rglob('.modules')})
     if len(roots) != 1:
@@ -200,7 +210,7 @@ def run_build(probe):
     # The selected kernel package directory resolves FILES against the compiled
     # kernel; retain its diagnostics and reject missing/empty package messages.
     before = evidence
-    invoke_make(probe, 'kernel-package-compile', 'package/kernel/linux/compile', result['source_before'])
+    invoke_make(probe, 'kernel-package-compile', 'package/kernel/linux/compile', result['source_before'], graph_lock)
     after = kernel.inventory(roots[0], probe.root)
     if after != before:
         raise ValueError('kernel inventory changed after package/kernel/linux compile')
@@ -226,8 +236,8 @@ def run_build(probe):
     for name, data in evidence_files.items():
         with (probe.out / name).open('xb') as f:
             f.write(data)
-    invoke_make(probe, 'statistics-compile', 'package/feeds/luci/luci-app-statistics/compile', result['source_before'])
-    config = frozen_metadata(probe, 'statistics-comparison')
+    invoke_make(probe, 'statistics-compile', 'package/feeds/luci/luci-app-statistics/compile', result['source_before'], graph_lock)
+    config, _ = frozen_metadata(probe, 'statistics-comparison', graph_lock)
     prepared = ow / 'build_dir/target-x86_64_musl/luci-app-statistics'
     stage = prepared / 'ipkg-all/luci-app-statistics'
     ipk_dir = ow / 'bin/packages/x86_64/luci'
@@ -241,11 +251,11 @@ def run_build(probe):
         f.write(ipk)
     receipt = compare.compare(probe.root / 'luci', prepared, stage, ipk, oracle, probe.root, config)
     receipt.update({'ipk_sha256': check.digest(ipk), 'config_sha256': check.digest(config),
-                    'oracle_sha256': compare.ORACLE_SHA, 'kernel_inventory_sha256': check.digest(check.physical_file(probe.out / 'kernel-inventory.json', probe.out, True))})
+                    'oracle_sha256': compare.ORACLE_SHA, 'graph_sha256': graph_lock, 'kernel_inventory_sha256': check.digest(check.physical_file(probe.out / 'kernel-inventory.json', probe.out, True))})
     with (probe.out / 'statistics-comparison.json').open('x') as f:
         json.dump(receipt, f, indent=2, sort_keys=True)
         f.write('\n')
-    frozen_metadata(probe, 'final')
+    frozen_metadata(probe, 'final', graph_lock)
     if kernel.inventory(roots[0], probe.root) != before or kernel_package_inventory(probe, roots[0]) != kernel_packages:
         raise ValueError('kernel evidence changed after Statistics target')
     result['status'] = 'statistics_package_compared_review_required'

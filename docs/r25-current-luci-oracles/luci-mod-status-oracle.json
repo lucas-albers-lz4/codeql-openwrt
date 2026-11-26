@@ -1,0 +1,368 @@
+{
+  "files": [
+    {
+      "expect_success": false,
+      "path": "usr/bin/luci-bwc",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "5e709a137dc827f5863b0f460cb26c8ddd229a27529a470aa8bfbba5493ecc7d"
+    },
+    {
+      "expect_success": false,
+      "path": "usr/libexec/syslog-wrapper",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "771aa3945463b07993e30762a2ee39376b710816e4ee317a101005b98b8e57a6"
+    },
+    {
+      "expect_success": false,
+      "path": "usr/share/luci/menu.d/luci-mod-status.json",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "93801ac0e9d9ee4573edcf352278d3d23b55604d412807d94f6dccd1d446ea21"
+    },
+    {
+      "expect_success": false,
+      "path": "usr/share/rpcd/acl.d/luci-mod-status-index.json",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "38fefe76231d53eb236940b83ef7eabd5cceb70164f1245ad0dd45251abebb61"
+    },
+    {
+      "expect_success": false,
+      "path": "usr/share/rpcd/acl.d/luci-mod-status.json",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "be0441526a4e288399f80f0f081722ddf188932a4bf33f3cbe7044f694036851"
+    },
+    {
+      "expect_success": true,
+      "path": "usr/share/ucode/luci/template/admin_status/index.ut",
+      "route": {
+        "classification": "markup",
+        "inconclusive_reason": "markup_not_modeled",
+        "reason": "ut_markup_extension",
+        "status": "inconclusive"
+      },
+      "sha256": "652842b1e54f8a2904458ae1f5693ddfc68b97f106d8b8ff48a4d8747d673019"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/svg/bandwidth.svg",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "428952de7ccc917962976e986c592286a3007ede906c24737294b825d1b49bc8"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/svg/channel_analysis.svg",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "60af494f0ccb0a91090809abbf50e4f4f2c8363676189a96a0b14fd0d4eaed48"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/svg/connections.svg",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "4d86cd04ad441e69b4a8cc7a3f981537583a2409067dc1169202b4bf9a2bea30"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/svg/load.svg",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "7ca5af93823d258f1daeef6ebf101c17cc9988617537f3d9d384fc66ca0aee24"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/svg/wifirate.svg",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "b7c402dc75654fdd0265dd633f9cf1812e25c0b647111a059d9844f8b0d64a5d"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/svg/wireless.svg",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "48aae26243051dcf67e6232519c50a068e36db6e4b2b601c913bece854002b17"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/bandwidth.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "79ddc49b8e1eec3fc4c6fb1c0405e12f639ae0d9c44cee44bcd614eb7a7dd2bf"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/channel_analysis.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "c575c928f580cc10173408e5cb9d5d1e54506a75221dd470ee1fa5afca0b1943"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/connections.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "7f18d86829d2a77ecea940a09f3b96a1ad73c8ce486e2566831ac0dcf180f041"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/dmesg.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "7702905266b85bd2f9887885da8bacf43515abdf9feccbd76583f0aff7740b1e"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/10_system.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "8f51f3dbdcfb93c06a348fa88f0bb7b39a83d35b416579a190a92adac86b2640"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/20_memory.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "6866fd4d1a2b607a34a55cd7efc2a4260d52040aedcd24a7d59deff44844a728"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/25_storage.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "ecd87b67c0b3be6a318b19c49186bcfcca7cd39a495df7e09f1569048b7f401b"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/29_ports.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "1c04f37bda64cd23822fbe8fe6f470dedd23687ba1f4f8fae547769e8b15e0bd"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/30_network.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "98d7c0af93af163aa3d7f2f1ff4a709c8ad84eebf76f9061c4f609ca2ee46f05"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/40_dhcp.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "c36d81ca72bb088c7f16b1efd3b18c36fb6a4e048bb606572e01aaaf12911522"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/50_dsl.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "304f898cb8a8f06bcb56a41cc5cf4edb4c637be7acde007894a2fe125c996a2a"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/include/60_wifi.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "965bcc335a875b3a34d6f61f50f1eaf62e2b212db2cd1722fe6422a26f2cb2dc"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/index.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "fa570cf1ea56ff36bc9e50c39ce29c0ee69c63b341ff7a842be4c45896d9d0e4"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/iptables.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "ee1719cf9d1602312a565fbb2c8706074d81aa098ea1fddebc1b4b84bb1fa2dc"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/load.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "3e7617b8e80bab6aa67c5879424b31c675f2d19734cebb390a3ab8dc222764aa"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/nftables.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "d1be9a0c33790498171e4ec6206729a8a8a978be1dd57849d1ad8cf8047f3c4f"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/processes.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "366a9756a540ca92971d61c754b98578baf08451b7076c046b21504377c2a2bc"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/routes.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "77925cf78b0e62498c80db11b93ded519f0bdd96972956a853a6f14e3ce9f72d"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/routesj.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "b4409423c21fc423dc5705eec090b00edeff8a7f760a65ca69ac0235a3576858"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/syslog.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "e5b7cca6b2bd9f73232db94c4c8c2c24d08afacc0faf847225ef45984b78b7c9"
+    },
+    {
+      "expect_success": false,
+      "path": "www/luci-static/resources/view/status/wireless.js",
+      "route": {
+        "classification": "excluded",
+        "inconclusive_reason": null,
+        "reason": "no_ucode_route",
+        "status": "excluded"
+      },
+      "sha256": "34b0f12cc365a2b58b49dcb4bb232cfa0fc44c5ef8b62dc519b498be53280c38"
+    }
+  ],
+  "schema": "ucode-installed-stage-v1"
+}
