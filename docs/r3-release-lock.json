@@ -10,6 +10,7 @@
     "manifest_sha256": null,
     "verifier_sha256": null,
     "artifact_kind": "versioned-release",
+    "expected_prerelease": true,
     "extractor_sha256": null,
     "library_lock_sha256": null,
     "query_lock_sha256": null,
