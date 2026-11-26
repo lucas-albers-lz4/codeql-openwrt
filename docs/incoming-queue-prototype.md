@@ -111,6 +111,22 @@ download and run API response together for review. A fabricated matching
 artifact and API file can still satisfy this offline comparison; a trusted
 same-job issuer is needed for completion.
 
+For an operator-owned read-only custody check, create a private, operator-owned
+mode `0700` directory and run `tools/operator_artifact_custody.py` with
+`--database <private-queue> --work-root <private-dir> --run-id <number>
+--attempt <number> --consumer-commit <exact-consumer-sha>`. The tool fetches
+the canonical run, jobs, and artifact API records through the operator's
+authenticated `gh` session, enforces exact run/job/attempt and workflow
+identity, downloads the exact released artifact with a byte limit, compares
+its SHA-256 to GitHub's published digest, extracts only bounded unique regular
+members into a new private directory, then invokes the exact offline link
+with `--require-claim`. Keep its retained API bytes and ZIP together with
+the result. `verified_read_only` means those current API and artifact bytes
+matched the local reservation; it does not mean the caller-supplied consumer
+SHA was approved by queue policy, sign a start/completion, or change SQLite.
+The operator's `gh` account and private directory are part of this trust
+boundary. Do not run the tool with a queue credential in the hosted scan job.
+
 For a new manual scan, the operator may also supply the private queue ID,
 reservation sequence, and transition SHA-256 through the optional
 `incoming-event-preflight.yml` dispatch inputs. The scan job writes
