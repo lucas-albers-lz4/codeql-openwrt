@@ -1,0 +1,161 @@
+name: Incoming read-only discovery
+
+on:
+  workflow_dispatch:
+    inputs:
+      genesis:
+        description: Explicit first observation with no predecessor
+        type: boolean
+        required: true
+        default: false
+      previous_run_id:
+        description: Previous successful discovery run ID (required unless genesis)
+        type: string
+        required: false
+      previous_run_attempt:
+        description: Previous successful discovery run attempt
+        type: string
+        required: false
+        default: '1'
+      previous_sha256:
+        description: SHA-256 of previous decisions.json (required unless genesis)
+        type: string
+        required: false
+  pull_request:
+    paths:
+      - '.github/workflows/incoming-discovery-manual.yml'
+      - 'tools/incoming_poll.py'
+      - 'tools/test_incoming_poll.py'
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Test read-only discovery contract
+        run: python3 -B -m unittest tools.test_incoming_poll -v
+  discover:
+    if: github.event_name == 'workflow_dispatch'
+    needs: contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Prepare run-owned output and validate predecessor inputs
+        id: prepare
+        env:
+          GENESIS: ${{ inputs.genesis }}
+          PRIOR_RUN: ${{ inputs.previous_run_id }}
+          PRIOR_ATTEMPT: ${{ inputs.previous_run_attempt }}
+          PRIOR_SHA256: ${{ inputs.previous_sha256 }}
+          CONSUMER_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          mkdir discovery-output
+          if [[ "$GENESIS" == 'true' ]]; then
+            [[ -z "$PRIOR_RUN" && -z "$PRIOR_SHA256" ]]
+          else
+            [[ "$GENESIS" == 'false' ]]
+            [[ "$PRIOR_RUN" =~ ^[1-9][0-9]*$ ]]
+            [[ "$PRIOR_ATTEMPT" =~ ^[1-9][0-9]*$ ]]
+            [[ "$PRIOR_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          fi
+          python3 -B - <<'PY'
+          import json, os
+          from pathlib import Path
+          record = {
+              'schema': 'incoming-discovery-run-input-v1',
+              'consumer_sha': os.environ['CONSUMER_SHA'],
+              'run_id': os.environ['RUN_ID'],
+              'run_attempt': os.environ['RUN_ATTEMPT'],
+              'genesis': os.environ['GENESIS'] == 'true',
+              'previous_run_id': os.environ['PRIOR_RUN'] or None,
+              'previous_run_attempt': os.environ['PRIOR_ATTEMPT'] if os.environ['PRIOR_RUN'] else None,
+              'previous_sha256': os.environ['PRIOR_SHA256'] or None,
+              'capacity': 1,
+          }
+          Path('discovery-output/run-input.json').write_text(json.dumps(record, indent=2) + '\n')
+          PY
+      - name: Retrieve and validate previous successful checkpoint
+        id: predecessor
+        if: inputs.genesis == false
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PRIOR_RUN: ${{ inputs.previous_run_id }}
+          PRIOR_ATTEMPT: ${{ inputs.previous_run_attempt }}
+          PRIOR_SHA256: ${{ inputs.previous_sha256 }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GH_REPO/actions/runs/$PRIOR_RUN" \
+            | jq -e --arg repo "$GH_REPO" --arg run "$PRIOR_RUN" --arg attempt "$PRIOR_ATTEMPT" '
+                .id == ($run | tonumber) and
+                .repository.full_name == $repo and
+                .path == ".github/workflows/incoming-discovery-manual.yml" and
+                .event == "workflow_dispatch" and
+                .head_branch == "main" and
+                .status == "completed" and .conclusion == "success" and
+                .run_attempt == ($attempt | tonumber)
+              ' > /dev/null
+          mkdir predecessor
+          gh run download "$PRIOR_RUN" -n "incoming-discovery-${PRIOR_RUN}-${PRIOR_ATTEMPT}" -D predecessor
+          printf '%s  %s\n' "$PRIOR_SHA256" predecessor/decisions.json | sha256sum --check --status
+          python3 -B - <<'PY'
+          from pathlib import Path
+          from tools.incoming_poll import read_checkpoint, plan
+          decisions, _ = read_checkpoint(Path('predecessor/decisions.json'))
+          plan(decisions, [], 0)
+          PY
+      - name: Discover upstream identities without dispatch
+        id: poll
+        env:
+          GENESIS: ${{ inputs.genesis }}
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [[ "$GENESIS" == 'true' ]]; then
+            python3 -B tools/incoming_poll.py --genesis --capacity 1 --output-dir discovery-output/poll
+          else
+            python3 -B tools/incoming_poll.py --previous predecessor/decisions.json --capacity 1 --output-dir discovery-output/poll
+          fi
+          cp discovery-output/poll/decisions.json discovery-output/decisions.json
+          sha256sum discovery-output/decisions.json | tee discovery-output/decisions.sha256
+      - name: Record failed preparation or poll phase
+        if: failure() && github.event_name == 'workflow_dispatch'
+        env:
+          PREPARE: ${{ steps.prepare.outcome }}
+          PREDECESSOR: ${{ steps.predecessor.outcome }}
+          POLL: ${{ steps.poll.outcome }}
+        run: |
+          mkdir -p discovery-output
+          python3 -B - <<'PY'
+          import json, os
+          from pathlib import Path
+          record = {
+              'schema': 'incoming-discovery-workflow-failure-v1',
+              'prepare': os.environ['PREPARE'],
+              'predecessor': os.environ['PREDECESSOR'],
+              'poll': os.environ['POLL'],
+              'limitation': 'Phase receipt only; inspect restricted job log for failure detail.',
+          }
+          Path('discovery-output/workflow-failure.json').write_text(json.dumps(record, indent=2) + '\n')
+          PY
+      - name: Retain complete checkpoint or failure receipt
+        if: always() && github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: incoming-discovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: discovery-output/
+          if-no-files-found: warn
+          retention-days: 30
