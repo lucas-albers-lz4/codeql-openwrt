@@ -32,6 +32,60 @@ class GuardTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "duplicate config symbol"):
             check.validate_config((check.SEED + "CONFIG_USE_APK=y\n").encode())
 
+    def test_statistics_only_seed_and_config_isolation(self):
+        expected = (
+            "CONFIG_TARGET_x86=y\nCONFIG_TARGET_x86_64=y\nCONFIG_PACKAGE_luci-base=m\n"
+            "# CONFIG_PACKAGE_luci-app-dockerman is not set\n"
+            "CONFIG_PACKAGE_luci-app-statistics=m\nCONFIG_PER_FEED_REPO=y\n"
+            "CONFIG_USE_APK=n\n# CONFIG_LUCI_JSMIN is not set\n"
+            "# CONFIG_LUCI_CSSTIDY is not set\n"
+        )
+        self.assertEqual(check.STATISTICS_SEED, expected)
+        self.assertEqual(check.profile_values("joint")[0], check.SEED)
+        self.assertEqual(
+            check.digest(check.SEED.encode()),
+            "23aef585895752a6ba0d447be3e2898fd84982f0a7b2a3c6fddec28ce81bd059",
+        )
+        self.assertEqual(check.profile_values("statistics-only")[2], ("luci-app-statistics",))
+        final = (expected + "CONFIG_HAVE_DOT_CONFIG=y\n").encode()
+        selected = check.validate_final_config(final, "statistics-only")
+        self.assertEqual(selected["CONFIG_PACKAGE_luci-app-dockerman"], "n")
+        for change in (
+            "CONFIG_PACKAGE_luci-app-dockerman=m",
+            "CONFIG_PACKAGE_luci-app-dockerman=y",
+            "",
+        ):
+            modified = expected.replace("# CONFIG_PACKAGE_luci-app-dockerman is not set", change)
+            with self.assertRaisesRegex(
+                ValueError, "config symbol differs: CONFIG_PACKAGE_luci-app-dockerman"
+            ):
+                check.validate_final_config(
+                    (modified + "CONFIG_HAVE_DOT_CONFIG=y\n").encode(), "statistics-only"
+                )
+        with self.assertRaisesRegex(ValueError, "duplicate config symbol"):
+            check.validate_final_config(
+                final + b"CONFIG_PACKAGE_luci-app-dockerman=m\n", "statistics-only"
+            )
+        with self.assertRaisesRegex(ValueError, "unchanged seed"):
+            check.validate_final_config(expected.encode(), "statistics-only")
+        with self.assertRaisesRegex(ValueError, "unknown metadata profile"):
+            check.profile_values("statistics;unexpected")
+
+    def test_statistics_graph_requires_only_selected_app(self):
+        graph = (
+            "package-$(CONFIG_PACKAGE_luci-app-statistics) += feeds/luci/luci-app-statistics\n"
+            "$(curdir)/feeds/luci/luci-app-statistics/compile += $(curdir)/feeds/packages/collectd/compile\n"
+        ).encode()
+        check.validate_packagedeps(graph, "statistics-only")
+        with self.assertRaisesRegex(
+            ValueError, "package graph declaration differs: luci-app-dockerman"
+        ):
+            check.validate_packagedeps(graph, "joint")
+        with self.assertRaisesRegex(ValueError, "package graph compile edge"):
+            check.validate_packagedeps(
+                graph.replace(b"/compile +=", b"/wrong +="), "statistics-only"
+            )
+
     def test_diagnostics_keep_unknown_and_exact_recursion(self):
         known = json.loads((HERE / "known-diagnostics.json").read_text())
         pair = known["defconfig_recursive_pairs"][0]
@@ -269,6 +323,14 @@ class ProbeTests(unittest.TestCase):
         self.assertIn("process group", row["failure"])
 
     def test_simulated_sequence_has_only_defconfig_make(self):
+        self.simulated_sequence("joint")
+
+    def test_statistics_real_runner_path_and_selection(self):
+        self.root = self.root.parent / "statistics-run"
+        self.p = run.Probe(self.root, "1" * 40, "statistics-only")
+        self.simulated_sequence("statistics-only")
+
+    def simulated_sequence(self, profile):
         calls = []
         ow = self.root / "openwrt"
 
@@ -292,7 +354,7 @@ class ProbeTests(unittest.TestCase):
                             + x
                             + "\n"
                             for x in (
-                                ("luci-app-dockerman", "luci-app-statistics")
+                                self.p.selected_packages
                                 if n == "luci"
                                 else (
                                     "docker",
@@ -312,19 +374,19 @@ class ProbeTests(unittest.TestCase):
                 base.mkdir(parents=True)
                 src = self.root / "luci/applications"
                 src.mkdir()
-                for n in ("luci-app-dockerman", "luci-app-statistics"):
+                for n in self.p.selected_packages:
                     (src / n).mkdir()
                     (base / n).symlink_to(src / n)
             if label == "defconfig":
                 tmp = ow / "tmp"
                 tmp.mkdir()
-                (ow / ".config").write_text(check.SEED + "CONFIG_HAVE_DOT_CONFIG=y\n")
+                (ow / ".config").write_text(self.p.seed + "CONFIG_HAVE_DOT_CONFIG=y\n")
                 (tmp / ".config-package.in").write_text("synthetic metadata")
                 (tmp / ".packagedeps").write_text(
                     "".join(
                         f"package-$(CONFIG_PACKAGE_{n}) += feeds/luci/{n}\n"
                         f"$(curdir)/feeds/luci/{n}/compile += $(curdir)/feeds/luci/luci-base/compile\n"
-                        for n in ("luci-app-dockerman", "luci-app-statistics")
+                        for n in self.p.selected_packages
                     )
                 )
                 (tmp / ".packageinfo").write_text(
@@ -334,7 +396,7 @@ class ProbeTests(unittest.TestCase):
                         + "/Makefile\nPackage: "
                         + x
                         + "\n"
-                        for x in ("luci-app-dockerman", "luci-app-statistics")
+                        for x in self.p.selected_packages
                     )
                 )
             return b""
@@ -354,12 +416,109 @@ class ProbeTests(unittest.TestCase):
         ):
             result = self.p.run()
         self.assertEqual(result["status"], "metadata_collected_review_required")
+        self.assertEqual((self.p.out / "config-input").read_text(), self.p.seed)
+        if profile == "joint":
+            self.assertEqual(
+                set(result),
+                {
+                    "status",
+                    "source_before",
+                    "source_after",
+                    "consumer_before",
+                    "consumer_after",
+                    "selected_config_index",
+                    "diagnostics",
+                    "scope",
+                },
+            )
+            self.assertNotIn("profile", result)
+            self.assertNotIn("selected_app_packages", result)
+        else:
+            self.assertEqual(result["profile"], "statistics-only")
+            self.assertEqual(result["selected_app_packages"], ["luci-app-statistics"])
+            self.assertEqual(
+                result["selected_config_index"]["CONFIG_PACKAGE_luci-app-dockerman"], "n"
+            )
         self.assertEqual(
             [argv for _, argv in calls if argv[0] == "make"],
             [["make", "--version"], ["make", "defconfig"]],
         )
         self.assertTrue(all("NO_DEPS" not in x and x != "-n" for _, argv in calls for x in argv))
 
+    def test_unknown_profile_never_creates_root(self):
+        target = self.root.parent / "unknown-profile"
+        with self.assertRaisesRegex(ValueError, "unknown metadata profile"):
+            run.Probe(target, "1" * 40, "other")
+        self.assertFalse(target.exists())
+
+    def test_profile_workflow_paths_and_alias_rejection(self):
+        script = HERE / "profile-path.sh"
+        temp = self.root.parent
+        result = subprocess.run(
+            ["bash", str(script), "joint", str(temp)], capture_output=True, text=True, check=True
+        )
+        self.assertEqual(
+            result.stdout.splitlines(),
+            [
+                f"root={temp}/issue173-app-metadata",
+                f"archive={temp}/issue173-app-metadata-evidence.tar",
+                "suffix=",
+            ],
+        )
+        result = subprocess.run(
+            ["bash", str(script), "statistics-only", str(temp)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertEqual(
+            result.stdout.splitlines(),
+            [
+                f"root={temp}/issue173-app-metadata-statistics-only",
+                f"archive={temp}/issue173-app-metadata-statistics-only-evidence.tar",
+                "suffix=-statistics-only",
+            ],
+        )
+        result = subprocess.run(
+            ["bash", str(script), "other", str(temp)], capture_output=True, text=True
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "")
+        for char in ("\n", "\r"):
+            unsafe = temp / ("unsafe" + char + "path")
+            unsafe.mkdir()
+            result = subprocess.run(
+                ["bash", str(script), "joint", str(unsafe)], capture_output=True, text=True
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(result.stdout, "")
+            self.assertIn("runner temp must be a physical absolute directory", result.stderr)
+        alias = temp / "alias"
+        alias.symlink_to(temp)
+        result = subprocess.run(
+            ["bash", str(script), "joint", str(alias)], capture_output=True, text=True
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, "")
+
+    def test_failure_receipt_distinguishes_requested_packages(self):
+        for profile in ("joint", "statistics-only"):
+            target = self.root.parent / ("failure-" + profile)
+            argv = ["run.py", "--root", str(target), "--consumer-commit", "1" * 40, "--profile", profile]
+            with patch.object(sys, "argv", argv), patch.object(
+                run.Probe, "run", side_effect=ValueError("synthetic preflight failure")
+            ), patch.object(run, "capture_failure_evidence"):
+                with self.assertRaisesRegex(SystemExit, "metadata probe failed"):
+                    run.main()
+            manifest = json.loads((target / "output" / "manifest.json").read_text())
+            self.assertEqual(manifest["status"], "failed")
+            if profile == "joint":
+                self.assertNotIn("profile", manifest)
+                self.assertNotIn("requested_app_packages", manifest)
+            else:
+                self.assertEqual(manifest["profile"], "statistics-only")
+                self.assertEqual(manifest["requested_app_packages"], ["luci-app-statistics"])
+                self.assertNotIn("selected_app_packages", manifest)
     def test_config_present_during_feeds_stops(self):
         ow = self.root / "openwrt"
         ow.mkdir()

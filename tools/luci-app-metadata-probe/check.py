@@ -24,6 +24,22 @@ REQUIRED = {
 }
 
 
+STATISTICS_SEED = SEED.replace(
+    "CONFIG_PACKAGE_luci-app-dockerman=m\n",
+    "# CONFIG_PACKAGE_luci-app-dockerman is not set\n",
+)
+PROFILES = ("joint", "statistics-only")
+
+
+def profile_values(profile):
+    need(profile in PROFILES, "unknown metadata profile")
+    if profile == "joint":
+        return SEED, REQUIRED.copy(), ("luci-app-dockerman", "luci-app-statistics")
+    required = REQUIRED.copy()
+    required["CONFIG_PACKAGE_luci-app-dockerman"] = "n"
+    return STATISTICS_SEED, required, ("luci-app-statistics",)
+
+
 def need(ok, message):
     if not ok:
         raise ValueError(message)
@@ -81,7 +97,8 @@ def physical_file(path, root, nonempty=False):
     return data
 
 
-def validate_config(data):
+def validate_config(data, profile="joint"):
+    _, required, _ = profile_values(profile)
     lines = data.decode("utf-8").splitlines()
     out = {}
     for line in lines:
@@ -94,9 +111,9 @@ def validate_config(data):
         value = m.group(2) if m.lastindex == 2 else "n"
         need(key not in out, "duplicate config symbol: " + key)
         out[key] = value
-    for k, v in REQUIRED.items():
+    for k, v in required.items():
         need(out.get(k) == v, "config symbol differs: " + k)
-    return {k: v for k, v in out.items() if k.startswith("CONFIG_PACKAGE_") or k in REQUIRED}
+    return {k: v for k, v in out.items() if k.startswith("CONFIG_PACKAGE_") or k in required}
 
 
 def diagnostics(phase, streams, known):
@@ -200,16 +217,18 @@ def validate_packageinfo(data, expected):
     return found
 
 
-def validate_final_config(data):
-    need(data != SEED.encode(), "defconfig output is unchanged seed")
-    values = validate_config(data)
+def validate_final_config(data, profile="joint"):
+    seed, _, _ = profile_values(profile)
+    need(data != seed.encode(), "defconfig output is unchanged seed")
+    values = validate_config(data, profile)
     need(b"CONFIG_HAVE_DOT_CONFIG=y" in data.splitlines(), "defconfig completion marker missing")
     return values
 
 
-def validate_packagedeps(data):
+def validate_packagedeps(data, profile="joint"):
+    _, _, packages = profile_values(profile)
     lines = data.decode("utf-8").splitlines()
-    for name in ("luci-app-dockerman", "luci-app-statistics"):
+    for name in packages:
         package = f"package-$(CONFIG_PACKAGE_{name}) += feeds/luci/{name}"
         prefix = f"$(curdir)/feeds/luci/{name}/compile += "
         need(lines.count(package) == 1, "package graph declaration differs: " + name)
