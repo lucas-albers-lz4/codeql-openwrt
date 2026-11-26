@@ -5,6 +5,8 @@ on:
       - '.github/workflows/issue174-core-check.yml'
       - 'tools/issue174-core/**'
       - 'evidence/issue174-localtime-ipk-20261126/**'
+      - 'evidence/issue174-core-review-20261126/**'
+      - 'evidence/issue173-core-packages-20261126/**'
       - 'tools/luci-base-inventory/archive.py'
       - 'tools/luci-base-inventory/compare.py'
 permissions:
@@ -19,6 +21,9 @@ jobs:
       - name: Check observation and preflight controls
         run: |
           python3 -B evidence/issue174-localtime-ipk-20261126/verify.py
+          python3 -B evidence/issue174-core-review-20261126/verify.py
+          python3 -B -m unittest discover -s evidence/issue174-core-review-20261126 -p 'test_*.py' -v
+          python3 -O -B -m unittest discover -s evidence/issue174-core-review-20261126 -p 'test_*.py' -v
           python3 -B -m unittest discover -s evidence/issue174-localtime-ipk-20261126 -p 'test_*.py' -v
           python3 -B -m unittest discover -s tools/issue174-core -p 'test_*.py' -v
           python3 -O -B -m unittest discover -s tools/issue174-core -p 'test_*.py' -v

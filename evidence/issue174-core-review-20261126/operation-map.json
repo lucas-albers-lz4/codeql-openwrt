@@ -1,0 +1,384 @@
+{
+  "schema": "issue174-core-source-operation-map-v1",
+  "status": "source-first only; no build/output, extraction, query, runtime or authorization was performed here",
+  "pins": {
+    "luci_commit": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "luci_tree": "1d7bf89bc8708fca69d005b0690ca823c9071692",
+    "core_source_oracle_commit": "602418adadf31a827766a52e7c02a0aefcc85bb3",
+    "core_source_oracle_path": "tools/luci-core-module-batches/source-oracle.json",
+    "core_source_oracle_sha256": "afa112d09dce539a3e51845cd0786938194cb8c8af7d4c67d9713361b83693a5",
+    "consumer_inventory_commit": "460c6ed45c445fbe9de199e324f08fc7542dc2bc",
+    "consumer_inventory_sha256": "91fcf7f84e2934a1df21c7438f898fb5cd097eb9f6cfde3bc80239369c0d7cbc"
+  },
+  "selected_modules": {
+    "luci-mod-status": {
+      "auxiliary_htdocs": 27,
+      "extensionless_unknown_shell": 1,
+      "auxiliary_root": 1,
+      "auxiliary_acl": 2,
+      "build_input_not_direct_member": 2,
+      "selected_markup_candidate": 1
+    },
+    "luci-mod-network": {
+      "auxiliary_htdocs": 9,
+      "extensionless_unknown_shell": 2,
+      "auxiliary_root": 5,
+      "auxiliary_acl": 1
+    },
+    "luci-mod-system": {
+      "auxiliary_htdocs": 17,
+      "auxiliary_root": 4,
+      "auxiliary_acl": 1
+    },
+    "package_selection_note": "luci-mod-admin-full is dependency context, not a selected output package. Provider operation source is in luci-base; these three modules supply companion ACLs and interface sources."
+  },
+  "provider": {
+    "source_path": "modules/luci-base/root/usr/share/rpcd/ucode/luci",
+    "proposed_installed_path": "usr/share/rpcd/ucode/luci",
+    "git_mode": "100644",
+    "git_blob": "b54011a84f4f2f7b0eeb89dcb06034574cb49099",
+    "sha256": "04c9cc966f9cbdd9bea942f55ab139ba11bff78e751ed3ee2e99f52be9c73dbf",
+    "bytes": 16240,
+    "provider_object": "luci",
+    "export_line": 686,
+    "operation_rows": [
+      {
+        "source": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "MemberExpression",
+          "span_inclusive": [
+            108,
+            22,
+            108,
+            43
+          ],
+          "source_line": "\t\t\tlet t = localtime(request.args.localtime);"
+        },
+        "message": "setLocaltime request.args reaches system",
+        "sink": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "CallExpression",
+          "name": "system",
+          "span_inclusive": [
+            111,
+            5,
+            111,
+            118
+          ],
+          "source_line": "\t\t\t\tsystem(sprintf('date -s \"%04d-%02d-%02d %02d:%02d:%02d\" >/dev/null', t.year, t.mon, t.mday, t.hour, t.min, t.sec));"
+        }
+      },
+      {
+        "source": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "MemberExpression",
+          "span_inclusive": [
+            343,
+            49,
+            343,
+            67
+          ],
+          "source_line": "\t\t\tconst swc = popen(`swconfig dev ${shellquote(request.args.switch)} help 2>/dev/null`);"
+        },
+        "message": "getSwconfigFeatures request.args reaches popen via shellquote",
+        "sink": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "CallExpression",
+          "name": "popen",
+          "span_inclusive": [
+            343,
+            16,
+            343,
+            88
+          ],
+          "source_line": "\t\t\tconst swc = popen(`swconfig dev ${shellquote(request.args.switch)} help 2>/dev/null`);"
+        }
+      },
+      {
+        "source": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "MemberExpression",
+          "span_inclusive": [
+            400,
+            49,
+            400,
+            67
+          ],
+          "source_line": "\t\t\tconst swc = popen(`swconfig dev ${shellquote(request.args.switch)} show 2>/dev/null`);"
+        },
+        "message": "getSwconfigPortState request.args reaches popen via shellquote",
+        "sink": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "CallExpression",
+          "name": "popen",
+          "span_inclusive": [
+            400,
+            16,
+            400,
+            88
+          ],
+          "source_line": "\t\t\tconst swc = popen(`swconfig dev ${shellquote(request.args.switch)} show 2>/dev/null`);"
+        }
+      },
+      {
+        "source": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "MemberExpression",
+          "span_inclusive": [
+            470,
+            25,
+            470,
+            45
+          ],
+          "source_line": "\t\t\tconst u = shellquote(request.args.username);"
+        },
+        "message": "setPassword request.args reaches system via shellquote",
+        "sink": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "CallExpression",
+          "name": "system",
+          "span_inclusive": [
+            474,
+            13,
+            474,
+            96
+          ],
+          "source_line": "\t\t\t\tresult: system(`(echo ${p}; sleep 1; echo ${p}) | /bin/busybox passwd ${u} >/dev/null 2>&1`) == 0"
+        }
+      },
+      {
+        "source": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "MemberExpression",
+          "span_inclusive": [
+            471,
+            25,
+            471,
+            45
+          ],
+          "source_line": "\t\t\tconst p = shellquote(request.args.password);"
+        },
+        "message": "setPassword request.args reaches system via shellquote",
+        "sink": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "CallExpression",
+          "name": "system",
+          "span_inclusive": [
+            474,
+            13,
+            474,
+            96
+          ],
+          "source_line": "\t\t\t\tresult: system(`(echo ${p}; sleep 1; echo ${p}) | /bin/busybox passwd ${u} >/dev/null 2>&1`) == 0"
+        }
+      },
+      {
+        "source": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "MemberExpression",
+          "span_inclusive": [
+            575,
+            30,
+            575,
+            48
+          ],
+          "source_line": "\t\t\t\tflags = `-i ${shellquote(request.args.device)}`;"
+        },
+        "message": "getRealtimeStats request.args reaches popen via shellquote",
+        "sink": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "CallExpression",
+          "name": "popen",
+          "span_inclusive": [
+            585,
+            15,
+            585,
+            45
+          ],
+          "source_line": "\t\t\tconst fd = popen(`luci-bwc ${flags}`, 'r');"
+        }
+      },
+      {
+        "source": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "MemberExpression",
+          "span_inclusive": [
+            577,
+            30,
+            577,
+            48
+          ],
+          "source_line": "\t\t\t\tflags = `-r ${shellquote(request.args.device)}`;"
+        },
+        "message": "getRealtimeStats request.args reaches popen via shellquote",
+        "sink": {
+          "path": "usr/share/rpcd/ucode/luci",
+          "kind": "CallExpression",
+          "name": "popen",
+          "span_inclusive": [
+            585,
+            15,
+            585,
+            45
+          ],
+          "source_line": "\t\t\tconst fd = popen(`luci-bwc ${flags}`, 'r');"
+        }
+      }
+    ]
+  },
+  "query": {
+    "path": "ql/src/m4/RequestArgsExec.ql",
+    "producer_revision": "a7bf614e2fb59200e303f04b6255af7e6d4007e2",
+    "sha256": "0bf41049d4841a6c989425b14d7f26ba12587a94c4e2c41f4da1b053f01bbb35",
+    "status": "testing-only; excluded from code-scanning.qls; local same-function request.args-to-popen/system shape, not default released R2.5 suite",
+    "retained_expected_rows_path": "ql/test/models-fs-popen-controls/pinned-production-baseline.json",
+    "projection": "request-args",
+    "retained_baseline_sha256": "ace8f6ff871c3261992c9088d4065c2fdf9e5e77d391f34447fb5ebb254fa4ac",
+    "retained_row_count": 7,
+    "expected_positive": "setLocaltime request.args.localtime \u2192 localtime fields \u2192 sprintf \u2192 system; historical tuple only, the focal source/sink lines are byte-identical at cb87; the whole provider file differs from the older source pin",
+    "eligible_near_miss": "same setLocaltime handler condition contains literal system call at line 112, same system sink kind/method, no request value in argument; expected no tuple"
+  },
+  "companion_acls": {
+    "network": {
+      "path": "modules/luci-mod-network/root/usr/share/rpcd/acl.d/luci-mod-network.json",
+      "git_mode": "100644",
+      "git_blob": "954b76c5578d9a2e5da86a9575a137fc7144075c",
+      "sha256": "38ba28adae3cfd5fc9241b7abacc8b441078cc9ff57da70a85241fdaa63b426b",
+      "bytes": 2145,
+      "grant_lines": [
+        {
+          "line": 17,
+          "text": "\"luci\": [ \"getSwconfigFeatures\", \"getSwconfigPortState\" ]"
+        }
+      ]
+    },
+    "system": {
+      "path": "modules/luci-mod-system/root/usr/share/rpcd/acl.d/luci-mod-system.json",
+      "git_mode": "100644",
+      "git_blob": "395c03a3928bbfd35398c671b085d21c257a37eb",
+      "sha256": "16a24f388ca457758afbea4ff2283ad5984b0146d01697a6955ea84f42cb7924",
+      "bytes": 4714,
+      "grant_lines": [
+        {
+          "line": 13,
+          "text": "\"luci\": [ \"setLocaltime\", \"setPassword\" ],"
+        },
+        {
+          "line": 37,
+          "text": "\"luci\": [ \"setLocaltime\" ]"
+        }
+      ]
+    },
+    "status": {
+      "path": "modules/luci-mod-status/root/usr/share/rpcd/acl.d/luci-mod-status.json",
+      "git_mode": "100644",
+      "git_blob": "b1d2b8f709e027f73ab72e9dbe308b6d08966e6d",
+      "sha256": "be0441526a4e288399f80f0f081722ddf188932a4bf33f3cbe7044f694036851",
+      "bytes": 2511,
+      "grant_lines": [
+        {
+          "line": 9,
+          "text": "\"luci\": [ \"getConntrackList\", \"getRealtimeStats\" ],"
+        }
+      ]
+    }
+  },
+  "recipes": {
+    "luci-base": {
+      "path": "modules/luci-base/Makefile",
+      "git_mode": "100644",
+      "git_blob": "7f5d1809fbc4df656da11644c1d57bda8a2068cd",
+      "sha256": "4a933ee77787783219bdeae45b03d89a6c3b5f1512e8ad8bc68d19f4b250c9bc",
+      "relationship": "provider source package; version/actual build metadata are not observed in this task"
+    },
+    "luci-mod-status": {
+      "path": "modules/luci-mod-status/Makefile",
+      "git_blob": "6b86e8472ca3aa2863ae036168e142026a2ae331",
+      "sha256": "912800ee5a94aa7bf70ef5fb12d1f7fa5e058d123965bc745ff5ac02e701dcdb",
+      "projected_version": "26.284.22350~8125d12",
+      "projected_arch": "target (x86_64 expected)"
+    },
+    "luci-mod-network": {
+      "path": "modules/luci-mod-network/Makefile",
+      "git_blob": "eee08272f63f58b3fea7a5dabe39e6c1163b1ff3",
+      "sha256": "6655bfdd158af34233396a24fac0a3f671e543553f8c14b377ac2948932d09d6",
+      "projected_version": "26.284.22350~8125d12",
+      "projected_arch": "all"
+    },
+    "luci-mod-system": {
+      "path": "modules/luci-mod-system/Makefile",
+      "git_blob": "a6d5a7a456628e8535924358c9584f1fd5e3a318",
+      "sha256": "315224a6aed5598eb229533eb73cc846e79f9d1f6fba4d1e75587910ef95cfe7",
+      "projected_version": "26.284.22350~8125d12",
+      "projected_arch": "all"
+    }
+  },
+  "module_ucode_scope": {
+    "source_oracle_rows": {
+      "luci-mod-status": {
+        "auxiliary_htdocs": 27,
+        "extensionless_unknown_shell": 1,
+        "auxiliary_root": 1,
+        "auxiliary_acl": 2,
+        "build_input_not_direct_member": 2,
+        "selected_markup_candidate": 1
+      },
+      "luci-mod-network": {
+        "auxiliary_htdocs": 9,
+        "extensionless_unknown_shell": 2,
+        "auxiliary_root": 5,
+        "auxiliary_acl": 1
+      },
+      "luci-mod-system": {
+        "auxiliary_htdocs": 17,
+        "auxiliary_root": 4,
+        "auxiliary_acl": 1
+      }
+    },
+    "markup_candidates": [
+      {
+        "package": "luci-mod-status",
+        "source_path": "modules/luci-mod-status/ucode/template/admin_status/index.ut",
+        "git_mode": "100644",
+        "git_blob": "dafb427bf48b4da1e09ead45b97e55791804f20d",
+        "source_sha256": "652842b1e54f8a2904458ae1f5693ddfc68b97f106d8b8ff48a4d8747d673019",
+        "size": 1626,
+        "first_line": "{#",
+        "projected_member": "usr/share/ucode/luci/template/admin_status/index.ut",
+        "projected_mode": "644",
+        "classification": "selected_markup_candidate",
+        "transform": "ucode .ut substitution checked for pinned input; no matched token or media/resource URL",
+        "symlink_text": null
+      }
+    ],
+    "only_eligible_module_ucode_candidate": "status admin_status/index.ut has a projected markup route and is not modeled as plain Ucode; successful-file identity requires actual extraction, which is not claimed here.",
+    "network_and_system": "their selected source-oracle rows contain no direct .uc/.ucode Ucode provider; RPC method implementations are in luci-base provider above; module ACL is companion source only",
+    "membership_status": "The provider file has already been observed and audited in a retained luci-base IPK at the exact cb87 source hash, via the separate #181 packet. #173 remains pending for selected status/network/system module package members and their ACL companion bytes."
+  },
+  "boundaries": {
+    "request": "request.args reads in provider function only; no HTTP/rpcd dispatch, typed request, session or caller identity established",
+    "authorization": "ACL declares named ubus grants; does not establish effective rpcd/uhttpd authorization or package installation",
+    "operations": "source indicates popen swconfig reads, popen luci-bwc stats, system date and password commands. No UCI commit is in these selected provider methods. No service effect/result verified.",
+    "shellquote": "query labels flow via shellquote where present; no proof of correct runtime binding, complete shell semantics or sanitization/safety",
+    "packaging": "recipe projections and source oracle only; actual IPK members/versions/bytes pending #173 audited build. luci-mod-admin-full is dependency context only.",
+    "unsupported": "no CFG/SSA/control-flow taint, runtime import binding, command execution, shell interpretation, cross-component flow, vulnerability or security coverage claim"
+  },
+  "source_row_counts": {
+    "query_rows_expected_from_historical_projection": 7,
+    "setLocaltime_focal": 1,
+    "other_request_args_rows": 6,
+    "new_query_observed_rows": 0
+  },
+  "existing_packaged_provider_evidence": {
+    "record": "codeql-openwrt/evidence/issue174-localtime-ipk-20261126/README.md",
+    "source": "independently reviewed/merged #181 evidence; exact cb87 luci-base IPK provider and seven historical testing-query rows are recorded there",
+    "producer_revision": "a7bf614e2fb59200e303f04b6255af7e6d4007e2",
+    "ipk_sha256": "41376c6774b35ff140ff3fa441643a184be252070cd3f462f645c6a98e527d6b",
+    "artifact_zip_sha256": "8d8baeacb21e3699535969c1c2009d15d84ca5d8103c3fc7e94312db923d9236",
+    "receipt_sha256": "1c80809ed7c87a2a586d0df7bdebcfc35eaecf6370013b27f994a46d0324b677",
+    "result": "one setLocaltime source-to-system tuple and six ambient rows; line112 fixed literal no tuple; selected provider one successful-file row and zero ExtractionErrors",
+    "limits": "local testing query, historical extractor/toolchain, not release-pinned R2.5 or whole core package coverage; ACL source is separate and authorization unknown",
+    "consumer_merge_commit": "02e427d417b86a988fe28cffa0eb1af31a99fb83",
+    "github_evidence_url": "https://github.com/lucas-albers-lz4/codeql-openwrt/blob/02e427d417b86a988fe28cffa0eb1af31a99fb83/evidence/issue174-localtime-ipk-20261126/README.md"
+  }
+}
