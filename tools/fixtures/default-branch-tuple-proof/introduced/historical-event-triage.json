@@ -1,0 +1,27 @@
+{
+  "producer": {
+    "codeql_version": "2.27.4",
+    "pack_sha256": "efd10ca853ad94c63e12f40ce92b10523d5cb9be5e647fb4312f82ed62c1e153",
+    "sha": "131605a726b7a79eb926886d07bf44eb721fe450",
+    "suite_sha256": "6d343f93e37c309b8461da9fafcf67d089737980d7ac42a5409e75df3bd442e5"
+  },
+  "result_count": 1,
+  "results_for_triage": [
+    {
+      "end_column": 132,
+      "end_line": 71,
+      "level": "warning",
+      "rule_id": "ucode/m4/direct-rpc-shell-word",
+      "start_column": 115,
+      "start_line": 71,
+      "uri": "usr/share/rpcd/ucode/luci.openvpn.uc"
+    }
+  ],
+  "run_id": "45833426577-1",
+  "sarif_sha256": "5ea9375a5fa925ac2feae55f2f25cce33ce8dce813f3f0314f2e3cd7efaee5be",
+  "schema": "ucode-sarif-event-triage-v1",
+  "status": "triage_required",
+  "successful_files": [
+    "usr/share/rpcd/ucode/luci.openvpn.uc"
+  ]
+}
