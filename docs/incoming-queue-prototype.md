@@ -96,6 +96,21 @@ not treat the printed digest or a prepared API file as evidence that a scan
 ran. Recovery of an abandoned reservation still follows the separate signed
 queue-action policy below.
 
+After a fresh manual released scan, `tools/queue_scan_link.py` can compare
+the current exact PR reservation with a downloaded `released-event-<run>-<attempt>`
+artifact and the retained exact GitHub Actions run API response. Run it with
+`--database <private-queue> --artifact <downloaded-artifact-dir> --run-api
+<run-api.json> --run-id <number> --attempt <number> --consumer-commit <sha>`.
+It opens the queue read-only, requires a successful matching workflow attempt
+created after the reservation, checks the complete freeze inventory and
+snapshot hashes, and compares PR, manifest, released scan, SARIF, graph and
+clean-control identities. Its only successful status is `linked_only`: the
+downloaded API response and artifact custody are outside its trust boundary,
+and it neither signs nor applies a queue start or completion. Keep the raw
+download and run API response together for review. A fabricated matching
+artifact and API file can still satisfy this offline comparison; a trusted
+same-job issuer is needed for completion.
+
 The `apply_attested` Python API accepts a start, failure, completion or recovery payload
 with an HMAC-SHA256 over canonical JSON using an externally provisioned secret
 of at least 32 bytes. The signer is a trust boundary: the MAC authenticates a
