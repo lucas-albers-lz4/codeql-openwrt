@@ -20,12 +20,9 @@ import run as metadata
 sys.path.insert(0, str(HERE))
 import compare
 import kernel
+import graph_scope
 
 CONFIG_SHA = 'cbff738c953271533651885c3759d6a5ba6b845c61b23a1e7aca7059f552d8ff'
-GRAPH_SHAS = frozenset({
-    '48bbf0a4525d53718fb8271f52857082e7917b09c268873706261b897ecf3b69',
-    '2f934e455a22f63289ebb82e87f59866f002167dae7418b5ed5464cf6a608a80',
-})
 PHASE_TIMEOUTS = {'tools-install': 3600, 'toolchain-install': 4800,
                   'kernel-compile': 5400, 'kernel-package-compile': 3600,
                   'statistics-compile': 2400}
@@ -80,9 +77,9 @@ def frozen_metadata(probe, label, expected_graph=None):
         raise ValueError('frozen Statistics config differs')
     graph_sha = check.digest(graph)
     if expected_graph is None:
-        if label != 'pre-build' or graph_sha not in GRAPH_SHAS:
+        if label != 'pre-build' or check.digest(graph_scope.scope(graph, config)) != graph_scope.SCOPE_SHA:
             raise ValueError('initial Statistics graph not approved')
-    elif expected_graph not in GRAPH_SHAS or graph_sha != expected_graph:
+    elif graph_sha != expected_graph:
         raise ValueError('Statistics graph changed after initial lock')
     check.validate_final_config(config, 'statistics-only')
     check.validate_packagedeps(graph, 'statistics-only')
@@ -202,6 +199,8 @@ def run_build(probe):
     source_preflight(probe, oracle)
     build_config, graph_lock = frozen_metadata(probe, 'pre-build')
     result['locked_graph_sha256'] = graph_lock
+    result['graph_scope_sha256'] = graph_scope.SCOPE_SHA
+    result['graph_scope_rows'] = 2781
     for label, target in (('tools-install', 'tools/install'), ('toolchain-install', 'toolchain/install'), ('kernel-compile', 'target/linux/compile')):
         invoke_make(probe, label, target, result['source_before'], graph_lock)
     ow = probe.root / 'openwrt'
@@ -275,7 +274,9 @@ def run_build(probe):
         f.write(ipk)
     receipt = compare.compare(probe.root / 'luci', prepared, stage, ipk, oracle, probe.root, config)
     receipt.update({'ipk_sha256': check.digest(ipk), 'config_sha256': check.digest(config),
-                    'oracle_sha256': compare.ORACLE_SHA, 'graph_sha256': graph_lock, 'kernel_inventory_sha256': check.digest(check.physical_file(probe.out / 'kernel-inventory.json', probe.out, True))})
+                    'oracle_sha256': compare.ORACLE_SHA, 'graph_sha256': graph_lock,
+                    'graph_scope_sha256': graph_scope.SCOPE_SHA, 'graph_scope_rows': 2781,
+                    'kernel_inventory_sha256': check.digest(check.physical_file(probe.out / 'kernel-inventory.json', probe.out, True))})
     with (probe.out / 'statistics-comparison.json').open('x') as f:
         json.dump(receipt, f, indent=2, sort_keys=True)
         f.write('\n')
