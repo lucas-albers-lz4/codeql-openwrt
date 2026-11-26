@@ -91,6 +91,8 @@ jobs:
         run: python3 -B -m unittest tools.test_default_branch_failed_execution_capture -v
       - name: Test bounded source-byte and route oracle
         run: python3 -B -m unittest tools.test_default_branch_source_truth -v
+      - name: Test bounded canonical source acquisition preflight
+        run: python3 -B -m unittest tools.test_canonical_source_preflight -v
       - name: Test offline issued start and terminal actions
         run: python3 -B -m unittest tools.test_default_branch_backlog_issued -v
 
