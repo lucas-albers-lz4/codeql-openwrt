@@ -1,0 +1,166 @@
+{
+  "boundary": "This check validates only the consumer package parser/stager on retained pinned IPK bytes. It does not invoke the producer runner, CodeQL, or the R3 workflow and is not a released handoff.",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "tools/r25_package_stage.py",
+        "--package",
+        "luci-base",
+        "--ipk",
+        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/input/luci-base/luci-base.ipk",
+        "--workspace",
+        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d",
+        "--stage",
+        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/stages/luci-base",
+        "--receipt",
+        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/receipts/luci-base.json"
+      ],
+      "environment": {
+        "HOME": "<run-root>/home/luci",
+        "LC_ALL": "C",
+        "TMPDIR": "<run-root>/tmp/luci"
+      },
+      "exit_status": 0,
+      "package": "luci-base",
+      "stderr": "<run-root>/commands/luci-base.stderr.txt",
+      "stdout": "<run-root>/commands/luci-base.stdout.json",
+      "timer_wrapper": "/usr/bin/time -p -o <run-root>/timing/luci-base.txt"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "tools/r25_package_stage.py",
+        "--package",
+        "wifi-scripts-ucode-y",
+        "--ipk",
+        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/input/wifi-scripts-ucode-y/y-wifi-scripts.ipk",
+        "--workspace",
+        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d",
+        "--stage",
+        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/stages/wifi-scripts-ucode-y",
+        "--receipt",
+        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/receipts/wifi-scripts-ucode-y.json"
+      ],
+      "environment": {
+        "HOME": "<run-root>/home/wifi",
+        "LC_ALL": "C",
+        "TMPDIR": "<run-root>/tmp/wifi"
+      },
+      "exit_status": 0,
+      "package": "wifi-scripts-ucode-y",
+      "stderr": "<run-root>/commands/wifi-scripts-ucode-y.stderr.txt",
+      "stdout": "<run-root>/commands/wifi-scripts-ucode-y.stdout.json",
+      "timer_wrapper": "/usr/bin/time -p -o <run-root>/timing/wifi-scripts-ucode-y.txt"
+    }
+  ],
+  "consumer_checkout": {
+    "adapter_sha256": "84f8d08e79305d0f629e7b2c14ba674aab6a75d77478eec3416f7387566d9dbf",
+    "branch": "codex/r25-package-byte-adapter-20261125",
+    "dirty_porcelain_lines": 11,
+    "package_lock_sha256": "227fd9fe282946800531b06f146ed9b366922a43e48636178c0187488840fe0c",
+    "python": "Python 3.15.2",
+    "repository": "lucas-albers-lz4/codeql-openwrt",
+    "sha": "c9691d32fa352e4d29fc8218fdcded7d5845b897",
+    "working_tree_dirty": true
+  },
+  "date": "2026-11-25",
+  "failed_attempts": [
+    {
+      "operation": "local package staging",
+      "outcome": "Both adapter commands wrote receipts and stage files, but /usr/bin/time -l returned an error after each command: time: sysctl kern.clockrate: Operation not permitted. Adapter process exit statuses were not recorded independently; this attempt is not counted as a pass.",
+      "run_root_relative_to_ledger": "work/r25-package-stage-consumer-20261125-a",
+      "status": "failed wrapper",
+      "wrapper_exit_status": 1
+    },
+    {
+      "exit_status": 1,
+      "operation": "local package staging",
+      "outcome": "Harness used ledger-relative output paths while running with the consumer checkout as cwd. Shell failed to create stdout and exit-status files before either adapter process started; no stage output was produced.",
+      "run_root_relative_to_ledger": "work/r25-package-stage-consumer-20261125-b"
+    }
+  ],
+  "measurements": {
+    "luci-base": {
+      "exit_status": 0,
+      "real_seconds": 0.04,
+      "system_seconds": 0.01,
+      "user_seconds": 0.03
+    },
+    "peak_memory_available": false,
+    "timer": "/usr/bin/time -p",
+    "wifi-scripts-ucode-y": {
+      "exit_status": 0,
+      "real_seconds": 0.03,
+      "system_seconds": 0.0,
+      "user_seconds": 0.02
+    }
+  },
+  "packages": {
+    "luci-base": {
+      "all_staged_member_hashes_match_receipt": true,
+      "artifact_id": 14979253876,
+      "artifact_name": "luci-ipk-byte-45513606386-1",
+      "artifact_run_id": 45513606386,
+      "ipk_sha256": "1a2188f5206ce61c993fdcc451781a06994ae2175b489eef56595858ef22b363",
+      "oracle_sha256": "efd49d1bec85b1c1ae2a12a6c64957f9c09e283d2ce326f80d881339b1f93fe8",
+      "regular_members": 76,
+      "route_counts": {
+        "excluded": 58,
+        "markup": 8,
+        "plain": 10
+      },
+      "selected_members": 18,
+      "stage_receipt_sha256": "e55434796d035b268b0ab8ff0f11d40468af178a3f8b70794ddc0f2462ee0efd",
+      "stdout_sha256": "e55434796d035b268b0ab8ff0f11d40468af178a3f8b70794ddc0f2462ee0efd"
+    },
+    "wifi-scripts-ucode-y": {
+      "all_staged_member_hashes_match_receipt": true,
+      "artifact_id": 14997815607,
+      "artifact_name": "wifi-ipk-byte-45548269425-1",
+      "artifact_run_id": 45548269425,
+      "eligible_near_miss": {
+        "path": "etc/hotplug.d/ieee80211/10-wifi-detect",
+        "selected": false,
+        "sha256": "0f8f0830ce3f7708505596b6b933e6ec6bc1156af26ae890ba4b69ae015abdfb"
+      },
+      "ipk_sha256": "20f2e18297a10e2c2fc0f3457dee52e5ee2db01a8d17d52ba44dffaf79ba833a",
+      "oracle_sha256": "5ac6c87cbbc12361581ee630083484b67c84d74d3b840ac8275fa3f0ff237aff",
+      "positive": {
+        "path": "lib/netifd/wireless/mac80211.sh",
+        "selected": true,
+        "sha256": "f7d6ae091777a8eb77ba55c2c1f09bf8caff1a4364dc6de4f19a1ecb322801aa"
+      },
+      "regular_members": 31,
+      "route_counts": {
+        "excluded": 14,
+        "markup": 0,
+        "plain": 17
+      },
+      "selected_members": 17,
+      "stage_receipt_sha256": "f482b05a1a6e4ff4c7acdcb85f8ee9fa6df66b7f824890f56164371a4535ec11",
+      "stdout_sha256": "f482b05a1a6e4ff4c7acdcb85f8ee9fa6df66b7f824890f56164371a4535ec11"
+    }
+  },
+  "raw_outputs_are_local_ignored_work": true,
+  "raw_run_root_relative_to_ledger": "work/r25-package-stage-consumer-20261125-d",
+  "schema": "openwrt-r25-consumer-stage-validation-v1",
+  "scope": "local package-byte-to-stage adapter check only; no released producer invocation or CodeQL query run",
+  "superseded_successful_attempts": [
+    {
+      "adapter_sha256": "168541bd3f31f3d7b46b574c6e385ca21b6ffd3dc3ec0c74a7831577bf47ffce",
+      "elapsed_seconds": {
+        "luci-base": 0.04,
+        "wifi-scripts-ucode-y": 0.03
+      },
+      "exit_statuses": {
+        "luci-base": 0,
+        "wifi-scripts-ucode-y": 0
+      },
+      "run_root_relative_to_ledger": "work/r25-package-stage-consumer-20261125-c",
+      "superseded_reason": "completed before security review found that repeated tar root entries did not consume the archive header budget; final run d used the corrected adapter and is the result reported above."
+    }
+  ]
+}
