@@ -1,0 +1,23 @@
+	Command being timed: "python3 -B /home/runner/work/codeql-openwrt/codeql-openwrt/tools/luci-app-module-batches/compare.py --package luci-app-ddns --run-root /home/runner/work/_temp/issue173-app-module-batches --luci /home/runner/work/_temp/issue173-app-module-batches/luci --packages /home/runner/work/_temp/issue173-app-module-batches/packages --config-root /home/runner/work/_temp/issue173-app-module-batches/openwrt --config-sha256 80d8c0b67b7dfd176068b06ea3e0abb8c99cc93fdc365555e5a131e48056cbcb --prepared /home/runner/work/_temp/issue173-app-module-batches/openwrt/build_dir/target-x86_64_musl/luci-app-ddns --stage /home/runner/work/_temp/issue173-app-module-batches/openwrt/build_dir/target-x86_64_musl/luci-app-ddns/ipkg-all/luci-app-ddns --built-ipk /home/runner/work/_temp/issue173-app-module-batches/openwrt/bin/packages/x86_64/luci/luci-app-ddns_26.280.64158~a450f0d_all.ipk --ipk /home/runner/work/_temp/issue173-app-module-batches/output/luci-app-ddns.ipk --receipt /home/runner/work/_temp/issue173-app-module-batches/output/luci-app-ddns-after-luci-app-wifihistory.json"
+	User time (seconds): 0.19
+	System time (seconds): 0.21
+	Percent of CPU this job got: 109%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.37
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 22088
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 57681
+	Voluntary context switches: 1103
+	Involuntary context switches: 76
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 24
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

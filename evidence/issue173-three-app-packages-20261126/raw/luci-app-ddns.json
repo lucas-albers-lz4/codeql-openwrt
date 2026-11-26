@@ -1,0 +1,315 @@
+{
+  "archive_control_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "control",
+      "sha256": "fb6185685a449c30a012ef180b74b32cf6383159ecde83f40e07a3cfbc1c1c3f",
+      "size": 477,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst",
+      "sha256": "61511dd6dcc9e5ae9038f7ea8b0ecdf3bdd17612af012c3d9536e9aca03691df",
+      "size": 160,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst-pkg",
+      "sha256": "ab1fbeaaef80ce81cc4a8e403d96ff0e564088417d52e735c7c4a1adb4cc7a95",
+      "size": 138,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "prerm",
+      "sha256": "41e62438f65308026184be1d4d931ae9100923e5ae97b146fb678e5b6cd0fc6c",
+      "size": 117,
+      "type": "file"
+    }
+  ],
+  "archive_data_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci/menu.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/menu.d/luci-app-ddns.json",
+      "sha256": "3e2af617a53c059aa5173ff6d1ae825d11713396208e1bf6d566329ee65d3d54",
+      "size": 188,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/acl.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/acl.d/luci-app-ddns.json",
+      "sha256": "7761a8c64b4fc7a752f3d2e12f85c9a375ea4ff72b20c65ada3af46bb66b0da3",
+      "size": 623,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/ucode",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/ucode/ddns.uc",
+      "sha256": "924bd2b53fbc64d2a00a479e36ef3c9239488445fc1ced70122e8ac3735fdc2b",
+      "size": 9093,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/ddns",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/ddns/overview.js",
+      "sha256": "f6fe7e229f10e4ebe081b3a65cf8774485ddf2ad4cb0617b5695fd860f1d621b",
+      "size": 33280,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/status",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/status/include",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/status/include/70_ddns.js",
+      "sha256": "530a01a33aa16c7b11407e889c9198257e84988da2a954e9df9bb09ee47a357f",
+      "size": 1015,
+      "type": "file"
+    }
+  ],
+  "built_ipk_path": "bin/packages/x86_64/luci/luci-app-ddns_26.280.64158~a450f0d_all.ipk",
+  "built_ipk_sha256": "cc54a30504d5936ad6c34919b815112cc4b05b02f517d856d2dee191e9c8fe38",
+  "config": {
+    "config": {
+      "path": ".config",
+      "sha256": "80d8c0b67b7dfd176068b06ea3e0abb8c99cc93fdc365555e5a131e48056cbcb"
+    },
+    "css_minification": true,
+    "dependency_modes": {
+      "ddns-scripts": "m",
+      "jshn": "y",
+      "rpcd-mod-iwinfo": "m",
+      "ucode": "y",
+      "ucode-mod-fs": "y",
+      "ucode-mod-ubus": "y"
+    },
+    "feeds": {
+      "path": "feeds.conf",
+      "sha256": "52b3e3c257411fc5de4caf088d2fab73a242ca33dfe182088113f217d0239848"
+    },
+    "js_minification": true,
+    "per_feed_repo": "CONFIG_PER_FEED_REPO=y"
+  },
+  "control": {
+    "Architecture": "all",
+    "Package": "luci-app-ddns",
+    "Version": "26.280.64158~a450f0d"
+  },
+  "ipk_sha256": "cc54a30504d5936ad6c34919b815112cc4b05b02f517d856d2dee191e9c8fe38",
+  "js_minification_enabled": true,
+  "members": [
+    {
+      "classification": "auxiliary_htdocs_js",
+      "ipk_mode": "0644",
+      "ipk_sha256": "f6fe7e229f10e4ebe081b3a65cf8774485ddf2ad4cb0617b5695fd860f1d621b",
+      "path": "www/luci-static/resources/view/ddns/overview.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "989e1ad8d79aab0ae708f07d98d7d847d098b3b2678671e65febb1e2c4cb40a9",
+      "source_git_blob": "0365ba458cfadff51cbe6a85a4562744f3f27c3b",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-ddns/htdocs/luci-static/resources/view/ddns/overview.js",
+      "source_sha256": "989e1ad8d79aab0ae708f07d98d7d847d098b3b2678671e65febb1e2c4cb40a9",
+      "stage_mode": "0644",
+      "stage_sha256": "f6fe7e229f10e4ebe081b3a65cf8774485ddf2ad4cb0617b5695fd860f1d621b",
+      "transform_provenance": "js_minification_unverified"
+    },
+    {
+      "classification": "auxiliary_htdocs_js",
+      "ipk_mode": "0644",
+      "ipk_sha256": "530a01a33aa16c7b11407e889c9198257e84988da2a954e9df9bb09ee47a357f",
+      "path": "www/luci-static/resources/view/status/include/70_ddns.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "fe418a276cde41d41c2b8b2f4d35f7ed37f9315b9805fa25f91c2ae430ff107e",
+      "source_git_blob": "d3b35d869103dc553b21e13fa34d636544e6653d",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-ddns/htdocs/luci-static/resources/view/status/include/70_ddns.js",
+      "source_sha256": "fe418a276cde41d41c2b8b2f4d35f7ed37f9315b9805fa25f91c2ae430ff107e",
+      "stage_mode": "0644",
+      "stage_sha256": "530a01a33aa16c7b11407e889c9198257e84988da2a954e9df9bb09ee47a357f",
+      "transform_provenance": "js_minification_unverified"
+    },
+    {
+      "classification": "auxiliary_menu",
+      "ipk_mode": "0644",
+      "ipk_sha256": "3e2af617a53c059aa5173ff6d1ae825d11713396208e1bf6d566329ee65d3d54",
+      "path": "usr/share/luci/menu.d/luci-app-ddns.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "3e2af617a53c059aa5173ff6d1ae825d11713396208e1bf6d566329ee65d3d54",
+      "source_git_blob": "6a7ee9a09616f31c0941e9a2b073aeb286661922",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-ddns/root/usr/share/luci/menu.d/luci-app-ddns.json",
+      "source_sha256": "3e2af617a53c059aa5173ff6d1ae825d11713396208e1bf6d566329ee65d3d54",
+      "stage_mode": "0644",
+      "stage_sha256": "3e2af617a53c059aa5173ff6d1ae825d11713396208e1bf6d566329ee65d3d54",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "auxiliary_acl",
+      "ipk_mode": "0644",
+      "ipk_sha256": "7761a8c64b4fc7a752f3d2e12f85c9a375ea4ff72b20c65ada3af46bb66b0da3",
+      "path": "usr/share/rpcd/acl.d/luci-app-ddns.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "7761a8c64b4fc7a752f3d2e12f85c9a375ea4ff72b20c65ada3af46bb66b0da3",
+      "source_git_blob": "298378452d28f3b4a67f2ee01602aed5f4aa1168",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-ddns/root/usr/share/rpcd/acl.d/luci-app-ddns.json",
+      "source_sha256": "7761a8c64b4fc7a752f3d2e12f85c9a375ea4ff72b20c65ada3af46bb66b0da3",
+      "stage_mode": "0644",
+      "stage_sha256": "7761a8c64b4fc7a752f3d2e12f85c9a375ea4ff72b20c65ada3af46bb66b0da3",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "selected source candidate",
+      "ipk_mode": "0644",
+      "ipk_sha256": "924bd2b53fbc64d2a00a479e36ef3c9239488445fc1ced70122e8ac3735fdc2b",
+      "path": "usr/share/rpcd/ucode/ddns.uc",
+      "prepared_mode": "0644",
+      "prepared_sha256": "924bd2b53fbc64d2a00a479e36ef3c9239488445fc1ced70122e8ac3735fdc2b",
+      "source_git_blob": "32d1da738b4932159a39bcda7ee6c72b5c58a8fd",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-ddns/root/usr/share/rpcd/ucode/ddns.uc",
+      "source_sha256": "924bd2b53fbc64d2a00a479e36ef3c9239488445fc1ced70122e8ac3735fdc2b",
+      "stage_mode": "0644",
+      "stage_sha256": "924bd2b53fbc64d2a00a479e36ef3c9239488445fc1ced70122e8ac3735fdc2b",
+      "transform_provenance": "source_equal"
+    }
+  ],
+  "oracle_sha256": "05906176f0830f311e2872d9d4b7743825cb80dfe1cb89af22673feac212d72a",
+  "outer_member_sha256": {
+    "control.tar.gz": "acc4e5ebe83ea577345661728b5a3e2f19d238a91340d7af11311594a54129f8",
+    "data.tar.gz": "eb96c36abb4c2f80c12fe0a7c962d476334bbb63e84f5b32b46f68c5e86bd501",
+    "debian-binary": "d526eb4e878a23ef26ae190031b4efd2d58ed66789ac049ea3dbaf74c9df7402"
+  },
+  "package": "luci-app-ddns",
+  "prepared_path": "build_dir/target-x86_64_musl/luci-app-ddns",
+  "retained_ipk_path": "output/luci-app-ddns.ipk",
+  "retained_ipk_sha256": "cc54a30504d5936ad6c34919b815112cc4b05b02f517d856d2dee191e9c8fe38",
+  "source_pins": {
+    "ddns_scripts_recipe": {
+      "git_blob": "c0f6aef5047bd4b07f1e1708557bdf41ff763c34",
+      "git_mode": "100644",
+      "source_path": "net/ddns-scripts/Makefile",
+      "source_sha256": "eaf326cffdd5436c0fe039030b40279a24ab2b7104dc7ddd5fa014957c66177b"
+    },
+    "luci": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4"
+  },
+  "stage_path": "build_dir/target-x86_64_musl/luci-app-ddns/ipkg-all/luci-app-ddns"
+}

@@ -1,0 +1,345 @@
+{
+  "archive_control_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "control",
+      "sha256": "2fc03b37ba6cc619186110cef47dbf1c804288791a56cf63cc500471989306a1",
+      "size": 548,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst",
+      "sha256": "61511dd6dcc9e5ae9038f7ea8b0ecdf3bdd17612af012c3d9536e9aca03691df",
+      "size": 160,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst-pkg",
+      "sha256": "ab1fbeaaef80ce81cc4a8e403d96ff0e564088417d52e735c7c4a1adb4cc7a95",
+      "size": 138,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "prerm",
+      "sha256": "41e62438f65308026184be1d4d931ae9100923e5ae97b146fb678e5b6cd0fc6c",
+      "size": 117,
+      "type": "file"
+    }
+  ],
+  "archive_data_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/init.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/init.d/wifihistory",
+      "sha256": "c12784a8ec1c5991a311bdc264b2f38108f491cc06a86223190becf091dfbd8c",
+      "size": 460,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/sbin",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/sbin/wifihistory",
+      "sha256": "e58a3d2bace9aa188ec4c0a0272fa462f88138e0639587326ab72a99f1c45200",
+      "size": 2398,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci/menu.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/menu.d/luci-app-wifihistory.json",
+      "sha256": "3302be1fe68c2d441f492ab7f674fcd0050467b8b131be4e7e053cbdd475bb21",
+      "size": 260,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/acl.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/acl.d/luci-app-wifihistory.json",
+      "sha256": "0045156d95332aa6bc2a1711489f3f1bec1f3a48b7eec02802a8e0827b0186ce",
+      "size": 276,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/ucode",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/ucode/wifihistory.uc",
+      "sha256": "b9ce671467adf519ac61e0f18e134856c4704497457949d774cb1af68830397c",
+      "size": 554,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/status",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/status/wifihistory.js",
+      "sha256": "053726d58832c16519c161d68b0c725ab01af8e217a4fa7ac7a653a701a97c24",
+      "size": 3856,
+      "type": "file"
+    }
+  ],
+  "built_ipk_path": "bin/packages/x86_64/luci/luci-app-wifihistory_26.040.14621~ff57b23_all.ipk",
+  "built_ipk_sha256": "1565f6d6616da36eaf97db27c3ec17ee13f23f5fa4e50dab6640a2508b41b673",
+  "config": {
+    "config": {
+      "path": ".config",
+      "sha256": "80d8c0b67b7dfd176068b06ea3e0abb8c99cc93fdc365555e5a131e48056cbcb"
+    },
+    "css_minification": true,
+    "dependency_modes": {
+      "ddns-scripts": "m",
+      "jshn": "y",
+      "rpcd-mod-iwinfo": "m",
+      "ucode": "y",
+      "ucode-mod-fs": "y",
+      "ucode-mod-ubus": "y"
+    },
+    "feeds": {
+      "path": "feeds.conf",
+      "sha256": "52b3e3c257411fc5de4caf088d2fab73a242ca33dfe182088113f217d0239848"
+    },
+    "js_minification": true,
+    "per_feed_repo": "CONFIG_PER_FEED_REPO=y"
+  },
+  "control": {
+    "Architecture": "all",
+    "Package": "luci-app-wifihistory",
+    "Version": "26.040.14621~ff57b23"
+  },
+  "ipk_sha256": "1565f6d6616da36eaf97db27c3ec17ee13f23f5fa4e50dab6640a2508b41b673",
+  "js_minification_enabled": true,
+  "members": [
+    {
+      "classification": "auxiliary_htdocs_js",
+      "ipk_mode": "0644",
+      "ipk_sha256": "053726d58832c16519c161d68b0c725ab01af8e217a4fa7ac7a653a701a97c24",
+      "path": "www/luci-static/resources/view/status/wifihistory.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "0a1596fe36395ac2316f23e80db2753e86783e6bd62c911afe96aed278d1d50a",
+      "source_git_blob": "076c97ab5ed3fc28b0238fe4e9573e8eb049f2e0",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-wifihistory/htdocs/luci-static/resources/view/status/wifihistory.js",
+      "source_sha256": "0a1596fe36395ac2316f23e80db2753e86783e6bd62c911afe96aed278d1d50a",
+      "stage_mode": "0644",
+      "stage_sha256": "053726d58832c16519c161d68b0c725ab01af8e217a4fa7ac7a653a701a97c24",
+      "transform_provenance": "js_minification_unverified"
+    },
+    {
+      "classification": "extensionless installed-root candidate: unsupported/unknown",
+      "ipk_mode": "0755",
+      "ipk_sha256": "c12784a8ec1c5991a311bdc264b2f38108f491cc06a86223190becf091dfbd8c",
+      "path": "etc/init.d/wifihistory",
+      "prepared_mode": "0755",
+      "prepared_sha256": "c12784a8ec1c5991a311bdc264b2f38108f491cc06a86223190becf091dfbd8c",
+      "source_git_blob": "2811c68422e5d4e934c302a0cfe9a7c60fa70279",
+      "source_git_mode": "100755",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-wifihistory/root/etc/init.d/wifihistory",
+      "source_sha256": "c12784a8ec1c5991a311bdc264b2f38108f491cc06a86223190becf091dfbd8c",
+      "stage_mode": "0755",
+      "stage_sha256": "c12784a8ec1c5991a311bdc264b2f38108f491cc06a86223190becf091dfbd8c",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "selected source candidate",
+      "ipk_mode": "0755",
+      "ipk_sha256": "e58a3d2bace9aa188ec4c0a0272fa462f88138e0639587326ab72a99f1c45200",
+      "path": "usr/sbin/wifihistory",
+      "prepared_mode": "0755",
+      "prepared_sha256": "e58a3d2bace9aa188ec4c0a0272fa462f88138e0639587326ab72a99f1c45200",
+      "source_git_blob": "c0cfcd2a6fdddba2a5b52cd798a979b851489b08",
+      "source_git_mode": "100755",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-wifihistory/root/usr/sbin/wifihistory",
+      "source_sha256": "e58a3d2bace9aa188ec4c0a0272fa462f88138e0639587326ab72a99f1c45200",
+      "stage_mode": "0755",
+      "stage_sha256": "e58a3d2bace9aa188ec4c0a0272fa462f88138e0639587326ab72a99f1c45200",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "auxiliary_menu",
+      "ipk_mode": "0644",
+      "ipk_sha256": "3302be1fe68c2d441f492ab7f674fcd0050467b8b131be4e7e053cbdd475bb21",
+      "path": "usr/share/luci/menu.d/luci-app-wifihistory.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "3302be1fe68c2d441f492ab7f674fcd0050467b8b131be4e7e053cbdd475bb21",
+      "source_git_blob": "b43addaf7ed65e7a059994ba309884149984b4ea",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-wifihistory/root/usr/share/luci/menu.d/luci-app-wifihistory.json",
+      "source_sha256": "3302be1fe68c2d441f492ab7f674fcd0050467b8b131be4e7e053cbdd475bb21",
+      "stage_mode": "0644",
+      "stage_sha256": "3302be1fe68c2d441f492ab7f674fcd0050467b8b131be4e7e053cbdd475bb21",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "auxiliary_acl",
+      "ipk_mode": "0644",
+      "ipk_sha256": "0045156d95332aa6bc2a1711489f3f1bec1f3a48b7eec02802a8e0827b0186ce",
+      "path": "usr/share/rpcd/acl.d/luci-app-wifihistory.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "0045156d95332aa6bc2a1711489f3f1bec1f3a48b7eec02802a8e0827b0186ce",
+      "source_git_blob": "b0f790fc415aa475212f0ce6da5793537fe031d1",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-wifihistory/root/usr/share/rpcd/acl.d/luci-app-wifihistory.json",
+      "source_sha256": "0045156d95332aa6bc2a1711489f3f1bec1f3a48b7eec02802a8e0827b0186ce",
+      "stage_mode": "0644",
+      "stage_sha256": "0045156d95332aa6bc2a1711489f3f1bec1f3a48b7eec02802a8e0827b0186ce",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "selected source candidate",
+      "ipk_mode": "0644",
+      "ipk_sha256": "b9ce671467adf519ac61e0f18e134856c4704497457949d774cb1af68830397c",
+      "path": "usr/share/rpcd/ucode/wifihistory.uc",
+      "prepared_mode": "0644",
+      "prepared_sha256": "b9ce671467adf519ac61e0f18e134856c4704497457949d774cb1af68830397c",
+      "source_git_blob": "918ad9818b2e769d7b5a95f3855cb180fb8e82a7",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-wifihistory/root/usr/share/rpcd/ucode/wifihistory.uc",
+      "source_sha256": "b9ce671467adf519ac61e0f18e134856c4704497457949d774cb1af68830397c",
+      "stage_mode": "0644",
+      "stage_sha256": "b9ce671467adf519ac61e0f18e134856c4704497457949d774cb1af68830397c",
+      "transform_provenance": "source_equal"
+    }
+  ],
+  "oracle_sha256": "05906176f0830f311e2872d9d4b7743825cb80dfe1cb89af22673feac212d72a",
+  "outer_member_sha256": {
+    "control.tar.gz": "9c3ef983e2423c0cf8a1479382b9ce445e9ab7f2723235662d3f0e3c640b2b8c",
+    "data.tar.gz": "ae52e867c850ad11e2f79fdcc08189fe480e94e34f41d8611e9e40fba56d4c26",
+    "debian-binary": "d526eb4e878a23ef26ae190031b4efd2d58ed66789ac049ea3dbaf74c9df7402"
+  },
+  "package": "luci-app-wifihistory",
+  "prepared_path": "build_dir/target-x86_64_musl/luci-app-wifihistory",
+  "retained_ipk_path": "output/luci-app-wifihistory.ipk",
+  "retained_ipk_sha256": "1565f6d6616da36eaf97db27c3ec17ee13f23f5fa4e50dab6640a2508b41b673",
+  "source_pins": {
+    "ddns_scripts_recipe": {
+      "git_blob": "c0f6aef5047bd4b07f1e1708557bdf41ff763c34",
+      "git_mode": "100644",
+      "source_path": "net/ddns-scripts/Makefile",
+      "source_sha256": "eaf326cffdd5436c0fe039030b40279a24ab2b7104dc7ddd5fa014957c66177b"
+    },
+    "luci": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4"
+  },
+  "stage_path": "build_dir/target-x86_64_musl/luci-app-wifihistory/ipkg-all/luci-app-wifihistory"
+}

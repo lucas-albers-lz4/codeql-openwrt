@@ -1,0 +1,413 @@
+{
+  "files": {
+    ".config": {
+      "mode": "0644",
+      "sha256": "adff086c399e48803aacc0b87838aacc89f582fc8bb52a5343a8d35cb8703fba",
+      "size": 139766
+    },
+    ".modules": {
+      "mode": "0644",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    ".vermagic": {
+      "mode": "0644",
+      "sha256": "aa3af465ac0d789b4fa9f77c935fb7fefc6683f8ea8e76335b33bc620e42c0c7",
+      "size": 33
+    },
+    "include/config/kernel.release": {
+      "mode": "0644",
+      "sha256": "92424c8a89b8016c449ee322a5db15ceeac4232f7edc14d3239bdaae669ae2a5",
+      "size": 9
+    },
+    "modules.builtin": {
+      "mode": "0644",
+      "sha256": "9acfe162b3775838a75f454393c5330609f080742b8dc7703d6ebc9b5b221a0e",
+      "size": 10689
+    },
+    "modules.builtin.modinfo": {
+      "mode": "0644",
+      "sha256": "c45ae0858848e6aa28d686756899c65b2e5bdd0cb797f39a8fa7370c8c715899",
+      "size": 39630
+    }
+  },
+  "kernel_root": "/home/runner/work/_temp/issue173-app-module-batches/openwrt/build_dir/target-x86_64_musl/linux-x86_64/linux-6.12.116",
+  "limitation": "inventory only; selected package FILES and builtin applicability require review",
+  "modules": {
+    "drivers/acpi/video.ko": {
+      "mode": "0644",
+      "sha256": "9aaee274abf8adc6c9faf2026c1786e20326da2149cdbee8d52eb35a7de7bfeb",
+      "size": 198064
+    },
+    "drivers/gpu/drm/display/drm_display_helper.ko": {
+      "mode": "0644",
+      "sha256": "cae788812a26c6f4f627226d8c41b5f82effb3d467d9537f990b3f4440f81ff3",
+      "size": 849728
+    },
+    "drivers/gpu/drm/drm_buddy.ko": {
+      "mode": "0644",
+      "sha256": "e123231ae27ab900d9dab339581f7e8971eb82de44e56f6b27de525c9e58a143",
+      "size": 32520
+    },
+    "drivers/gpu/drm/i915/i915.ko": {
+      "mode": "0644",
+      "sha256": "3d59b5691b9b8add48479c9568ed1d8480af69d963b68170bebe98929ea88576",
+      "size": 25734760
+    },
+    "drivers/i2c/i2c-dev.ko": {
+      "mode": "0644",
+      "sha256": "4f2f32e0a317bc58a2b1fa1086e9cb702343385b6095c5adb42a8eed988d1acd",
+      "size": 91464
+    },
+    "drivers/net/ethernet/amazon/ena/ena.ko": {
+      "mode": "0644",
+      "sha256": "e85bc98ace4d121274913bb9b369032f7f198927c9930284c332090681189ce2",
+      "size": 702520
+    },
+    "drivers/net/ethernet/amd/xgbe/amd-xgbe.ko": {
+      "mode": "0644",
+      "sha256": "6e16fa434539b9b076f04a341483f9134e08707695f0c76c2df46ac4f3eb844f",
+      "size": 1102992
+    },
+    "drivers/net/ethernet/broadcom/bnx2.ko": {
+      "mode": "0644",
+      "sha256": "f1afe46bff6a947b4ba4ed06c2fe46da8229fa6701766429795b72e953b635c7",
+      "size": 527248
+    },
+    "drivers/net/ethernet/broadcom/tg3.ko": {
+      "mode": "0644",
+      "sha256": "ba237d7ed58d67e6b7832a4c4a5a772c1362a8c0f088472c24cd5e65a09b1707",
+      "size": 1122848
+    },
+    "drivers/net/ethernet/intel/e1000/e1000.ko": {
+      "mode": "0644",
+      "sha256": "d72a51a1a4ae19252866b54dc495bc4e6b1c67ec56aace399c0254d589fc7b28",
+      "size": 737680
+    },
+    "drivers/net/ethernet/intel/e1000e/e1000e.ko": {
+      "mode": "0644",
+      "sha256": "9a17efa53869723cf3378e16a0a9268068748af6db5274537a9ba35b8af86e9a",
+      "size": 1450152
+    },
+    "drivers/net/ethernet/intel/igb/igb.ko": {
+      "mode": "0644",
+      "sha256": "79f2189eed40fd08437bf33600a39a0fc4651ac02c602fa07ca9d1ce4cb2e1a4",
+      "size": 1322192
+    },
+    "drivers/net/ethernet/intel/igc/igc.ko": {
+      "mode": "0644",
+      "sha256": "37118caaff17d16e2e144c7bb4e7082c54077f277e14dcce23ba99f3fce32f72",
+      "size": 1009936
+    },
+    "drivers/net/ethernet/intel/ixgbe/ixgbe.ko": {
+      "mode": "0644",
+      "sha256": "44048cb574b32ad67c72ad608b1ca4fa6c03d3eded0fe5922e64e548350baa11",
+      "size": 2022336
+    },
+    "drivers/net/ethernet/nvidia/forcedeth.ko": {
+      "mode": "0644",
+      "sha256": "034b320ac783eaa98a99e53d5737edaf230963f6316b12d1b7c83f2e5a7381ac",
+      "size": 426568
+    },
+    "drivers/net/ethernet/realtek/r8169.ko": {
+      "mode": "0644",
+      "sha256": "3ee03f5044ede437e11b5feb2dce692d8675fcf6df8ef68bc0013127d2711a1b",
+      "size": 767632
+    },
+    "drivers/net/ethernet/stmicro/stmmac/dwmac-generic.ko": {
+      "mode": "0644",
+      "sha256": "a36f20c2d95b8debd43f67ebb5298c5bab7fc4c39125f80f052b493a842fd235",
+      "size": 39000
+    },
+    "drivers/net/ethernet/stmicro/stmmac/dwmac-intel.ko": {
+      "mode": "0644",
+      "sha256": "0eca9fd291ab03b628025e4de67274e27f9b3e299b21d4027ba36138c428d6a2",
+      "size": 98912
+    },
+    "drivers/net/ethernet/stmicro/stmmac/stmmac-platform.ko": {
+      "mode": "0644",
+      "sha256": "1d0262d484b13ad1380c610392903b49fcf45c0c500c8891ca8827b58d5afe1d",
+      "size": 55080
+    },
+    "drivers/net/ethernet/stmicro/stmmac/stmmac.ko": {
+      "mode": "0644",
+      "sha256": "d7a2edd9316d6cf334abd16f8f1fe31f2a9a4277d690c6b538a082651bb3aa69",
+      "size": 1629808
+    },
+    "drivers/net/mdio.ko": {
+      "mode": "0644",
+      "sha256": "ee47432351c977a5d0782d23cfea81bae62c5ebdd79db754f83c8ab759a6b57a",
+      "size": 52232
+    },
+    "drivers/net/mdio/acpi_mdio.ko": {
+      "mode": "0644",
+      "sha256": "57feacb45eefdc1e9539d08597af81796ba07ef58f2611704ac7f90b7ac95125",
+      "size": 42088
+    },
+    "drivers/net/mdio/fwnode_mdio.ko": {
+      "mode": "0644",
+      "sha256": "fcf59705eb7633a82ba39b19d229fd2695f8ea028588323dc5604279887fe911",
+      "size": 47992
+    },
+    "drivers/net/mii.ko": {
+      "mode": "0644",
+      "sha256": "0bf6cfd07613c4092c75fd4f0453834a87065ad01b159b59c777bf685e72b4b7",
+      "size": 64168
+    },
+    "drivers/net/pcs/pcs_xpcs.ko": {
+      "mode": "0644",
+      "sha256": "21a75a81891fd7d58951a5f59a1d214cbe9a81cfc731a5e21d5624a2d5a3125e",
+      "size": 229056
+    },
+    "drivers/net/phy/fixed_phy.ko": {
+      "mode": "0644",
+      "sha256": "dd4a326db0d9cbc5b7ae833ee01aaf8f6f7dc0c41baa699ec52cd54a79d4c9ab",
+      "size": 91168
+    },
+    "drivers/net/phy/libphy.ko": {
+      "mode": "0644",
+      "sha256": "5a142f6ee31b3a3f707fa244ff56cab1067b0349e39782381116a2c587535272",
+      "size": 855616
+    },
+    "drivers/net/phy/mdio_devres.ko": {
+      "mode": "0644",
+      "sha256": "b82d4a7876a9a272a39eb6f839fd2e6d108823c8b7d15370ebe2cee604a0c3bc",
+      "size": 43648
+    },
+    "drivers/net/phy/phylink.ko": {
+      "mode": "0644",
+      "sha256": "07ef1762db2927627b4af61e8c3ec557c75c0494483d1e2248f3b98a0be33a95",
+      "size": 270408
+    },
+    "drivers/net/phy/realtek/realtek.ko": {
+      "mode": "0644",
+      "sha256": "fd544fb0116b5be58baa9c307652e0bb84af593f143bff75570b47d9e93d3be6",
+      "size": 211256
+    },
+    "drivers/net/ppp/ppp_async.ko": {
+      "mode": "0644",
+      "sha256": "5ad56f33700d8deab2f6a50a065aa4ff6d3e4ce85ead14eaa4e57c8d53b29342",
+      "size": 95136
+    },
+    "drivers/net/ppp/ppp_generic.ko": {
+      "mode": "0644",
+      "sha256": "b95a3cd6d281d8419a0425dbb3be4265ba8e6538da64b77c781e112645afe67d",
+      "size": 316136
+    },
+    "drivers/net/ppp/pppoe.ko": {
+      "mode": "0644",
+      "sha256": "1b515e9f7c870c3b34d3b2ba9a31b6b59db67b3752f890098545bbec0f90fb37",
+      "size": 168544
+    },
+    "drivers/net/ppp/pppox.ko": {
+      "mode": "0644",
+      "sha256": "b1e7d8b9c5f73c992fb99daf24e72ccc414e513f16925bbacf0977ebb38f9dbf",
+      "size": 42696
+    },
+    "drivers/net/slip/slhc.ko": {
+      "mode": "0644",
+      "sha256": "545e404213db0c8eaec7f86ef598178358e86ce93ecebb40f39c5dc72941f65f",
+      "size": 77072
+    },
+    "drivers/platform/x86/wmi.ko": {
+      "mode": "0644",
+      "sha256": "797587864f70d134d9a2b28c07b1caef03d49d26f464098566d132c9034fdf4f",
+      "size": 118072
+    },
+    "fs/efivarfs/efivarfs.ko": {
+      "mode": "0644",
+      "sha256": "b8876bc861f599e4bdaca61a2f0c01765013b9c2b2bf91b17077a9e064960adf",
+      "size": 174672
+    },
+    "fs/fat/fat.ko": {
+      "mode": "0644",
+      "sha256": "241375dce0180fde6b240037db467fa7165577c99bcdbf1d2078572942df47ea",
+      "size": 531888
+    },
+    "fs/fat/vfat.ko": {
+      "mode": "0644",
+      "sha256": "29a9fffb3390f21afca2bf309f33b445edf278b117fc73532c6d5391e78ee412",
+      "size": 124544
+    },
+    "fs/nls/nls_cp437.ko": {
+      "mode": "0644",
+      "sha256": "e21d76ee8d3f46c026dc36e761593d5ca8c3ad1504c0bb23a76ac35136390c59",
+      "size": 38112
+    },
+    "fs/nls/nls_iso8859-1.ko": {
+      "mode": "0644",
+      "sha256": "1b3828a5a44b96287e715f5026b2a9b87662f9faeef53209a97e61b5787a9100",
+      "size": 35800
+    },
+    "fs/nls/nls_utf8.ko": {
+      "mode": "0644",
+      "sha256": "b1cff454b2ff0d901cb963e8c3d717ced2d2958d492e5990fdb9a8b584021d78",
+      "size": 32176
+    },
+    "lib/crc-ccitt.ko": {
+      "mode": "0644",
+      "sha256": "b5460701a11a66e955b38b2e70addcdcfda373c661f5259d74ed0262bdf253dc",
+      "size": 29848
+    },
+    "lib/libcrc32c.ko": {
+      "mode": "0644",
+      "sha256": "982dace4ba06a79d78abc7c95cd359e9a37deaf5b4e6ce7d89ef8a5f52d78fae",
+      "size": 33928
+    },
+    "net/core/selftests.ko": {
+      "mode": "0644",
+      "sha256": "7d176d0d9b936a20f11018164f864918a4fc5e544baa84a6069a1e3312183cf3",
+      "size": 78864
+    },
+    "net/ipv4/netfilter/nf_defrag_ipv4.ko": {
+      "mode": "0644",
+      "sha256": "18b6f92cafac3ddd248479356c525b67d909de0b4cf902d538307ad4451348ef",
+      "size": 51624
+    },
+    "net/ipv4/netfilter/nf_reject_ipv4.ko": {
+      "mode": "0644",
+      "sha256": "23cee6774823b8707cacea31bf886157f572656276ab1bae3c6650e45a4d3004",
+      "size": 84408
+    },
+    "net/ipv4/netfilter/nft_fib_ipv4.ko": {
+      "mode": "0644",
+      "sha256": "e1d36c297bc591c89ae6f58641d4af389a698145f844f4525b157bcc76ead4a4",
+      "size": 58848
+    },
+    "net/ipv4/netfilter/nft_reject_ipv4.ko": {
+      "mode": "0644",
+      "sha256": "348b68ff04f9f433a12a5ec45fde1990d7a1b8c1e702ce36844031513bb7d0da",
+      "size": 42016
+    },
+    "net/ipv6/netfilter/nf_defrag_ipv6.ko": {
+      "mode": "0644",
+      "sha256": "a6cbbdf9761bc531e31bb45527a9e3ef942cd3b4bac97857094f6cb9520bdfb0",
+      "size": 141424
+    },
+    "net/ipv6/netfilter/nf_reject_ipv6.ko": {
+      "mode": "0644",
+      "sha256": "23150f4596e2a0f13950e79cb007d0a0659c3eb1b4344bac66d6065e4e4b88a5",
+      "size": 82528
+    },
+    "net/ipv6/netfilter/nft_fib_ipv6.ko": {
+      "mode": "0644",
+      "sha256": "e8cc6113f9fe58a60defba0ef4d0ec88a8bdc4147351153d05705fcb4af38db4",
+      "size": 64144
+    },
+    "net/ipv6/netfilter/nft_reject_ipv6.ko": {
+      "mode": "0644",
+      "sha256": "4a1b55dd658d30652f8f13ae954111474da907fd14b303f1dc596ac2457da4cd",
+      "size": 41448
+    },
+    "net/netfilter/nf_conntrack.ko": {
+      "mode": "0644",
+      "sha256": "111e5b149d0203c1710ae60a5e14bad606594103326806cfb32a4da3325572c4",
+      "size": 1016152
+    },
+    "net/netfilter/nf_flow_table.ko": {
+      "mode": "0644",
+      "sha256": "faf11633625daaadf616370ed4cfed9bc47e55f55677f29de3c582705dbe8b71",
+      "size": 395096
+    },
+    "net/netfilter/nf_flow_table_inet.ko": {
+      "mode": "0644",
+      "sha256": "812988687b6dba3e3c8290a8e1f1be43cf132b7abb1a9d2c3b17fd60de4a9c7d",
+      "size": 45440
+    },
+    "net/netfilter/nf_log_syslog.ko": {
+      "mode": "0644",
+      "sha256": "8a90c837cd5051ea8d1f5152ab8c190d41fe47431dd64a30c913fc375a2987e2",
+      "size": 96256
+    },
+    "net/netfilter/nf_nat.ko": {
+      "mode": "0644",
+      "sha256": "afed5b05255ebb66b08b535c96bb1737c6fe570a93445ee04cae4a943bdbd598",
+      "size": 330272
+    },
+    "net/netfilter/nf_tables.ko": {
+      "mode": "0644",
+      "sha256": "f7b29a741fc678743085fa71ed684e4093e12c65c400f6f5b18a300d3f905208",
+      "size": 2456168
+    },
+    "net/netfilter/nfnetlink.ko": {
+      "mode": "0644",
+      "sha256": "6189af823d736c31a7ec57b44244f42d1a7651f70f8fc6403fb92705b93eb85a",
+      "size": 107888
+    },
+    "net/netfilter/nft_chain_nat.ko": {
+      "mode": "0644",
+      "sha256": "733aec1391f7864f13fcbac4bb60af87359a690921d59cc9435fde0d2e583a1e",
+      "size": 50112
+    },
+    "net/netfilter/nft_ct.ko": {
+      "mode": "0644",
+      "sha256": "1540863c750afc88c4f8053e5d73f6715e301c6a9930d9f2dd4ac11c046b484d",
+      "size": 150816
+    },
+    "net/netfilter/nft_fib.ko": {
+      "mode": "0644",
+      "sha256": "0945b1ba232711d31b5fdcdc2f008afadac68fc63d8a042b99b3d11727b4d429",
+      "size": 52376
+    },
+    "net/netfilter/nft_fib_inet.ko": {
+      "mode": "0644",
+      "sha256": "2eff140faab3286e7a74e95896abee1caa4dabbd66c4024cc8b7ab5a4ac2cfe3",
+      "size": 40728
+    },
+    "net/netfilter/nft_flow_offload.ko": {
+      "mode": "0644",
+      "sha256": "0b241d36d428519a51650539b066b8015614c0cf317c25c5430e7ad0f8289352",
+      "size": 90776
+    },
+    "net/netfilter/nft_hash.ko": {
+      "mode": "0644",
+      "sha256": "ec0abd6a622ddfc6a4d5ee58f04d143312e958ddac1d1c2c2ac338c3ebcda9ab",
+      "size": 54824
+    },
+    "net/netfilter/nft_limit.ko": {
+      "mode": "0644",
+      "sha256": "0f2ba4be58251c59f53c2cef4a01e18a32ecba99f792dfa71e1384813535ca6d",
+      "size": 70944
+    },
+    "net/netfilter/nft_log.ko": {
+      "mode": "0644",
+      "sha256": "2a407e00c8581a4397725997c5edab7cc562c19140c00ad1a09f190e179be795",
+      "size": 58360
+    },
+    "net/netfilter/nft_masq.ko": {
+      "mode": "0644",
+      "sha256": "c982bc9738f680eeedeb0c47fd268ee9cc9cae827a4b9a5f8e3f621d61da7817",
+      "size": 53032
+    },
+    "net/netfilter/nft_nat.ko": {
+      "mode": "0644",
+      "sha256": "38e829878cc103398875e098921656b3baaa53a4f7105f9a595dbef99ab88734",
+      "size": 61976
+    },
+    "net/netfilter/nft_numgen.ko": {
+      "mode": "0644",
+      "sha256": "55d960aaf4dae05f9065c9fc5257a119dc554b52fbe2c8008def5a97ca08838e",
+      "size": 55560
+    },
+    "net/netfilter/nft_quota.ko": {
+      "mode": "0644",
+      "sha256": "c9d5a4ca1ae731d29bce8ea96fe270800ca19a5f4c86e62a923f1c72e8c69af7",
+      "size": 65312
+    },
+    "net/netfilter/nft_redir.ko": {
+      "mode": "0644",
+      "sha256": "7307bd603b0993b12b260a19416503002d71e397b7293b8a6d5f73d8ec1ce1e2",
+      "size": 53616
+    },
+    "net/netfilter/nft_reject.ko": {
+      "mode": "0644",
+      "sha256": "6d29a6350f254396743c7380cfcc115ed8bb1e3549eda776b1599965e233bde0",
+      "size": 43936
+    },
+    "net/netfilter/nft_reject_inet.ko": {
+      "mode": "0644",
+      "sha256": "86811d02f93eb751c887d8125eb365839885751ccbdbb599454bd03ed37e3088",
+      "size": 44456
+    }
+  }
+}
