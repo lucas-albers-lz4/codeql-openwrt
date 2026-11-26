@@ -17,6 +17,9 @@ archive = base_compare.archive
 KERNEL_VERSION = '6.12.116'
 KERNEL_REL = f'build_dir/target-x86_64_musl/linux-x86_64/linux-{KERNEL_VERSION}'
 DATA_PREFIX = f'lib/modules/{KERNEL_VERSION}/'
+AUDITED_BUILD_CONFIG = '80d8c0b67b7dfd176068b06ea3e0abb8c99cc93fdc365555e5a131e48056cbcb'
+AUDITED_KERNEL_CONFIG = 'adff086c399e48803aacc0b87838aacc89f582fc8bb52a5343a8d35cb8703fba'
+AUDITED_VERMAGIC = 'd06fc8e744142971fdfa96b50c6d006f'
 LINUX_KERNEL = HERE.parent / 'luci-statistics-batch' / 'kernel.py'
 spec = importlib.util.spec_from_file_location('pinned_kernel_inventory', LINUX_KERNEL)
 kernel = importlib.util.module_from_spec(spec)
@@ -104,11 +107,27 @@ def capture_kernel(run_root, config_sha256):
 
 
 def reject_diagnostics(run, phase):
-    data = b''
-    for ext in ('stdout', 'stderr'):
-        path = run / 'output' / f'{phase}.{ext}'
-        data += physical_file(path, run / 'output') + b'\n'
-    kernel.reject_empty_package_diagnostic(data)
+    run = Path(run)
+    out = run / 'output'
+    stdout, stderr = (physical_file(out / f'{phase}.{ext}', out) for ext in ('stdout', 'stderr'))
+    kernel.reject_missing_module(stdout)
+    kernel.reject_missing_module(stderr)
+    out_warnings, warnings = kernel.empty_warnings(stdout), kernel.empty_warnings(stderr)
+    if out_warnings or len(warnings) != len(set(warnings)) or (warnings and set(warnings) != kernel.KNOWN_EMPTY):
+        raise ValueError('unapproved empty kernel package diagnostic')
+    if warnings:
+        if phase != 'kernel-package-compile':
+            raise ValueError('known empty warnings outside kernel package phase')
+        config = physical_file(run / 'openwrt/.config', run / 'openwrt', True)
+        kernel_config = physical_file(out / 'kernel-evidence/.config', out, True)
+        magic = physical_file(out / 'kernel-evidence/.vermagic', out, True).strip().decode('ascii')
+        selected = config.splitlines()
+        if (digest(config) != AUDITED_BUILD_CONFIG or digest(kernel_config) != AUDITED_KERNEL_CONFIG
+                or magic != AUDITED_VERMAGIC or any(selected.count(symbol) != 1 for symbol in (
+                    b'CONFIG_PACKAGE_kmod-drm-exec=y', b'CONFIG_PACKAGE_kmod-drm-suballoc-helper=y',
+                    b'CONFIG_PACKAGE_kmod-drm-i915=y'))):
+            raise ValueError('known empty warnings lack audited config or kernel identity')
+    return [line.decode('ascii') for line in warnings]
 
 
 def kernel_ipk_inventory(run, root):
@@ -272,7 +291,9 @@ def main():
     else:
         if not args.phase:
             parser.error('diagnostics requires --phase')
-        reject_diagnostics(args.run_root, args.phase)
+        warnings = reject_diagnostics(args.run_root, args.phase)
+        write_json_exclusive(args.run_root / 'output' / f'{args.phase}.diagnostics.json',
+                             {'phase': args.phase, 'accepted_scoped_empty_warnings': warnings})
 
 
 if __name__ == '__main__':
