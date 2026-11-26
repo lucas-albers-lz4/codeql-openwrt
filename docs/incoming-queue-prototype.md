@@ -75,6 +75,27 @@ responses. Only the current successor's observations are reconciled.
 Run tests with `python3 -B tools/test_incoming_queue.py -v` and
 `python3 -B -m unittest tools.test_incoming_poll`.
 
+For a one-item operator pilot, reconcile genesis and successor checkpoints
+with `--capacity 0`, then prepare an exact PR candidate with
+`tools.discovery_pr_dispatch`. Use
+`python3 -B tools/incoming_queue_reserve.py --database <private-queue> \
+--prepared-inputs <prepared-only-json> --expected-sequence <queue-head-seq> \
+--expected-sha256 <queue-head-digest>` to reserve that PR. The command
+requires the candidate's snapshot digest to be the latest queued discovery,
+the exact PR head to be the one current pending identity for its subject, no
+existing reserved or started work, and zero prior starts for that identity.
+The result is a one-slot `reserved_only` queue history record. It deliberately
+allows an explicit operator choice from the poller's backlog and does not
+assert automatic fairness or poller selection priority. A head superseded in
+the latest *queued* discovery cannot be reserved under its old identity. A
+head that moves upstream after that checkpoint can still be reserved locally;
+the released event workflow must re-fetch the PR and reject the stale SHA.
+This reservation does not invoke `incoming-event-preflight.yml`, sign a
+start, authenticate an outcome, or establish a known alert. An operator must
+not treat the printed digest or a prepared API file as evidence that a scan
+ran. Recovery of an abandoned reservation still follows the separate signed
+queue-action policy below.
+
 The `apply_attested` Python API accepts a start, failure, completion or recovery payload
 with an HMAC-SHA256 over canonical JSON using an externally provisioned secret
 of at least 32 bytes. The signer is a trust boundary: the MAC authenticates a

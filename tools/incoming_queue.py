@@ -211,6 +211,76 @@ def transition(db, expected, snapshot, capacity, now, previous_snapshot=None):
 
 
 
+def reserve_exact_pr(db, expected, prepared, now):
+    """Reserve one exact current PR for an operator-owned, one-item pilot.
+
+    This is an offline queue transition, not a scan dispatch or completion.
+    """
+    check(isinstance(prepared, dict) and prepared.get('schema') == 'incoming-pr-dispatch-inputs-v1' and
+          prepared.get('status') == 'prepared_only', 'unsupported prepared input')
+    upstream = prepared.get('upstream')
+    check(isinstance(upstream, str), 'invalid prepared upstream')
+    repo = 'openwrt/' + upstream
+    number, source_sha = prepared.get('pr_number'), prepared.get('source_sha')
+    snapshot_sha = prepared.get('discovery_checkpoint_sha256')
+    control_sha = prepared.get('control_sha')
+    check(repo in ('openwrt/openwrt', 'openwrt/luci') and type(number) is int and number > 0 and
+          isinstance(source_sha, str) and re.fullmatch(r'[0-9a-f]{40}', source_sha) and
+          isinstance(control_sha, str) and re.fullmatch(r'[0-9a-f]{40}', control_sha) and
+          isinstance(snapshot_sha, str) and re.fullmatch(r'[0-9a-f]{64}', snapshot_sha),
+          'invalid prepared PR identity')
+    check(isinstance(now, str), 'invalid reservation time')
+    timestamp = datetime.fromisoformat(now.replace('Z', '+00:00'))
+    check(timestamp.tzinfo is not None, 'reservation time needs timezone')
+    eid = json.dumps((repo, 'pull_request', number, source_sha), separators=(',', ':'))
+    db.execute('BEGIN IMMEDIATE')
+    try:
+        head = db.execute('SELECT seq,digest,document FROM history ORDER BY seq DESC LIMIT 1').fetchone()
+        check(head is not None and (head[0], head[1]) == expected,
+              'stale or missing queue predecessor')
+        previous = json.loads(head[2], object_pairs_hook=unique_object)
+        check(timestamp >= datetime.fromisoformat(previous['observed_at'].replace('Z', '+00:00')),
+              'reservation time moved backwards')
+        latest_snapshot = None
+        for (raw_history,) in db.execute('SELECT document FROM history ORDER BY seq DESC'):
+            history = json.loads(raw_history, object_pairs_hook=unique_object)
+            if history.get('schema') == 'incoming-queue-v1':
+                latest_snapshot = history.get('snapshot_sha256')
+                break
+        check(latest_snapshot == snapshot_sha, 'prepared candidate is not from latest queued discovery')
+        check(db.execute("SELECT count(*) FROM events WHERE status IN ('reserved','started')").fetchone()[0] == 0,
+              'pilot capacity is occupied')
+        subj = json.dumps((repo, 'pull_request', number), separators=(',', ':'))
+        check(db.execute("SELECT count(*) FROM events WHERE subject=? AND status='pending'", (subj,)).fetchone()[0] == 1,
+              'PR subject is not uniquely current and pending')
+        row = db.execute('SELECT event,status,attempts FROM events WHERE id=?', (eid,)).fetchone()
+        check(row is not None and row[1] == 'pending' and row[2] == 0,
+              'exact PR head is not an unattempted pending event')
+        event = json.loads(row[0], object_pairs_hook=unique_object)
+        check(event.get('kind') == 'pull_request' and event['source']['commit'] == source_sha and
+              event['base_commit'] == control_sha and source_sha != control_sha,
+              'queued event differs from prepared PR')
+        seq = head[0] + 1
+        queue_id = db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
+        result = {'schema': 'incoming-queue-manual-reservation-v1', 'sequence': seq,
+                  'previous_sha256': head[1], 'observed_at': now,
+                  'queue_id': queue_id, 'snapshot_sha256': snapshot_sha,
+                  'event_id': eid, 'source': event['source'],
+                  'control_sha': control_sha,
+                  'prepared_sha256': hashlib.sha256(encoded(prepared)).hexdigest(),
+                  'capacity': 1, 'status': 'reserved_only'}
+        raw = encoded(result)
+        digest = hashlib.sha256(raw).hexdigest()
+        changed = db.execute("UPDATE events SET status='reserved',reservation=?,reservation_digest=?,reason='manual_reserved' WHERE id=? AND status='pending' AND attempts=0",
+                             (seq, digest, eid)).rowcount
+        check(changed == 1, 'PR reservation changed during transaction')
+        db.execute('INSERT INTO history VALUES (?,?,?)', (seq, digest, raw))
+        db.execute('COMMIT')
+        return result, digest
+    except BaseException:
+        db.execute('ROLLBACK'); raise
+
+
 def apply_attested(db, expected, payload, mac, secret, now):
     """Apply a trusted signer's start or outcome. MAC authenticates the issuer,
     not the truth of its claims; production needs a reviewed same-job signer.
