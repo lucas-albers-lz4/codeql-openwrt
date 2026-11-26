@@ -84,3 +84,12 @@ and retains R3 historical event-triage files. The graph does not independently
 validate the contents of those two historical JSON files; R3 checked their
 contents earlier in the same job. This freeze is non-issuing and does not
 authenticate a future queue completion or satisfy the Gate 8 known-alert test.
+
+The freeze's command receipt read, artifact hashing and source snapshot copy
+now open regular files through checked directory descriptors without following
+symlinks. They compare file identity before and after reading and hash copied
+bytes while both source and destination descriptors remain open. These guards
+cover the tested final-file rewrite and nested-parent swap cases. Other
+receipt reads and snapshot destination directory creation still rely on the
+same-job writers-stopped assumption. A future signer must review the complete
+first-I/O and credential boundary before attesting a queue outcome.
