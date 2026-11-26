@@ -20,6 +20,18 @@ on:
         description: Full clean control commit SHA from canonical upstream
         type: string
         required: true
+      queue_id:
+        description: Optional private queue ID; claim only, not authorization
+        type: string
+        required: false
+      reservation_sequence:
+        description: Optional exact queue reservation sequence
+        type: string
+        required: false
+      reservation_sha256:
+        description: Optional exact queue reservation transition digest
+        type: string
+        required: false
   pull_request:
     paths:
       - '.github/workflows/incoming-event-preflight.yml'
@@ -33,6 +45,8 @@ on:
       - 'tools/issuer_consumer_prerequisite.py'
       - 'tools/issuer_workflow_graph.py'
       - 'tools/issuer_artifact_freeze.py'
+      - 'tools/reservation_claim.py'
+      - 'tools/test_reservation_claim.py'
       - 'tools/queue_scan_link.py'
       - 'tools/test_queue_scan_link.py'
       - 'policy/tests/test_issuer_consumer_prerequisite.py'
@@ -56,12 +70,15 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Test incoming event and full-tree candidate contracts
         run: |
           python3 -B -m unittest policy.tests.test_incoming_event -v
           python3 -B tools/test_full_tree_candidates.py -v
           python3 -B -m unittest tools.test_event_corpus_manifest tools.test_event_control_scan -v
           python3 -B -m unittest policy.tests.test_issuer_consumer_prerequisite policy.tests.test_issuer_control_graph policy.tests.test_issuer_workflow_graph policy.tests.test_issuer_artifact_freeze -v
+          python3 -B tools/test_reservation_claim.py -v
           python3 -B tools/test_queue_scan_link.py -v
           python3 -B -m unittest policy.tests.test_event_corpus_linux policy.tests.test_current_corpus_linux policy.tests.test_sarif_accept policy.tests.test_r3_linux_handoff -v
   resolve-pins:
@@ -71,6 +88,8 @@ jobs:
       artifact_name: ${{ steps.artifact-name.outputs.name }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Fetch exact GitHub pull API response
         id: pull
         env:
@@ -182,6 +201,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Determine immutable release-lock readiness
         id: release
         run: |
@@ -249,6 +270,16 @@ jobs:
           cmp "$input_root/full-tree-candidates.json" "$input_root/replayed-inventory.json"
           python3 -B -m tools.event_corpus_manifest docs/current-corpus-source-v0.6.json "$input_root/incoming-event-receipt.json" "$input_root/full-tree-candidates.json" "$source_root" "$input_root/replayed-manifest.json"
           cmp "$input_root/event-corpus-manifest.json" "$input_root/replayed-manifest.json"
+      - name: Retain same-job reservation claim after PR revalidation
+        if: steps.release.outputs.ready == 'true'
+        env:
+          QUEUE_ID: ${{ inputs.queue_id }}
+          RESERVATION_SEQUENCE: ${{ inputs.reservation_sequence }}
+          RESERVATION_SHA256: ${{ inputs.reservation_sha256 }}
+        run: |
+          set -euo pipefail
+          input_root="$RUNNER_TEMP/event-input-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B tools/reservation_claim.py "$input_root/replayed-receipt.json" "$input_root/reservation-claim.json"
       - name: Prepare control oracle before either corpus scan
         id: control-oracle
         if: steps.release.outputs.ready == 'true'

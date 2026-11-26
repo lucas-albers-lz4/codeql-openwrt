@@ -23,7 +23,7 @@ INPUT_FILES = {
     'pull-api-response.json', 'incoming-event.json', 'incoming-event-receipt.json',
     'source-policy-drift.json', 'full-tree-candidates.json', 'event-corpus-manifest.json',
     'scan-pull-api-response.json', 'replayed-receipt.json', 'replayed-inventory.json',
-    'replayed-manifest.json', 'consumer-graph.json',
+    'replayed-manifest.json', 'consumer-graph.json', 'reservation-claim.json',
     *(f'control-oracle/{name}' for name in ('control-derived-receipt.json',
       'control-inventory.json', 'control-manifest.json', 'control-binding.json')),
 }

@@ -17,7 +17,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from incoming_queue import _store_path
-from incoming_poll import PollError
+from incoming_poll import PollError, unique_object
 from tools.issuer_artifact_freeze import INPUT_FILES, R3_OUT, SCAN_OUT
 
 
@@ -50,7 +50,7 @@ def safe_bytes(path):
 
 
 def read_json(path):
-    return json.loads(safe_bytes(path))
+    return json.loads(safe_bytes(path), object_pairs_hook=unique_object)
 
 
 def verify_file(path, metadata):
@@ -79,7 +79,7 @@ def verify_file(path, metadata):
          'snapshot hash mismatch: ' + str(path))
 
 
-def verify_snapshot(snapshot, inventory):
+def verify_snapshot(snapshot, inventory, require_claim=False):
     need(snapshot.is_dir() and not snapshot.is_symlink(), 'unsafe snapshot root')
     actual = set()
     for path in snapshot.rglob('*'):
@@ -90,7 +90,12 @@ def verify_snapshot(snapshot, inventory):
             need(path.is_dir(), 'snapshot contains special file')
     records = inventory['artifacts']
     need(set(records) == {'inputs', 'event', 'control', 'r3'}, 'incomplete freeze groups')
-    need(set(records['inputs']) == INPUT_FILES, 'incomplete input inventory')
+    input_names = set(records['inputs'])
+    if require_claim:
+        need(input_names == INPUT_FILES, 'incomplete input inventory')
+    else:
+        need(input_names in (INPUT_FILES, INPUT_FILES - {'reservation-claim.json'}),
+             'incomplete input inventory')
     for role in ('event', 'control'):
         sections = records[role]
         need(set(sections) == {'root', 'out', 'commands', 'stage'},
@@ -151,7 +156,8 @@ def open_readonly_queue(path):
         raise
 
 
-def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit):
+def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit,
+           require_claim=False):
     need(re.fullmatch(r'[1-9][0-9]*', str(run_id)) and type(attempt) is int and attempt > 0,
          'invalid run identity')
     need(re.fullmatch(r'[0-9a-f]{40}', consumer_commit), 'invalid consumer commit')
@@ -170,7 +176,7 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit):
         need(head is not None, 'queue has no history')
         sequence, digest, raw = head
         need(hashlib.sha256(raw).hexdigest() == digest, 'queue history digest mismatch')
-        reservation = json.loads(raw)
+        reservation = json.loads(raw, object_pairs_hook=unique_object)
         need(reservation.get('schema') == 'incoming-queue-manual-reservation-v1' and
              reservation.get('status') == 'reserved_only' and reservation.get('sequence') == sequence,
              'queue head is not an exact PR reservation')
@@ -180,7 +186,7 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit):
                          (reservation['event_id'],)).fetchone()
         need(row is not None and row[1:] == ('reserved', sequence, digest),
              'queue event is not held by this reservation')
-        queued_event = json.loads(row[0])
+        queued_event = json.loads(row[0], object_pairs_hook=unique_object)
     finally:
         db.close()
     need(datetime.fromisoformat(run_api['created_at'].replace('Z', '+00:00')) >=
@@ -194,14 +200,32 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit):
          inventory.get('status') == 'frozen' and inventory.get('run_id') == identity and
          inventory.get('consumer_commit') == consumer_commit, 'freeze run or consumer mismatch')
     snapshot = freeze / 'snapshot'
-    count = verify_snapshot(snapshot, inventory)
+    count = verify_snapshot(snapshot, inventory, require_claim)
     verify_file(freeze / 'graph-recheck.json', inventory['graph_recheck'])
     receipt = read_json(snapshot / 'inputs/incoming-event-receipt.json')
+    claim_bound = False
+    if 'reservation-claim.json' in inventory['artifacts']['inputs']:
+        claim = read_json(snapshot / 'inputs/reservation-claim.json')
+        if claim.get('status') == 'claimed_unverified':
+            need(set(claim) == {'schema', 'status', 'run_id', 'queue_id',
+                                'reservation_sequence', 'reservation_sha256',
+                                'event_id', 'source_sha', 'control_sha'} and
+                 claim.get('schema') == 'incoming-reservation-claim-v1' and
+                 claim.get('run_id') == identity and
+                 claim.get('queue_id') == queue_id and
+                 claim.get('reservation_sequence') == sequence and
+                 claim.get('reservation_sha256') == digest and
+                 claim.get('event_id') == reservation['event_id'] and
+                 claim.get('source_sha') == reservation['source']['commit'] and
+                 claim.get('control_sha') == reservation['control_sha'],
+                 'same-job reservation claim mismatch')
+            claim_bound = True
+    need(not require_claim or claim_bound, 'same-job reservation claim missing')
     need(safe_bytes(snapshot / 'inputs/incoming-event-receipt.json') ==
          safe_bytes(snapshot / 'inputs/replayed-receipt.json'),
          'original and replayed PR receipts differ')
     api = read_json(snapshot / 'inputs/scan-pull-api-response.json')
-    event_id = json.loads(reservation['event_id'])
+    event_id = json.loads(reservation['event_id'], object_pairs_hook=unique_object)
     need(type(event_id) is list and len(event_id) == 4 and event_id[1] == 'pull_request' and
          event_id[0] in ('openwrt/openwrt', 'openwrt/luci'), 'invalid reserved PR identity')
     repo, _, number, head = event_id
@@ -310,6 +334,7 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit):
             'reservation_sha256': digest, 'run_id': identity,
             'consumer_commit': consumer_commit, 'source': receipt['source'],
             'snapshot_files_verified': count, 'scan_status': scan['status'],
+            'claim_bound': claim_bound,
             'selected_count': scan['selected_count'], 'result_count': triage['result_count'],
             'limitations': ['Offline comparison; no artifact custody or queue attestation.']}
 
@@ -323,10 +348,13 @@ def main():
     parser.add_argument('--run-id', required=True)
     parser.add_argument('--attempt', required=True, type=int)
     parser.add_argument('--consumer-commit', required=True)
+    parser.add_argument('--require-claim', action='store_true',
+                        help='require a matching reservation claim frozen by the scan job')
     args = parser.parse_args()
     try:
         print(json.dumps(verify(args.database, args.artifact, args.run_api, args.run_id,
-                                args.attempt, args.consumer_commit), sort_keys=True))
+                                args.attempt, args.consumer_commit,
+                                args.require_claim), sort_keys=True))
         return 0
     except (LinkError, PollError, ValueError, KeyError, IndexError, TypeError, OSError,
             sqlite3.Error, json.JSONDecodeError) as exc:
