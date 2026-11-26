@@ -1,0 +1,1069 @@
+{
+  "all_seen_ipks": [
+    {
+      "path": "bin/packages/x86_64/luci/liblucihttp-ucode_2023.03.15~9b5b683f-r1_x86_64.ipk",
+      "sha256": "3d26624c69ebb366cb252a5370d13488b90db06a93bfa24efcf2a15946a80fa1",
+      "size": 4753
+    },
+    {
+      "path": "bin/packages/x86_64/luci/liblucihttp0_2023.03.15~9b5b683f-r1_x86_64.ipk",
+      "sha256": "2c30817cf32606393cd9b86d3f5375a5bb5a4b3b2c9297940400e4ab02ba75f4",
+      "size": 8660
+    },
+    {
+      "path": "bin/packages/x86_64/luci/luci-app-dockerman_26.134.50559~d5129a1_all.ipk",
+      "sha256": "7b17766175a32ad8ab533a7b01089a7f362d3d1dd2988fe1ce15aaa66480dcd3",
+      "size": 77312
+    },
+    {
+      "path": "bin/packages/x86_64/luci/luci-base_26.317.52279~1c75ea4_x86_64.ipk",
+      "sha256": "9fc0c47ffbb4621847dd177f6cca4d531f2cfc55b7127a25ef22b1fb895d12e5",
+      "size": 245783
+    },
+    {
+      "path": "bin/packages/x86_64/luci/rpcd-mod-luci_20240305-r1_x86_64.ipk",
+      "sha256": "b176a9042bdc852b80e7ddba5f198bf5743975c8b72785511856b1b677fed514",
+      "size": 14916
+    },
+    {
+      "path": "bin/packages/x86_64/luci/ucode-mod-html_1_x86_64.ipk",
+      "sha256": "f9f3267da82bd9b0f37451020f028624f34db6783a5d87d972e7436d1023f7e7",
+      "size": 22360
+    },
+    {
+      "path": "bin/packages/x86_64/packages/btrfs-progs_6.11-r3_x86_64.ipk",
+      "sha256": "9b6a618941b572299aa9e2c1fe8fa7b453421c8fe447acdae3ae2728ec322d6c",
+      "size": 1159549
+    },
+    {
+      "path": "bin/packages/x86_64/packages/cgi-io_2026.07.21~31cb3c89-r1_x86_64.ipk",
+      "sha256": "ae74672156956f3c1639818d1214dd53ced4591921b172552e5c5903569daa81",
+      "size": 9989
+    },
+    {
+      "path": "bin/packages/x86_64/packages/containerd_2.2.5-r1_x86_64.ipk",
+      "sha256": "ef106d70bcfd59aa89c43f86d269d8b497254e7542395d2a28e7b324972e6338",
+      "size": 34804205
+    },
+    {
+      "path": "bin/packages/x86_64/packages/docker-compose_5.1.4-r1_x86_64.ipk",
+      "sha256": "d6ec4206ee7b23e9adc0a7975281b9333d35d63e7ef6c94e7a453aab73d515e4",
+      "size": 10706078
+    },
+    {
+      "path": "bin/packages/x86_64/packages/docker_29.6.1-r1_x86_64.ipk",
+      "sha256": "8c6cc7e0d239a0147b1f2a16b0e9aacbdb4b4bcf794a59ef080717a1085d82f1",
+      "size": 9903289
+    },
+    {
+      "path": "bin/packages/x86_64/packages/dockerd_29.6.1-r1_x86_64.ipk",
+      "sha256": "6d6eae48328c765944c20021679acc6bab1f7abe3e1380a0d7bb6ac6e4cdb3d1",
+      "size": 29335090
+    },
+    {
+      "path": "bin/packages/x86_64/packages/libattr_2.5.2-r3_x86_64.ipk",
+      "sha256": "fe6fc1f9a038b276539facca60ed19988a47ffe6edc5d8f842cbb93b09519076",
+      "size": 7168
+    },
+    {
+      "path": "bin/packages/x86_64/packages/liblzo2_2.10-r5_x86_64.ipk",
+      "sha256": "c471a8068333e4fa5e0ba47c05df4e2c94fed5dc7504c31f31fbf7cf250812e2",
+      "size": 38952
+    },
+    {
+      "path": "bin/packages/x86_64/packages/libseccomp_2.5.5-r1_x86_64.ipk",
+      "sha256": "edda9d2c51ba90f93d51775907a1bdc0fd4866c3098dd9673d587908e32e51c0",
+      "size": 42011
+    },
+    {
+      "path": "bin/packages/x86_64/packages/libuv1_1.48.0-r1_x86_64.ipk",
+      "sha256": "21940c9e9aea0af75e6ffb1d88eaf789ec2f4e14c5f2b588420a982d71fa93a5",
+      "size": 70679
+    },
+    {
+      "path": "bin/packages/x86_64/packages/libwebsockets-full_4.4.1-r1_x86_64.ipk",
+      "sha256": "aacf8931d4d1f84572e0cabdf5a7bb608661b58efac13d3af26b25984a9388c2",
+      "size": 265632
+    },
+    {
+      "path": "bin/packages/x86_64/packages/runc_1.3.6-r1_x86_64.ipk",
+      "sha256": "baafbf4865aa5030814cd7ee0744cb7ca90a2c4b9b1d27f158c998b29a5397a0",
+      "size": 4510989
+    },
+    {
+      "path": "bin/packages/x86_64/packages/tini_0.19.0-r4_x86_64.ipk",
+      "sha256": "007e701f49b11fee6771f299d89c34d71fe8b68d50fec4c58ee9b395f53e8e3f",
+      "size": 33735
+    },
+    {
+      "path": "bin/packages/x86_64/packages/ttyd_1.7.7-r1_x86_64.ipk",
+      "sha256": "13859af8890c87148ede62d4dbfcd04204ea0dfe34bc4d34c5afe97256b47c58",
+      "size": 408777
+    },
+    {
+      "path": "bin/packages/x86_64/base/bnx2-firmware_20260221-r1_x86_64.ipk",
+      "sha256": "af2ebc6044d60e63b49726ec5aa1dcd55327c29a40410f84ea88f17455f888d8",
+      "size": 105850
+    },
+    {
+      "path": "bin/packages/x86_64/base/ca-bundle_20260816-r2_all.ipk",
+      "sha256": "441de863d109f6d0f51cfef076806740fcc49cf8104fe0c1b593f9a5f828e1f9",
+      "size": 107089
+    },
+    {
+      "path": "bin/packages/x86_64/base/ca-certificates_20260816-r2_all.ipk",
+      "sha256": "9975cc1619f0242271726a99f238e1ce369701925dabe5dcb00b0f6619aabe62",
+      "size": 115868
+    },
+    {
+      "path": "bin/packages/x86_64/base/firewall4_2025.03.17~b6e51575-r2_x86_64.ipk",
+      "sha256": "da869737b693249f8bbd4a331fa762972bb58002d607df4dc2a2759235039a8e",
+      "size": 30116
+    },
+    {
+      "path": "bin/packages/x86_64/base/i915-firmware-dmc_20260221-r1_x86_64.ipk",
+      "sha256": "39bf89ef83372b07cd1a55b48e1b102518d56fa214d0f85007e6236bf7a0bc75",
+      "size": 244096
+    },
+    {
+      "path": "bin/packages/x86_64/base/jansson4_2.14.1-r1_x86_64.ipk",
+      "sha256": "7b2315770dc1a52646e23a83cb9c907cb9737fba42b79f73e0c2527d062431a9",
+      "size": 48071
+    },
+    {
+      "path": "bin/packages/x86_64/base/jshn_2026.11.02~ff13b89e-r1_x86_64.ipk",
+      "sha256": "e5104afd13e2c87cd74e63f2393f805035631c9b82515f664d7c2a532eac5d48",
+      "size": 7411
+    },
+    {
+      "path": "bin/packages/x86_64/base/libblkid1_2.41.5-r1_x86_64.ipk",
+      "sha256": "1375c69660059a5a612723b332e4068c5264c448a563b5a699f6c9b74cc9259b",
+      "size": 120819
+    },
+    {
+      "path": "bin/packages/x86_64/base/libblobmsg-json20260213_2026.11.02~ff13b89e-r1_x86_64.ipk",
+      "sha256": "92f4b48db031a6456eea50633f6b90dbb8b7fcc008ec568df4134215a750d469",
+      "size": 4556
+    },
+    {
+      "path": "bin/packages/x86_64/base/libcap_2.69-r1_x86_64.ipk",
+      "sha256": "136666dac785e7f2ab305e8a80930ade5732eae7b9d42bc8b49021748f92378e",
+      "size": 15618
+    },
+    {
+      "path": "bin/packages/x86_64/base/libjson-c5_0.18-r1_x86_64.ipk",
+      "sha256": "ca09fd732b1709e79f76a76010b1ef82a82ad9be21b6d48df58a2553b26b2faf",
+      "size": 32424
+    },
+    {
+      "path": "bin/packages/x86_64/base/libjson-script20260213_2026.11.02~ff13b89e-r1_x86_64.ipk",
+      "sha256": "9c65904d659740a90ae7c5c29388ea9541bc5d36129b23e30cf7aa068555beeb",
+      "size": 5832
+    },
+    {
+      "path": "bin/packages/x86_64/base/libmbedtls21_3.6.7-r1_x86_64.ipk",
+      "sha256": "41069b76de08854c56aea5abfc89ab8eecfc9f2981c0df838d9ba10908026cab",
+      "size": 340730
+    },
+    {
+      "path": "bin/packages/x86_64/base/libmnl0_1.0.5-r1_x86_64.ipk",
+      "sha256": "30950ac56b0044c2ad0c82f46eff80bb45ede4a3375c8302dd82c777eca35f7f",
+      "size": 8212
+    },
+    {
+      "path": "bin/packages/x86_64/base/libmount1_2.41.5-r1_x86_64.ipk",
+      "sha256": "d7f924d96903ac76730aa833cfc2796422af0dd77b12eb73f74ad0b4c5413df8",
+      "size": 158895
+    },
+    {
+      "path": "bin/packages/x86_64/base/libnftnl11_1.3.1-r1_x86_64.ipk",
+      "sha256": "19a682637d0722dbe3de999b64b83271c8f8a5f48602c584db99d3cf52e92e8d",
+      "size": 64090
+    },
+    {
+      "path": "bin/packages/x86_64/base/libnl-tiny1_2025.12.02~40493a65-r1_x86_64.ipk",
+      "sha256": "828a4ed1ffdab933976f9e6a156613841e9742b768943707ebf4e5956e830dd9",
+      "size": 16236
+    },
+    {
+      "path": "bin/packages/x86_64/base/libopenssl3_3.5.9-r1_x86_64.ipk",
+      "sha256": "cd91bc7593a0f6b4e53a6de8a58600c95aca246fe8f363a45366fa3ebe7142f0",
+      "size": 2566475
+    },
+    {
+      "path": "bin/packages/x86_64/base/libsmartcols1_2.41.5-r1_x86_64.ipk",
+      "sha256": "3b02b321bd8a349335df8a4a63af689b170d0b4be05a202d60dcc71dca31dfa9",
+      "size": 62803
+    },
+    {
+      "path": "bin/packages/x86_64/base/libubox20260213_2026.11.02~ff13b89e-r1_x86_64.ipk",
+      "sha256": "0f9bbb8e64571361fb88c4c02b9a59d3631d7257779c7478f494b705f1e3a8f8",
+      "size": 29810
+    },
+    {
+      "path": "bin/packages/x86_64/base/libubus20251202_2026.06.28~24864e78-r2_x86_64.ipk",
+      "sha256": "2a48799e46b41ba36968561b0e1d4556aeb54d98d5cbf26a1b7ca028802feadb",
+      "size": 12513
+    },
+    {
+      "path": "bin/packages/x86_64/base/libuci20250120_2025.12.02~66127cd7-r1_x86_64.ipk",
+      "sha256": "ddd9a4675156923465f5358912fe0014f954b25fa9b9b2f2b4612fd5b7eba3a7",
+      "size": 19212
+    },
+    {
+      "path": "bin/packages/x86_64/base/libucode20230711_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "0a8137e4e56352905d79ab1f8772f0261d81644b6931d53f844fadc68f833551",
+      "size": 78828
+    },
+    {
+      "path": "bin/packages/x86_64/base/libuuid1_2.41.5-r1_x86_64.ipk",
+      "sha256": "c416e425b99aa20ede8cc5578b33c8bb8e45d4ea84a67775cac76a47689f84c5",
+      "size": 13746
+    },
+    {
+      "path": "bin/packages/x86_64/base/nftables-json_1.1.6-r2_x86_64.ipk",
+      "sha256": "e8035ad87739701eb3a1095f1eba6d50ee2fb17f33b9f59b4f374362f465e026",
+      "size": 328719
+    },
+    {
+      "path": "bin/packages/x86_64/base/partx-utils_2.41.5-r1_x86_64.ipk",
+      "sha256": "9c0c555e8fb36e782c0278399a2bddfc001c3d7d5215fc844cab023d68180bc9",
+      "size": 56958
+    },
+    {
+      "path": "bin/packages/x86_64/base/r8169-firmware_20260221-r1_x86_64.ipk",
+      "sha256": "5c71d4c89c79f93486c2317e2b77df6b78ec7c678ea084cc2dc533d32f798c71",
+      "size": 50047
+    },
+    {
+      "path": "bin/packages/x86_64/base/rpcd-mod-file_2026.10.04~d99f703e-r1_x86_64.ipk",
+      "sha256": "b774ee9564ae9b22a1303ee373f6be72ed7459cf07a0a5e92645ca11683fbbac",
+      "size": 8793
+    },
+    {
+      "path": "bin/packages/x86_64/base/rpcd-mod-ucode_2026.10.04~d99f703e-r1_x86_64.ipk",
+      "sha256": "30404e507847b71361d7e8fbadaa39dec434a1c9e5d00c7558ae1cd674cd9ca9",
+      "size": 8750
+    },
+    {
+      "path": "bin/packages/x86_64/base/rpcd_2026.10.04~d99f703e-r1_x86_64.ipk",
+      "sha256": "a4bee4297bb9f5eb29aa65264e318b9416a482889ec159ab4b23f066083e3aba",
+      "size": 25814
+    },
+    {
+      "path": "bin/packages/x86_64/base/ubus_2026.06.28~24864e78-r2_x86_64.ipk",
+      "sha256": "f946164656214978aa521e18fa7cd17ad5cd7aa203e5a9d270e214286bf5506e",
+      "size": 6687
+    },
+    {
+      "path": "bin/packages/x86_64/base/ubusd_2026.06.28~24864e78-r2_x86_64.ipk",
+      "sha256": "319ed64dbc813abc2eb5197a749e30bf655b97b23cc80383ba609cb03f0865f1",
+      "size": 14126
+    },
+    {
+      "path": "bin/packages/x86_64/base/uci_2025.12.02~66127cd7-r1_x86_64.ipk",
+      "sha256": "68b4106a14687a399310ffab0e9e5fde8e43206525bc1fcc4af2b3a9e5da9d53",
+      "size": 7874
+    },
+    {
+      "path": "bin/packages/x86_64/base/ucode-mod-fs_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "11344b7c3c4ac6a7fc98cd2d3ab335b40a181055d791106bdf442543d0eb09b5",
+      "size": 12943
+    },
+    {
+      "path": "bin/packages/x86_64/base/ucode-mod-log_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "8063999c41c1d7ae3056793ee53d152b404acae47403d569e15045655852147f",
+      "size": 4892
+    },
+    {
+      "path": "bin/packages/x86_64/base/ucode-mod-math_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "4ad12934dc5a3466d58e17250b754448df81833ac6d6d6fb3cef576fdb9cff23",
+      "size": 5161
+    },
+    {
+      "path": "bin/packages/x86_64/base/ucode-mod-socket_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "cb23b7069d8684cb33d773ea89a9d99361fc84405860016291765134ed67eb76",
+      "size": 25612
+    },
+    {
+      "path": "bin/packages/x86_64/base/ucode-mod-ubus_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "ccebcb10a505d20a1f8f697a57e18c04c345ef1719be87f0d4a34ac88fbb7633",
+      "size": 18209
+    },
+    {
+      "path": "bin/packages/x86_64/base/ucode-mod-uci_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "bd0a5a3c6da4f1f4ed870bb348bc54b96b639120637674a29192ae57a8f526b2",
+      "size": 8681
+    },
+    {
+      "path": "bin/packages/x86_64/base/ucode-mod-uloop_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "af914f4190c65179f7ede72038a219df15735ba323a4c4477150fdf0b7b04f80",
+      "size": 9941
+    },
+    {
+      "path": "bin/packages/x86_64/base/ucode_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "aade4e3a118a3a02ebfc1696bffd10a233cd266042071804f0ae3ba153e9515a",
+      "size": 7430
+    },
+    {
+      "path": "bin/packages/x86_64/base/zlib_1.3.1-r1_x86_64.ipk",
+      "sha256": "d549630a9bc4e85fce4d0627cb1aaaded762cc782413f880a9943861cb1da550",
+      "size": 44469
+    },
+    {
+      "path": "bin/targets/x86/64/packages/ip6tables-nft_1.8.10-r3_x86_64.ipk",
+      "sha256": "050e97225ce1bb5aeff2bf44621ac4296600b3b69c2b07e2f8cb1d27255a48f1",
+      "size": 952
+    },
+    {
+      "path": "bin/targets/x86/64/packages/iptables-mod-extra_1.8.10-r3_x86_64.ipk",
+      "sha256": "6ac045dc2d54bc28a24d2eb067acf69f6d92623e81e8097262ab8b13ed94c8d0",
+      "size": 10335
+    },
+    {
+      "path": "bin/targets/x86/64/packages/iptables-nft_1.8.10-r3_x86_64.ipk",
+      "sha256": "f9cda0ae86239c837b7f229a561941229259b7051936619c2672704769fe47f0",
+      "size": 948
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kernel_6.12.116~7df1a98339a37dfe41af7485d026e004-r1_x86_64.ipk",
+      "sha256": "88490a59d5be9be9bee9f6582efe8bf20fd6df4e52933abd324763cda96f1caa",
+      "size": 5253
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-acpi-video_6.12.116-r1_x86_64.ipk",
+      "sha256": "54ca35085b431f950733e3d9ff0508948269f3b3f98b214c439ce769bb3bf5a0",
+      "size": 21755
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-amazon-ena_6.12.116-r1_x86_64.ipk",
+      "sha256": "eabc8731173d5dd377c304d2adf98936cfafcacac8a0add4e65581016082473f",
+      "size": 45534
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-amd-xgbe_6.12.116-r1_x86_64.ipk",
+      "sha256": "2b9cde5b19ea9b4845b595e5ce25e809fd2af5c016919bd55b8ecf6b29bfcbeb",
+      "size": 61444
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-backlight_6.12.116-r1_x86_64.ipk",
+      "sha256": "00587d8ac96c5b9411db4e12984fdff9ba9b2697e01e47c5ee7b1b8d879dedb0",
+      "size": 967
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-bnx2_6.12.116-r1_x86_64.ipk",
+      "sha256": "52b2559f969d9113df88b50f272a1cbfc3a88ac1d3aec15ebe6c82815ca6b6ac",
+      "size": 41428
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-br-netfilter_6.12.116-r1_x86_64.ipk",
+      "sha256": "3b69d4d73fc0248f09431044901d7c0b1cebd110cdbe19f7520d8eada35d70e3",
+      "size": 10536
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-crypto-acompress_6.12.116-r1_x86_64.ipk",
+      "sha256": "5972bd88207e96b6009ac78d749cb6179a7289c63846c73f8323c16d3a47c40f",
+      "size": 4800
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-crypto-blake2b_6.12.116-r1_x86_64.ipk",
+      "sha256": "00c5d5f77c915da661f309d09681d83b34d87bbeb323f4bc3d4e6395d72d6e8c",
+      "size": 6333
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-crypto-crc32c_6.12.116-r1_x86_64.ipk",
+      "sha256": "d9436dd2bac80de14ce5c3af839d342c3eb82b82b4115ebf948767ff701474fe",
+      "size": 1016
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-crypto-hash_6.12.116-r1_x86_64.ipk",
+      "sha256": "98cc9e2e2b394c6acebadfaa4352c4326b0097a27740723e64cdee081697d98d",
+      "size": 1013
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-crypto-xxhash_6.12.116-r1_x86_64.ipk",
+      "sha256": "fb0ad3b5090b459063a42134107672135494c80790570e78baecca1f26defb57",
+      "size": 2032
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-dma-buf_6.12.116-r1_x86_64.ipk",
+      "sha256": "cc395f00b6dc252d0c1978aa6869ab574c78a4a89a343298dfaf0b9879197a61",
+      "size": 967
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm-buddy_6.12.116-r1_x86_64.ipk",
+      "sha256": "78cd86243f4b793c57b63c598f9c47b246c6173310b9594664ee13c0de5102f5",
+      "size": 2298
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm-display-helper_6.12.116-r1_x86_64.ipk",
+      "sha256": "94899bc886ba93ae28b921ba324f089f342bb63cb74a826809ef7d29fd54dcd9",
+      "size": 61548
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm-exec_6.12.116-r1_x86_64.ipk",
+      "sha256": "6e2da6de7eed258f72a22a851e824389261a58a61f57d99acc2c7ce885c38de3",
+      "size": 883
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm-i915_6.12.116-r1_x86_64.ipk",
+      "sha256": "150320184236a97ff1513b437f0ae48b22209e856a0d978db052309ef5d380e6",
+      "size": 1213522
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm-kms-helper_6.12.116-r1_x86_64.ipk",
+      "sha256": "39519adfcc956764e88f9a08c2bebb3758896e6ac664f03a6ec5edcf46c672f5",
+      "size": 1024
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm-suballoc-helper_6.12.116-r1_x86_64.ipk",
+      "sha256": "485dc407c6f0f6cf40caa33c2b703b19e53d992ddbb7d0c65c0512bbff70ec98",
+      "size": 874
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm-ttm-helper_6.12.116-r1_x86_64.ipk",
+      "sha256": "14767d71da7b8f4130b8ec269920b845eec7bb64f19dfa59d1f8663916488bd8",
+      "size": 990
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm-ttm_6.12.116-r1_x86_64.ipk",
+      "sha256": "ed6006ebca1a492ef06e712f6921640deb31c7bdbdd1145c74aacd23874f23c0",
+      "size": 1027
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-drm_6.12.116-r1_x86_64.ipk",
+      "sha256": "b75e7b4e7849e8904199b1d3733ce90163bb47914e0a6d0b7442f4d38b3ba8c8",
+      "size": 994
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-dwmac-intel_6.12.116-r1_x86_64.ipk",
+      "sha256": "a8cad659600e2362c4de182ec5f97a9251a1c7f910ea504ed55ba00b3b830e95",
+      "size": 7075
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-e1000_6.12.116-r1_x86_64.ipk",
+      "sha256": "26332fbb92ea2f561c944267694a74fa02fa58e234ba9c4747309b6131bdf2db",
+      "size": 51398
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-e1000e_6.12.116-r1_x86_64.ipk",
+      "sha256": "184a9334a7d662d0dc574dc034098de1b83f6e288aad79537be9c57fce7922ef",
+      "size": 90162
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-fb-cfb-copyarea_6.12.116-r1_x86_64.ipk",
+      "sha256": "5bf2f68ef177cccedfe6add6b42825afac15e6b1791e5ee93a92fc9180d7f392",
+      "size": 977
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-fb-cfb-fillrect_6.12.116-r1_x86_64.ipk",
+      "sha256": "15b7a1ba6bc9b96d554879ef88e9f0de49fdcc8c493a4596ca325bb3e1e525b8",
+      "size": 987
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-fb-cfb-imgblt_6.12.116-r1_x86_64.ipk",
+      "sha256": "94d763cee82f0c60296f14127f32abe005c608c477a7d710f23e91de27aaae2c",
+      "size": 979
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-fb-sys-fops_6.12.116-r1_x86_64.ipk",
+      "sha256": "b1bfea9a4c45cf62b421e923809b782ffac648805a1076de37097b8ba1b37582",
+      "size": 977
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-fb-sys-ram_6.12.116-r1_x86_64.ipk",
+      "sha256": "22a9068ba4fb8ff276b4aa2ea16b3e520ec2c39b7e9cca57143b4e3844345d29",
+      "size": 1003
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-fb_6.12.116-r1_x86_64.ipk",
+      "sha256": "f07eb02a013542862e0939f15b47535d81e322734133fbd26e9f9165bb075401",
+      "size": 974
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-forcedeth_6.12.116-r1_x86_64.ipk",
+      "sha256": "1637f587a5611a48c26f147fddafb4288a65c4a8e2f3d8a2a9d470e202d5b155",
+      "size": 28737
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-fs-btrfs_6.12.116-r1_x86_64.ipk",
+      "sha256": "024b3f140b3bc7e5d04e63dc79bb871b02094a1f2dca74396a53a8a2aca91961",
+      "size": 596652
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-fs-vfat_6.12.116-r1_x86_64.ipk",
+      "sha256": "9541849a8a6c4a3790d2a442280ce4b8842102d5f603e78f86e9c49af629b36e",
+      "size": 45209
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-hwmon-core_6.12.116-r1_x86_64.ipk",
+      "sha256": "b20f0e30fc3ad6befc84439fa04969a9d484918f6e42e7772850d0e601942773",
+      "size": 877
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-i2c-algo-bit_6.12.116-r1_x86_64.ipk",
+      "sha256": "4502f5289295a73ffed4c5fe603221ac8559fcd18962e4fc6f11c7f1f07fddae",
+      "size": 987
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-i2c-core_6.12.116-r1_x86_64.ipk",
+      "sha256": "a43e1d5716a218ed4b43de38710aa7f2a899ce460b52ab21343cb3d4e6edd426",
+      "size": 5784
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-igb_6.12.116-r1_x86_64.ipk",
+      "sha256": "24fb7eccb8a1a088e2a75c061048187adfc49cc34ba4349b850b8a81c1d1f4eb",
+      "size": 91410
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-igc_6.12.116-r1_x86_64.ipk",
+      "sha256": "152b0b2cdd951458093c284e0301785ae8e096a4ac19552e3df667c7e2fcf2c0",
+      "size": 61038
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-input-core_6.12.116-r1_x86_64.ipk",
+      "sha256": "fe5d1137a0a5e33a75a3d7a5c0833b6c4f0e7a3ad51116b61526bf69ce2790d5",
+      "size": 881
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ip6tables_6.12.116-r1_x86_64.ipk",
+      "sha256": "f499cae49127b34243e3f7e8dad1a1ce80d2703ac386fdde33a32b4b7f7ce709",
+      "size": 4195
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ipt-conntrack_6.12.116-r1_x86_64.ipk",
+      "sha256": "dfd44301a308284b44328662c6dca347aa109ba7e4e9c9a53185e798a5c4d1d1",
+      "size": 5960
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ipt-core_6.12.116-r1_x86_64.ipk",
+      "sha256": "20ef06bbb58e22e9839af60735b272ec3c4e41a22524efc568f7fa2c14b6264a",
+      "size": 13101
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ipt-extra_6.12.116-r1_x86_64.ipk",
+      "sha256": "00cffc82562ed375786d750e5bbe2417cb71970f8fb6466eca16c982109fb589",
+      "size": 6818
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ipt-nat6_6.12.116-r1_x86_64.ipk",
+      "sha256": "24df68ed29211f45a8b0783614442f8c8e6534b65f69ff686c899d2da1299784",
+      "size": 4194
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ipt-nat_6.12.116-r1_x86_64.ipk",
+      "sha256": "5a928e184bb5d5f3ae6ba167f8eeba0174458b3b5cf09fe3d2823e99c8cd1921",
+      "size": 5204
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ipt-physdev_6.12.116-r1_x86_64.ipk",
+      "sha256": "722ccee83da3814613e041886ab00a124d29d4e2240178108fdb0f8778386fe1",
+      "size": 2662
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ixgbe_6.12.116-r1_x86_64.ipk",
+      "sha256": "98f9aa2b567cd51ce782f4d4aecda3d0ba62f99b7e07043ac3ac175d500cba7e",
+      "size": 132270
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-crc-ccitt_6.12.116-r1_x86_64.ipk",
+      "sha256": "4d9c16c8def6a8e7e41b9fdb11a75e3c64339fe119dc30eb1b7de909b9b15526",
+      "size": 2296
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-crc32c_6.12.116-r1_x86_64.ipk",
+      "sha256": "287c2d46fd0c3c1089ee26ddaa2ba40b14dd133f2ef5661488ec34298daf8f57",
+      "size": 2075
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-lzo_6.12.116-r1_x86_64.ipk",
+      "sha256": "03ff206be42ca1f0c3d798fe38a34c2f4d13570f56b1de2494159a456eda0852",
+      "size": 7671
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-raid6_6.12.116-r1_x86_64.ipk",
+      "sha256": "06670fba3868b6e0ced74b2c7450b6da8bc63bc6b1e67dc031c9c9c780d77044",
+      "size": 83359
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-xor_6.12.116-r1_x86_64.ipk",
+      "sha256": "dcefeac36cae8c833c3db3677ae181e76b815a7bddb44c275c902ee22dcd770a",
+      "size": 4842
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-xxhash_6.12.116-r1_x86_64.ipk",
+      "sha256": "05e6e8c1680631dda9211b689a1a69080cc05ffe380a00feb156d5db6231006a",
+      "size": 4601
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-zlib-deflate_6.12.116-r1_x86_64.ipk",
+      "sha256": "cdca482e6551c6462caa3870ab7672b3f00e23cdd924cbc59acb393eb2ad8193",
+      "size": 963
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-zlib-inflate_6.12.116-r1_x86_64.ipk",
+      "sha256": "c69eef49459e24a77c552fa6327c6c5b12b24273d1ef3d5d45cceaf91bb20121",
+      "size": 963
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-lib-zstd_6.12.116-r1_x86_64.ipk",
+      "sha256": "f067d4e855a6e66f6c4e87dca87aababf4e40ecb7e7e63bc75486b872994aae3",
+      "size": 211803
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-libphy_6.12.116-r1_x86_64.ipk",
+      "sha256": "5fb7d29bf720f03ed256266f270cf00ec4115b8d7204103bade3cab9dd4afdba",
+      "size": 46835
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-mdio-devres_6.12.116-r1_x86_64.ipk",
+      "sha256": "90ba79f60cdaf3c1fdb00a301f88939e51de77e9cc1066ff707a8f7f1f65ed1f",
+      "size": 2178
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-mdio_6.12.116-r1_x86_64.ipk",
+      "sha256": "712e2912ccd1fb5ab7d60237cde65def10fa0b23bd7c83d41a3d0fb7e86e540c",
+      "size": 4212
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-mii_6.12.116-r1_x86_64.ipk",
+      "sha256": "cfa46df87d8c9476069b44d8986345c92f302d57b39a47ef9c1b4c7b27974a3c",
+      "size": 5145
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-conntrack6_6.12.116-r1_x86_64.ipk",
+      "sha256": "22a85990ed38fd9be5d73cfd8db4b10f23f5bf61e11d1f58d97b4c53a06e8e13",
+      "size": 878
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-conntrack_6.12.116-r1_x86_64.ipk",
+      "sha256": "3715198f9bb778ec9d16389819e32880e0fd91e910b31e2e19290a9634171b77",
+      "size": 48793
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-flow_6.12.116-r1_x86_64.ipk",
+      "sha256": "bf14cbca59ec2f7080ba378cac2a95638f644736d1566912c81918a290e5e9fc",
+      "size": 17513
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-ipt6_6.12.116-r1_x86_64.ipk",
+      "sha256": "0c11c3d7477d429a6d5b723ce2d02eb38de8875677c24542d0439c774a8a1091",
+      "size": 8990
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-ipt_6.12.116-r1_x86_64.ipk",
+      "sha256": "fda1ca15cb0cb6da3bc42c7f61b95e786420aa5fd85b1c73c2bd6acd4a5e08aa",
+      "size": 21271
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-ipvs_6.12.116-r1_x86_64.ipk",
+      "sha256": "1e4bbf8aa7ae44aa600fb2895277c88089a48a7488ef4abb4c03d1d0c73aaa78",
+      "size": 88765
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-log6_6.12.116-r1_x86_64.ipk",
+      "sha256": "865d96ec20223ae83651e27f21667ab23554d2aa2d1f094ef6d1cbee7d53bfb9",
+      "size": 865
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-log_6.12.116-r1_x86_64.ipk",
+      "sha256": "bee1f797fff1eeefc669eac8845ac083709d3050d31a770d0ce27a8d459dfdb3",
+      "size": 7993
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-nat6_6.12.116-r1_x86_64.ipk",
+      "sha256": "7416df418be7e4f9aebc6b61376439637ea3c0cf862ec6637638f85894de4905",
+      "size": 874
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-nat_6.12.116-r1_x86_64.ipk",
+      "sha256": "c5e3393ffd7ae9d39c0425824bf275dd0f8cd39c244f0a644361c2d459cc75e9",
+      "size": 14582
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-reject6_6.12.116-r1_x86_64.ipk",
+      "sha256": "8418452adaad03d8bf9fad0600018ef7b097c26815248530e54790b852686eb9",
+      "size": 4841
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nf-reject_6.12.116-r1_x86_64.ipk",
+      "sha256": "00339043f6ac49c1f4fbc1f63ae12f0b97c91931b6cf47f2eb7d463b1f442202",
+      "size": 4627
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nfnetlink_6.12.116-r1_x86_64.ipk",
+      "sha256": "3462f4330dfe609d1afd2dc9155e16c895aa7bc669ffb670c7413b88311e70dd",
+      "size": 6181
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nft-compat_6.12.116-r1_x86_64.ipk",
+      "sha256": "3911e38bbe9866a4524b591dafe6c8074520689e4a248d1fe3495e00ce872c26",
+      "size": 5800
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nft-core_6.12.116-r1_x86_64.ipk",
+      "sha256": "9d3cfa3d041dbfa4a689517aa109d54ca40c8a420d3c6ba483d8d9a0d1b87300",
+      "size": 131821
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nft-fib_6.12.116-r1_x86_64.ipk",
+      "sha256": "7b8475e8843b56c5c9b4e1f292b9ebf23f6495e74e0d3705464374d662e6bfb7",
+      "size": 7144
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nft-nat_6.12.116-r1_x86_64.ipk",
+      "sha256": "1350572f291d571e447eae531c3aa10a057a781af8ff314e8fe088ed62c304fb",
+      "size": 5268
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nft-offload_6.12.116-r1_x86_64.ipk",
+      "sha256": "1cf0245f64b667e7cd47e629aec298377d10d97b48d9f2bf7b1300deefd587fc",
+      "size": 5567
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nls-base_6.12.116-r1_x86_64.ipk",
+      "sha256": "2eee9ada829efb26b4ad7a434fcf36843abc261ef035203e6c2aa5a385ff4d98",
+      "size": 880
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nls-cp437_6.12.116-r1_x86_64.ipk",
+      "sha256": "43e2a64daa1b07a817db7eaba89f2fee191dee27e5d8de1c3d636643831ac2ee",
+      "size": 3074
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nls-iso8859-1_6.12.116-r1_x86_64.ipk",
+      "sha256": "67f754b04bd364ec354d9d2fbd5c1b5c2066e5699aca4ecb2b012c3765f7f2c9",
+      "size": 2752
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-nls-utf8_6.12.116-r1_x86_64.ipk",
+      "sha256": "302ee460b4bfe8a3f0786cbd8e488f51a0ff23c6b819329c6d4d0f22c734744e",
+      "size": 1981
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-pcs-xpcs_6.12.116-r1_x86_64.ipk",
+      "sha256": "a4225d7b4df2ace6ca05522ecdb7f683b3950fcad68694ed5158c08e3529ecd0",
+      "size": 10852
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-phy-realtek_6.12.116-r1_x86_64.ipk",
+      "sha256": "8d83c535559ebf40e5ededd6aa061582682070a74db836dafe7dfebe14eb7d89",
+      "size": 10179
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-phylink_6.12.116-r1_x86_64.ipk",
+      "sha256": "a1a9ecb6e37ac780ffefb690f9e23690dd57b95a868cb2918eb4585f987d7365",
+      "size": 20039
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ppp_6.12.116-r1_x86_64.ipk",
+      "sha256": "2a8401dc295ba03c81b8eec72e6d95b450ddb7b23f250230f260f35a58a228a8",
+      "size": 25119
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-pppoe_6.12.116-r1_x86_64.ipk",
+      "sha256": "3547475fd9fbe44e8beb22837f3f81e69c670df95375fbc3d3a90eb9b3d3ab90",
+      "size": 8471
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-pppox_6.12.116-r1_x86_64.ipk",
+      "sha256": "908987a4bdd55d013504726ae3d9dbc386f7a57dee862863d8486ac2f14f26b7",
+      "size": 2814
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-pps_6.12.116-r1_x86_64.ipk",
+      "sha256": "a7ec75272332385618fc19f4d68d3a004798ede024a3fd0c5a007143c55d85a1",
+      "size": 1073
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-ptp_6.12.116-r1_x86_64.ipk",
+      "sha256": "2b3caf78bcff0b1f305f027e5b69203cb16c47d8f5322aa74a7f4c32224a42e9",
+      "size": 1062
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-r8169_6.12.116-r1_x86_64.ipk",
+      "sha256": "9f368cfef2c51ee6d7856da84954128387c9f43f38b0fc799e11646607ae6433",
+      "size": 39000
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-slhc_6.12.116-r1_x86_64.ipk",
+      "sha256": "39757721250b19c0767ab2dfa9ad7d1507113ec1c44b33173f9b17f94e8255dc",
+      "size": 4671
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-stmmac-core_6.12.116-r1_x86_64.ipk",
+      "sha256": "29370a503f4dbfaa5a7c4668a1c0d5842c2c4eb509fe3e488976e3cf565b1118",
+      "size": 99824
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-tg3_6.12.116-r1_x86_64.ipk",
+      "sha256": "0fed88eaf15e5ecc5676fb6368c366bd47c914726eef010e3bc1a629186db723",
+      "size": 85606
+    },
+    {
+      "path": "bin/targets/x86/64/packages/kmod-veth_6.12.116-r1_x86_64.ipk",
+      "sha256": "0a9f06d628ffd931aa7c6d1690e4208adb152e691e2494190026e6e62b3d0d66",
+      "size": 12752
+    },
+    {
+      "path": "bin/targets/x86/64/packages/libc_1.2.5-r5_x86_64.ipk",
+      "sha256": "805fb0735fc9ad85d1fa28079573322f68b4a4a59ee23986fc0f796df11dce8a",
+      "size": 287700
+    },
+    {
+      "path": "bin/targets/x86/64/packages/libgcc1_14.3.0-r5_x86_64.ipk",
+      "sha256": "2b5b10691029eb530c87be89cec0f61c7ea3947a3404c0e56fa42c8b5e074f6a",
+      "size": 53788
+    },
+    {
+      "path": "bin/targets/x86/64/packages/libiptext-nft0_1.8.10-r3_x86_64.ipk",
+      "sha256": "fa67b4f2a083cde8782ff2033a1c4c9e539731b588aad80699cc43d2c868c622",
+      "size": 3552
+    },
+    {
+      "path": "bin/targets/x86/64/packages/libiptext0_1.8.10-r3_x86_64.ipk",
+      "sha256": "7e94cae4bc0294d58ab03f737145b14801d3ea34608454c256bbecf9c93c64e1",
+      "size": 36192
+    },
+    {
+      "path": "bin/targets/x86/64/packages/libiptext6-0_1.8.10-r3_x86_64.ipk",
+      "sha256": "d64f765ef75210053e62c57e5ab4ab75ba1220fc51ceaadb5dfa1854400fde61",
+      "size": 4756
+    },
+    {
+      "path": "bin/targets/x86/64/packages/libpthread_1.2.5-r5_x86_64.ipk",
+      "sha256": "4569914ae28d02f1bff0adf3ebd7b488120e3f0331a88904cf1a56f6528433cb",
+      "size": 912
+    },
+    {
+      "path": "bin/targets/x86/64/packages/librt_1.2.5-r5_x86_64.ipk",
+      "sha256": "4943e0b752d165658c0fcb37c1dd04b3857376c4675e2c622a424eb4484e35af",
+      "size": 923
+    },
+    {
+      "path": "bin/targets/x86/64/packages/libxtables12_1.8.10-r3_x86_64.ipk",
+      "sha256": "9c8eb3cf0fa51435d9b7529dce28455f8dc5b2ff09f2445c01317dd61b776918",
+      "size": 22850
+    },
+    {
+      "path": "bin/targets/x86/64/packages/xtables-nft_1.8.10-r3_x86_64.ipk",
+      "sha256": "02309a0fae0940898ec2785e3313f1ecbaac618be83a783e15d37066dd28674f",
+      "size": 78210
+    }
+  ],
+  "go_binary": "staging_dir/hostpkg/lib/go-1.26/bin/go",
+  "go_version": "go version go1.26.11 linux/amd64",
+  "ipks": {
+    "containerd": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "containerd",
+        "Version": "2.2.5-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/packages/containerd_2.2.5-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/packages/containerd_2.2.5-r1_x86_64.ipk",
+      "sha256": "ef106d70bcfd59aa89c43f86d269d8b497254e7542395d2a28e7b324972e6338",
+      "size": 34804205
+    },
+    "docker": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "docker",
+        "Version": "29.6.1-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/packages/docker_29.6.1-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/packages/docker_29.6.1-r1_x86_64.ipk",
+      "sha256": "8c6cc7e0d239a0147b1f2a16b0e9aacbdb4b4bcf794a59ef080717a1085d82f1",
+      "size": 9903289
+    },
+    "docker-compose": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "docker-compose",
+        "Version": "5.1.4-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/packages/docker-compose_5.1.4-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/packages/docker-compose_5.1.4-r1_x86_64.ipk",
+      "sha256": "d6ec4206ee7b23e9adc0a7975281b9333d35d63e7ef6c94e7a453aab73d515e4",
+      "size": 10706078
+    },
+    "dockerd": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "dockerd",
+        "Version": "29.6.1-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/packages/dockerd_29.6.1-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/packages/dockerd_29.6.1-r1_x86_64.ipk",
+      "sha256": "6d6eae48328c765944c20021679acc6bab1f7abe3e1380a0d7bb6ac6e4cdb3d1",
+      "size": 29335090
+    },
+    "kernel": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "kernel",
+        "Version": "6.12.116~7df1a98339a37dfe41af7485d026e004-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/targets/x86/64/packages/kernel_6.12.116~7df1a98339a37dfe41af7485d026e004-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/target/kernel_6.12.116~7df1a98339a37dfe41af7485d026e004-r1_x86_64.ipk",
+      "sha256": "88490a59d5be9be9bee9f6582efe8bf20fd6df4e52933abd324763cda96f1caa",
+      "size": 5253
+    },
+    "kmod-ipt-nat": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "kmod-ipt-nat",
+        "Version": "6.12.116-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/targets/x86/64/packages/kmod-ipt-nat_6.12.116-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/target/kmod-ipt-nat_6.12.116-r1_x86_64.ipk",
+      "sha256": "5a928e184bb5d5f3ae6ba167f8eeba0174458b3b5cf09fe3d2823e99c8cd1921",
+      "size": 5204
+    },
+    "kmod-ipt-nat6": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "kmod-ipt-nat6",
+        "Version": "6.12.116-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/targets/x86/64/packages/kmod-ipt-nat6_6.12.116-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/target/kmod-ipt-nat6_6.12.116-r1_x86_64.ipk",
+      "sha256": "24df68ed29211f45a8b0783614442f8c8e6534b65f69ff686c899d2da1299784",
+      "size": 4194
+    },
+    "kmod-ipt-physdev": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "kmod-ipt-physdev",
+        "Version": "6.12.116-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/targets/x86/64/packages/kmod-ipt-physdev_6.12.116-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/target/kmod-ipt-physdev_6.12.116-r1_x86_64.ipk",
+      "sha256": "722ccee83da3814613e041886ab00a124d29d4e2240178108fdb0f8778386fe1",
+      "size": 2662
+    },
+    "kmod-nf-ipvs": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "kmod-nf-ipvs",
+        "Version": "6.12.116-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/targets/x86/64/packages/kmod-nf-ipvs_6.12.116-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/target/kmod-nf-ipvs_6.12.116-r1_x86_64.ipk",
+      "sha256": "1e4bbf8aa7ae44aa600fb2895277c88089a48a7488ef4abb4c03d1d0c73aaa78",
+      "size": 88765
+    },
+    "kmod-veth": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "kmod-veth",
+        "Version": "6.12.116-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/targets/x86/64/packages/kmod-veth_6.12.116-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/target/kmod-veth_6.12.116-r1_x86_64.ipk",
+      "sha256": "0a9f06d628ffd931aa7c6d1690e4208adb152e691e2494190026e6e62b3d0d66",
+      "size": 12752
+    },
+    "luci-app-dockerman": {
+      "control": {
+        "Architecture": "all",
+        "Package": "luci-app-dockerman",
+        "Version": "26.134.50559~d5129a1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/luci/luci-app-dockerman_26.134.50559~d5129a1_all.ipk",
+      "retained_path": "provider-candidates/luci/luci-app-dockerman_26.134.50559~d5129a1_all.ipk",
+      "sha256": "7b17766175a32ad8ab533a7b01089a7f362d3d1dd2988fe1ce15aaa66480dcd3",
+      "size": 77312
+    },
+    "luci-base": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "luci-base",
+        "Version": "26.317.52279~1c75ea4"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/luci/luci-base_26.317.52279~1c75ea4_x86_64.ipk",
+      "retained_path": "provider-candidates/luci/luci-base_26.317.52279~1c75ea4_x86_64.ipk",
+      "sha256": "9fc0c47ffbb4621847dd177f6cca4d531f2cfc55b7127a25ef22b1fb895d12e5",
+      "size": 245783
+    },
+    "runc": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "runc",
+        "Version": "1.3.6-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/packages/runc_1.3.6-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/packages/runc_1.3.6-r1_x86_64.ipk",
+      "sha256": "baafbf4865aa5030814cd7ee0744cb7ca90a2c4b9b1d27f158c998b29a5397a0",
+      "size": 4510989
+    },
+    "tini": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "tini",
+        "Version": "0.19.0-r4"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/packages/tini_0.19.0-r4_x86_64.ipk",
+      "retained_path": "provider-candidates/packages/tini_0.19.0-r4_x86_64.ipk",
+      "sha256": "007e701f49b11fee6771f299d89c34d71fe8b68d50fec4c58ee9b395f53e8e3f",
+      "size": 33735
+    },
+    "ttyd": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "ttyd",
+        "Version": "1.7.7-r1"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/packages/ttyd_1.7.7-r1_x86_64.ipk",
+      "retained_path": "provider-candidates/packages/ttyd_1.7.7-r1_x86_64.ipk",
+      "sha256": "13859af8890c87148ede62d4dbfcd04204ea0dfe34bc4d34c5afe97256b47c58",
+      "size": 408777
+    },
+    "ucode-mod-socket": {
+      "control": {
+        "Architecture": "x86_64",
+        "Package": "ucode-mod-socket",
+        "Version": "2026.07.09~b885dd0f-r3"
+      },
+      "data_members": "not parsed for dependency IPKs; package main archive is validated separately",
+      "mode": "0644",
+      "path": "bin/packages/x86_64/base/ucode-mod-socket_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "retained_path": "provider-candidates/base/ucode-mod-socket_2026.07.09~b885dd0f-r3_x86_64.ipk",
+      "sha256": "cb23b7069d8684cb33d773ea89a9d99361fc84405860016291765134ed67eb76",
+      "size": 25612
+    }
+  },
+  "provider_candidate_manifest": "provider-candidates.json",
+  "provider_candidate_manifest_sha256": "b92220c16d555b57eab18d81fd60910e54ae95f0c6f705f7dc28620097190487",
+  "schema": "issue173-dockerman-provider-inventory-v1"
+}

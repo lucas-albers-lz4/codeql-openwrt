@@ -1,0 +1,160 @@
+{
+  "members": [
+    {
+      "mode": "0644",
+      "path": "CONTROL/control",
+      "sha256": "b99631496caf826718cdd3d593af3a7bdeaf52bbaaa686ab66d628b9eb7ef358",
+      "size": 509
+    },
+    {
+      "mode": "0755",
+      "path": "CONTROL/postinst",
+      "sha256": "61511dd6dcc9e5ae9038f7ea8b0ecdf3bdd17612af012c3d9536e9aca03691df",
+      "size": 160
+    },
+    {
+      "mode": "0755",
+      "path": "CONTROL/postinst-pkg",
+      "sha256": "ab1fbeaaef80ce81cc4a8e403d96ff0e564088417d52e735c7c4a1adb4cc7a95",
+      "size": 138
+    },
+    {
+      "mode": "0755",
+      "path": "CONTROL/prerm",
+      "sha256": "41e62438f65308026184be1d4d931ae9100923e5ae97b146fb678e5b6cd0fc6c",
+      "size": 117
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/menu.d/luci-app-dockerman.json",
+      "sha256": "bc004ead94dd843fdac9e5041cf6434c8eab7b30d28edcb05e6386ffe20c3542",
+      "size": 7877
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/acl.d/luci-app-dockerman.json",
+      "sha256": "929f35852db41e213c62f89ea11d97cae09e0d54119f6c9240da87b887a18957",
+      "size": 549
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/ucode/docker_rpc.uc",
+      "sha256": "f9c8482fb58d6d56d9b749f9206513b24c169fd8cb59e0619a29b7f2a2b55381",
+      "size": 20186
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/ucode/luci/controller/docker.uc",
+      "sha256": "efe000bce54b6c946a20a7ee0950075bdd555ec92d3158dffc150ec0b4a53981",
+      "size": 11638
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/ucode/luci/docker_socket.uc",
+      "sha256": "21ec950f71e6448c72f2b652695d0742804ab942da55c18009ca9be49a382989",
+      "size": 2408
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/dockerman/api.js",
+      "sha256": "fef49f569d3cf8ef1d255f81b74ff880c2ec18ff435047f7e335944ff59590e6",
+      "size": 21784
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/dockerman/common.js",
+      "sha256": "4ed1f9928c7da1fdb9c487bc7716870bcc36f759c1f85072cd08a0c29cf19a34",
+      "size": 41983
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/dockerman/containers.svg",
+      "sha256": "9934d0f5020124eacaa27d2648cd13e36c65d113bf9d731fca6669796ccbfb37",
+      "size": 1046
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/dockerman/images.svg",
+      "sha256": "5de0af7cff0bd0ca9f82796337c1069daa6a9206dd6a793ea82ba57b12e13ddf",
+      "size": 3067
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/dockerman/networks.svg",
+      "sha256": "7ebff80c81b076139a8f940c5ae27a3aa1562eb801743a124e93c6699763276c",
+      "size": 1270
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/dockerman/volumes.svg",
+      "sha256": "79efec19f4288cfd2ea6011294302c447eac3ca9abb997d7c8a11ecd359b3606",
+      "size": 6547
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/configuration.js",
+      "sha256": "84a8ac3e1cdbf78d1075df6ff5032d67c1b888d9b6b5b6e168a683c89fef03e5",
+      "size": 4576
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/container.js",
+      "sha256": "1420e19161832b73a30e74c276b043fa55bdfc201e97129139f18ee788e61fd7",
+      "size": 66773
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/container_new.js",
+      "sha256": "b3bcaf372a5c7977c779b0fc5796cf142a93e546b5d0ed5a42107bc493067075",
+      "size": 36491
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/containers.js",
+      "sha256": "daf8e8d1d372204a1de8f47aca41233a18f5d393fe17760482f3e6163530abdf",
+      "size": 12521
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/events.js",
+      "sha256": "e319626b57c6b01e7159b0a3eb1125d308b718159ebaafaaff947ad04de3243e",
+      "size": 10329
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/images.js",
+      "sha256": "fbf1f5e42cf9ad1266588ac5ec47b98150be87dec278db067f5e7f8e6fa77ba2",
+      "size": 22227
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/network.js",
+      "sha256": "abce032e776d60d9aaf541f2526efd19f043c13e117996f4f1372a031ce56a30",
+      "size": 5258
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/network_new.js",
+      "sha256": "44e28716200165bcdb730b6d9231af77ea1be5131370669761e031d6cad8c214",
+      "size": 7075
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/networks.js",
+      "sha256": "2945fb6714964a61cb5f0a9665f2b98e09a1822f7d3a979d79e0da96ba96b64c",
+      "size": 6889
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/overview.js",
+      "sha256": "2838071041f62623d6bb993c48b509daede6176781fbb3b58e57d10f686ccee8",
+      "size": 9381
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/dockerman/volumes.js",
+      "sha256": "36b65dd6748b940b27d9fc18204264c04d2ec3de6345bc24b952f6cbafae7af5",
+      "size": 9280
+    }
+  ]
+}

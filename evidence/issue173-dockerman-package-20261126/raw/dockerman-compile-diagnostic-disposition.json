@@ -1,0 +1,17 @@
+{
+  "config_sha256": "4678b8d328391f97ba85b19020cbdcc077cccc528dc79553b99625627f25ae17",
+  "disposition": "candidate only; kernel IPK validation and package-recipe dependency comparison remain required",
+  "kernel_config_sha256": "3723a6cb9153dc0683defc4fc724b92ddb69e534b66acf1afeb4dc7f39ec4492",
+  "kernel_vermagic_sha256": "246f14a2f7273b4720dc6162c176e80adbff30eeaeaa4e2e3de0abb775ef5140",
+  "phase": "dockerman-compile",
+  "prior_kernel_warning_receipt": "kernel-package-compile-diagnostic-disposition.json",
+  "prior_kernel_warning_receipt_sha256": "8824d84f4fa1a9db74fc415c99eb0afb7872d56eac93ec2ea339e7001d1cf491",
+  "raw_empty_package_lines": [
+    "WARNING: kmod-drm-exec is not available in the kernel config - generating empty package",
+    "WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package"
+  ],
+  "repeated_kernel_warning_candidate": true,
+  "source_scoped_exception_candidate": false,
+  "validated_kernel_package_inventory": "kernel-package-inventory.json",
+  "validated_kernel_package_inventory_sha256": "4eab1dc77cd69293432a921530bb5cbde4295b6935af02e7e2c0dcc2a2729a46"
+}

@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/runner/work/_temp/issue173-dockerman-build/openwrt/staging_dir/hostpkg/lib/go-1.26/bin/go",
+    "version"
+  ],
+  "cwd": "/home/runner/work/_temp/issue173-dockerman-build/openwrt",
+  "elapsed_seconds": 0.007758918000035919,
+  "env": {
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "HOME": "/home/runner/work/_temp/issue173-dockerman-build/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TMPDIR": "/home/runner/work/_temp/issue173-dockerman-build/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "failure": null,
+  "finished_utc": "2026-11-26T12:22:53.684688+00:00",
+  "label": "go-version",
+  "peak_rss_bytes": null,
+  "rss_note": "not measured",
+  "started_utc": "2026-11-26T12:22:53.676922+00:00",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "3008ffc50874cac169bf0446997798346d244c5c1ff94af771a02191f465a4b1"
+}

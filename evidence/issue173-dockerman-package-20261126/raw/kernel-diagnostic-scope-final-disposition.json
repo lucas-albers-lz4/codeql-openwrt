@@ -1,0 +1,27 @@
+{
+  "config_sha256": "4678b8d328391f97ba85b19020cbdcc077cccc528dc79553b99625627f25ae17",
+  "direct_app_dependencies": [
+    "docker",
+    "docker-compose",
+    "dockerd",
+    "luci-base",
+    "ttyd",
+    "ucode-mod-socket"
+  ],
+  "disposition": "both helper warnings were retained; pinned kernel/IPK validation passed and selected Dockerman recipe declares no direct DRM dependency; this is not complete kernel-module coverage",
+  "dockerman_comparison": "dockerman-package-comparison.json",
+  "dockerman_comparison_sha256": "e081ff7c47e1e04229987919c75d67b8cb12772f5ea481755135dc6ede38108c",
+  "dockerman_repeated_warning_receipt": "dockerman-compile-diagnostic-disposition.json",
+  "dockerman_repeated_warning_receipt_sha256": "e9b152932b828dfc3d1240056d88e0e65ea12a6205273dd7b46116e141da5916",
+  "kernel_config_sha256": "3723a6cb9153dc0683defc4fc724b92ddb69e534b66acf1afeb4dc7f39ec4492",
+  "kernel_package_inventory": "kernel-package-inventory.json",
+  "kernel_package_inventory_sha256": "4eab1dc77cd69293432a921530bb5cbde4295b6935af02e7e2c0dcc2a2729a46",
+  "kernel_vermagic_sha256": "246f14a2f7273b4720dc6162c176e80adbff30eeaeaa4e2e3de0abb775ef5140",
+  "kernel_version": "6.12.116~7df1a98339a37dfe41af7485d026e004-r1",
+  "raw_warning_receipt": "kernel-package-compile-diagnostic-disposition.json",
+  "raw_warning_receipt_sha256": "8824d84f4fa1a9db74fc415c99eb0afb7872d56eac93ec2ea339e7001d1cf491",
+  "warning_lines": [
+    "WARNING: kmod-drm-exec is not available in the kernel config - generating empty package",
+    "WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package"
+  ]
+}

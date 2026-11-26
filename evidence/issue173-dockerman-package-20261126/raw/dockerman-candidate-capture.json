@@ -1,0 +1,18 @@
+{
+  "dockerman_ipk_candidates": [
+    {
+      "mode": "0644",
+      "path": "bin/packages/x86_64/luci/luci-app-dockerman_26.134.50559~d5129a1_all.ipk",
+      "retained_path": "provider-candidates/luci/luci-app-dockerman_26.134.50559~d5129a1_all.ipk",
+      "sha256": "7b17766175a32ad8ab533a7b01089a7f362d3d1dd2988fe1ce15aaa66480dcd3",
+      "size": 77312
+    }
+  ],
+  "errors": {},
+  "ipk_copy": "luci-app-dockerman.ipk",
+  "prepared_copy": "dockerman-prepared",
+  "provider_manifest": "provider-candidates.json",
+  "provider_manifest_sha256": "b92220c16d555b57eab18d81fd60910e54ae95f0c6f705f7dc28620097190487",
+  "schema": "issue173-dockerman-candidate-capture-v1",
+  "stage_copy": "dockerman-stage"
+}
