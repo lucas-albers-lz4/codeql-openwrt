@@ -133,14 +133,15 @@ def source_route(source_path: str, installed_path: str, data: bytes) -> dict[str
 
 def build(policy: dict, receipt: dict, inventory: dict, checkout: Path,
           *, policy_sha256: str | None = None,
-          admitted_additions: tuple[str, ...] = ()) -> dict:
+          admitted_additions: tuple[str, ...] = (),
+          accepted_identity_statuses: tuple[str, ...] = ('identities_resolved_only',)) -> dict:
     if policy_sha256 is None:
         policy_sha256 = POLICY_SHA256
     repo = receipt.get("repository")
     need(repo in ("openwrt", "luci"), "unsupported event repository")
     head = receipt.get("source", {})
     base = receipt.get("base", {})
-    need(receipt.get("status") == "identities_resolved_only" and
+    need(receipt.get("status") in accepted_identity_statuses and
          isinstance(head, dict) and isinstance(base, dict), "invalid event identity receipt")
     need(inventory.get("status") == "inventory_ready" and inventory.get("fail_closed") is False,
          "candidate inventory requires review")

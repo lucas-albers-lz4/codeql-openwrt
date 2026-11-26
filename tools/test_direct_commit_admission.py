@@ -80,6 +80,19 @@ class DirectCommitAdmissionTests(unittest.TestCase):
         self.assertNotIn('sarif', got)
         self.assertNotIn('gap_sha256', got)
 
+    def test_historical_identity_has_no_synthetic_checkpoint_digests(self):
+        identity = copy.deepcopy(self.identity)
+        identity['schema'] = 'historical-direct-commit-source-identity-v1'
+        identity['status'] = 'historical_objects_resolved_only'
+        for key in ('gap_sha256', 'previous_checkpoint_sha256',
+                    'current_checkpoint_sha256'):
+            del identity[key]
+        self.assertEqual(self.verify(identity)['status'],
+                         'source_policy_input_verified_only')
+        identity['gap_sha256'] = 'a' * 64
+        with self.assertRaisesRegex(poll.PollError, 'receipt differs'):
+            self.verify(identity)
+
     def test_source_receipt_and_oracle_tamper_fail(self):
         with self.assertRaisesRegex(poll.PollError, 'not an object'):
             self.verify([])

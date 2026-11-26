@@ -33,3 +33,13 @@ manifest validation and unit tests alone do not prove one occurred. The
 historical identity probe did not replay live linked gap/checkpoint bytes.
 Actual installed IPK bytes, a clean/no-alert control and live Gate 8 remain
 separate evidence requirements.
+
+The manual `direct-commit-openvpn-history.yml` workflow uses clean pinned
+LuCI checkouts and `direct_commit_historical_identity.py` to resolve the
+introduction, its first parent and the fixed commit against canonical Git
+objects. Its `historical-direct-commit-source-identity-v1` receipt has no
+gap or checkpoint digests and makes no live event-custody claim. The workflow
+runs R3 and the 112-path direct corpus in one Linux job, then retains the
+input receipts, release handoff and raw scan outputs. A successful run
+establishes a historical source-first known positive. The direct corpus's
+fixed/no-alert control needs its own scan and assertion contract.

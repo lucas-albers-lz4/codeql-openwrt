@@ -40,8 +40,10 @@ def build_manifest(policy_raw, identity_raw, admission_raw, inventory_raw,
     source = identity.get('source')
     base = identity.get('base')
     poll.check(isinstance(source, dict) and isinstance(base, dict) and
-               identity.get('schema') == 'default-branch-event-identity-v1' and
-               identity.get('status') == 'identities_resolved_only' and
+               ((identity.get('schema') == 'default-branch-event-identity-v1' and
+                 identity.get('status') == 'identities_resolved_only') or
+                (identity.get('schema') == 'historical-direct-commit-source-identity-v1' and
+                 identity.get('status') == 'historical_objects_resolved_only')) and
                identity.get('repository') == 'openwrt/luci' and
                identity.get('ref') == 'master', 'direct-commit identity differs')
     poll.check(source.get('commit') == policy['pins']['luci'] and
@@ -58,7 +60,8 @@ def build_manifest(policy_raw, identity_raw, admission_raw, inventory_raw,
     derived = dict(identity, repository='luci')
     manifest = corpus.build(policy, derived, inventory, source_checkout,
                             policy_sha256=POLICY_SHA256,
-                            admitted_additions=(path,))
+                            admitted_additions=(path,),
+                            accepted_identity_statuses=(identity['status'],))
     manifest['schema'] = 'mvp-direct-commit-corpus-v1'
     manifest['event'].pop('pr_number', None)
     manifest['event'].update(kind='direct_commit', source_role='historical_direct_commit',
@@ -78,7 +81,7 @@ def build_manifest(policy_raw, identity_raw, admission_raw, inventory_raw,
         'Historical policy LuCI pin equals the introduction head, so the generic selected-owner recipe-drift diff is empty; the exact OpenVPN Makefile and luci.mk blobs are checked by the admission verifier.',
         'Other repositories remain at frozen policy pins and have not been refreshed to the historical LuCI commit.',
         'Selected source hashes and routes were checked against Git blobs before extraction; package installation and built IPK bytes remain unverified.',
-        'Identity gap/checkpoint bytes were not replayed by this historical manifest builder; the local probe used a synthetic interval.',
+        'This historical manifest builder does not replay gap/checkpoint bytes; the input identity schema records whether a live interval was supplied or only historical source objects were resolved.',
         'The admission check binds historical source and recipe objects, not actual installed IPK bytes or a no-alert control.',
         'This is a source-first input only; no released CodeQL scan, SARIF or live incoming event was produced.',
     ]
