@@ -231,7 +231,18 @@ jobs:
           git -C "$source_root" fetch --no-tags --depth=1 origin "refs/pull/$PR_NUMBER/head"
           git -C "$source_root" checkout -q --detach FETCH_HEAD
           [[ "$(git -C "$source_root" rev-parse HEAD)" == "$SOURCE_SHA" ]]
-          git -C "$control_root" fetch --no-tags --depth=1 origin "$CONTROL_SHA"
+          # GitHub's shallow fetch can fail after updating .git/shallow. Retry only
+          # this exact pinned object; downstream commit/tree checks still apply.
+          for attempt in 1 2 3; do
+            if git -C "$control_root" fetch --no-tags --depth=1 origin "$CONTROL_SHA"; then
+              break
+            fi
+            if [[ "$attempt" -eq 3 ]]; then
+              echo 'canonical control fetch failed after three attempts' >&2
+              exit 1
+            fi
+            sleep 2
+          done
           git -C "$control_root" checkout -q --detach "$CONTROL_SHA"
           gh api -H 'Accept: application/vnd.github+json' \
             "repos/openwrt/$UPSTREAM/pulls/$PR_NUMBER" > "$input_root/scan-pull-api-response.json"
