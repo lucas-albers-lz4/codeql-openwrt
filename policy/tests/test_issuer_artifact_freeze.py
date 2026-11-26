@@ -92,13 +92,16 @@ class SourceRecheckTests(unittest.TestCase):
         self.run.mkdir()
         self.source = self.root / 'source'
         self.control = self.root / 'control'
-        for checkout in (self.source, self.control):
+        for checkout, timestamp in ((self.source, '2024-01-01T00:00:00+0000'),
+                                    (self.control, '2024-01-02T00:00:00+0000')):
             subprocess.run(['git', 'init', '-q', str(checkout)], check=True)
             subprocess.run(['git', '-C', str(checkout), 'config', 'user.email', 'test@example.invalid'], check=True)
             subprocess.run(['git', '-C', str(checkout), 'config', 'user.name', 'Test'], check=True)
             (checkout / 'file.uc').write_text('source\n')
             subprocess.run(['git', '-C', str(checkout), 'add', 'file.uc'], check=True)
-            subprocess.run(['git', '-C', str(checkout), 'commit', '-qm', 'source'], check=True)
+            git_env = {**os.environ, 'GIT_AUTHOR_DATE': timestamp, 'GIT_COMMITTER_DATE': timestamp}
+            subprocess.run(['git', '-C', str(checkout), 'commit', '-qm', 'source'],
+                           check=True, env=git_env)
         self.identity = {checkout: {'commit': freeze._git(checkout, 'rev-parse', 'HEAD'),
                                     'tree': freeze._git(checkout, 'rev-parse', 'HEAD^{tree}')}
                          for checkout in (self.source, self.control)}
@@ -109,6 +112,8 @@ class SourceRecheckTests(unittest.TestCase):
                     'source_sha256': hashlib.sha256(b'source\n').hexdigest(),
                     'source_commit': self.identity[self.source]['commit'],
                     'git_blob': freeze._git(self.source, 'rev-parse', 'HEAD:file.uc')}
+        self.control_row = {**self.row, 'source_commit': self.identity[self.control]['commit'],
+                            'git_blob': freeze._git(self.control, 'rev-parse', 'HEAD:file.uc')}
         for role in ('event-corpus', 'control-corpus'):
             stage = self.run / role / 'stage'
             stage.mkdir(parents=True)
@@ -122,11 +127,15 @@ class SourceRecheckTests(unittest.TestCase):
         with patch.object(freeze, 'canonical_repository'), patch.object(
                 freeze, 'validate_event_manifest', side_effect=[
                     {'selected': [self.row], 'excluded': [], 'pins': {'openwrt': self.identity[self.source]['commit']}},
-                    {'selected': [self.row], 'excluded': [], 'pins': {'openwrt': self.identity[self.control]['commit']}}]):
+                    {'selected': [self.control_row], 'excluded': [], 'pins': {'openwrt': self.identity[self.control]['commit']}}]):
             return freeze._source_recheck(self.source, self.control, self.inputs, self.run)
 
     def test_clean_git_and_source_bytes_pass(self):
-        self.assertEqual(self.check()['event']['checkout'], self.identity[self.source])
+        self.assertNotEqual(self.identity[self.source]['commit'], self.identity[self.control]['commit'])
+        self.assertEqual(self.identity[self.source]['tree'], self.identity[self.control]['tree'])
+        result = self.check()
+        self.assertEqual(result['event']['checkout'], self.identity[self.source])
+        self.assertEqual(result['control']['checkout'], self.identity[self.control])
 
     def test_dirty_checkout_rejected(self):
         (self.source / 'file.uc').write_text('drift\n')
