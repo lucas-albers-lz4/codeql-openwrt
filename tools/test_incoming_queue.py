@@ -1,4 +1,5 @@
 import json
+import base64
 import hashlib
 import hmac
 import tempfile
@@ -7,8 +8,9 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from threading import Barrier
 import unittest
+from unittest.mock import patch
 from pathlib import Path
-from incoming_poll import PollError
+from incoming_poll import PollError, replay_observed
 from incoming_queue import open_queue, transition, apply_attested, encoded, identity
 
 
@@ -19,6 +21,30 @@ def event(repo, number, sha):
 def snapshot(path, events):
     path.write_text(json.dumps({'schema':'incoming-poll-v3','status':'complete','observed_at':'2026-01-01T00:00:00Z','capacity':0,'previous_sha256':None,'genesis':True,'requests':[],'http_errors':[],'decisions':[{'event':e,'status':'pending','decision':'backlog','reason':'new'} for e in events],'limitations':[]}))
 
+
+def retained_requests():
+    result = []
+    for repo in ('openwrt/openwrt', 'openwrt/luci'):
+        pulls = ([{'number': 17, 'state': 'open',
+                   'base': {'sha': 'b'*40, 'ref': 'main', 'repo': {'full_name': repo}},
+                   'head': {'sha': 'a'*40, 'ref': 'head',
+                            'repo': {'full_name': repo, 'fork': False}}}]
+                 if repo == 'openwrt/openwrt' else [])
+        values = [(f'/repos/{repo}', {'id': 100 if repo == 'openwrt/openwrt' else 101,
+                                     'full_name': repo, 'default_branch': 'main'}),
+                  (f'/repos/{repo}/commits/main', {'sha': 'b'*40}),
+                  (f'/repos/{repo}/git/commits/{"b"*40}', {'sha': 'b'*40,
+                                                            'tree': {'sha': 'c'*40}}),
+                  (f'/repos/{repo}/pulls?state=open&per_page=25&page=1', pulls)]
+        for path, data in values:
+            raw = json.dumps(data).encode()
+            result.append({'path': path, 'status': 200,
+                           'time': '2026-01-01T00:00:00Z', 'link': '',
+                           'rate_remaining': '100',
+                           'sha256': hashlib.sha256(raw).hexdigest(),
+                           'body_base64': base64.b64encode(raw).decode()})
+    return result
+
 class QueueTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
@@ -26,8 +52,19 @@ class QueueTests(unittest.TestCase):
         self.snap = self.path/'snapshot.json'
         self.events = [event('openwrt/openwrt',1,'a'),event('openwrt/luci',2,'c'),event('openwrt/openwrt',3,'d')]
         snapshot(self.snap,self.events)
-    def advance(self, pred, capacity=1):
+        self.last_snapshot_hash = None
+        self.replay_patch = patch('incoming_queue.replay_observed',
+                                  side_effect=lambda path, digest:
+                                  [row['event'] for row in json.loads(Path(path).read_text())['decisions']])
+        self.replay_patch.start(); self.addCleanup(self.replay_patch.stop)
+    def advance(self, pred, capacity=1, preserve=False):
+        if pred is not None and not preserve:
+            doc = json.loads(self.snap.read_text())
+            doc['genesis'] = False
+            doc['previous_sha256'] = self.last_snapshot_hash
+            self.snap.write_text(json.dumps(doc))
         result, digest = transition(self.db,pred,self.snap,capacity,'2026-01-01T00:00:00Z')
+        self.last_snapshot_hash = result['snapshot_sha256']
         return result,(result['sequence'],digest)
     def test_first_attempts_before_retries_and_stale_cas(self):
         a,p = self.advance(None,3); b,q = self.advance(p,3); c,r = self.advance(q,3)
@@ -35,6 +72,12 @@ class QueueTests(unittest.TestCase):
         with self.assertRaises(PollError): self.advance(p)
         self.assertEqual(self.db.execute('select count(*) from history').fetchone()[0],3)
         d,_ = self.advance(r,3); self.assertEqual(d['selected'], [])
+    def test_repeated_genesis_rejected_without_mutating_queue(self):
+        _, predecessor = self.advance(None, 0)
+        before = self.db.execute('SELECT id,status,reason FROM events ORDER BY id').fetchall()
+        with self.assertRaises(PollError): self.advance(predecessor, 0, preserve=True)
+        self.assertEqual(self.db.execute('SELECT id,status,reason FROM events ORDER BY id').fetchall(), before)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM history').fetchone()[0], 1)
     def test_reconcile_supersession_and_absence(self):
         _,p = self.advance(None,0)
         replacement = event('openwrt/openwrt',1,'e')
@@ -300,5 +343,93 @@ class QueueTests(unittest.TestCase):
         snapshot(self.snap,[]); _,p = self.advance(p,0)
         snapshot(self.snap,self.events); b,_ = self.advance(p,0)
         self.assertTrue(all(r['attempts']==0 and r['status']=='pending' for r in b['events']))
+
+    def test_successor_replays_current_requests_and_checks_snapshot_chain(self):
+        old = event('openwrt/openwrt', 17, 'e')
+        snapshot(self.snap, [old])
+        _, predecessor = self.advance(None, 0)
+        genesis_hash = hashlib.sha256(self.snap.read_bytes()).hexdigest()
+        successor = {'schema': 'incoming-poll-v3', 'status': 'complete',
+                     'observed_at': '2026-01-01T00:00:01Z', 'capacity': 1,
+                     'previous_sha256': genesis_hash, 'genesis': False,
+                     'requests': retained_requests(), 'http_errors': [],
+                     'decisions': [{'event': old, 'status': 'pending',
+                                    'decision': 'selected', 'reason': 'retry'},
+                                   {'event': event('openwrt/openwrt', 17, 'a'), 'status': 'pending',
+                                    'decision': 'backlog', 'reason': 'new'}],
+                     'limitations': []}
+        self.snap.write_text(json.dumps(successor))
+        observed = replay_observed(self.snap, hashlib.sha256(self.snap.read_bytes()).hexdigest())
+        successor['decisions'].extend({'event': item, 'status': 'pending',
+                                       'decision': 'backlog', 'reason': 'new'}
+                                      for item in observed if item['kind'] == 'default_branch')
+        self.snap.write_text(json.dumps(successor))
+        self.replay_patch.stop()
+        missing = dict(successor, decisions=[row for row in successor['decisions']
+                                             if row['event'] != event('openwrt/openwrt', 17, 'a')])
+        self.snap.write_text(json.dumps(missing))
+        with self.assertRaises(PollError): self.advance(predecessor, 0, preserve=True)
+        self.snap.write_text(json.dumps(successor))
+        state, next_head = self.advance(predecessor, 0, preserve=True)
+        rows = {identity(row['event']): row for row in state['events']}
+        self.assertEqual(rows[identity(old)]['status'], 'inactive')
+        self.assertEqual(rows[identity(event('openwrt/openwrt', 17, 'a'))]['status'], 'pending')
+        self.assertEqual(len([row for row in state['events'] if row['status'] == 'pending']), 3)
+        self.assertEqual(state['snapshot_sha256'], hashlib.sha256(self.snap.read_bytes()).hexdigest())
+        before_rows = self.db.execute('SELECT id,status,reason FROM events ORDER BY id').fetchall()
+        with self.assertRaises(PollError): self.advance(next_head, 0, preserve=True)
+        successor['previous_sha256'] = state['snapshot_sha256']
+        successor['observed_at'] = '2025-12-31T23:59:59Z'
+        self.snap.write_text(json.dumps(successor))
+        with self.assertRaises(PollError): self.advance(next_head, 0, preserve=True)
+        successor['observed_at'] = '2026-01-01T00:00:01Z'
+        successor['previous_sha256'] = '0' * 64
+        self.snap.write_text(json.dumps(successor))
+        with self.assertRaises(PollError): self.advance(next_head, 0, preserve=True)
+        self.assertEqual(self.db.execute('select count(*) from history').fetchone()[0], 2)
+        self.assertEqual(self.db.execute('SELECT id,status,reason FROM events ORDER BY id').fetchall(), before_rows)
+
+    def test_successor_without_retained_requests_fails_before_queue_change(self):
+        snapshot(self.snap, [])
+        _, predecessor = self.advance(None, 0)
+        genesis_hash = hashlib.sha256(self.snap.read_bytes()).hexdigest()
+        self.snap.write_text(json.dumps({'schema': 'incoming-poll-v3', 'status': 'complete',
+            'observed_at': '2026-01-01T00:00:01Z', 'capacity': 1,
+            'previous_sha256': genesis_hash, 'genesis': False, 'requests': [],
+            'http_errors': [], 'decisions': [], 'limitations': []}))
+        self.replay_patch.stop()
+        with self.assertRaises(PollError): self.advance(predecessor, 0, preserve=True)
+        self.assertEqual(self.db.execute('select count(*) from history').fetchone()[0], 1)
+
+    def test_old_queue_history_requires_exact_previous_checkpoint(self):
+        snapshot(self.snap, [])
+        prior_bytes = self.snap.read_bytes()
+        self.advance(None, 0)
+        prior_file = self.path / 'prior.json'; prior_file.write_bytes(prior_bytes)
+        old = json.loads(self.db.execute('SELECT document FROM history WHERE seq=0').fetchone()[0])
+        old.pop('discovery_observed_at')
+        raw_old = encoded(old); old_digest = hashlib.sha256(raw_old).hexdigest()
+        self.db.execute('UPDATE history SET digest=?,document=? WHERE seq=0', (old_digest, raw_old))
+        successor = {'schema': 'incoming-poll-v3', 'status': 'complete',
+                     'observed_at': '2026-01-01T00:00:01Z', 'capacity': 0,
+                     'previous_sha256': hashlib.sha256(prior_bytes).hexdigest(),
+                     'genesis': False, 'requests': retained_requests(),
+                     'http_errors': [], 'decisions': [], 'limitations': []}
+        self.snap.write_text(json.dumps(successor))
+        current = replay_observed(self.snap, hashlib.sha256(self.snap.read_bytes()).hexdigest())
+        successor['decisions'] = [{'event': item, 'status': 'pending',
+                                   'decision': 'backlog', 'reason': 'new'} for item in current]
+        self.snap.write_text(json.dumps(successor))
+        self.replay_patch.stop()
+        with self.assertRaises(PollError):
+            transition(self.db, (0, old_digest), self.snap, 0, '2026-01-01T00:00:01Z')
+        wrong = self.path / 'wrong.json'; wrong.write_bytes(prior_bytes + b' ')
+        with self.assertRaises(PollError):
+            transition(self.db, (0, old_digest), self.snap, 0,
+                       '2026-01-01T00:00:01Z', wrong)
+        state, _ = transition(self.db, (0, old_digest), self.snap, 0,
+                              '2026-01-01T00:00:01Z', prior_file)
+        self.assertEqual(state['sequence'], 1)
+        self.assertEqual(len([row for row in state['events'] if row['status'] == 'pending']), 3)
 
 if __name__ == '__main__': unittest.main()

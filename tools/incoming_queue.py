@@ -10,7 +10,7 @@ import stat
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from incoming_poll import PollError, check, key, plan, read_checkpoint, unique_object, MAX_EVENTS
+from incoming_poll import PollError, check, key, plan, read_checkpoint, replay_observed, unique_object, MAX_EVENTS, MAX_RECORD
 
 
 def encoded(value):
@@ -109,7 +109,7 @@ def open_queue(path, *, create=False):
         raise
 
 
-def transition(db, expected, snapshot, capacity, now):
+def transition(db, expected, snapshot, capacity, now, legacy_previous_snapshot=None):
     """Atomically reconcile a complete snapshot and reserve first attempts before retries.
 
     expected is None only for genesis; otherwise (sequence, digest). A reservation
@@ -122,14 +122,49 @@ def transition(db, expected, snapshot, capacity, now):
     raw_snapshot = Path(snapshot).read_bytes()
     check(hashlib.sha256(raw_snapshot).hexdigest() == snapshot_hash, 'snapshot changed while reading')
     doc = json.loads(raw_snapshot, object_pairs_hook=unique_object)
-    check(doc['genesis'] and doc['previous_sha256'] is None, 'snapshot must be a complete genesis discovery')
     plan(rows, [], 0)
-    events = [r['event'] for r in rows]
+    # A successor carries pending rows from older observations. Replaying its
+    # current API responses avoids treating a superseded PR head as current.
+    events = [r['event'] for r in rows] if doc['genesis'] else replay_observed(Path(snapshot), snapshot_hash)
+    if not doc['genesis']:
+        decision_events = {key(row['event']): row['event'] for row in rows}
+        check(all(decision_events.get(key(event)) == event for event in events),
+              'current API observation missing or changed in successor decisions')
     check(len({subject(e) for e in events}) == len(events), 'duplicate snapshot subject')
     db.execute('BEGIN IMMEDIATE')
     try:
         head = db.execute('SELECT seq,digest FROM history ORDER BY seq DESC LIMIT 1').fetchone()
         check(head == expected, 'stale or missing predecessor')
+        check(doc['genesis'] == (head is None),
+              'genesis is valid only for an empty queue')
+        if not doc['genesis']:
+            prior_snapshot = None
+            for (raw_history,) in db.execute('SELECT document FROM history ORDER BY seq DESC'):
+                history = json.loads(raw_history, object_pairs_hook=unique_object)
+                if history.get('schema') == 'incoming-queue-v1':
+                    prior_snapshot = history
+                    break
+            check(prior_snapshot is not None and prior_snapshot.get('snapshot_sha256') == doc['previous_sha256'],
+                  'successor discovery does not follow last queued snapshot')
+            earlier_time = prior_snapshot.get('discovery_observed_at')
+            if earlier_time is None:
+                check(legacy_previous_snapshot is not None,
+                      'legacy queue history requires the exact previous discovery checkpoint')
+                _, legacy_hash = read_checkpoint(Path(legacy_previous_snapshot))
+                check(legacy_hash == prior_snapshot['snapshot_sha256'],
+                      'legacy previous checkpoint digest differs from queue history')
+                with Path(legacy_previous_snapshot).open('rb') as handle:
+                    legacy_raw = handle.read(MAX_RECORD + 1)
+                check(len(legacy_raw) <= MAX_RECORD and hashlib.sha256(legacy_raw).hexdigest() == legacy_hash,
+                      'legacy previous checkpoint changed after validation')
+                earlier_time = json.loads(legacy_raw, object_pairs_hook=unique_object)['observed_at']
+            else:
+                check(legacy_previous_snapshot is None,
+                      'legacy previous checkpoint supplied for current queue history')
+            check(isinstance(earlier_time, str) and
+                  datetime.fromisoformat(doc['observed_at'].replace('Z', '+00:00')) >=
+                  datetime.fromisoformat(earlier_time.replace('Z', '+00:00')),
+                  'discovery observation time moved backwards')
         seq = 0 if head is None else head[0] + 1
         queue_id = db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
         if head is not None:
@@ -181,6 +216,7 @@ def transition(db, expected, snapshot, capacity, now):
                    for e, first, status, attempts, last, reason in db.execute('SELECT event,first_seen,status,attempts,last_attempt,reason FROM events ORDER BY id')]
         result = {'schema':'incoming-queue-v1', 'sequence':seq, 'previous_sha256':None if head is None else head[1],
                   'queue_id':queue_id, 'snapshot_sha256':snapshot_hash, 'observed_at':now, 'capacity':capacity,
+                  'discovery_observed_at':doc['observed_at'],
                   'selected':[x[0] for x in selected], 'preempted':[x[0] for x in preempted], 'events':records}
         raw = encoded(result)
         digest = hashlib.sha256(raw).hexdigest()
@@ -268,6 +304,8 @@ def main():
     parser.add_argument('--expected-sequence', required=True, type=int, help='-1 only for a new queue')
     parser.add_argument('--expected-sha256', help='required except for genesis')
     parser.add_argument('--capacity', required=True, type=int)
+    parser.add_argument('--legacy-previous-snapshot',
+                        help='exact prior discovery checkpoint only when old queue history lacks its observation time')
     args = parser.parse_args()
     try:
         check((args.expected_sequence == -1 and args.expected_sha256 is None) or
@@ -276,14 +314,16 @@ def main():
         expected = None if args.expected_sequence == -1 else (args.expected_sequence, args.expected_sha256)
         db = open_queue(args.database, create=args.create)
         try:
-            result, digest = transition(db, expected, args.snapshot, args.capacity, datetime.now(timezone.utc).isoformat())
+            result, digest = transition(db, expected, args.snapshot, args.capacity,
+                                        datetime.now(timezone.utc).isoformat(),
+                                        args.legacy_previous_snapshot)
         finally:
             db.close()
         print(json.dumps({'sequence': result['sequence'], 'sha256': digest, 'selected': result['selected'],
                           'pending': sum(r['status'] in ('pending', 'reserved', 'started') for r in result['events']),
                           'unattempted': sum(r['status'] in ('pending', 'reserved', 'started') and r['attempts'] == 0 for r in result['events'])}))
         return 0
-    except (PollError, ValueError, OSError, sqlite3.Error) as exc:
+    except (PollError, ValueError, OSError, sqlite3.Error, RecursionError) as exc:
         print('queue rejected: ' + str(exc), file=sys.stderr)
         return 2
 
