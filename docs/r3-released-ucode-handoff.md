@@ -11,8 +11,12 @@ not accepted as a release.
 The lock reviewer must independently record the release tag, full tag commit,
 release asset URL and SHA-256, manifest and pinned-commit verifier hashes,
 extractor and CodeQL executable hashes, QL pack names/versions/lock hashes, and
-default suite digest. The runner checks GitHub's `isImmutable` release field,
-the Git tag target, outer asset and CodeQL archive digests before extraction.
+default suite digest. `release.expected_prerelease` is an explicit boolean pin
+for GitHub's release status; the first versioned producer release is expected
+to be a prerelease. The runner requires GitHub's `isImmutable` field to be
+true, `draft` to be false, and `prerelease` to match that lock value. The Git
+tag target, outer asset and CodeQL archive digests are checked before
+extraction.
 It fetches the bundle verifier from the exact producer commit and checks its
 digest. Producer draft PR #158 adds the versioned publication contract and
 verifier options used here; its review, release policy and publication remain

@@ -70,6 +70,8 @@ def pinned(lock: dict) -> None:
     need(release.get("asset_url") == f"{repo}/releases/download/{release['tag']}/codeql-ucode-linux-x64.tar.gz", "unreviewed release URL")
     need(cli.get("version") == "2.27.4" and cli.get("url") == "https://github.com/github/codeql-cli-binaries/releases/download/v2.27.4/codeql-linux64.zip", "unreviewed CodeQL URL/version")
     need(release.get("artifact_kind") == "versioned-release", "bundle must declare versioned release kind")
+    need(type(release.get("expected_prerelease")) is bool,
+         "missing/invalid expected prerelease status")
     packs = release.get("packs")
     need(isinstance(packs, dict) and set(packs) == {"library", "queries"}, "missing pack pins")
     for part, name in (("library", "lucas-albers-lz4/ucode-all"), ("queries", "lucas-albers-lz4/ucode-queries")):
@@ -78,6 +80,13 @@ def pinned(lock: dict) -> None:
     need(release.get("expected_rules") == list(EXPECTED_QUERIES.values()), "unreviewed exact suite rules")
     need(isinstance(lock.get("source_oracle_sha256"), str) and
          HEX64.fullmatch(lock["source_oracle_sha256"]) is not None, "unpopulated source-oracle pin")
+
+
+def validate_release_state(release: dict, published: dict, immutability: dict) -> None:
+    need(immutability.get("isImmutable") is True, "GitHub release is mutable")
+    need(published.get("draft") is False, "GitHub release is draft")
+    need(published.get("prerelease") is release["expected_prerelease"],
+         "GitHub release prerelease status mismatch")
 
 
 class Run:
@@ -190,8 +199,7 @@ def run_handoff(lock_path: Path, run_root: Path, run_id: str) -> None:
     published = json.loads(release_json.read_text())
     immutable = json.loads(run.call("release-immutability", ["gh", "release", "view", release["tag"],
                        "--repo", "lucas-albers-lz4/codeql-ucode", "--json", "isImmutable"]))
-    need(immutable.get("isImmutable") is True and not published.get("draft") and
-         not published.get("prerelease"), "GitHub release is not immutable/published")
+    validate_release_state(release, published, immutable)
     need(published.get("tag_name") == release["tag"], "GitHub release tag mismatch")
     assets = [a for a in published.get("assets", []) if a.get("browser_download_url") == release["asset_url"]]
     need(len(assets) == 1, "pinned asset absent from immutable release")

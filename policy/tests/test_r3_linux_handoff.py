@@ -5,10 +5,27 @@ import tempfile
 import unittest
 import zipfile
 
-from tools.r3_linux_handoff import pinned, run_handoff, safe_unzip
+from tools.r3_linux_handoff import pinned, run_handoff, safe_unzip, validate_release_state
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def populated_lock(expected_prerelease=True, artifact_kind="versioned-release"):
+    lock = json.loads((ROOT / "docs/r3-release-lock.json").read_text())
+    release = lock["release"]
+    release.update(commit="a" * 40, asset_sha256="b" * 64,
+                   manifest_sha256="c" * 64, verifier_sha256="d" * 64,
+                   suite_sha256="e" * 64, extractor_sha256="f" * 64,
+                   library_lock_sha256="0" * 64, query_lock_sha256="1" * 64,
+                   codeql_binary_sha256="2" * 64,
+                   tag="v1.2.3-rc.1", artifact_kind=artifact_kind,
+                   expected_prerelease=expected_prerelease,
+                   asset_url="https://github.com/lucas-albers-lz4/codeql-ucode/releases/download/v1.2.3-rc.1/codeql-ucode-linux-x64.tar.gz")
+    release["packs"]["library"]["version"] = "0.1.0"
+    release["packs"]["queries"]["version"] = "0.1.0"
+    lock["source_oracle_sha256"] = "3" * 64
+    return lock
 
 
 class R3LinuxHandoffTests(unittest.TestCase):
@@ -24,19 +41,48 @@ class R3LinuxHandoffTests(unittest.TestCase):
             self.assertFalse(run_root.exists())
 
     def test_candidate_kind_cannot_satisfy_release_lock(self):
-        lock = json.loads((ROOT / "docs/r3-release-lock.json").read_text())
-        lock["release"].update(commit="a" * 40, asset_sha256="b" * 64,
-                               manifest_sha256="c" * 64, verifier_sha256="d" * 64,
-                               suite_sha256="e" * 64, extractor_sha256="f" * 64,
-                               library_lock_sha256="0" * 64, query_lock_sha256="1" * 64,
-                               codeql_binary_sha256="2" * 64,
-                               tag="v1.2.3", artifact_kind="ci-candidate",
-                               asset_url="https://github.com/lucas-albers-lz4/codeql-ucode/releases/download/v1.2.3/codeql-ucode-linux-x64.tar.gz")
-        lock["release"]["packs"]["library"]["version"] = "0.1.0"
-        lock["release"]["packs"]["queries"]["version"] = "0.1.0"
-        lock["source_oracle_sha256"] = "3" * 64
+        lock = populated_lock(artifact_kind="ci-candidate")
         with self.assertRaisesRegex(RuntimeError, "versioned release kind"):
             pinned(lock)
+
+    def test_lock_accepts_versioned_prerelease_pin(self):
+        pinned(populated_lock())
+
+    def test_lock_requires_explicit_boolean_prerelease_status(self):
+        lock = populated_lock(expected_prerelease=1)
+        with self.assertRaisesRegex(RuntimeError, "expected prerelease status"):
+            pinned(lock)
+
+    def test_matching_immutable_prerelease_is_accepted(self):
+        validate_release_state(
+            {"expected_prerelease": True},
+            {"draft": False, "prerelease": True},
+            {"isImmutable": True},
+        )
+
+    def test_release_status_must_match_lock(self):
+        with self.assertRaisesRegex(RuntimeError, "prerelease status mismatch"):
+            validate_release_state(
+                {"expected_prerelease": True},
+                {"draft": False, "prerelease": False},
+                {"isImmutable": True},
+            )
+
+    def test_mutable_prerelease_is_rejected(self):
+        with self.assertRaisesRegex(RuntimeError, "release is mutable"):
+            validate_release_state(
+                {"expected_prerelease": True},
+                {"draft": False, "prerelease": True},
+                {"isImmutable": False},
+            )
+
+    def test_draft_prerelease_is_rejected(self):
+        with self.assertRaisesRegex(RuntimeError, "release is draft"):
+            validate_release_state(
+                {"expected_prerelease": True},
+                {"draft": True, "prerelease": True},
+                {"isImmutable": True},
+            )
 
     def test_zip_traversal_rejected_before_extraction(self):
         with tempfile.TemporaryDirectory() as temp:
