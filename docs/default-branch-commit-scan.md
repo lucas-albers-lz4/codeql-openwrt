@@ -122,10 +122,17 @@ retained bytes and a distinct unexpired final artifact matching the
 download. The ZIP download uses the canonical artifact ID and allows one
 HTTPS redirect to GitHub's `productionresultssa*.blob.core.windows.net`
 artifact storage. The download request receives no GitHub auth header.
-Alternate storage origins fail closed. The narrow hostname and path pattern
-is a fixture-tested candidate and requires confirmation against a live
-artifact endpoint before deployment. GitHub documents the 302 endpoint and
-lists Azure Blob Storage among its Actions artifact network destinations.
+Alternate storage origins fail closed. A read-only transport check on
+2026-11-26 used the private collector's download helper against retained
+final artifact `15144917516` from completed run `45875169837`. It observed
+one redirect to `productionresultssa8.blob.core.windows.net` and received
+14,906,724 bytes with SHA-256
+`44ef942823a2a460c9b20dd57730965ca8ae124c5da8407ced4fdebfd195bc1e`,
+matching the retained final artifact. That check exercised this one artifact
+download path; it did not launch the full private collector or authenticate a
+signed start. Future storage origins outside the allowlist fail closed.
+GitHub documents the 302 endpoint and lists Azure Blob Storage among its
+Actions artifact network destinations.
 [Artifact download API](https://docs.github.com/en/rest/actions/artifacts#download-an-artifact)
 [Actions artifact destinations](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#communication-requirements-for-github-hosted-runners)
 
