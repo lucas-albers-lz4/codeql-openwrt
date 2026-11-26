@@ -328,11 +328,12 @@ if index == 5:
         self._assert_no_issue()
 
     def test_proxy_ca_and_hosted_runner_overrides_are_rejected_for_real_cli_path(self):
-        with patch.dict(os.environ, {'HTTPS_PROXY': 'http://proxy.invalid:8080'}):
+        with patch.dict(os.environ, {'HTTPS_PROXY': 'http://proxy.invalid:8080'},
+                        clear=True):
             with self.assertRaisesRegex(start.PrivateStartError,
                                         'proxy or custom CA'):
                 start._trusted_network_environment()
-        with patch.dict(os.environ, {'GITHUB_ACTIONS': 'true'}):
+        with patch.dict(os.environ, {'GITHUB_ACTIONS': 'true'}, clear=True):
             with self.assertRaisesRegex(start.PrivateStartError,
                                         'must not run in a hosted'):
                 start._trusted_network_environment()
