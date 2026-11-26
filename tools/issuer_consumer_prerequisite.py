@@ -129,3 +129,78 @@ def check_scan(root: Path, manifest_path: Path, manifest: dict, lock: dict, run_
                     paths['out/producer-receipt.json'], root / 'stage')
     need(objects['out/triage.json'] == actual and corpus.get('status') == actual['status'], 'actual consumer triage differs')
     return actual
+
+
+def check_event_and_control(run_root: Path, event_manifest_path: Path, event_manifest: dict,
+                            control_inputs: Path, control_manifest: dict,
+                            incoming_receipt_path: Path, lock_path: Path, lock: dict,
+                            run_id: str, consumer_sha: str) -> tuple[dict, dict]:
+    """Check two independently replayed scans and their retained control assertion.
+
+    Both oracle manifests and the lock must have been independently verified by
+    the caller. This is an offline graph check, not an issuer or proof of execution.
+    """
+    from tools.event_control_scan import assert_clean
+    from tools.event_corpus_manifest import POLICY_SHA256
+
+    root, inputs = Path(run_root), Path(control_inputs)
+    need(root.is_absolute() and not root.is_symlink() and inputs.is_absolute() and
+         not inputs.is_symlink(), 'unsafe run or control input root')
+    need(not (inputs / 'failure.json').exists() and not (inputs / 'control-failure.json').exists(), 'control failure marker')
+    lock_path, incoming_receipt_path = Path(lock_path), Path(incoming_receipt_path)
+    need(not lock_path.is_symlink() and _load(lock_path) == lock, 'lock bytes mismatch')
+    need(not incoming_receipt_path.is_symlink(), 'unsafe incoming receipt')
+    incoming = _load(incoming_receipt_path)
+    need(incoming.get('schema') == 'incoming-event-receipt-v1' and incoming.get('status') == 'identities_resolved_only', 'invalid incoming receipt')
+    source, control = incoming['source'], incoming['control']
+    need(source['commit'] != control['commit'] and source['tree'] != control['tree'],
+         'event and control commits and trees must differ')
+    event_root, control_root = root / 'event-corpus', root / 'control-corpus'
+    need(event_root != control_root and event_root.resolve() != control_root.resolve(), 'scan roots must differ')
+    files = {name: _file(inputs, name) for name in ('control-derived-receipt.json', 'control-inventory.json', 'control-manifest.json', 'control-binding.json')}
+    derived, inventory, binding = (_load(files[name]) for name in ('control-derived-receipt.json', 'control-inventory.json', 'control-binding.json'))
+    need(_load(files['control-manifest.json']) == control_manifest, 'control manifest bytes differ')
+    expected_derived = dict(incoming, source=control, base={'commit': inventory['base_commit'], 'tree': inventory['base_tree']})
+    need(derived == expected_derived and inventory['head_commit'] == control['commit'] and inventory['head_tree'] == control['tree'], 'control derived identity mismatch')
+    need(binding == {'schema': 'incoming-control-binding-v1', 'incoming_receipt_sha256': _hash(incoming_receipt_path),
+                     'repository': incoming['repository'], 'control': control, 'policy_sha256': POLICY_SHA256,
+                     'derived_receipt_sha256': _hash(files['control-derived-receipt.json']),
+                     'inventory_sha256': _hash(files['control-inventory.json']),
+                     'manifest_sha256': _hash(files['control-manifest.json']),
+                     'limitations': ['Derived receipt is an oracle adapter, not a PR membership claim.',
+                                     'A clean scan means zero results for this bounded source-staged corpus, not proof of safety.']}, 'control binding mismatch')
+    for manifest, identity, role, receipt_hash in ((event_manifest, source, None, _hash(incoming_receipt_path)),
+                                                   (control_manifest, control, 'clean_control', _hash(files['control-derived-receipt.json']))):
+        event = manifest['event']
+        base = incoming['base'] if role is None else derived['base']
+        need(event.get('repository') == incoming['repository'] and event.get('pr_number') == incoming['pr_number'] and
+             event.get('base_commit') == base['commit'] and event.get('base_tree') == base['tree'] and
+             event.get('head_commit') == identity['commit'] and event.get('head_tree') == identity['tree'] and
+             event.get('identity_receipt_sha256') == receipt_hash and event.get('source_role') == role and
+             event.get('policy_sha256') == POLICY_SHA256, 'manifest event identity mismatch')
+    need(control_manifest['event'].get('candidate_inventory_sha256') == _hash(files['control-inventory.json']), 'control inventory link mismatch')
+    # Both scans must point to the same retained R3 receipt, whose preflight
+    # records the actual lock bytes and job/run identity.
+    r3_path = _file(root, 'receipt.json')
+    r3 = _load(r3_path)
+    preflight = r3.get('preflight', {})
+    release = lock['release']
+    need(r3.get('status') == 'accepted' and preflight.get('run_id') == run_id and
+         preflight.get('consumer_sha') == consumer_sha and preflight.get('lock_sha256') == _hash(lock_path) and
+         r3.get('release', {}).get('tag') == release['tag'] and
+         r3['release'].get('producer_commit') == release['commit'] and
+         r3['release'].get('asset_sha256') == release['asset_sha256'] and
+         r3['release'].get('isImmutable') is True and
+         r3.get('codeql', {}).get('binary_sha256') == release['codeql_binary_sha256'], 'R3 run or lock identity mismatch')
+    for scan in (event_root, control_root):
+        scan_preflight = _load(_file(scan, 'preflight.json'))
+        need(scan_preflight.get('r3_receipt_sha256') == _hash(r3_path), 'scan R3 receipt mismatch')
+    event_result = check_scan(event_root, event_manifest_path, event_manifest, lock, run_id, consumer_sha)
+    control_result = check_scan(control_root, files['control-manifest.json'], control_manifest, lock, run_id, consumer_sha)
+    assert_clean(control_result)
+    assertion = _load(_file(control_root, 'control-assertion.json'))
+    need(assertion == {'schema': 'incoming-clean-control-assertion-v1', 'status': 'clean_scan',
+                       'binding_sha256': _hash(files['control-binding.json']),
+                       'scan_receipt_sha256': _hash(_file(control_root, 'receipt.json')),
+                       'triage_sha256': _hash(_file(control_root, 'out/triage.json')), 'result_count': 0}, 'control assertion mismatch')
+    return event_result, control_result
