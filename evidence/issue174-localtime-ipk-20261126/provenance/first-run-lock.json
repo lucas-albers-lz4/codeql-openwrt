@@ -1,0 +1,200 @@
+{
+  "additional_packs": [
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/controlflow/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/dataflow/1.1.6",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/regex/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/ssa/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/threat-models/1.1.1",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/typetracking/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/util/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/yaml/1.0.61"
+  ],
+  "bqrs_paths": {
+    "errors": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/errors.bqrs",
+    "query": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/query.bqrs",
+    "successful": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/successful.bqrs"
+  },
+  "cli_sha256": "bb3a754e126ed061b5f3356531cd5501872ab3864bd665b2d1afdbf8a67a146d",
+  "commands_path": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/commands.json",
+  "cwd": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer",
+  "database_path": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db",
+  "dependencies_tree_sha256": "1c01cb9a53e4608a00f51604daf952014aa875a046041af796affe7769695da8",
+  "env": {
+    "CODEQL_UCODE_STAGED_ROOT": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/stage",
+    "HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache"
+  },
+  "extractor_pack_tree_sha256": "572cadb99234f32fac2537d180e2e20f3071a84fffe1dcb0d154c3ce1274d9dc",
+  "ipk_sha256": "41376c6774b35ff140ff3fa441643a184be252070cd3f462f645c6a98e527d6b",
+  "models_sha256": "fac64bc3b9fc232225c351c44a7985458a2fe90d87e462f1af2803b26185fd1e",
+  "output_paths": {
+    "errors": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/errors.json",
+    "query": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/query.json",
+    "routing": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db/trap/ucode/routing.json",
+    "successful": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/successful.json"
+  },
+  "package_run_id": "45741119647-1",
+  "phase_argv": {
+    "database-finalize": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "database",
+      "finalize",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/database"
+    ],
+    "database-index": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "database",
+      "index-files",
+      "--language=ucode",
+      "--include=**/*",
+      "--working-dir=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/stage",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/database",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db"
+    ],
+    "database-init": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "database",
+      "init",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db",
+      "--language=ucode",
+      "--search-path=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/database",
+      "--source-root=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/stage"
+    ],
+    "errors-decode": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "bqrs",
+      "decode",
+      "--format=json",
+      "--entities=id,url,string",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/errors.bqrs",
+      "--output=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/errors.json"
+    ],
+    "errors-query": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "query",
+      "run",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src/diagnostics/ExtractionErrors.ql",
+      "--database=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db",
+      "--search-path=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/lib:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src",
+      "--additional-packs=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/controlflow/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/dataflow/1.1.6:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/regex/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/ssa/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/threat-models/1.1.1:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/typetracking/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/util/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/yaml/1.0.61",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/queries",
+      "--compilation-cache=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/compile",
+      "--no-default-compilation-cache",
+      "--output=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/errors.bqrs",
+      "--threads=1",
+      "--ram=2048"
+    ],
+    "resolve-errors": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "resolve",
+      "library-path",
+      "--query=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src/diagnostics/ExtractionErrors.ql",
+      "--search-path=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/lib:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src",
+      "--additional-packs=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/controlflow/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/dataflow/1.1.6:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/regex/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/ssa/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/threat-models/1.1.1:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/typetracking/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/util/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/yaml/1.0.61",
+      "--format=json",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/queries",
+      "--compilation-cache=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/compile",
+      "--no-default-compilation-cache"
+    ],
+    "resolve-query": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "resolve",
+      "library-path",
+      "--query=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src/m4/RequestArgsExec.ql",
+      "--search-path=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/lib:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src",
+      "--additional-packs=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/controlflow/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/dataflow/1.1.6:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/regex/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/ssa/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/threat-models/1.1.1:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/typetracking/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/util/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/yaml/1.0.61",
+      "--format=json",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/queries",
+      "--compilation-cache=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/compile",
+      "--no-default-compilation-cache"
+    ],
+    "resolve-success": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "resolve",
+      "library-path",
+      "--query=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+      "--search-path=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/lib:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src",
+      "--additional-packs=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/controlflow/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/dataflow/1.1.6:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/regex/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/ssa/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/threat-models/1.1.1:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/typetracking/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/util/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/yaml/1.0.61",
+      "--format=json",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/queries",
+      "--compilation-cache=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/compile",
+      "--no-default-compilation-cache"
+    ],
+    "success-decode": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "bqrs",
+      "decode",
+      "--format=json",
+      "--entities=id,url,string",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/successful.bqrs",
+      "--output=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/successful.json"
+    ],
+    "success-query": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "query",
+      "run",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+      "--database=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db",
+      "--search-path=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/lib:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src",
+      "--additional-packs=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/controlflow/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/dataflow/1.1.6:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/regex/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/ssa/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/threat-models/1.1.1:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/typetracking/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/util/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/yaml/1.0.61",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/queries",
+      "--compilation-cache=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/compile",
+      "--no-default-compilation-cache",
+      "--output=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/successful.bqrs",
+      "--threads=1",
+      "--ram=2048"
+    ],
+    "target-decode": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "bqrs",
+      "decode",
+      "--format=json",
+      "--entities=id,url,string",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/query.bqrs",
+      "--output=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/query.json"
+    ],
+    "target-query": [
+      "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+      "query",
+      "run",
+      "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src/m4/RequestArgsExec.ql",
+      "--database=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/db",
+      "--search-path=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/extractor-pack:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/lib:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src",
+      "--additional-packs=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/controlflow/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/dataflow/1.1.6:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/regex/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/ssa/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/threat-models/1.1.1:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/typetracking/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/util/1.0.12:/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/yaml/1.0.61",
+      "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/queries",
+      "--compilation-cache=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/cache/compile",
+      "--no-default-compilation-cache",
+      "--output=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/query.bqrs",
+      "--threads=1",
+      "--ram=2048"
+    ]
+  },
+  "producer_commit": "a7bf614e2fb59200e303f04b6255af7e6d4007e2",
+  "query_sha256": "0bf41049d4841a6c989425b14d7f26ba12587a94c4e2c41f4da1b053f01bbb35",
+  "receipt_sha256": "1c80809ed7c87a2a586d0df7bdebcfc35eaecf6370013b27f994a46d0324b677",
+  "resolved_library_paths": [
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/src",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/producer/ql/lib",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/controlflow/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/dataflow/1.1.6",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/regex/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/ssa/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/threat-models/1.1.1",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/typetracking/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/util/1.0.12",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/dependencies/yaml/1.0.61"
+  ],
+  "resolver_paths": {
+    "errors": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/resolve-errors.json",
+    "query": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/resolve-query.json",
+    "successful": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run/output/resolve-successful.json"
+  },
+  "run_root": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-execution-context-20261126/run",
+  "schema": "issue174-run-lock-v1"
+}

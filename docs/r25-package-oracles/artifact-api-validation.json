@@ -1,0 +1,236 @@
+{
+  "failed_attempts": [
+    {
+      "command_statuses": {
+        "luci-base-artifact-download": 0,
+        "luci-base-artifact-list": 0
+      },
+      "result": "Initial single-member policy rejected the 33-entry LuCI archive before extracting or writing any IPK.",
+      "run_root": "work/r25-artifact-api-live-20261125"
+    },
+    {
+      "api_command_statuses": "all four commands exit 0",
+      "result": "LuCI stage passed; Wi-Fi ZIP rejected because run.log declared 49,253,435 bytes, above initial 32 MiB member cap. No Wi-Fi IPK written.",
+      "run_root": "work/r25-artifact-api-live-20261125-b"
+    },
+    {
+      "api_command_statuses": "all four commands exit 0",
+      "result": "LuCI stage passed; Wi-Fi ZIP rejected because it contains both n and y package variants. The validator was narrowed to select only the unique expected y member.",
+      "run_root": "work/r25-artifact-api-live-20261125-c"
+    }
+  ],
+  "packages": {
+    "luci-base": {
+      "api_archive_digest": "sha256:cefdf043c269e61a6e13d2dbe9213898c8898f30b7d9413761d3a51c5d9c95da",
+      "archive_bytes": 1378670,
+      "archive_sha256": "cefdf043c269e61a6e13d2dbe9213898c8898f30b7d9413761d3a51c5d9c95da",
+      "artifact_download_command": {
+        "archive_bytes": 1378670,
+        "archive_path": "incoming/luci-base/artifact.zip",
+        "archive_sha256": "cefdf043c269e61a6e13d2dbe9213898c8898f30b7d9413761d3a51c5d9c95da",
+        "argv": [
+          "gh",
+          "api",
+          "-H",
+          "Accept: application/vnd.github+json",
+          "/repos/lucas-albers-lz4/codeql-openwrt/actions/artifacts/14979253876/zip"
+        ],
+        "elapsed_seconds": 1.524,
+        "exit_status": 0,
+        "label": "luci-base-artifact-download",
+        "response_bytes_observed": 1378670,
+        "response_too_large": false,
+        "stderr": "commands/luci-base-artifact-download.stderr",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_truncated": false,
+        "timed_out": false
+      },
+      "artifact_expired": false,
+      "artifact_expires_at": "2026-12-09T00:42:35Z",
+      "artifact_id": 14979253876,
+      "artifact_list_command": {
+        "argv": [
+          "gh",
+          "api",
+          "/repos/lucas-albers-lz4/codeql-openwrt/actions/runs/45513606386/artifacts?per_page=100"
+        ],
+        "elapsed_seconds": 0.417,
+        "exit_status": 0,
+        "label": "luci-base-artifact-list",
+        "stderr": "commands/luci-base-artifact-list.stderr",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "commands/luci-base-artifact-list.stdout",
+        "stdout_sha256": "82aaf301b3076fda5ac7c7065840695915131098a5db95943043412b42d779c0"
+      },
+      "artifact_name": "luci-ipk-byte-45513606386-1",
+      "artifact_run_id": 45513606386,
+      "ipk_sha256": "1a2188f5206ce61c993fdcc451781a06994ae2175b489eef56595858ef22b363",
+      "oracle_sha256": "efd49d1bec85b1c1ae2a12a6c64957f9c09e283d2ce326f80d881339b1f93fe8",
+      "other_ipk_members_left_unexpanded": [],
+      "regular_member_count": 76,
+      "route_counts": {
+        "excluded": 58,
+        "markup": 8,
+        "plain": 10
+      },
+      "selected_member_count": 18,
+      "stage_command": {
+        "argv": [
+          "python3",
+          "-B",
+          "tools/r25_package_stage.py",
+          "--package",
+          "luci-base",
+          "--ipk",
+          "<stage-run-root>/input/luci-base/luci-base.ipk",
+          "--workspace",
+          "<stage-run-root>",
+          "--stage",
+          "<stage-run-root>/stages/luci-base",
+          "--receipt",
+          "<stage-run-root>/receipts/luci-base.json"
+        ],
+        "cwd": "<consumer checkout>",
+        "environment": {
+          "HOME": "<run-root>/home/luci",
+          "LC_ALL": "C",
+          "TMPDIR": "<run-root>/tmp/luci"
+        },
+        "exit_status": 0,
+        "real_seconds": 0.04,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "fc32f1ee913d354ef3e33e1e3bf9bc4021607e48372d2b27330d2b70faee61f4",
+        "system_seconds": 0.01,
+        "timer": "/usr/bin/time -p",
+        "user_seconds": 0.02
+      },
+      "stage_receipt_sha256": "fc32f1ee913d354ef3e33e1e3bf9bc4021607e48372d2b27330d2b70faee61f4",
+      "staged_file_hashes_match_receipt": true,
+      "zip_member_count": 33,
+      "zip_total_declared_uncompressed_bytes": 25203143
+    },
+    "wifi-scripts-ucode-y": {
+      "api_archive_digest": "sha256:c52528d8bf453585cc5c384d1a573263db7a0102c2a9df443bee7a029869970a",
+      "archive_bytes": 2446003,
+      "archive_sha256": "c52528d8bf453585cc5c384d1a573263db7a0102c2a9df443bee7a029869970a",
+      "artifact_download_command": {
+        "archive_bytes": 2446003,
+        "archive_path": "incoming/wifi-scripts-ucode-y/artifact.zip",
+        "archive_sha256": "c52528d8bf453585cc5c384d1a573263db7a0102c2a9df443bee7a029869970a",
+        "argv": [
+          "gh",
+          "api",
+          "-H",
+          "Accept: application/vnd.github+json",
+          "/repos/lucas-albers-lz4/codeql-openwrt/actions/artifacts/14997815607/zip"
+        ],
+        "elapsed_seconds": 1.751,
+        "exit_status": 0,
+        "label": "wifi-scripts-ucode-y-artifact-download",
+        "response_bytes_observed": 2446003,
+        "response_too_large": false,
+        "stderr": "commands/wifi-scripts-ucode-y-artifact-download.stderr",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_truncated": false,
+        "timed_out": false
+      },
+      "artifact_expired": false,
+      "artifact_expires_at": "2026-12-09T06:22:51Z",
+      "artifact_id": 14997815607,
+      "artifact_list_command": {
+        "argv": [
+          "gh",
+          "api",
+          "/repos/lucas-albers-lz4/codeql-openwrt/actions/runs/45548269425/artifacts?per_page=100"
+        ],
+        "elapsed_seconds": 0.424,
+        "exit_status": 0,
+        "label": "wifi-scripts-ucode-y-artifact-list",
+        "stderr": "commands/wifi-scripts-ucode-y-artifact-list.stderr",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout": "commands/wifi-scripts-ucode-y-artifact-list.stdout",
+        "stdout_sha256": "183ccdcff0e8ca6cba9a753f590e83cb7139ac9b5a894323b9c581c32a34e1b1"
+      },
+      "artifact_name": "wifi-ipk-byte-45548269425-1",
+      "artifact_run_id": 45548269425,
+      "ipk_sha256": "20f2e18297a10e2c2fc0f3457dee52e5ee2db01a8d17d52ba44dffaf79ba833a",
+      "oracle_sha256": "5ac6c87cbbc12361581ee630083484b67c84d74d3b840ac8275fa3f0ff237aff",
+      "other_ipk_members_left_unexpanded": [
+        "n-wifi-scripts.ipk"
+      ],
+      "regular_member_count": 31,
+      "route_counts": {
+        "excluded": 14,
+        "markup": 0,
+        "plain": 17
+      },
+      "selected_member_count": 17,
+      "stage_command": {
+        "argv": [
+          "python3",
+          "-B",
+          "tools/r25_package_stage.py",
+          "--package",
+          "wifi-scripts-ucode-y",
+          "--ipk",
+          "<stage-run-root>/input/wifi-scripts-ucode-y/y-wifi-scripts.ipk",
+          "--workspace",
+          "<stage-run-root>",
+          "--stage",
+          "<stage-run-root>/stages/wifi-scripts-ucode-y",
+          "--receipt",
+          "<stage-run-root>/receipts/wifi-scripts-ucode-y.json"
+        ],
+        "cwd": "<consumer checkout>",
+        "environment": {
+          "HOME": "<run-root>/home/wifi",
+          "LC_ALL": "C",
+          "TMPDIR": "<run-root>/tmp/wifi"
+        },
+        "exit_status": 0,
+        "real_seconds": 0.03,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "6ba3fcb5eadb0af501578b051c8d712f9fb1fd5dd95fc335f6fb26d534a8b5b5",
+        "system_seconds": 0.0,
+        "timer": "/usr/bin/time -p",
+        "user_seconds": 0.02
+      },
+      "stage_receipt_sha256": "6ba3fcb5eadb0af501578b051c8d712f9fb1fd5dd95fc335f6fb26d534a8b5b5",
+      "staged_file_hashes_match_receipt": true,
+      "zip_member_count": 51,
+      "zip_total_declared_uncompressed_bytes": 49698740
+    }
+  },
+  "positive_and_near_miss": {
+    "wifi_eligible_near_miss": {
+      "path": "etc/hotplug.d/ieee80211/10-wifi-detect",
+      "selected": false,
+      "sha256": "0f8f0830ce3f7708505596b6b933e6ec6bc1156af26ae890ba4b69ae015abdfb"
+    },
+    "wifi_positive": {
+      "path": "lib/netifd/wireless/mac80211.sh",
+      "selected": true,
+      "sha256": "f7d6ae091777a8eb77ba55c2c1f09bf8caff1a4364dc6de4f19a1ecb322801aa"
+    }
+  },
+  "preflight": {
+    "consumer_head": "8a55ce6083990a2c52e9ee784fde3bb32967c0d2",
+    "consumer_repository": "lucas-albers-lz4/codeql-openwrt",
+    "consumer_worktree_relative_to_ledger": "work/consumer-r25-package-lane-20261125",
+    "dirty_status_lines": 7,
+    "free_bytes_before": 96093941760,
+    "package_lock_sha256": "907a68bc5ba9c841961c69b446ec08de688fabccb978af073d6742ed65a16800",
+    "package_stage_script_sha256": "a90b409146348973640755b4b7de09ef6c0beeac2314d57f3efddc7af4dc340f",
+    "platform": "macOS-15.8.2-arm64-arm-64bit-Mach-O",
+    "python": "3.15.2 (main, Oct 25 2026, 16:57:51) [Clang 17.0.0 (clang-1700.6.4.2)]",
+    "raw_outputs_are_ignored_local_work": true,
+    "run_roots_relative_to_ledger": {
+      "adapter_stage": "work/r25-package-stage-final-20261125-e",
+      "artifact_api": "work/r25-artifact-api-live-20261125-d"
+    },
+    "working_tree_dirty": true
+  },
+  "result": "Final run d downloaded both pinned artifacts; all four GitHub API commands exited 0; ZIP SHA-256 values matched the consumer lock and GitHub metadata; only each expected IPK was extracted; both IPK hashes and source-first member oracles matched in final stage run e.",
+  "schema": "openwrt-r25-live-artifact-api-validation-v1",
+  "scope": "Real pinned GitHub Actions artifact REST ZIP download, bounded ZIP metadata validation, exact IPK extraction, and consumer package-to-stage validation. No producer runner, CodeQL query or released handoff was run."
+}

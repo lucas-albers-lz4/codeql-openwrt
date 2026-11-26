@@ -1,0 +1,6 @@
+{"#select":{"columns":[
+   {"name":"f","kind":"Entity"}
+  ,{"kind":"String"}]
+ ,"tuples":[
+   [{"id":0,"label":"/Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/stage/usr/share/rpcd/ucode/luci","url":{"uri":"file:///Users/lalbers/gitroot/ucode/coverage-wave-work/issue174-retry-context-20261126/run/stage/usr/share/rpcd/ucode/luci","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]]
+ }}
