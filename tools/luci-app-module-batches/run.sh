@@ -13,8 +13,16 @@ trap 's=$?; printf "exit=%s line=%s\n" "$s" "$LINENO"; exit "$s"' EXIT
 set -x
 [[ $(uname -s) == Linux ]]
 uname -a; cat /etc/os-release; git --version; make --version; python3 --version; gcc --version; /usr/bin/time --version; df -h "$RUN"; free -h
-sha256sum "$HERE"/{run.sh,batch-order.sh,compare.py,source-oracle.json} "$HERE/../luci-base-inventory"/{archive.py,compare.py}
+sha256sum "$HERE"/{run.sh,batch-order.sh,compare.py,kernel-evidence.py,source-oracle.json} "$HERE/../luci-base-inventory"/{archive.py,compare.py} "$HERE/../luci-statistics-batch/kernel.py"
 timed() { local label=$1; shift; printf 'command:'; printf ' %q' "$@"; printf '\n'; /usr/bin/time -v -o "$RUN/output/$label.time" "$@"; }
+timed_capture() {
+  local label=$1 status=0; shift
+  printf 'command:'; printf ' %q' "$@"; printf '\n'
+  /usr/bin/time -v -o "$RUN/output/$label.time" "$@" > "$RUN/output/$label.stdout" 2> "$RUN/output/$label.stderr" || status=$?
+  cat "$RUN/output/$label.stdout"
+  cat "$RUN/output/$label.stderr" >&2
+  return "$status"
+}
 timed clone-openwrt git clone https://git.openwrt.org/openwrt/openwrt.git "$RUN/openwrt"
 timed checkout-openwrt git -C "$RUN/openwrt" checkout --detach 4e9642517b48bae612ff10fb72fb9199e559500e
 timed clone-luci git clone --single-branch --branch openwrt-25.12 https://git.openwrt.org/project/luci.git "$RUN/luci"
@@ -62,6 +70,29 @@ python3 -B "$HERE/compare.py" --preflight --run-root "$RUN" --luci "$RUN/luci" -
 timed tools-install make -j2 tools/install V=s
 timed toolchain-install make -j2 toolchain/install V=s
 sha256sum -c "$RUN/output/build-input-digests.txt"
+build_kernel_phase() {
+  local label=$1 target=$2 make_status=0
+  check_inputs "$RUN/openwrt" "$RUN/luci" "$RUN/packages"
+  sha256sum -c "$RUN/output/build-input-digests.txt"
+  python3 -B "$HERE/compare.py" --preflight --run-root "$RUN" --luci "$RUN/luci" --packages "$RUN/packages" --config-root "$RUN/openwrt" --config-sha256 "$CONFIG_SHA"
+  timed_capture "$label" make -j2 "$target" V=s || make_status=$?
+  if [[ "$label" == kernel-compile && make_status -eq 0 ]]; then
+    python3 -B "$HERE/kernel-evidence.py" capture --run-root "$RUN" --config-sha256 "$CONFIG_SHA"
+  elif [[ "$label" == kernel-package-compile ]]; then
+    python3 -B "$HERE/kernel-evidence.py" snapshot-package --run-root "$RUN"
+  fi
+  python3 -B "$HERE/kernel-evidence.py" diagnostics --run-root "$RUN" --phase "$label"
+  if (( make_status != 0 )); then return "$make_status"; fi
+  if [[ "$label" == kernel-package-compile ]]; then
+    python3 -B "$HERE/kernel-evidence.py" validate-package --run-root "$RUN" --config-sha256 "$CONFIG_SHA"
+  elif [[ "$label" != kernel-compile ]]; then
+    return 2
+  fi
+  check_inputs "$RUN/openwrt" "$RUN/luci" "$RUN/packages"
+  sha256sum -c "$RUN/output/build-input-digests.txt"
+  python3 -B "$HERE/compare.py" --preflight --run-root "$RUN" --luci "$RUN/luci" --packages "$RUN/packages" --config-root "$RUN/openwrt" --config-sha256 "$CONFIG_SHA"
+}
+run_kernel_prelude build_kernel_phase
 locate_and_compare() {
   local name=$1 receipt=$2 version=$3
   local stage="$RUN/openwrt/build_dir/target-x86_64_musl/$name/ipkg-all/$name"
@@ -89,6 +120,7 @@ BUILT=()
 recheck_all() {
   local trigger=$1 name
   check_inputs "$RUN/openwrt" "$RUN/luci" "$RUN/packages"; sha256sum -c "$RUN/output/build-input-digests.txt"
+  python3 -B "$HERE/kernel-evidence.py" recheck --run-root "$RUN"
   for name in "${BUILT[@]}"; do
     local version
     case "$name" in
