@@ -76,6 +76,18 @@ class DirectCommitCorpusManifestTests(unittest.TestCase):
         self.assertEqual(result['event']['selector_script_sha256'],
                          direct.digest((direct.ROOT / 'tools/full_tree_candidates.py').read_bytes()))
 
+    def test_historical_source_identity_keeps_distinct_schema(self):
+        identity = copy.deepcopy(self.identity)
+        identity['schema'] = 'historical-direct-commit-source-identity-v1'
+        identity['status'] = 'historical_objects_resolved_only'
+        identity['policy_ref_context'] = identity.pop('ref')
+        checked = copy.deepcopy(self.checked)
+        checked['identity_receipt_sha256'] = direct.digest(raw(identity))
+        result, _ = self.build(identity=identity, admission=checked)
+        self.assertEqual(result['event']['identity_receipt_sha256'],
+                         direct.digest(raw(identity)))
+        self.assertEqual(result['event']['kind'], 'direct_commit')
+
     def test_tampered_receipt_inventory_or_policy_rejected(self):
         changed = copy.deepcopy(self.checked)
         changed['identity_receipt_sha256'] = '0'*64

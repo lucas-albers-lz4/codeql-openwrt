@@ -82,13 +82,19 @@ def verify(identity, source_checkout, control_checkout):
     oracle = frozen_oracle()
     commits = oracle['commits']
     poll.check(isinstance(identity, dict), 'direct-commit receipt is not an object')
-    poll.check(identity.get('schema') == 'default-branch-event-identity-v1' and
-               identity.get('status') == 'identities_resolved_only' and
-               identity.get('repository') == 'openwrt/luci' and
-               identity.get('ref') == 'master' and
-               all(isinstance(identity.get(key), str) and
-                   re.fullmatch(r'[0-9a-f]{64}', identity[key]) for key in
-                   ('gap_sha256', 'previous_checkpoint_sha256', 'current_checkpoint_sha256')),
+    live = (identity.get('schema') == 'default-branch-event-identity-v1' and
+            identity.get('status') == 'identities_resolved_only' and
+            all(isinstance(identity.get(key), str) and
+                re.fullmatch(r'[0-9a-f]{64}', identity[key]) for key in
+                ('gap_sha256', 'previous_checkpoint_sha256', 'current_checkpoint_sha256')))
+    historical = (identity.get('schema') == 'historical-direct-commit-source-identity-v1' and
+                  identity.get('status') == 'historical_objects_resolved_only' and
+                  identity.get('policy_ref_context') == 'master' and
+                  'ref' not in identity and
+                  not any(key in identity for key in
+                          ('gap_sha256', 'previous_checkpoint_sha256', 'current_checkpoint_sha256')))
+    poll.check((live and identity.get('ref') == 'master' or historical) and
+               identity.get('repository') == 'openwrt/luci',
                'direct-commit receipt differs')
     for role, name in (('source', 'introduced'), ('base', 'absent_parent'), ('control', 'fixed')):
         item = identity.get(role)
