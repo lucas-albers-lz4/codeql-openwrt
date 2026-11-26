@@ -116,10 +116,12 @@ class CustodyTests(unittest.TestCase):
 
         process = Process()
         with tempfile.TemporaryDirectory() as directory, patch.object(
-                custody.subprocess, 'Popen', return_value=process):
+                custody.subprocess, 'Popen', return_value=process) as launcher:
             with self.assertRaises(custody.CustodyError):
                 custody.fetch('test', Path(directory), 'api.json', limit=4)
             self.assertTrue(process.killed)
+            self.assertEqual(launcher.call_args.args[0][:4],
+                             ['gh', 'api', '--hostname', 'github.com'])
 
 
 if __name__ == '__main__':

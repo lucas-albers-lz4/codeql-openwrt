@@ -52,7 +52,8 @@ def fetch(endpoint, owner, filename, limit=MAX_API):
     target = owner / filename
     descriptor = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o400)
     try:
-        process = subprocess.Popen(['gh', 'api', endpoint], stdout=subprocess.PIPE,
+        process = subprocess.Popen(['gh', 'api', '--hostname', 'github.com', endpoint],
+                                   stdout=subprocess.PIPE,
                                    stderr=subprocess.DEVNULL)
     except BaseException:
         os.close(descriptor)
