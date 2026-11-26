@@ -1,6 +1,8 @@
 name: Incoming read-only discovery
 
 on:
+  schedule:
+    - cron: '17 7 * * *'
   workflow_dispatch:
     inputs:
       genesis:
@@ -40,7 +42,7 @@ jobs:
       - name: Test read-only discovery contract
         run: python3 -B -m unittest tools.test_incoming_poll tools.test_discovery_pr_dispatch tools.test_discovery_latest_predecessor -v
   discover:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && github.ref == 'refs/heads/main'
     needs: contract
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -54,10 +56,11 @@ jobs:
       - name: Prepare run-owned output and validate predecessor inputs
         id: prepare
         env:
-          GENESIS: ${{ inputs.genesis }}
-          PRIOR_RUN: ${{ inputs.previous_run_id }}
-          PRIOR_ATTEMPT: ${{ inputs.previous_run_attempt }}
-          PRIOR_SHA256: ${{ inputs.previous_sha256 }}
+          EVENT: ${{ github.event_name }}
+          GENESIS_INPUT: ${{ inputs.genesis }}
+          PRIOR_RUN_INPUT: ${{ inputs.previous_run_id }}
+          PRIOR_ATTEMPT_INPUT: ${{ inputs.previous_run_attempt }}
+          PRIOR_SHA256_INPUT: ${{ inputs.previous_sha256 }}
           CONSUMER_SHA: ${{ github.sha }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
@@ -66,66 +69,169 @@ jobs:
         run: |
           set -euo pipefail
           mkdir discovery-output
-          gh api "repos/$GH_REPO/actions/workflows/incoming-discovery-manual.yml/runs?event=workflow_dispatch&branch=main&per_page=100" > discovery-output/latest-successful-run-api.json
-          python3 -B -m tools.discovery_latest_predecessor --api-response discovery-output/latest-successful-run-api.json --repository "$GH_REPO" --genesis "$GENESIS" --prior-run "$PRIOR_RUN" --prior-attempt "$PRIOR_ATTEMPT" --current-run "$RUN_ID"
-          if [[ "$GENESIS" == 'true' ]]; then
-            [[ -z "$PRIOR_RUN" && -z "$PRIOR_SHA256" ]]
-          else
-            [[ "$GENESIS" == 'false' ]]
-            [[ "$PRIOR_RUN" =~ ^[1-9][0-9]*$ ]]
-            [[ "$PRIOR_ATTEMPT" =~ ^[1-9][0-9]*$ ]]
-            [[ "$PRIOR_SHA256" =~ ^[0-9a-f]{64}$ ]]
-          fi
+          gh api "repos/$GH_REPO/actions/workflows/incoming-discovery-manual.yml/runs?event=workflow_dispatch&branch=main&per_page=100" > discovery-output/manual-run-history-api.json
+          gh api "repos/$GH_REPO/actions/workflows/incoming-discovery-manual.yml/runs?event=schedule&branch=main&per_page=100" > discovery-output/scheduled-run-history-api.json
           python3 -B - <<'PY'
-          import json, os
+          import json
           from pathlib import Path
-          record = {
-              'schema': 'incoming-discovery-run-input-v1',
-              'consumer_sha': os.environ['CONSUMER_SHA'],
-              'run_id': os.environ['RUN_ID'],
-              'run_attempt': os.environ['RUN_ATTEMPT'],
-              'genesis': os.environ['GENESIS'] == 'true',
-              'previous_run_id': os.environ['PRIOR_RUN'] or None,
-              'previous_run_attempt': os.environ['PRIOR_ATTEMPT'] if os.environ['PRIOR_RUN'] else None,
-              'previous_sha256': os.environ['PRIOR_SHA256'] or None,
-              'capacity': 1,
+          history = {
+              'schema': 'incoming-discovery-history-api-v1',
+              'workflow_dispatch': json.loads(Path('discovery-output/manual-run-history-api.json').read_text()),
+              'schedule': json.loads(Path('discovery-output/scheduled-run-history-api.json').read_text()),
           }
-          Path('discovery-output/run-input.json').write_text(json.dumps(record, indent=2) + '\n')
+          Path('discovery-output/discovery-history-api.json').write_text(
+              json.dumps(history, indent=2) + '\n')
           PY
+          if [[ "$EVENT" == 'schedule' ]]; then
+            [[ -z "$GENESIS_INPUT" && -z "$PRIOR_RUN_INPUT" && -z "$PRIOR_SHA256_INPUT" ]]
+            GENESIS=false
+            resolution=$(python3 -B -m tools.discovery_latest_predecessor \
+              --api-response discovery-output/discovery-history-api.json \
+              --repository "$GH_REPO" --genesis false --current-run "$RUN_ID" \
+              --current-event schedule --resolve-latest)
+            PRIOR_RUN=$(jq -er '.latest_run_id | tostring' <<< "$resolution")
+            PRIOR_ATTEMPT=$(jq -er '.latest_run_attempt | tostring' <<< "$resolution")
+            PRIOR_EVENT=$(jq -er '.latest_run_event' <<< "$resolution")
+          else
+            GENESIS="$GENESIS_INPUT"
+            PRIOR_RUN="$PRIOR_RUN_INPUT"
+            PRIOR_ATTEMPT="$PRIOR_ATTEMPT_INPUT"
+            PRIOR_SHA256="$PRIOR_SHA256_INPUT"
+            if [[ "$GENESIS" == 'true' ]]; then
+              [[ -z "$PRIOR_RUN_INPUT" && -z "$PRIOR_SHA256_INPUT" ]]
+              PRIOR_RUN=''
+              PRIOR_ATTEMPT=''
+              PRIOR_SHA256=''
+            fi
+            [[ "$GENESIS" == 'true' || "$GENESIS" == 'false' ]]
+            resolution=$(python3 -B -m tools.discovery_latest_predecessor \
+              --api-response discovery-output/discovery-history-api.json \
+              --repository "$GH_REPO" --genesis "$GENESIS" \
+              --prior-run "$PRIOR_RUN" --prior-attempt "$PRIOR_ATTEMPT" \
+              --current-run "$RUN_ID" --current-event workflow_dispatch)
+            PRIOR_EVENT=$(jq -r '.latest_run_event // empty' <<< "$resolution")
+            if [[ "$GENESIS" == 'false' ]]; then
+              [[ "$PRIOR_RUN" =~ ^[1-9][0-9]*$ ]]
+              [[ "$PRIOR_ATTEMPT" =~ ^[1-9][0-9]*$ ]]
+              [[ "$PRIOR_SHA256" =~ ^[0-9a-f]{64}$ ]]
+            else
+              [[ -z "$PRIOR_RUN" && -z "$PRIOR_SHA256" ]]
+            fi
+          fi
+          {
+            echo "genesis=$GENESIS"
+            echo "prior_run=$PRIOR_RUN"
+            echo "prior_attempt=$PRIOR_ATTEMPT"
+            echo "prior_sha256=${PRIOR_SHA256:-}"
+            echo "prior_event=$PRIOR_EVENT"
+          } >> "$GITHUB_OUTPUT"
       - name: Retrieve and validate previous successful checkpoint
         id: predecessor
-        if: inputs.genesis == false
+        if: steps.prepare.outputs.genesis == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          PRIOR_RUN: ${{ inputs.previous_run_id }}
-          PRIOR_ATTEMPT: ${{ inputs.previous_run_attempt }}
-          PRIOR_SHA256: ${{ inputs.previous_sha256 }}
+          EVENT: ${{ github.event_name }}
+          PRIOR_RUN: ${{ steps.prepare.outputs.prior_run || inputs.previous_run_id }}
+          PRIOR_ATTEMPT: ${{ steps.prepare.outputs.prior_attempt || inputs.previous_run_attempt }}
+          PRIOR_EVENT: ${{ steps.prepare.outputs.prior_event }}
+          PRIOR_SHA256_INPUT: ${{ steps.prepare.outputs.prior_sha256 }}
         run: |
           set -euo pipefail
           gh api "repos/$GH_REPO/actions/runs/$PRIOR_RUN" \
-            | jq -e --arg repo "$GH_REPO" --arg run "$PRIOR_RUN" --arg attempt "$PRIOR_ATTEMPT" '
+            | tee discovery-output/predecessor-run-api.json \
+            | jq -e --arg repo "$GH_REPO" --arg run "$PRIOR_RUN" --arg attempt "$PRIOR_ATTEMPT" --arg event "$PRIOR_EVENT" '
                 .id == ($run | tonumber) and
                 .repository.full_name == $repo and
                 .path == ".github/workflows/incoming-discovery-manual.yml" and
-                .event == "workflow_dispatch" and
+                .event == $event and ($event == "workflow_dispatch" or $event == "schedule") and
                 .head_branch == "main" and
                 .status == "completed" and .conclusion == "success" and
                 .run_attempt == ($attempt | tonumber)
               ' > /dev/null
           mkdir predecessor
           gh run download "$PRIOR_RUN" -n "incoming-discovery-${PRIOR_RUN}-${PRIOR_ATTEMPT}" -D predecessor
-          printf '%s  %s\n' "$PRIOR_SHA256" predecessor/decisions.json | sha256sum --check --status
           python3 -B - <<'PY'
+          import hashlib, json, os, re
           from pathlib import Path
           from tools.incoming_poll import read_checkpoint, plan
-          decisions, _ = read_checkpoint(Path('predecessor/decisions.json'))
+
+          run_id = os.environ['PRIOR_RUN']
+          attempt = os.environ['PRIOR_ATTEMPT']
+          event = os.environ['PRIOR_EVENT']
+          run_api = json.loads(Path('discovery-output/predecessor-run-api.json').read_text())
+          raw_input = json.loads(Path('predecessor/run-input.json').read_text())
+          if raw_input.get('schema') not in ('incoming-discovery-run-input-v1',
+                                             'incoming-discovery-run-input-v2'):
+              raise SystemExit('invalid predecessor run-input schema')
+          if (raw_input.get('run_id') != run_id or raw_input.get('run_attempt') != attempt or
+                  raw_input.get('consumer_sha') != run_api.get('head_sha')):
+              raise SystemExit('predecessor run-input identity differs from Actions API')
+          if raw_input.get('schema') == 'incoming-discovery-run-input-v2' and raw_input.get('event') != event:
+              raise SystemExit('predecessor event differs from run-input receipt')
+          if raw_input.get('schema') == 'incoming-discovery-run-input-v1' and event != 'workflow_dispatch':
+              raise SystemExit('legacy predecessor must be a manual genesis or successor')
+          decisions_path = Path('predecessor/decisions.json')
+          actual_sha = hashlib.sha256(decisions_path.read_bytes()).hexdigest()
+          if not re.fullmatch(r'[0-9a-f]{64}', actual_sha):
+              raise SystemExit('invalid predecessor decisions digest')
+          sha_lines = Path('predecessor/decisions.sha256').read_text().splitlines()
+          if sha_lines != [f'{actual_sha}  discovery-output/decisions.json']:
+              raise SystemExit('predecessor decisions.sha256 differs from exact artifact bytes')
+          supplied_sha = os.environ['PRIOR_SHA256_INPUT']
+          if supplied_sha and supplied_sha != actual_sha:
+              raise SystemExit('manual predecessor SHA differs from downloaded bytes')
+          Path('discovery-output/predecessor-decisions.sha256').write_text(actual_sha + '\n')
+          decisions, _ = read_checkpoint(decisions_path)
           plan(decisions, [], 0)
+          PY
+          echo "previous_sha256=$(cat discovery-output/predecessor-decisions.sha256)" >> "$GITHUB_OUTPUT"
+      - name: Record validated discovery run inputs
+        id: record-input
+        env:
+          EVENT: ${{ github.event_name }}
+          GENESIS: ${{ steps.prepare.outputs.genesis }}
+          PRIOR_RUN: ${{ steps.prepare.outputs.prior_run }}
+          PRIOR_ATTEMPT: ${{ steps.prepare.outputs.prior_attempt }}
+          PRIOR_EVENT: ${{ steps.prepare.outputs.prior_event }}
+          PRIOR_SHA256: ${{ steps.predecessor.outputs.previous_sha256 }}
+          CONSUMER_SHA: ${{ github.sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python3 -B - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          record = {
+              'schema': 'incoming-discovery-run-input-v2',
+              'consumer_sha': os.environ['CONSUMER_SHA'],
+              'event': os.environ['EVENT'],
+              'discovery_history_api_sha256': hashlib.sha256(
+                  Path('discovery-output/discovery-history-api.json').read_bytes()).hexdigest(),
+              'manual_run_history_api_sha256': hashlib.sha256(
+                  Path('discovery-output/manual-run-history-api.json').read_bytes()).hexdigest(),
+              'scheduled_run_history_api_sha256': hashlib.sha256(
+                  Path('discovery-output/scheduled-run-history-api.json').read_bytes()).hexdigest(),
+              'predecessor_run_api_sha256': (
+                  hashlib.sha256(Path('discovery-output/predecessor-run-api.json').read_bytes()).hexdigest()
+                  if Path('discovery-output/predecessor-run-api.json').exists() else None),
+              'run_id': os.environ['RUN_ID'],
+              'run_attempt': os.environ['RUN_ATTEMPT'],
+              'genesis': os.environ['GENESIS'] == 'true',
+              'previous_run_id': os.environ['PRIOR_RUN'] or None,
+              'previous_run_attempt': os.environ['PRIOR_ATTEMPT'] if os.environ['PRIOR_RUN'] else None,
+              'previous_run_event': os.environ['PRIOR_EVENT'] or None,
+              'previous_sha256': os.environ['PRIOR_SHA256'] or None,
+              'capacity': 1,
+              'scan_dispatched': False,
+          }
+          Path('discovery-output/run-input.json').write_text(json.dumps(record, indent=2) + '\n')
           PY
       - name: Discover upstream identities without dispatch
         id: poll
         env:
-          GENESIS: ${{ inputs.genesis }}
+          GENESIS: ${{ steps.prepare.outputs.genesis }}
           GH_TOKEN: ${{ github.token }}
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -139,7 +245,7 @@ jobs:
           sha256sum discovery-output/decisions.json | tee discovery-output/decisions.sha256
       - name: Enumerate and replay bounded default-branch gap
         id: gap
-        if: inputs.genesis == false
+        if: steps.prepare.outputs.genesis == 'false'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -148,10 +254,19 @@ jobs:
           python3 -B -m tools.default_branch_gap --previous predecessor/decisions.json --current discovery-output/decisions.json --verify-gap discovery-output/gap/gap.json
           sha256sum discovery-output/gap/gap.json | tee discovery-output/gap/gap.sha256
       - name: Record failed preparation or poll phase
-        if: failure() && github.event_name == 'workflow_dispatch'
+        if: failure() && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
         env:
+          EVENT: ${{ github.event_name }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          CONSUMER_SHA: ${{ github.sha }}
+          PRIOR_RUN: ${{ steps.prepare.outputs.prior_run || inputs.previous_run_id }}
+          PRIOR_ATTEMPT: ${{ steps.prepare.outputs.prior_attempt || inputs.previous_run_attempt }}
+          PRIOR_EVENT: ${{ steps.prepare.outputs.prior_event }}
+          PRIOR_SHA256: ${{ steps.prepare.outputs.prior_sha256 || inputs.previous_sha256 }}
           PREPARE: ${{ steps.prepare.outcome }}
           PREDECESSOR: ${{ steps.predecessor.outcome }}
+          RECORD_INPUT: ${{ steps.record-input.outcome }}
           POLL: ${{ steps.poll.outcome }}
           GAP: ${{ steps.gap.outcome }}
         run: |
@@ -160,17 +275,26 @@ jobs:
           import json, os
           from pathlib import Path
           record = {
-              'schema': 'incoming-discovery-workflow-failure-v1',
+              'schema': 'incoming-discovery-workflow-failure-v2',
+              'event': os.environ['EVENT'],
+              'run_id': os.environ['RUN_ID'],
+              'run_attempt': os.environ['RUN_ATTEMPT'],
+              'consumer_sha': os.environ['CONSUMER_SHA'],
+              'previous_run_id': os.environ['PRIOR_RUN'] or None,
+              'previous_run_attempt': os.environ['PRIOR_ATTEMPT'] if os.environ['PRIOR_RUN'] else None,
+              'previous_run_event': os.environ['PRIOR_EVENT'] or None,
+              'previous_sha256_input': os.environ['PRIOR_SHA256'] or None,
               'prepare': os.environ['PREPARE'],
               'predecessor': os.environ['PREDECESSOR'],
+              'record_input': os.environ['RECORD_INPUT'],
               'poll': os.environ['POLL'],
               'gap': os.environ['GAP'],
-              'limitation': 'Phase receipt only; inspect restricted job log for failure detail.',
+              'limitation': 'Phase receipt only; inspect job log for failure detail. Failed runs are not predecessors.',
           }
           Path('discovery-output/workflow-failure.json').write_text(json.dumps(record, indent=2) + '\n')
           PY
       - name: Retain complete checkpoint or failure receipt
-        if: always() && github.event_name == 'workflow_dispatch'
+        if: always() && (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: incoming-discovery-${{ github.run_id }}-${{ github.run_attempt }}
