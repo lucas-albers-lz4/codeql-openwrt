@@ -23,15 +23,17 @@ read/write existing-file mode and rejects WAL stores. An interrupted first
 creation may leave an uninitialized file that requires explicit operator
 inspection and cleanup; it is never silently treated as a new genesis.
 
-For a genesis snapshot the queue uses its decision events as before. For a
-successor, it requires `previous_sha256` to equal the most recent discovery
-snapshot digest in queue history, then replays the successor's retained API
-request sequence to derive the *current* observed set. The poller's successor
+For a genesis snapshot the queue replays retained API requests and requires
+the decisions to equal the poller's full plan from an empty predecessor. For
+a successor, it requires the exact prior checkpoint file, verifies its digest
+against both the successor and the most recent discovery snapshot in queue
+history, then replays current requests and the full decision plan. Only the
+*current* observed set enters queue reconciliation. The poller's successor
 decisions retain old pending events, including superseded heads; they must not
 be treated as a complete current set. A successor cannot initialize an empty
 queue or be applied twice. Request replay checks internal consistency of
-retained bytes, not the authenticity of the original GitHub fetch or the
-poller's whole decision policy. An absent subject is marked `not_observed`,
+retained bytes and poller decisions, not the authenticity of the original
+GitHub fetch or artifact custody. An absent subject is marked `not_observed`,
 not proven closed; a changed event for a subject is marked `superseded`.
 Events remain in history and reappearance reactivates them. PR identity is repository, PR number and head commit; a base-only change
 requires recovery of any in-flight reservation first and returns the same
@@ -58,17 +60,18 @@ Capacity and interval remain unset pending Linux cost measurements.
 
 Run `python3 -B tools/incoming_queue.py --help`; genesis requires
 `--create --expected-sequence -1`, later transitions omit `--create` and require the exact prior sequence
-and SHA-256 printed by the command. A successor additionally requires that
-the previous discovery checkpoint was already reconciled into the same queue;
+and SHA-256 printed by the command. A successor additionally requires
+`--previous-snapshot <exact-prior-decisions.json>` and that the previous
+discovery checkpoint was already reconciled into the same queue;
 queue actions between discoveries do not break that snapshot link. The
 complete documents and their digests
 are stored in `history`; the database is the authority, not printed output.
 Queue history written by the earlier v2 prototype lacks a stored discovery
-observation time. Its first successor requires
-`--legacy-previous-snapshot <exact-prior-decisions.json>` so the queue can
-verify that file against its recorded snapshot digest and check chronological
-observation. A missing or mismatched prior file fails closed. Later
-transitions must omit that option because their history has the time field.
+observation time. The supplied prior checkpoint also provides that time for
+the first successor. A missing or mismatched prior file fails closed. Older
+queue transitions did not replay their prior checkpoints, so this does not
+retroactively prove that legacy decision rows came from their retained API
+responses. Only the current successor's observations are reconciled.
 Run tests with `python3 -B tools/test_incoming_queue.py -v` and
 `python3 -B -m unittest tools.test_incoming_poll`.
 
