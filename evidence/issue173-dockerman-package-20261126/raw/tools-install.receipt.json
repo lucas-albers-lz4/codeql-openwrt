@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/time",
+    "-v",
+    "-o",
+    "/home/runner/work/_temp/issue173-dockerman-build/output/tools-install.time",
+    "make",
+    "-j2",
+    "tools/install",
+    "V=s"
+  ],
+  "cwd": "/home/runner/work/_temp/issue173-dockerman-build/openwrt",
+  "elapsed_seconds": 1010.587443268,
+  "env": {
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "HOME": "/home/runner/work/_temp/issue173-dockerman-build/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TMPDIR": "/home/runner/work/_temp/issue173-dockerman-build/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "failure": null,
+  "finished_utc": "2026-11-26T11:19:35.548543+00:00",
+  "label": "tools-install",
+  "peak_rss_bytes": null,
+  "rss_note": "not measured",
+  "started_utc": "2026-11-26T11:02:44.961111+00:00",
+  "stderr_sha256": "5ee592166a14fa75a72bfcf9106bd71a3b948b3a6fb33e245b04e85abc1df5c6",
+  "stdout_sha256": "33585b9e2318c2ea35b7cc6f36608848b16705fb93cb041a72160fc71fd4ab1f"
+}

@@ -1,0 +1,14 @@
+Package: luci-app-dockerman
+Version: 26.134.50559~d5129a1
+Depends: libc, luci-base, docker, ttyd, dockerd, docker-compose, ucode-mod-socket
+Provides: luci-app-dockerman-any
+Source: /home/runner/work/_temp/issue173-dockerman-build/luci/applications/luci-app-dockerman
+SourceName: luci-app-dockerman
+License: AGPL-3.0
+Section: luci
+SourceDateEpoch: 1795690889
+URL: https://github.com/openwrt/luci
+Maintainer: OpenWrt LuCI community
+Architecture: all
+Installed-Size: 337920
+Description:  LuCI Support for docker

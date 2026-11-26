@@ -1,0 +1,16 @@
+{
+  "docker-cli": {
+    "peeled_commit": "8900f1d330cb39e93e16d780a26bff1d7e07ba03",
+    "raw_sha256": "16b4b8c27f9a9ea56688e1d9409d97b7f5093085d6bb445a8a6a5fb4b603a3b8",
+    "tag": "v29.6.1",
+    "tag_object": "54ef6288d2fdf057c6eb58419d9a8f8587f532e4",
+    "url": "https://github.com/docker/cli.git"
+  },
+  "moby": {
+    "peeled_commit": "8ec5ab355a34b2a0e2b3238d67bdefe77fefa982",
+    "raw_sha256": "37719bb4094e300fc931cbff02598ee84d2eab8852171be7237228be6bf8f109",
+    "tag": "docker-v29.6.1",
+    "tag_object": "5259f1f37f10f37594a18eab40604e3e91622fe9",
+    "url": "https://github.com/moby/moby.git"
+  }
+}

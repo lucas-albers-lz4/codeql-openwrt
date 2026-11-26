@@ -1,0 +1,98 @@
+[
+  {
+    "control": "Package: luci-app-dockerman\nVersion: 26.134.50559~d5129a1\nDepends: libc, luci-base, docker, ttyd, dockerd, docker-compose, ucode-mod-socket\nProvides: luci-app-dockerman-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/luci/applications/luci-app-dockerman\nSourceName: luci-app-dockerman\nLicense: AGPL-3.0\nSection: luci\nSourceDateEpoch: 1795690889\nURL: https://github.com/openwrt/luci\nMaintainer: OpenWrt LuCI community\nArchitecture: all\nInstalled-Size: 337920\nDescription:  LuCI Support for docker\n",
+    "ipk_sha256": "7b17766175a32ad8ab533a7b01089a7f362d3d1dd2988fe1ce15aaa66480dcd3",
+    "ipk_size": 77312,
+    "retained_path": "provider-candidates/luci/luci-app-dockerman_26.134.50559~d5129a1_all.ipk"
+  },
+  {
+    "control": "Package: luci-base\nVersion: 26.317.52279~1c75ea4\nDepends: libc, rpcd, rpcd-mod-file, rpcd-mod-luci, rpcd-mod-ucode, cgi-io, ucode, ucode-mod-fs, ucode-mod-log, ucode-mod-uci, ucode-mod-ubus, ucode-mod-math, ucode-mod-html, liblucihttp-ucode\nProvides: luci-base-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/luci/modules/luci-base\nSourceName: luci-base\nLicense: Apache-2.0\nLicenseFiles: LICENSE NOTICE\nSection: luci\nSourceDateEpoch: 1795694632\nURL: https://github.com/openwrt/luci\nMaintainer: OpenWrt LuCI community\nArchitecture: x86_64\nInstalled-Size: 1259520\nDescription:  LuCI core runtime\n",
+    "ipk_sha256": "9fc0c47ffbb4621847dd177f6cca4d531f2cfc55b7127a25ef22b1fb895d12e5",
+    "ipk_size": 245783,
+    "retained_path": "provider-candidates/luci/luci-base_26.317.52279~1c75ea4_x86_64.ipk"
+  },
+  {
+    "control": "Package: containerd\nVersion: 2.2.5-r1\nDepends: libc, btrfs-progs, runc\nProvides: containerd-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/packages/utils/containerd\nSourceName: containerd\nLicense: Apache-2.0\nLicenseFiles: LICENSE\nSection: utils\nSourceDateEpoch: 1781823807\nURL: https://containerd.io/\nCPE-ID: cpe:/a:linuxfoundation:containerd\nMaintainer: Gerard Ryan <G.M0N3Y.2503@gmail.com>\nArchitecture: x86_64\nInstalled-Size: 97945600\nDescription:  An industry-standard container runtime with an emphasis on simplicity,\n robustness and portability.\n",
+    "ipk_sha256": "ef106d70bcfd59aa89c43f86d269d8b497254e7542395d2a28e7b324972e6338",
+    "ipk_size": 34804205,
+    "retained_path": "provider-candidates/packages/containerd_2.2.5-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: docker-compose\nVersion: 5.1.4-r1\nDepends: libc, docker\nProvides: docker-compose-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/packages/utils/docker-compose\nSourceName: compose\nLicense: Apache-2.0\nLicenseFiles: LICENSE\nSection: utils\nSourceDateEpoch: 1779288312\nURL: https://github.com/docker/compose\nMaintainer: Javier Marcet <javier@marcet.info>\nArchitecture: x86_64\nInstalled-Size: 29675520\nDescription:  Multi-container orchestration for Docker\n",
+    "ipk_sha256": "d6ec4206ee7b23e9adc0a7975281b9333d35d63e7ef6c94e7a453aab73d515e4",
+    "ipk_size": 10706078,
+    "retained_path": "provider-candidates/packages/docker-compose_5.1.4-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: docker\nVersion: 29.6.1-r1\nDepends: libc\nProvides: docker-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/packages/utils/docker\nSourceName: docker\nLicense: Apache-2.0\nLicenseFiles: LICENSE\nSection: utils\nSourceDateEpoch: 1782418104\nURL: https://www.docker.com/\nMaintainer: Gerard Ryan <G.M0N3Y.2503@gmail.com>\nArchitecture: x86_64\nInstalled-Size: 29327360\nDescription:  The CLI used in the Docker CE and Docker EE products.\n",
+    "ipk_sha256": "8c6cc7e0d239a0147b1f2a16b0e9aacbdb4b4bcf794a59ef080717a1085d82f1",
+    "ipk_size": 9903289,
+    "retained_path": "provider-candidates/packages/docker_29.6.1-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: dockerd\nVersion: 29.6.1-r1\nDepends: libc, ca-certificates, containerd, iptables, iptables-mod-extra, ip6tables, kmod-ipt-nat6, libseccomp, kmod-ipt-nat, kmod-ipt-physdev, kmod-nf-ipvs, kmod-veth, tini, uci-firewall\nProvides: dockerd-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/packages/utils/dockerd\nSourceName: dockerd\nLicense: Apache-2.0\nLicenseFiles: LICENSE\nSection: utils\nRequire-User: docker:docker\nSourceDateEpoch: 1782422754\nURL: https://www.docker.com/\nCPE-ID: cpe:/a:mobyproject:moby\nMaintainer: Gerard Ryan <G.M0N3Y.2503@gmail.com>\nArchitecture: x86_64\nInstalled-Size: 87285760\nDescription:  The Docker CE Engine.\n",
+    "ipk_sha256": "6d6eae48328c765944c20021679acc6bab1f7abe3e1380a0d7bb6ac6e4cdb3d1",
+    "ipk_size": 29335090,
+    "retained_path": "provider-candidates/packages/dockerd_29.6.1-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: runc\nVersion: 1.3.6-r1\nDepends: libc, libseccomp\nProvides: runc-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/packages/utils/runc\nSourceName: runc\nLicense: Apache-2.0\nLicenseFiles: LICENSE\nSection: utils\nSourceDateEpoch: 1781353648\nURL: https://www.opencontainers.org/\nCPE-ID: cpe:/a:linuxfoundation:runc\nMaintainer: Gerard Ryan <G.M0N3Y.2503@gmail.com>\nArchitecture: x86_64\nInstalled-Size: 11612160\nDescription:  runc is a CLI tool for spawning and running containers according to the OCI\n specification.\n",
+    "ipk_sha256": "baafbf4865aa5030814cd7ee0744cb7ca90a2c4b9b1d27f158c998b29a5397a0",
+    "ipk_size": 4510989,
+    "retained_path": "provider-candidates/packages/runc_1.3.6-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: tini\nVersion: 0.19.0-r4\nDepends: libc\nProvides: tini-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/packages/utils/tini\nSourceName: tini\nLicense: MIT\nLicenseFiles: LICENSE\nSection: utils\nSourceDateEpoch: 1587317602\nURL: https://github.com/krallin/tini\nCPE-ID: cpe:/a:tini_project:tini\nMaintainer: Gerard Ryan <G.M0N3Y.2503@gmail.com>\nArchitecture: x86_64\nInstalled-Size: 92160\nDescription:  A tiny but valid init process for containers.\n",
+    "ipk_sha256": "007e701f49b11fee6771f299d89c34d71fe8b68d50fec4c58ee9b395f53e8e3f",
+    "ipk_size": 33735,
+    "retained_path": "provider-candidates/packages/tini_0.19.0-r4_x86_64.ipk"
+  },
+  {
+    "control": "Package: ttyd\nVersion: 1.7.7-r1\nDepends: libc, libcap, libopenssl3, libjson-c5, libuv1, zlib, libwebsockets-full\nProvides: ttyd-any\nSource: /home/runner/work/_temp/issue173-dockerman-build/packages/utils/ttyd\nSourceName: ttyd\nLicense: MIT\nLicenseFiles: LICENSE\nSection: utils\nSourceDateEpoch: 1711767891\nURL: https://github.com/tsl0922/ttyd\nCPE-ID: cpe:/a:ttyd_project:ttyd\nMaintainer: Shuanglei Tao <tsl0922@gmail.com>\nArchitecture: x86_64\nInstalled-Size: 634880\nDescription:  ttyd is a command-line tool for sharing terminal over the web.\n",
+    "ipk_sha256": "13859af8890c87148ede62d4dbfcd04204ea0dfe34bc4d34c5afe97256b47c58",
+    "ipk_size": 408777,
+    "retained_path": "provider-candidates/packages/ttyd_1.7.7-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: ucode-mod-socket\nVersion: 2026.07.09~b885dd0f-r3\nDepends: libc, ucode\nProvides: ucode-mod-socket-any\nSource: feeds/base/utils/ucode\nSourceName: ucode\nLicense: ISC\nSection: lang\nSourceDateEpoch: 1783587483\nMaintainer: Jo-Philipp Wich <jo@mein.io>\nArchitecture: x86_64\nInstalled-Size: 71680\nDescription:  The socket plugin provides access to IPv4\n",
+    "ipk_sha256": "cb23b7069d8684cb33d773ea89a9d99361fc84405860016291765134ed67eb76",
+    "ipk_size": 25612,
+    "retained_path": "provider-candidates/base/ucode-mod-socket_2026.07.09~b885dd0f-r3_x86_64.ipk"
+  },
+  {
+    "control": "Package: kernel\nVersion: 6.12.116~7df1a98339a37dfe41af7485d026e004-r1\nDepends: libc\nProvides: kernel-any\nSource: feeds/base/kernel/linux\nSourceName: kernel\nLicense: GPL-2.0-only\nLicenseFiles: COPYING\nSection: sys\nSourceDateEpoch: 1786881288\nURL: http://www.kernel.org/\nCPE-ID: cpe:/o:linux:linux_kernel\nArchitecture: x86_64\nInstalled-Size: 30720\nDescription:  Virtual kernel package\n",
+    "ipk_sha256": "88490a59d5be9be9bee9f6582efe8bf20fd6df4e52933abd324763cda96f1caa",
+    "ipk_size": 5253,
+    "retained_path": "provider-candidates/target/kernel_6.12.116~7df1a98339a37dfe41af7485d026e004-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: kmod-ipt-nat6\nVersion: 6.12.116-r1\nDepends: kernel (=6.12.116~7df1a98339a37dfe41af7485d026e004-r1), kmod-ipt-core, kmod-nf-nat6, kmod-ipt-core, kmod-ipt-conntrack, kmod-ipt-core, kmod-ipt-nat, kmod-ipt-core, kmod-ip6tables\nProvides: kmod-ipt-nat6-any\nSource: feeds/base/kernel/linux\nSourceName: kernel\nLicense: GPL-2.0-only\nLicenseFiles: COPYING\nSection: kernel\nSourceDateEpoch: 1786881288\nCPE-ID: cpe:/o:linux:linux_kernel\nArchitecture: x86_64\nInstalled-Size: 20480\nDescription:  Netfilter (IPv6) kernel modules for NAT targets\n",
+    "ipk_sha256": "24df68ed29211f45a8b0783614442f8c8e6534b65f69ff686c899d2da1299784",
+    "ipk_size": 4194,
+    "retained_path": "provider-candidates/target/kmod-ipt-nat6_6.12.116-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: kmod-ipt-nat\nVersion: 6.12.116-r1\nDepends: kernel (=6.12.116~7df1a98339a37dfe41af7485d026e004-r1), kmod-ipt-core, kmod-nf-nat\nProvides: kmod-ipt-nat-any\nSource: feeds/base/kernel/linux\nSourceName: kernel\nLicense: GPL-2.0-only\nLicenseFiles: COPYING\nSection: kernel\nSourceDateEpoch: 1786881288\nCPE-ID: cpe:/o:linux:linux_kernel\nArchitecture: x86_64\nInstalled-Size: 40960\nDescription:  Netfilter (IPv4) kernel modules for basic NAT targets\n Includes:\n - MASQUERADE\n",
+    "ipk_sha256": "5a928e184bb5d5f3ae6ba167f8eeba0174458b3b5cf09fe3d2823e99c8cd1921",
+    "ipk_size": 5204,
+    "retained_path": "provider-candidates/target/kmod-ipt-nat_6.12.116-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: kmod-ipt-physdev\nVersion: 6.12.116-r1\nDepends: kernel (=6.12.116~7df1a98339a37dfe41af7485d026e004-r1), kmod-ipt-core, kmod-br-netfilter\nProvides: kmod-ipt-physdev-any\nSource: feeds/base/kernel/linux\nSourceName: kernel\nLicense: GPL-2.0-only\nLicenseFiles: COPYING\nSection: kernel\nSourceDateEpoch: 1786881288\nCPE-ID: cpe:/o:linux:linux_kernel\nArchitecture: x86_64\nInstalled-Size: 20480\nDescription:  The iptables physdev kernel module\n",
+    "ipk_sha256": "722ccee83da3814613e041886ab00a124d29d4e2240178108fdb0f8778386fe1",
+    "ipk_size": 2662,
+    "retained_path": "provider-candidates/target/kmod-ipt-physdev_6.12.116-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: kmod-nf-ipvs\nVersion: 6.12.116-r1\nDepends: kernel (=6.12.116~7df1a98339a37dfe41af7485d026e004-r1), kmod-lib-crc32c, kmod-ipt-conntrack, kmod-nf-conntrack, kmod-ipt-core, kmod-ipt-conntrack\nProvides: kmod-nf-ipvs-any\nSource: feeds/base/kernel/linux\nSourceName: kernel\nLicense: GPL-2.0-only\nLicenseFiles: COPYING\nSection: kernel\nSourceDateEpoch: 1786881288\nCPE-ID: cpe:/o:linux:linux_kernel\nArchitecture: x86_64\nInstalled-Size: 317440\nDescription:  IPVS (IP Virtual Server) implements transport-layer load balancing inside\n the Linux kernel so called Layer-4 switching.\n",
+    "ipk_sha256": "1e4bbf8aa7ae44aa600fb2895277c88089a48a7488ef4abb4c03d1d0c73aaa78",
+    "ipk_size": 88765,
+    "retained_path": "provider-candidates/target/kmod-nf-ipvs_6.12.116-r1_x86_64.ipk"
+  },
+  {
+    "control": "Package: kmod-veth\nVersion: 6.12.116-r1\nDepends: kernel (=6.12.116~7df1a98339a37dfe41af7485d026e004-r1)\nProvides: kmod-veth-any\nSource: feeds/base/kernel/linux\nSourceName: kernel\nLicense: GPL-2.0-only\nLicenseFiles: COPYING\nSection: kernel\nSourceDateEpoch: 1786881288\nCPE-ID: cpe:/o:linux:linux_kernel\nArchitecture: x86_64\nInstalled-Size: 40960\nDescription:  This device is a local ethernet tunnel. Devices are created in pairs.\n When one end receives the packet it appears on its pair and vice\n versa.\n",
+    "ipk_sha256": "0a9f06d628ffd931aa7c6d1690e4208adb152e691e2494190026e6e62b3d0d66",
+    "ipk_size": 12752,
+    "retained_path": "provider-candidates/target/kmod-veth_6.12.116-r1_x86_64.ipk"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "disposition": "observed known source-graph cycle warning",
+    "edge": [
+      "containerd",
+      "dockerd"
+    ],
+    "line": "make[1]: Circular package/feeds/packages/containerd/compile <- package/feeds/packages/dockerd/compile dependency dropped."
+  },
+  {
+    "disposition": "observed known source-graph cycle warning",
+    "edge": [
+      "runc",
+      "dockerd"
+    ],
+    "line": "make[1]: Circular package/feeds/packages/runc/compile <- package/feeds/packages/dockerd/compile dependency dropped."
+  },
+  {
+    "disposition": "observed known source-graph cycle warning",
+    "edge": [
+      "tini",
+      "dockerd"
+    ],
+    "line": "make[1]: Circular package/feeds/packages/tini/compile <- package/feeds/packages/dockerd/compile dependency dropped."
+  }
+]

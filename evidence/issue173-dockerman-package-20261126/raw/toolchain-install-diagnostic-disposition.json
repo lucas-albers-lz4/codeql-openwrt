@@ -1,0 +1,14 @@
+{
+  "config_sha256": null,
+  "disposition": "no empty package diagnostics observed",
+  "kernel_config_sha256": null,
+  "kernel_vermagic_sha256": null,
+  "phase": "toolchain-install",
+  "prior_kernel_warning_receipt": null,
+  "prior_kernel_warning_receipt_sha256": null,
+  "raw_empty_package_lines": [],
+  "repeated_kernel_warning_candidate": false,
+  "source_scoped_exception_candidate": false,
+  "validated_kernel_package_inventory": null,
+  "validated_kernel_package_inventory_sha256": null
+}

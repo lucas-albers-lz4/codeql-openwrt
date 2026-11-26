@@ -1,0 +1,101 @@
+{
+  "argv": [
+    "/usr/bin/time",
+    "-l",
+    "/bin/sh",
+    "-c",
+    "output=$1; shift; exec \"$@\" 2>\"$output\"",
+    "sh",
+    "/private/tmp/review173-timed-offline.Zno9L6X9/dockerman/comparison.stderr",
+    "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/bin/python3.15",
+    "-I",
+    "-B",
+    "/Users/lalbers/gitroot/ucode/.worktrees/openwrt-issue173-dockerman-postguard-20261126/tools/luci-dockerman-build/compare.py",
+    "--luci",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue172-20261125/luci",
+    "--prepared",
+    "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/dockerman-prepared",
+    "--stage",
+    "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/dockerman-stage",
+    "--ipk",
+    "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/luci-app-dockerman.ipk",
+    "--config",
+    "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/config-final",
+    "--receipt",
+    "/private/tmp/review173-timed-offline.Zno9L6X9/dockerman/comparison.receipt.json"
+  ],
+  "completed_utc": "2026-11-26T12:27:11.383299+00:00",
+  "cpu": "arm64",
+  "cwd": "/private/tmp/review173-timed-offline.Zno9L6X9/dockerman",
+  "env": {
+    "HOME": "/private/tmp/review173-timed-offline.Zno9L6X9/dockerman/home",
+    "LC_ALL": "C",
+    "PATH": "/opt/homebrew/Cellar/git/2.56.1/bin:/usr/bin:/bin",
+    "TMPDIR": "/private/tmp/review173-timed-offline.Zno9L6X9/dockerman/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "hosted_source": {
+    "app_receipt_sha256": "e081ff7c47e1e04229987919c75d67b8cb12772f5ea481755135dc6ede38108c",
+    "artifact": 15116344304,
+    "artifact_zip_sha256": "3f43b40f959d2f7381719f3a6214b81ac446327009afb684a3cd2c4a0afe5c50",
+    "attempt": 1,
+    "head": "9d5e323060c16ad50fc925dfc5d7dab7ba6c3c91",
+    "run": 45806390805
+  },
+  "input_paths": {
+    "archive": "/Users/lalbers/gitroot/ucode/.worktrees/openwrt-issue173-dockerman-postguard-20261126/tools/luci-base-inventory/archive.py",
+    "comparator": "/Users/lalbers/gitroot/ucode/.worktrees/openwrt-issue173-dockerman-postguard-20261126/tools/luci-dockerman-build/compare.py",
+    "config": "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/config-final",
+    "hosted_comparison_receipt": "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/dockerman-package-comparison.json",
+    "ipk": "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/luci-app-dockerman.ipk",
+    "oracle": "/Users/lalbers/gitroot/ucode/.worktrees/openwrt-issue173-dockerman-postguard-20261126/tools/luci-app-metadata-probe/source-oracle.json",
+    "prepared": "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/dockerman-prepared",
+    "prepared_inventory": "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/dockerman-prepared-inventory.json",
+    "source": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue172-20261125/luci",
+    "stage": "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/dockerman-stage",
+    "stage_inventory": "/private/tmp/review173-dockerman-retry.wtpEepuR/retained/dockerman/dockerman-stage-inventory.json"
+  },
+  "inputs": {
+    "archive": "224e748846138261c2d709b2932764ffeaabfd90378ccf2a8ffa7476e6630100",
+    "comparator": "f8d38548b24cef4fb8493d0f7e564bf082061d566efcdb1bfca567008631ffae",
+    "config": "4678b8d328391f97ba85b19020cbdcc077cccc528dc79553b99625627f25ae17",
+    "hosted_comparison_receipt": "e081ff7c47e1e04229987919c75d67b8cb12772f5ea481755135dc6ede38108c",
+    "ipk": "7b17766175a32ad8ab533a7b01089a7f362d3d1dd2988fe1ce15aaa66480dcd3",
+    "oracle": "a5ab0a2b8f0099073a040b57ec4be3324a874d2f67ec3951a62a18cfa886cf4f",
+    "prepared_inventory": "f2127ae629498828011ed78183374c6a5f2721055c0a0e7e71ed278c81428a87",
+    "stage_inventory": "d0cdf1659a8b3a99dc6659f4190b71c97a33a531f127bc4e11446bd7a995f971"
+  },
+  "outputs": {
+    "comparison.receipt.json": "e081ff7c47e1e04229987919c75d67b8cb12772f5ea481755135dc6ede38108c",
+    "comparison.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "comparison.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "comparison.time-and-stderr": "fadb5a2220d585516671bb6677e44805c220669de6f477881a1e7a59def6063c"
+  },
+  "platform": "macOS-15.8.2-arm64-arm-64bit-Mach-O",
+  "release": "macOS 15.8.2 (24H232)",
+  "schema": "issue173-offline-comparison-timing-v1",
+  "scope": "single offline local comparison of pinned Git, actual archived prepared and stage regular files, and exact IPK. Cache state uncontrolled. Original hosted comparator elapsed not measured.",
+  "started_utc": "2026-11-26T12:27:11.141006+00:00",
+  "tool_driver_sha256": "8436570b8ffc327659ded365f7f14aa0af3a5061359d414f4e15530a13ea6256",
+  "tools": {
+    "git": {
+      "path": "/opt/homebrew/Cellar/git/2.56.1/bin/git",
+      "sha256": "6f487a07ba5c4d48ebd60ebddac1fe723b01c02593673eaa4dc4acbf33be98f3",
+      "version": "git version 2.56.1"
+    },
+    "python3": {
+      "path": "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/bin/python3.15",
+      "sha256": "fe4fd6c475964c108a2f4b105dcb46f849f4fc2c84d1b46f37443b0eb492fc38",
+      "version": "Python 3.15.2"
+    },
+    "shell": {
+      "path": "/bin/sh",
+      "sha256": "324f9aeacfe8e36831b4537765771ea2926af255d15440a9038008413006201d"
+    },
+    "time": {
+      "path": "/usr/bin/time",
+      "sha256": "42f1c66af3b34979ee54591134b122d2a002fa0db5756df4c88c13a0a2a3d563"
+    }
+  }
+}
