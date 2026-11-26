@@ -12,6 +12,64 @@ runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
 
 class RunnerTests(unittest.TestCase):
+    def test_app_warning_pair_requires_matching_kernel_disposition(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            ow, output, linux = root/'openwrt', root/'output', root/'openwrt/linux'
+            output.mkdir(); linux.mkdir(parents=True)
+            config = (b'CONFIG_PACKAGE_kmod-drm-exec=y\nCONFIG_PACKAGE_kmod-drm-suballoc-helper=y\n'
+                      b'CONFIG_PACKAGE_kmod-drm-i915=y\n')
+            (ow/'.config').write_bytes(config)
+            (linux/'.config').write_bytes(b'kernel')
+            (linux/'.vermagic').write_bytes(b'0123456789abcdef0123456789abcdef\n')
+            warnings = sorted(x.decode() for x in runner.kernel.KNOWN_EMPTY)
+            disposition = {'warnings': warnings}
+            (output/'kernel-warning-disposition.json').write_text(__import__('json').dumps(disposition))
+            probe = SimpleNamespace(root=root, out=output)
+            stderr = ('\n'.join(warnings)+'\n').encode()
+            with patch.object(runner.kernel, 'inventory', return_value='before'), patch.object(runner, 'kernel_package_inventory', return_value='packages'), \
+                 patch.object(runner.kernel, 'AUDITED_BUILD_CONFIG', hashlib.sha256(config).hexdigest()), \
+                 patch.object(runner.kernel, 'AUDITED_KERNEL_CONFIG', hashlib.sha256(b'kernel').hexdigest()), \
+                 patch.object(runner.kernel, 'AUDITED_VERMAGIC', '0123456789abcdef0123456789abcdef'):
+                runner.classify_statistics_diagnostics(probe, b'', stderr, linux, 'before', 'packages', config, disposition)
+                (output/'statistics-warning-disposition.json').unlink()
+                runner.classify_statistics_diagnostics(probe, b'', ('\n'.join(reversed(warnings))+'\n').encode(), linux, 'before', 'packages', config, disposition)
+                (output/'statistics-warning-disposition.json').unlink()
+                with self.assertRaisesRegex(ValueError, 'unapproved empty kernel package diagnostic'):
+                    runner.classify_statistics_diagnostics(probe, stderr, b'', linux, 'before', 'packages', config, disposition)
+                (output/'kernel-warning-disposition.json').write_text('{"warnings": []}')
+                with self.assertRaisesRegex(ValueError, 'kernel warning disposition changed'):
+                    runner.classify_statistics_diagnostics(probe, b'', stderr, linux, 'before', 'packages', config, disposition)
+                with self.assertRaisesRegex(ValueError, 'app warnings differ from prior kernel disposition'):
+                    runner.classify_statistics_diagnostics(probe, b'', stderr, linux, 'before', 'packages', config, {'warnings': []})
+                (output/'kernel-warning-disposition.json').write_text(__import__('json').dumps(disposition))
+                (linux/'.config').write_bytes(b'changed')
+                with self.assertRaisesRegex(ValueError, 'lack audited config or kernel identity'):
+                    runner.classify_statistics_diagnostics(probe, b'', stderr, linux, 'before', 'packages', config, disposition)
+
+    def test_failed_statistics_phase_retains_candidate_before_diagnostic_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            output = root / 'output'
+            directory = root / 'openwrt/bin/packages/x86_64/luci'
+            output.mkdir()
+            directory.mkdir(parents=True)
+            (directory / 'luci-app-statistics_test_all.ipk').write_bytes(b'candidate')
+            probe = SimpleNamespace(root=root, out=output, quiescent=True, phases=[], consumer_identity=lambda suffix: None)
+            def invoke(label, argv, cwd, timeout):
+                (output / (label + '.time')).write_bytes(b'Maximum resident set size (kbytes): 123\n')
+                (output / (label + '.stdout')).write_bytes(b'')
+                (output / (label + '.stderr')).write_bytes(b'bad warning\n')
+                raise RuntimeError('nonzero make')
+            probe.invoke = invoke
+            def diagnose(stdout, stderr):
+                raise ValueError('unexpected diagnostic')
+            with patch.object(runner, 'frozen_metadata'), patch.object(runner.check, 'validate_link'), patch.object(runner, 'post_sources'):
+                with self.assertRaisesRegex(RuntimeError, 'unexpected diagnostic'):
+                    runner.invoke_make(probe, 'statistics-compile', 'target', {}, 'lock', diagnose)
+            self.assertEqual((output / 'candidate-luci-app-statistics_test_all.ipk').read_bytes(), b'candidate')
+            self.assertIn('luci-app-statistics_test_all.ipk', (output / 'statistics-candidates.json').read_text())
+
     def test_prerequisite_logs_copied_and_alias_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp).resolve()
@@ -137,7 +195,7 @@ class RunnerTests(unittest.TestCase):
                     runner.kernel_package_inventory(probe, linux)
 
     def test_same_job_sequence_and_kernel_failure_stops_statistics(self):
-        for fail in (False, True, 'unapproved-warning'):
+        for fail in (False, True, 'unapproved-warning', 'candidate-drift'):
             with self.subTest(kernel_failure=fail), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp).resolve()
                 output = root / 'output'
@@ -145,6 +203,7 @@ class RunnerTests(unittest.TestCase):
                 linux = root / 'openwrt/build_dir/target-x86_64_musl/linux-x86_64/linux-6.12.116'
                 linux.mkdir(parents=True)
                 (linux / '.modules').write_bytes(b'')
+                (root / 'openwrt/.config').write_bytes(b'config')
                 for name in ('.config', '.vermagic', 'modules.builtin', 'modules.builtin.modinfo', 'include/config/kernel.release'):
                     p = linux / name
                     p.parent.mkdir(parents=True, exist_ok=True)
@@ -160,12 +219,17 @@ class RunnerTests(unittest.TestCase):
                 ipk.write_bytes(b'ipk')
                 probe = SimpleNamespace(root=root, out=output, run=lambda: {'source_before': {}})
                 calls = []
-                def invoke(probe, label, target, sources, graph_lock):
+                def invoke(probe, label, target, sources, graph_lock, diagnostics=None):
                     calls.append(target)
                     if fail is True and target == 'package/kernel/linux/compile':
                         raise ValueError('missing kernel module')
                     if fail == 'unapproved-warning' and target == 'package/kernel/linux/compile':
                         return b'', b'WARNING: kmod-other is not available in the kernel config - generating empty package\n'
+                    if diagnostics is not None:
+                        runner.retain_statistics_candidates(probe)
+                        diagnostics(b'', b'')
+                        if fail == 'candidate-drift':
+                            ipk.write_bytes(b'changed')
                     return b'', b''
                 with patch.object(runner, 'invoke_make', side_effect=invoke), patch.object(runner, 'host_preflight'), patch.object(runner, 'source_preflight'), patch.object(runner, 'frozen_metadata', return_value=(b'config', 'locked')), patch.object(runner.compare, 'load_oracle', return_value={}), patch.object(runner.compare, 'physical_directory'), patch.object(runner.compare, 'compare', return_value={}), patch.object(runner.kernel, 'inventory', return_value={'kernel': 'same'}), patch.object(runner, 'kernel_package_inventory', return_value={'kernel_test.ipk': 'same'}):
                     if fail is True:
@@ -179,6 +243,9 @@ class RunnerTests(unittest.TestCase):
                         for name in ('kernel-config','kernel-vermagic','kernel-version','kernel-modules.builtin','kernel-modules.builtin.modinfo'):
                             self.assertTrue((output/name).is_file(), name)
                         self.assertNotIn('package/feeds/luci/luci-app-statistics/compile', calls)
+                    elif fail == 'candidate-drift':
+                        with self.assertRaisesRegex(ValueError, 'candidate inventory differs from live output'):
+                            runner.run_build(probe)
                     else:
                         result = runner.run_build(probe)
                         self.assertEqual(result['status'], 'statistics_package_compared_review_required')
