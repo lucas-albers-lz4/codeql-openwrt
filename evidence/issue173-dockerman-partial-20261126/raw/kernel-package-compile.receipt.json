@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/time",
+    "-v",
+    "-o",
+    "/home/runner/work/_temp/issue173-dockerman-build/output/kernel-package-compile.time",
+    "make",
+    "-j2",
+    "package/kernel/linux/compile",
+    "V=s"
+  ],
+  "cwd": "/home/runner/work/_temp/issue173-dockerman-build/openwrt",
+  "elapsed_seconds": 31.500999382999908,
+  "env": {
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "HOME": "/home/runner/work/_temp/issue173-dockerman-build/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TMPDIR": "/home/runner/work/_temp/issue173-dockerman-build/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "failure": null,
+  "finished_utc": "2026-11-26T10:15:27.656106+00:00",
+  "label": "kernel-package-compile",
+  "peak_rss_bytes": null,
+  "rss_note": "not measured",
+  "started_utc": "2026-11-26T10:14:56.155123+00:00",
+  "stderr_sha256": "ebbf03642d740ed622acd87c08f26e84632bab640e6c6802c6cbe8a7ee497500",
+  "stdout_sha256": "e3791ad670df2cfdf423d32d5c97bd1cdffbeb888228af114bca85d6d3e7e7e3"
+}
