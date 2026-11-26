@@ -56,8 +56,8 @@ python3 -B "$HERE/compare.py" --preflight --run-root "$RUN" --openwrt "$RUN/open
 timed tools-install make -j2 tools/install V=s
 timed toolchain-install make -j2 toolchain/install V=s
 
-packages=(luci-mod-status luci-mod-network luci-mod-system)
-for pkg in "${packages[@]}"; do
+build_core_package() {
+  local pkg=$1
   sha256sum -c "$RUN/output/build-input-digests.txt"
   check_feed_links "$RUN/openwrt" "$RUN/luci" "$RUN/packages"
   sha256sum -c "$RUN/output/recipe-digests.txt"
@@ -73,7 +73,9 @@ for pkg in "${packages[@]}"; do
   sha256sum "$RUN/output/$pkg.ipk" > "$RUN/output/$pkg.ipk.sha256"
   check_feed_links "$RUN/openwrt" "$RUN/luci" "$RUN/packages"
   sha256sum -c "$RUN/output/recipe-digests.txt"
-done
+}
+packages=(luci-mod-status luci-mod-network luci-mod-system)
+run_package_batches "$RUN/openwrt" "$RUN/luci" "$RUN/packages" build_core_package
 # After the final package build, re-resolve and recompare all three outputs.
 for pkg in "${packages[@]}"; do
   find_package_stage "$RUN/openwrt" "$pkg" > "$RUN/output/$pkg.stages-after.nul"
