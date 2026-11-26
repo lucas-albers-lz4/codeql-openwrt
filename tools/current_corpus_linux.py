@@ -252,6 +252,8 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                    "wifi_scripts_config_assumed": "CONFIG_WIFI_SCRIPTS_UCODE=y"})
         db = run.root / "db/current"
         common = run.root / "cache/common"
+        # Query dependency resolution uses --common-caches, not HOME's package cache.
+        shutil.copytree(dependencies, common / "packages")
         compile_cache = run.root / "cache/compilation"
         search = os.pathsep.join(str(bundle / p) for p in ("extractor-pack", "ql/lib", "ql/src"))
         env = dict(run.env, CODEQL_UCODE_STAGED_ROOT=str(stage))

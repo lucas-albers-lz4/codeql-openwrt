@@ -1,12 +1,12 @@
 # Released ucode R3 Linux handoff
 
-This job is prepared but cannot pass until `r3-release-lock.json` is filled from
-an immutable producer GitHub Release. Its current null pins deliberately fail
-before any network access or database creation. Pull requests run only the
-offline contract job while all release pins are null. A partially populated
-lock fails; once all pins are populated, pull requests run the full live
-handoff. Manual dispatch with a null lock fails. A CI candidate artifact is
-not accepted as a release.
+The lock pins immutable producer prerelease `v0.1.0-rc.1` at commit
+`131605a726b7a79eb926886d07bf44eb721fe450`. The archive was
+independently downloaded after publication and hashed before the lock was
+filled. Pull requests with this populated lock run the live Linux handoff;
+the offline contract job runs as well. This page describes the acceptance
+contract, while the hosted R3 result must be inspected separately before
+claiming a released handoff.
 
 The lock reviewer must independently record the release tag, full tag commit,
 release asset URL and SHA-256, manifest and pinned-commit verifier hashes,
@@ -18,9 +18,8 @@ true, `draft` to be false, and `prerelease` to match that lock value. The Git
 tag target, outer asset and CodeQL archive digests are checked before
 extraction.
 It fetches the bundle verifier from the exact producer commit and checks its
-digest. Producer draft PR #158 adds the versioned publication contract and
-verifier options used here; its review, release policy and publication remain
-open. The runner requires `artifact_kind: versioned-release` and the exact tag
+digest. The published producer release includes the versioned publication contract
+and verifier options used here. The runner requires `artifact_kind: versioned-release` and the exact tag
 in the bundle manifest.
 
 The source-first oracle is `r3-openvpn-source-oracle.json`. Each historical LuCI
