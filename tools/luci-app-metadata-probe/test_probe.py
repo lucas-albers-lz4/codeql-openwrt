@@ -224,11 +224,15 @@ class ProbeTests(unittest.TestCase):
         self.p = run.Probe(self.root, "1" * 40)
 
     def test_nonzero_phase_retains_exact_receipt(self):
-        with patch.object(
+        # Popen is synthetic here: its PID is not an owned process-group ID.
+        with patch.object(run, "group_exists", return_value=False), patch.object(
+            run.os, "killpg"
+        ) as killpg, patch.object(
             subprocess, "Popen", return_value=SimpleNamespace(pid=999, wait=lambda timeout=None: 7)
         ):
             with self.assertRaisesRegex(RuntimeError, "phase failed"):
                 self.p.invoke("fake-phase", ["fake"], self.root)
+        killpg.assert_not_called()
         row = json.loads((self.p.out / "fake-phase.receipt.json").read_text())
         self.assertEqual(row["exit"], 7)
         self.assertEqual(row["argv"], ["fake"])
@@ -253,9 +257,13 @@ class ProbeTests(unittest.TestCase):
             path.symlink_to(actual)
             return SimpleNamespace(pid=999, wait=lambda timeout=None: 0)
 
-        with patch.object(subprocess, "Popen", side_effect=fake):
+        # The fake PID can collide with an unrelated host process group (e.g. 999 on CI).
+        with patch.object(run, "group_exists", return_value=False), patch.object(
+            run.os, "killpg"
+        ) as killpg, patch.object(subprocess, "Popen", side_effect=fake):
             with self.assertRaisesRegex(RuntimeError, "phase failed"):
                 self.p.invoke("defconfig", ["make", "defconfig"], self.root)
+        killpg.assert_not_called()
         row = json.loads((self.p.out / "defconfig.receipt.json").read_text())
         self.assertIn("unsafe file", row["stdout_capture_error"])
         self.assertEqual(self.p.diags, [])
@@ -265,8 +273,11 @@ class ProbeTests(unittest.TestCase):
             kw["stdout"].write(b"$(error ERROR: recipe literal, not execution)\n")
             return SimpleNamespace(pid=999, wait=lambda timeout=None: 0)
 
-        with patch.object(subprocess, "Popen", side_effect=fake):
+        with patch.object(run, "group_exists", return_value=False), patch.object(
+            run.os, "killpg"
+        ) as killpg, patch.object(subprocess, "Popen", side_effect=fake):
             self.p.invoke("scheduler-sources-0", ["git", "show", "blob"], self.root)
+        killpg.assert_not_called()
         self.assertEqual(self.p.phases[-1]["exit"], 0)
         self.assertEqual(self.p.diags, [])
 
@@ -275,9 +286,12 @@ class ProbeTests(unittest.TestCase):
             kw["stderr"].write(b"WARNING: synthetic warning\nERROR: synthetic failure\n")
             return SimpleNamespace(pid=999, wait=lambda timeout=None: 2)
 
-        with patch.object(subprocess, "Popen", side_effect=fake):
+        with patch.object(run, "group_exists", return_value=False), patch.object(
+            run.os, "killpg"
+        ) as killpg, patch.object(subprocess, "Popen", side_effect=fake):
             with self.assertRaisesRegex(RuntimeError, "phase failed"):
                 self.p.invoke("defconfig", ["make", "defconfig"], self.root)
+        killpg.assert_not_called()
         self.assertIn("WARNING: synthetic warning", self.p.diags[-1]["warnings"])
         self.assertIn("ERROR: synthetic failure", self.p.diags[-1]["unexpected_errors"])
 
