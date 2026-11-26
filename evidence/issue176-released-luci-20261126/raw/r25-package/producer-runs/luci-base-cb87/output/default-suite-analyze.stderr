@@ -1,0 +1,27 @@
+Running queries.
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1254 MB.
+Compiling query plan for /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/m4/DirectRpcShellWord.ql.
+[1/3 comp 3.5s] Compiled /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/m4/DirectRpcShellWord.ql.
+Compiling query plan for /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/SuccessfullyExtractedFiles.ql.
+[2/3] Found in cache: /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/SuccessfullyExtractedFiles.ql.
+Compiling query plan for /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/ExtractionErrors.ql.
+[3/3] Found in cache: /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/ExtractionErrors.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/diagnostics/ExtractionErrors.ql.
+[1/3 eval 15ms] Evaluation done; writing results to lucas-albers-lz4/ucode-queries/diagnostics/ExtractionErrors.bqrs.
+Starting evaluation of lucas-albers-lz4/ucode-queries/diagnostics/SuccessfullyExtractedFiles.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/m4/DirectRpcShellWord.ql.
+[2/3 eval 74ms] Evaluation done; writing results to lucas-albers-lz4/ucode-queries/diagnostics/SuccessfullyExtractedFiles.bqrs.
+[3/3 eval 28ms] Evaluation done; writing results to lucas-albers-lz4/ucode-queries/m4/DirectRpcShellWord.bqrs.
+Shutting down query evaluator.
+Interpreting results.
+Resolving extensions
+Interpreting /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/m4/DirectRpcShellWord.ql...
+Interpreting /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/SuccessfullyExtractedFiles.ql...
+Interpreting /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/ExtractionErrors.ql...
+Reading source archive /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/database/src.zip
+Exporting results to SARIF v2.1.0...
+Exported results to SARIF v2.1.0 (48ms).

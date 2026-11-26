@@ -1,0 +1,256 @@
+[
+  {
+    "argv": [
+      "git",
+      "init",
+      "--bare",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/sources/producer.git"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "producer-init",
+    "peak_rss_bytes": 4653056,
+    "stderr": "commands/producer-init.stderr",
+    "stdout": "commands/producer-init.stdout",
+    "time": "commands/producer-init.time",
+    "wall_seconds": 0.01
+  },
+  {
+    "argv": [
+      "git",
+      "--git-dir",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/sources/producer.git",
+      "remote",
+      "add",
+      "origin",
+      "https://github.com/lucas-albers-lz4/codeql-ucode.git"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "producer-remote",
+    "peak_rss_bytes": 4493312,
+    "stderr": "commands/producer-remote.stderr",
+    "stdout": "commands/producer-remote.stdout",
+    "time": "commands/producer-remote.time",
+    "wall_seconds": 0.003
+  },
+  {
+    "argv": [
+      "git",
+      "--git-dir",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/sources/producer.git",
+      "fetch",
+      "--depth=1",
+      "origin",
+      "refs/tags/v0.1.0-rc.1:refs/tags/v0.1.0-rc.1"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "producer-fetch-tag",
+    "peak_rss_bytes": 16846848,
+    "stderr": "commands/producer-fetch-tag.stderr",
+    "stdout": "commands/producer-fetch-tag.stdout",
+    "time": "commands/producer-fetch-tag.time",
+    "wall_seconds": 0.518
+  },
+  {
+    "argv": [
+      "git",
+      "--git-dir",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/sources/producer.git",
+      "rev-parse",
+      "v0.1.0-rc.1^{}"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "producer-tag-commit",
+    "peak_rss_bytes": 5046272,
+    "stderr": "commands/producer-tag-commit.stderr",
+    "stdout": "commands/producer-tag-commit.stdout",
+    "time": "commands/producer-tag-commit.time",
+    "wall_seconds": 0.002
+  },
+  {
+    "argv": [
+      "gh",
+      "api",
+      "https://api.github.com/repos/lucas-albers-lz4/codeql-ucode/releases/tags/v0.1.0-rc.1"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "release-api",
+    "peak_rss_bytes": 44544000,
+    "stderr": "commands/release-api.stderr",
+    "stdout": "commands/release-api.stdout",
+    "time": "commands/release-api.time",
+    "wall_seconds": 0.549
+  },
+  {
+    "argv": [
+      "gh",
+      "release",
+      "view",
+      "v0.1.0-rc.1",
+      "--repo",
+      "lucas-albers-lz4/codeql-ucode",
+      "--json",
+      "isImmutable"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "release-immutability",
+    "peak_rss_bytes": 46186496,
+    "stderr": "commands/release-immutability.stderr",
+    "stdout": "commands/release-immutability.stdout",
+    "time": "commands/release-immutability.time",
+    "wall_seconds": 0.406
+  },
+  {
+    "argv": [
+      "curl",
+      "--fail",
+      "--location",
+      "--retry",
+      "3",
+      "--output",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/downloads/producer.tar.gz",
+      "https://github.com/lucas-albers-lz4/codeql-ucode/releases/download/v0.1.0-rc.1/codeql-ucode-linux-x64.tar.gz"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "producer-download",
+    "peak_rss_bytes": 15364096,
+    "stderr": "commands/producer-download.stderr",
+    "stdout": "commands/producer-download.stdout",
+    "time": "commands/producer-download.time",
+    "wall_seconds": 0.29
+  },
+  {
+    "argv": [
+      "curl",
+      "--fail",
+      "--location",
+      "--retry",
+      "3",
+      "--output",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/downloads/codeql-linux64.zip",
+      "https://github.com/github/codeql-cli-binaries/releases/download/v2.27.4/codeql-linux64.zip"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "codeql-download",
+    "peak_rss_bytes": 17985536,
+    "stderr": "commands/codeql-download.stderr",
+    "stdout": "commands/codeql-download.stdout",
+    "time": "commands/codeql-download.time",
+    "wall_seconds": 3.506
+  },
+  {
+    "argv": [
+      "git",
+      "--git-dir",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/sources/producer.git",
+      "show",
+      "131605a726b7a79eb926886d07bf44eb721fe450:scripts/verify-linux-release-bundle.py"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "fetch-verifier",
+    "peak_rss_bytes": 5271552,
+    "stderr": "commands/fetch-verifier.stderr",
+    "stdout": "commands/fetch-verifier.stdout",
+    "time": "commands/fetch-verifier.time",
+    "wall_seconds": 0.003
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/downloads/verify-linux-release-bundle.py",
+      "--archive",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/downloads/producer.tar.gz",
+      "--expected-sha256",
+      "efd10ca853ad94c63e12f40ce92b10523d5cb9be5e647fb4312f82ed62c1e153",
+      "--output-dir",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle",
+      "--expected-release-tag",
+      "v0.1.0-rc.1",
+      "--expected-producer-commit",
+      "131605a726b7a79eb926886d07bf44eb721fe450",
+      "--expected-manifest-sha256",
+      "1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "verify-extract-bundle",
+    "peak_rss_bytes": 24051712,
+    "stderr": "commands/verify-extract-bundle.stderr",
+    "stdout": "commands/verify-extract-bundle.stdout",
+    "time": "commands/verify-extract-bundle.time",
+    "wall_seconds": 0.125
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "version"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "codeql-version",
+    "peak_rss_bytes": 90193920,
+    "stderr": "commands/codeql-version.stderr",
+    "stdout": "commands/codeql-version.stdout",
+    "time": "commands/codeql-version.time",
+    "wall_seconds": 0.34
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "pack",
+      "install",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/ql/lib"
+    ],
+    "cwd": "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux",
+    "exit": 0,
+    "label": "pack-install-lib",
+    "peak_rss_bytes": 159268864,
+    "stderr": "commands/pack-install-lib.stderr",
+    "stdout": "commands/pack-install-lib.stdout",
+    "time": "commands/pack-install-lib.time",
+    "wall_seconds": 5.249
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "pack",
+      "install",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/ql/src"
+    ],
+    "cwd": "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux",
+    "exit": 0,
+    "label": "pack-install-src",
+    "peak_rss_bytes": 151977984,
+    "stderr": "commands/pack-install-src.stderr",
+    "stdout": "commands/pack-install-src.stdout",
+    "time": "commands/pack-install-src.time",
+    "wall_seconds": 4.16
+  },
+  {
+    "argv": [
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+      "resolve",
+      "queries",
+      "--format=json",
+      "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/ql/src/codeql-suites/code-scanning.qls",
+      "--search-path=/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/extractor-pack:/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/ql/lib:/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/ql/src"
+    ],
+    "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+    "exit": 0,
+    "label": "resolve-suite",
+    "peak_rss_bytes": 115109888,
+    "stderr": "commands/resolve-suite.stderr",
+    "stdout": "commands/resolve-suite.stdout",
+    "time": "commands/resolve-suite.time",
+    "wall_seconds": 0.618
+  }
+]

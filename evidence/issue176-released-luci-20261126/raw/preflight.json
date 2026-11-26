@@ -1,0 +1,15 @@
+{
+  "actual_results_observed": false,
+  "consumer_dirty": false,
+  "consumer_sha": "cb69c826b77c3beed4cac5a22ce20e9aab7359a7",
+  "package_allowlist": [
+    "luci-app-adblock-fast",
+    "luci-base-cb87",
+    "luci-mod-status"
+  ],
+  "package_default_suite_result_count": "pre-run source-derived hypothesis: zero per package",
+  "package_lock_sha256": "6f3d382a9ed4a55f56a5f237bdd6b2d6022d61f62adcf1e330e24d4e6f231745",
+  "release_lock_sha256": "53ef87cdaa69ae58be3da9386f4e710050309368649f8ae886c0a7f9ee5c2526",
+  "run_id": "45775775881-1",
+  "schema": "r25-current-luci-preflight-v1"
+}

@@ -1,0 +1,10 @@
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1254 MB.
+Compiling query plan for /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/SuccessfullyExtractedFiles.ql.
+[1/1 comp 1.5s] Compiled /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/bundle/ql/src/diagnostics/SuccessfullyExtractedFiles.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/diagnostics/SuccessfullyExtractedFiles.ql.
+[1/1 eval 101ms] Evaluation done; writing results to /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87/output/success.bqrs.
+Shutting down query evaluator.

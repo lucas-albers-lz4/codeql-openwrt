@@ -1,0 +1,213 @@
+{
+  "artifact": {
+    "archive_sha256": "7432735425f220c12c0a51acc7cc2ef16ae68d14f157a7d33fdb239bd1d55dd2",
+    "artifact_id": 15092505063,
+    "artifact_name": "issue173-core-module-batches-45761966404-1",
+    "filename": "luci-mod-status.ipk",
+    "run_id": 45761966404,
+    "sha256": "bfa86d24ef4fcdd32e0343fc88322c6ef57417be88fe357323959ae80b9e611a"
+  },
+  "build_condition": null,
+  "directory_entry_count": 19,
+  "excluded_paths": [
+    "usr/bin/luci-bwc",
+    "usr/libexec/syslog-wrapper",
+    "usr/share/luci/menu.d/luci-mod-status.json",
+    "usr/share/rpcd/acl.d/luci-mod-status-index.json",
+    "usr/share/rpcd/acl.d/luci-mod-status.json",
+    "www/luci-static/resources/svg/bandwidth.svg",
+    "www/luci-static/resources/svg/channel_analysis.svg",
+    "www/luci-static/resources/svg/connections.svg",
+    "www/luci-static/resources/svg/load.svg",
+    "www/luci-static/resources/svg/wifirate.svg",
+    "www/luci-static/resources/svg/wireless.svg",
+    "www/luci-static/resources/view/status/bandwidth.js",
+    "www/luci-static/resources/view/status/channel_analysis.js",
+    "www/luci-static/resources/view/status/connections.js",
+    "www/luci-static/resources/view/status/dmesg.js",
+    "www/luci-static/resources/view/status/include/10_system.js",
+    "www/luci-static/resources/view/status/include/20_memory.js",
+    "www/luci-static/resources/view/status/include/25_storage.js",
+    "www/luci-static/resources/view/status/include/29_ports.js",
+    "www/luci-static/resources/view/status/include/30_network.js",
+    "www/luci-static/resources/view/status/include/40_dhcp.js",
+    "www/luci-static/resources/view/status/include/50_dsl.js",
+    "www/luci-static/resources/view/status/include/60_wifi.js",
+    "www/luci-static/resources/view/status/index.js",
+    "www/luci-static/resources/view/status/iptables.js",
+    "www/luci-static/resources/view/status/load.js",
+    "www/luci-static/resources/view/status/nftables.js",
+    "www/luci-static/resources/view/status/processes.js",
+    "www/luci-static/resources/view/status/routes.js",
+    "www/luci-static/resources/view/status/routesj.js",
+    "www/luci-static/resources/view/status/syslog.js",
+    "www/luci-static/resources/view/status/wireless.js"
+  ],
+  "files": [
+    {
+      "path": "usr/bin/luci-bwc",
+      "sha256": "5e709a137dc827f5863b0f460cb26c8ddd229a27529a470aa8bfbba5493ecc7d"
+    },
+    {
+      "path": "usr/libexec/syslog-wrapper",
+      "sha256": "771aa3945463b07993e30762a2ee39376b710816e4ee317a101005b98b8e57a6"
+    },
+    {
+      "path": "usr/share/luci/menu.d/luci-mod-status.json",
+      "sha256": "93801ac0e9d9ee4573edcf352278d3d23b55604d412807d94f6dccd1d446ea21"
+    },
+    {
+      "path": "usr/share/rpcd/acl.d/luci-mod-status-index.json",
+      "sha256": "38fefe76231d53eb236940b83ef7eabd5cceb70164f1245ad0dd45251abebb61"
+    },
+    {
+      "path": "usr/share/rpcd/acl.d/luci-mod-status.json",
+      "sha256": "be0441526a4e288399f80f0f081722ddf188932a4bf33f3cbe7044f694036851"
+    },
+    {
+      "path": "usr/share/ucode/luci/template/admin_status/index.ut",
+      "sha256": "652842b1e54f8a2904458ae1f5693ddfc68b97f106d8b8ff48a4d8747d673019"
+    },
+    {
+      "path": "www/luci-static/resources/svg/bandwidth.svg",
+      "sha256": "428952de7ccc917962976e986c592286a3007ede906c24737294b825d1b49bc8"
+    },
+    {
+      "path": "www/luci-static/resources/svg/channel_analysis.svg",
+      "sha256": "60af494f0ccb0a91090809abbf50e4f4f2c8363676189a96a0b14fd0d4eaed48"
+    },
+    {
+      "path": "www/luci-static/resources/svg/connections.svg",
+      "sha256": "4d86cd04ad441e69b4a8cc7a3f981537583a2409067dc1169202b4bf9a2bea30"
+    },
+    {
+      "path": "www/luci-static/resources/svg/load.svg",
+      "sha256": "7ca5af93823d258f1daeef6ebf101c17cc9988617537f3d9d384fc66ca0aee24"
+    },
+    {
+      "path": "www/luci-static/resources/svg/wifirate.svg",
+      "sha256": "b7c402dc75654fdd0265dd633f9cf1812e25c0b647111a059d9844f8b0d64a5d"
+    },
+    {
+      "path": "www/luci-static/resources/svg/wireless.svg",
+      "sha256": "48aae26243051dcf67e6232519c50a068e36db6e4b2b601c913bece854002b17"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/bandwidth.js",
+      "sha256": "79ddc49b8e1eec3fc4c6fb1c0405e12f639ae0d9c44cee44bcd614eb7a7dd2bf"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/channel_analysis.js",
+      "sha256": "c575c928f580cc10173408e5cb9d5d1e54506a75221dd470ee1fa5afca0b1943"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/connections.js",
+      "sha256": "7f18d86829d2a77ecea940a09f3b96a1ad73c8ce486e2566831ac0dcf180f041"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/dmesg.js",
+      "sha256": "7702905266b85bd2f9887885da8bacf43515abdf9feccbd76583f0aff7740b1e"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/10_system.js",
+      "sha256": "8f51f3dbdcfb93c06a348fa88f0bb7b39a83d35b416579a190a92adac86b2640"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/20_memory.js",
+      "sha256": "6866fd4d1a2b607a34a55cd7efc2a4260d52040aedcd24a7d59deff44844a728"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/25_storage.js",
+      "sha256": "ecd87b67c0b3be6a318b19c49186bcfcca7cd39a495df7e09f1569048b7f401b"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/29_ports.js",
+      "sha256": "1c04f37bda64cd23822fbe8fe6f470dedd23687ba1f4f8fae547769e8b15e0bd"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/30_network.js",
+      "sha256": "98d7c0af93af163aa3d7f2f1ff4a709c8ad84eebf76f9061c4f609ca2ee46f05"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/40_dhcp.js",
+      "sha256": "c36d81ca72bb088c7f16b1efd3b18c36fb6a4e048bb606572e01aaaf12911522"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/50_dsl.js",
+      "sha256": "304f898cb8a8f06bcb56a41cc5cf4edb4c637be7acde007894a2fe125c996a2a"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/include/60_wifi.js",
+      "sha256": "965bcc335a875b3a34d6f61f50f1eaf62e2b212db2cd1722fe6422a26f2cb2dc"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/index.js",
+      "sha256": "fa570cf1ea56ff36bc9e50c39ce29c0ee69c63b341ff7a842be4c45896d9d0e4"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/iptables.js",
+      "sha256": "ee1719cf9d1602312a565fbb2c8706074d81aa098ea1fddebc1b4b84bb1fa2dc"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/load.js",
+      "sha256": "3e7617b8e80bab6aa67c5879424b31c675f2d19734cebb390a3ab8dc222764aa"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/nftables.js",
+      "sha256": "d1be9a0c33790498171e4ec6206729a8a8a978be1dd57849d1ad8cf8047f3c4f"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/processes.js",
+      "sha256": "366a9756a540ca92971d61c754b98578baf08451b7076c046b21504377c2a2bc"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/routes.js",
+      "sha256": "77925cf78b0e62498c80db11b93ded519f0bdd96972956a853a6f14e3ce9f72d"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/routesj.js",
+      "sha256": "b4409423c21fc423dc5705eec090b00edeff8a7f760a65ca69ac0235a3576858"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/syslog.js",
+      "sha256": "e5b7cca6b2bd9f73232db94c4c8c2c24d08afacc0faf847225ef45984b78b7c9"
+    },
+    {
+      "path": "www/luci-static/resources/view/status/wireless.js",
+      "sha256": "34b0f12cc365a2b58b49dcb4bb232cfa0fc44c5ef8b62dc519b498be53280c38"
+    }
+  ],
+  "ipk_sha256": "bfa86d24ef4fcdd32e0343fc88322c6ef57417be88fe357323959ae80b9e611a",
+  "markup_inconclusive_paths": [
+    "usr/share/ucode/luci/template/admin_status/index.ut"
+  ],
+  "oracle_sha256": "987f4d79caac219d11f9e0da1878a85114744986d5705a77f23c860fce5a6a9e",
+  "package": {
+    "Architecture": "x86_64",
+    "Package": "luci-mod-status",
+    "Version": "26.284.22350~8125d12"
+  },
+  "package_id": "luci-mod-status",
+  "package_lock_sha256": "6f3d382a9ed4a55f56a5f237bdd6b2d6022d61f62adcf1e330e24d4e6f231745",
+  "producer_fixture_commit": "d508217bfb5d31e205eb51dd797075e0277966ec",
+  "producer_runner_sha256": "0480553ff6598438bbcaf7d973f8dfef20097728480a94cdcdea0f011b0611fa",
+  "producer_stage_helper_sha256": "991c92bb72f5c7a048d25b12021ff03b28c2d3c462a977b6a596d070aa7122a9",
+  "regular_member_count": 33,
+  "route_counts": {
+    "excluded": 32,
+    "markup": 1,
+    "plain": 0
+  },
+  "schema": "openwrt-r25-package-stage-receipt-v1",
+  "selected_paths": [
+    "usr/share/ucode/luci/template/admin_status/index.ut"
+  ],
+  "source_revisions": {
+    "luci": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "luci_tree": "1d7bf89bc8708fca69d005b0690ca823c9071692",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "openwrt_tree": "328d4df01c038d365176b72753b778e10c3ff413",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+    "packages_tree": "a6b0fc0935cbfeedb810e6e991b6940f71548ea7"
+  }
+}

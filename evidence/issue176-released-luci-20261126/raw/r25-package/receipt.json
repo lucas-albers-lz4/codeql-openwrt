@@ -1,0 +1,356 @@
+{
+  "codeql": {
+    "archive_sha256": "393bf92b66596141ec93baf9b483f4a350f3749916c922fed0dd63c67706047d",
+    "binary_sha256": "bb3a754e126ed061b5f3356531cd5501872ab3864bd665b2d1afdbf8a67a146d"
+  },
+  "commands": [
+    {
+      "argv": [
+        "gh",
+        "api",
+        "/repos/lucas-albers-lz4/codeql-openwrt/actions/runs/45748188587/artifacts?per_page=100"
+      ],
+      "elapsed_seconds": 0.338,
+      "exit_status": 0,
+      "label": "luci-app-adblock-fast-artifact-list",
+      "stderr": "commands/luci-app-adblock-fast-artifact-list.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "commands/luci-app-adblock-fast-artifact-list.stdout",
+      "stdout_sha256": "18e08952a307912a987e64b30f826f01fc29b43cfcf46d172f85747341922167"
+    },
+    {
+      "archive_bytes": 1341598,
+      "archive_path": "incoming/luci-app-adblock-fast/artifact.zip",
+      "archive_sha256": "49367dcc1058f0ce1fec71079f64cbf42c4307de3c687c73da0e3f4c8c750807",
+      "argv": [
+        "gh",
+        "api",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "/repos/lucas-albers-lz4/codeql-openwrt/actions/artifacts/15087445880/zip"
+      ],
+      "elapsed_seconds": 0.876,
+      "exit_status": 0,
+      "label": "luci-app-adblock-fast-artifact-download",
+      "response_bytes_observed": 1341598,
+      "response_too_large": false,
+      "stderr": "commands/luci-app-adblock-fast-artifact-download.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_truncated": false,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.004,
+      "exit_status": 0,
+      "label": "luci-app-adblock-fast-consumer-stage",
+      "operation": "tools.r25_package_stage.stage_locked_package",
+      "stage_receipt_sha256": "35bc638ef8cf4279717e285ca00cab4a3c2929f4ec077ff4ae9e303a5e9019a3"
+    },
+    {
+      "elapsed_seconds": 0.006,
+      "exit_status": 0,
+      "label": "luci-app-adblock-fast-stage-preservation",
+      "operation": "current-luci-hidden-stage-preservation"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/runner/run-installed-stage.py",
+        "--bundle",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux",
+        "--bundle-sha256",
+        "1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9",
+        "--codeql",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "--codeql-archive",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/downloads/codeql-linux64.zip",
+        "--stage",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-app-adblock-fast",
+        "--oracle",
+        "/home/runner/work/codeql-openwrt/codeql-openwrt/docs/r25-current-luci-oracles/luci-app-adblock-fast-oracle.json",
+        "--output",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-app-adblock-fast"
+      ],
+      "elapsed_seconds": 28.703,
+      "exit_status": 0,
+      "label": "luci-app-adblock-fast-producer",
+      "peak_rss_kb": 408860,
+      "stderr": "commands/luci-app-adblock-fast-producer.stderr",
+      "stdout": "commands/luci-app-adblock-fast-producer.stdout",
+      "time_report": "commands/luci-app-adblock-fast-producer.time"
+    },
+    {
+      "elapsed_seconds": 0.002,
+      "exit_status": 0,
+      "label": "luci-app-adblock-fast-consumer-acceptance",
+      "operation": "tools.r25_package_handoff.verify_coverage"
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "/repos/lucas-albers-lz4/codeql-openwrt/actions/runs/45741119647/artifacts?per_page=100"
+      ],
+      "elapsed_seconds": 0.298,
+      "exit_status": 0,
+      "label": "luci-base-cb87-artifact-list",
+      "stderr": "commands/luci-base-cb87-artifact-list.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "commands/luci-base-cb87-artifact-list.stdout",
+      "stdout_sha256": "27b93fa33fdbf9f7306912063224288b11551570c99fadc54751018fdbca3de5"
+    },
+    {
+      "archive_bytes": 1394450,
+      "archive_path": "incoming/luci-base-cb87/artifact.zip",
+      "archive_sha256": "8d8baeacb21e3699535969c1c2009d15d84ca5d8103c3fc7e94312db923d9236",
+      "argv": [
+        "gh",
+        "api",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "/repos/lucas-albers-lz4/codeql-openwrt/actions/artifacts/15084046585/zip"
+      ],
+      "elapsed_seconds": 0.874,
+      "exit_status": 0,
+      "label": "luci-base-cb87-artifact-download",
+      "response_bytes_observed": 1394450,
+      "response_too_large": false,
+      "stderr": "commands/luci-base-cb87-artifact-download.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_truncated": false,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.014,
+      "exit_status": 0,
+      "label": "luci-base-cb87-consumer-stage",
+      "operation": "tools.r25_package_stage.stage_locked_package",
+      "stage_receipt_sha256": "ffff8663f9fa0e03f18b860b93ecfa0e11a82ac24e73f1786f91fa7c490a6ab2"
+    },
+    {
+      "elapsed_seconds": 0.021,
+      "exit_status": 0,
+      "label": "luci-base-cb87-stage-preservation",
+      "operation": "current-luci-hidden-stage-preservation"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/runner/run-installed-stage.py",
+        "--bundle",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux",
+        "--bundle-sha256",
+        "1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9",
+        "--codeql",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "--codeql-archive",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/downloads/codeql-linux64.zip",
+        "--stage",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-base-cb87",
+        "--oracle",
+        "/home/runner/work/codeql-openwrt/codeql-openwrt/docs/r25-current-luci-oracles/luci-base-oracle.json",
+        "--output",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87"
+      ],
+      "elapsed_seconds": 26.386,
+      "exit_status": 0,
+      "label": "luci-base-cb87-producer",
+      "peak_rss_kb": 454324,
+      "stderr": "commands/luci-base-cb87-producer.stderr",
+      "stdout": "commands/luci-base-cb87-producer.stdout",
+      "time_report": "commands/luci-base-cb87-producer.time"
+    },
+    {
+      "elapsed_seconds": 0.006,
+      "exit_status": 0,
+      "label": "luci-base-cb87-consumer-acceptance",
+      "operation": "tools.r25_package_handoff.verify_coverage"
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "/repos/lucas-albers-lz4/codeql-openwrt/actions/runs/45761966404/artifacts?per_page=100"
+      ],
+      "elapsed_seconds": 0.306,
+      "exit_status": 0,
+      "label": "luci-mod-status-artifact-list",
+      "stderr": "commands/luci-mod-status-artifact-list.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout": "commands/luci-mod-status-artifact-list.stdout",
+      "stdout_sha256": "ec0410cf1d4e9bb1757d9f0b32f8d9ce7687d5ed520d19b038598eafc9381785"
+    },
+    {
+      "archive_bytes": 1465099,
+      "archive_path": "incoming/luci-mod-status/artifact.zip",
+      "archive_sha256": "7432735425f220c12c0a51acc7cc2ef16ae68d14f157a7d33fdb239bd1d55dd2",
+      "argv": [
+        "gh",
+        "api",
+        "-H",
+        "Accept: application/vnd.github+json",
+        "/repos/lucas-albers-lz4/codeql-openwrt/actions/artifacts/15092505063/zip"
+      ],
+      "elapsed_seconds": 0.93,
+      "exit_status": 0,
+      "label": "luci-mod-status-artifact-download",
+      "response_bytes_observed": 1465099,
+      "response_too_large": false,
+      "stderr": "commands/luci-mod-status-artifact-download.stderr",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_truncated": false,
+      "timed_out": false
+    },
+    {
+      "elapsed_seconds": 0.007,
+      "exit_status": 0,
+      "label": "luci-mod-status-consumer-stage",
+      "operation": "tools.r25_package_stage.stage_locked_package",
+      "stage_receipt_sha256": "9dcdb51a055e9f9aab4106cfec4aba43c82e062babca8d75b1bc6455af62d63f"
+    },
+    {
+      "elapsed_seconds": 0.011,
+      "exit_status": 0,
+      "label": "luci-mod-status-stage-preservation",
+      "operation": "current-luci-hidden-stage-preservation"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/runner/run-installed-stage.py",
+        "--bundle",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux",
+        "--bundle-sha256",
+        "1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9",
+        "--codeql",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql",
+        "--codeql-archive",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/downloads/codeql-linux64.zip",
+        "--stage",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-mod-status",
+        "--oracle",
+        "/home/runner/work/codeql-openwrt/codeql-openwrt/docs/r25-current-luci-oracles/luci-mod-status-oracle.json",
+        "--output",
+        "/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-mod-status"
+      ],
+      "elapsed_seconds": 25.64,
+      "exit_status": 0,
+      "label": "luci-mod-status-producer",
+      "peak_rss_kb": 435232,
+      "stderr": "commands/luci-mod-status-producer.stderr",
+      "stdout": "commands/luci-mod-status-producer.stdout",
+      "time_report": "commands/luci-mod-status-producer.time"
+    },
+    {
+      "elapsed_seconds": 0.003,
+      "exit_status": 0,
+      "label": "luci-mod-status-consumer-acceptance",
+      "operation": "tools.r25_package_handoff.verify_coverage"
+    }
+  ],
+  "consumer_dirty": false,
+  "consumer_sha": "cb69c826b77c3beed4cac5a22ce20e9aab7359a7",
+  "package_lock_sha256": "6f3d382a9ed4a55f56a5f237bdd6b2d6022d61f62adcf1e330e24d4e6f231745",
+  "packages": {
+    "luci-app-adblock-fast": {
+      "artifact_archive": {
+        "api_digest": "sha256:49367dcc1058f0ce1fec71079f64cbf42c4307de3c687c73da0e3f4c8c750807",
+        "archive_bytes": 1341598,
+        "archive_declared_uncompressed_bytes": 27434031,
+        "archive_member_count": 42,
+        "archive_sha256": "49367dcc1058f0ce1fec71079f64cbf42c4307de3c687c73da0e3f4c8c750807",
+        "command_label": "luci-app-adblock-fast-artifact-download",
+        "ipk_bytes": 20451,
+        "ipk_sha256": "b3d18c736a970f0ba17919e1249c837dae393b04f5ec541950a6cce737110e0f",
+        "member_name": "luci-app-adblock-fast.ipk",
+        "other_ipk_members": [
+          "adblock-fast.ipk"
+        ]
+      },
+      "coverage_manifest_sha256": "043eed6769e2805733acbf8b9dab33145de582ed1d4b066a234d29e0bd4fdd79",
+      "file_count": 9,
+      "ipk_sha256": "b3d18c736a970f0ba17919e1249c837dae393b04f5ec541950a6cce737110e0f",
+      "package_id": "luci-app-adblock-fast",
+      "producer_receipt_sha256": "0f3ea09a7926722efa8727c3c626d18ae276844103acdc8227e9394cccd9125c",
+      "route_counts": {
+        "excluded": 8,
+        "plain": 1
+      },
+      "routing_sha256": "a4735a87b8c8f0ea2a30a18784132af95fab75daee3dc5801ca7efb88aa6a8c3",
+      "sarif_result_count": 0,
+      "sarif_sha256": "5058fa4ec49677958ec27703444fadc75c6face32322d5c64db1969128a5440d",
+      "stage_receipt_sha256": "35bc638ef8cf4279717e285ca00cab4a3c2929f4ec077ff4ae9e303a5e9019a3",
+      "successful_file_count": 1
+    },
+    "luci-base-cb87": {
+      "artifact_archive": {
+        "api_digest": "sha256:8d8baeacb21e3699535969c1c2009d15d84ca5d8103c3fc7e94312db923d9236",
+        "archive_bytes": 1394450,
+        "archive_declared_uncompressed_bytes": 25655984,
+        "archive_member_count": 33,
+        "archive_sha256": "8d8baeacb21e3699535969c1c2009d15d84ca5d8103c3fc7e94312db923d9236",
+        "command_label": "luci-base-cb87-artifact-download",
+        "ipk_bytes": 155868,
+        "ipk_sha256": "41376c6774b35ff140ff3fa441643a184be252070cd3f462f645c6a98e527d6b",
+        "member_name": "luci-base.ipk",
+        "other_ipk_members": []
+      },
+      "coverage_manifest_sha256": "264164b36916cae2823cc5615d7fc4d27075ac822b7cb59858f812063ea1af30",
+      "file_count": 76,
+      "ipk_sha256": "41376c6774b35ff140ff3fa441643a184be252070cd3f462f645c6a98e527d6b",
+      "package_id": "luci-base-cb87",
+      "producer_receipt_sha256": "2bee2200a3aad194b3a7444d9303ffc22c947954d37a6be327d63b5c707b230f",
+      "route_counts": {
+        "excluded": 58,
+        "markup": 8,
+        "plain": 10
+      },
+      "routing_sha256": "b0d5a28ca1cddede1bd7cc971f32f4b582ed3408e1c89880cd83c38f8844fd15",
+      "sarif_result_count": 0,
+      "sarif_sha256": "91a4091d89e310609df09880f5260653a4cbcd0f43d244635b020576df67f0d0",
+      "stage_receipt_sha256": "ffff8663f9fa0e03f18b860b93ecfa0e11a82ac24e73f1786f91fa7c490a6ab2",
+      "successful_file_count": 18
+    },
+    "luci-mod-status": {
+      "artifact_archive": {
+        "api_digest": "sha256:7432735425f220c12c0a51acc7cc2ef16ae68d14f157a7d33fdb239bd1d55dd2",
+        "archive_bytes": 1465099,
+        "archive_declared_uncompressed_bytes": 27345652,
+        "archive_member_count": 59,
+        "archive_sha256": "7432735425f220c12c0a51acc7cc2ef16ae68d14f157a7d33fdb239bd1d55dd2",
+        "command_label": "luci-mod-status-artifact-download",
+        "ipk_bytes": 46163,
+        "ipk_sha256": "bfa86d24ef4fcdd32e0343fc88322c6ef57417be88fe357323959ae80b9e611a",
+        "member_name": "luci-mod-status.ipk",
+        "other_ipk_members": [
+          "luci-mod-network.ipk",
+          "luci-mod-system.ipk"
+        ]
+      },
+      "coverage_manifest_sha256": "7fd7b38d56492be3e4cd182a414078b1d02de88620a4eacc5f931bc00b5c0dde",
+      "file_count": 33,
+      "ipk_sha256": "bfa86d24ef4fcdd32e0343fc88322c6ef57417be88fe357323959ae80b9e611a",
+      "package_id": "luci-mod-status",
+      "producer_receipt_sha256": "65aa1a7b9e0d4e9adc49d0e77db59424d34162a9ea5f9aad8224fbdd632fbec5",
+      "route_counts": {
+        "excluded": 32,
+        "markup": 1
+      },
+      "routing_sha256": "6dea19adc8f8b85ba03e44281458b5476e3578bfbae6b0ef9075cc4d43888430",
+      "sarif_result_count": 0,
+      "sarif_sha256": "e083ee8f979ef5a966bfc1f391bc534493947fb70350a2a7d5ad57e97d9edbcf",
+      "stage_receipt_sha256": "9dcdb51a055e9f9aab4106cfec4aba43c82e062babca8d75b1bc6455af62d63f",
+      "successful_file_count": 1
+    }
+  },
+  "producer_release": {
+    "commit": "131605a726b7a79eb926886d07bf44eb721fe450",
+    "manifest_sha256": "1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9",
+    "tag": "v0.1.0-rc.1"
+  },
+  "run_id": "45775775881-1",
+  "schema": "openwrt-r25-package-handoff-v1"
+}

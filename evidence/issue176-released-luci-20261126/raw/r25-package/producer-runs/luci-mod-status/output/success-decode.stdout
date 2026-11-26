@@ -1,0 +1,6 @@
+{"#select":{"columns":[
+   {"name":"f","kind":"Entity"}
+  ,{"kind":"String"}]
+ ,"tuples":[
+   [{"label":"/home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-mod-status/usr/share/ucode/luci/template/admin_status/index.ut","url":{"uri":"file:///home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-mod-status/usr/share/ucode/luci/template/admin_status/index.ut","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]]
+ }}

@@ -1,0 +1,23 @@
+	Command being timed: "/usr/bin/python3 -B /home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux/runner/run-installed-stage.py --bundle /home/runner/work/_temp/r25-current-luci-45775775881-1/bundle/codeql-ucode-linux --bundle-sha256 1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9 --codeql /home/runner/work/_temp/r25-current-luci-45775775881-1/cli/codeql/codeql --codeql-archive /home/runner/work/_temp/r25-current-luci-45775775881-1/downloads/codeql-linux64.zip --stage /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/stages/luci-base-cb87 --oracle /home/runner/work/codeql-openwrt/codeql-openwrt/docs/r25-current-luci-oracles/luci-base-oracle.json --output /home/runner/work/_temp/r25-current-luci-45775775881-1/r25-package/producer-runs/luci-base-cb87"
+	User time (seconds): 46.19
+	System time (seconds): 2.67
+	Percent of CPU this job got: 185%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:26.38
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 454324
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 41
+	Minor (reclaiming a frame) page faults: 683773
+	Voluntary context switches: 84355
+	Involuntary context switches: 3013
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 57904
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
