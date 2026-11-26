@@ -2,13 +2,17 @@ from __future__ import annotations
 
 from collections import Counter
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
 import stat
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+import warnings
+import zipfile
 
 from tools import r25_package_handoff as handoff
 from tools import r25_package_stage as stage
@@ -17,6 +21,18 @@ from tools import r25_package_stage as stage
 def write_json(path: Path, data: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n")
+
+
+def artifact_zip(name: str, data: bytes, *, compression: int = zipfile.ZIP_DEFLATED,
+                 external_attr: int | None = None) -> bytes:
+    stream = io.BytesIO()
+    with zipfile.ZipFile(stream, "w", compression=compression) as archive:
+        info = zipfile.ZipInfo(name)
+        info.compress_type = compression
+        if external_attr is not None:
+            info.external_attr = external_attr
+        archive.writestr(info, data)
+    return stream.getvalue()
 
 
 class PackageHandoffTests(unittest.TestCase):
@@ -50,10 +66,16 @@ class PackageHandoffTests(unittest.TestCase):
                              "commit": "a" * 40, "tag": "v0.1.0",
                              "codeql_binary_sha256": handoff.sha_file(binary)},
                 "codeql": {"sha256": handoff.sha_file(archive)}}
-        self.assertEqual(handoff.verify_bundle_inputs(r3, lock), (bundle, binary, archive))
+        package_lock = {"producer": {"runner": {"sha256": handoff.sha_file(runner)}}}
+        self.assertEqual(handoff.verify_bundle_inputs(r3, lock, package_lock),
+                         (bundle, binary, archive))
+        package_lock["producer"]["runner"]["sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "consumer package-lock source pin"):
+            handoff.verify_bundle_inputs(r3, lock, package_lock)
+        package_lock["producer"]["runner"]["sha256"] = handoff.sha_file(runner)
         lock["release"]["codeql_binary_sha256"] = "0" * 64
         with self.assertRaisesRegex(ValueError, "executable differs from release lock"):
-            handoff.verify_bundle_inputs(r3, lock)
+            handoff.verify_bundle_inputs(r3, lock, package_lock)
 
     def test_artifact_id_name_and_expiry_are_checked_before_download(self):
         input_root = self.root / "inputs"
@@ -63,29 +85,55 @@ class PackageHandoffTests(unittest.TestCase):
         profile = {"ipk": {"run_id": 45548269425, "artifact_id": 14997815607,
                            "artifact_name": "wifi-ipk-byte-45548269425-1",
                            "filename": "y-wifi-scripts.ipk"}}
+        ipk_bytes = b"verified later by package lock"
+        zip_stream = io.BytesIO()
+        with zipfile.ZipFile(zip_stream, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("y-wifi-scripts.ipk", ipk_bytes)
+            archive.writestr("build/run.log", b"producer build log")
+            archive.writestr("n-wifi-scripts.ipk", b"unselected package variant")
+        zip_bytes = zip_stream.getvalue()
+        profile["ipk"]["sha256"] = hashlib.sha256(ipk_bytes).hexdigest()
+        profile["ipk"]["archive_sha256"] = hashlib.sha256(zip_bytes).hexdigest()
         metadata = {"artifacts": [{"id": 14997815607,
                                    "name": "wifi-ipk-byte-45548269425-1",
                                    "expired": False,
+                                   "size_in_bytes": len(zip_bytes),
+                                   "digest": "sha256:" + hashlib.sha256(zip_bytes).hexdigest(),
                                    "workflow_run": {"id": 45548269425}}]}
         calls = []
 
         def fake_run(label, argv, cwd, env, log_root, records):
             calls.append((label, argv, env.copy()))
-            if label.endswith("artifact-list"):
-                return json.dumps(metadata)
-            dest = Path(argv[-1])
-            (dest / "y-wifi-scripts.ipk").write_bytes(b"verified later by lock")
-            return ""
+            return json.dumps(metadata)
+
+        def fake_binary(label, argv, cwd, env, archive_path, log_root, records):
+            calls.append((label, argv, env.copy()))
+            archive_path.write_bytes(zip_bytes)
+            records.append({"label": label, "exit_status": 0, "elapsed_seconds": 0.01,
+                            "archive_sha256": hashlib.sha256(zip_bytes).hexdigest(),
+                            "archive_bytes": len(zip_bytes)})
+            return {"archive_sha256": hashlib.sha256(zip_bytes).hexdigest(),
+                    "archive_bytes": len(zip_bytes), "command_label": label}
 
         with patch.dict(os.environ, {"GH_TOKEN": "artifact-read-token"}):
             with patch.object(handoff, "run_checked", side_effect=fake_run):
-                result = handoff.download_pinned_artifact(
-                    "lucas-albers-lz4/codeql-openwrt", "wifi-scripts-ucode-y",
-                    profile, input_root, logs, [])
+                with patch.object(handoff, "run_binary_download", side_effect=fake_binary):
+                    result, archive_info = handoff.download_pinned_artifact(
+                        "lucas-albers-lz4/codeql-openwrt", "wifi-scripts-ucode-y",
+                        profile, input_root, logs, [])
         self.assertEqual(result, input_root / "wifi-scripts-ucode-y/y-wifi-scripts.ipk")
+        self.assertEqual(result.read_bytes(), ipk_bytes)
+        self.assertEqual(archive_info["archive_sha256"], hashlib.sha256(zip_bytes).hexdigest())
+        self.assertEqual(archive_info["other_ipk_members"], ["n-wifi-scripts.ipk"])
+        self.assertEqual((result.parent / "artifact.zip").read_bytes(), zip_bytes)
+        self.assertEqual(sorted(path.name for path in result.parent.iterdir()),
+                         ["artifact.zip", "y-wifi-scripts.ipk"])
         self.assertEqual(len(calls), 2)
         self.assertIn("GH_TOKEN", calls[0][2])
         self.assertEqual(calls[0][1][2], "/repos/lucas-albers-lz4/codeql-openwrt/actions/runs/45548269425/artifacts?per_page=100")
+        self.assertEqual(calls[1][1][-1],
+                         "/repos/lucas-albers-lz4/codeql-openwrt/actions/artifacts/14997815607/zip")
+        self.assertIn("GH_TOKEN", calls[1][2])
 
         expired = {"artifacts": [{**metadata["artifacts"][0], "expired": True}]}
         calls.clear()
@@ -96,6 +144,82 @@ class PackageHandoffTests(unittest.TestCase):
                         "lucas-albers-lz4/codeql-openwrt", "wifi-scripts-ucode-y",
                         profile, input_root, logs, [])
         self.assertEqual(len(calls), 0)
+
+    def test_artifact_zip_rejects_unsafe_paths_duplicate_entries_links_and_compression(self):
+        workspace = self.root / "workspace"
+        workspace.mkdir()
+        (workspace / "downloads").mkdir()
+        ipk = b"pinned ipk bytes"
+        expected = hashlib.sha256(ipk).hexdigest()
+        cases = [
+            (artifact_zip("../y-wifi-scripts.ipk", ipk), "unsafe member path"),
+            (artifact_zip("y-wifi-scripts.ipk", ipk, compression=zipfile.ZIP_BZIP2),
+             "compression method is unsupported"),
+            (artifact_zip("y-wifi-scripts.ipk", ipk,
+                          external_attr=(stat.S_IFLNK | 0o777) << 16),
+             "not a regular file"),
+            (artifact_zip("y-wifi-scripts.ipk", b"0" * 50_000),
+             "compression ratio exceeds budget"),
+        ]
+        duplicate_stream = io.BytesIO()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UserWarning)
+            with zipfile.ZipFile(duplicate_stream, "w") as archive:
+                archive.writestr("y-wifi-scripts.ipk", ipk)
+                archive.writestr("y-wifi-scripts.ipk", ipk)
+        cases.append((duplicate_stream.getvalue(), "duplicate artifact ZIP member path"))
+        many_members = io.BytesIO()
+        with zipfile.ZipFile(many_members, "w") as archive:
+            for index in range(handoff.MAX_ARTIFACT_MEMBERS + 1):
+                archive.writestr(f"build/log-{index}.txt", b"x")
+        cases.append((many_members.getvalue(), "member count is invalid or exceeds budget"))
+        for index, (archive_bytes, message) in enumerate(cases):
+            with self.subTest(message=message):
+                archive_path = workspace / "downloads" / f"case-{index}.zip"
+                archive_path.write_bytes(archive_bytes)
+                with self.assertRaisesRegex(ValueError, message):
+                    handoff.extract_pinned_ipk(
+                        archive_path, "y-wifi-scripts.ipk", expected,
+                        workspace / "downloads" / f"case-{index}.ipk", workspace)
+                self.assertFalse((workspace / "downloads" / f"case-{index}.ipk").exists())
+
+    def test_binary_artifact_download_enforces_live_byte_cap_and_records_timing(self):
+        log_root = self.root / "commands"
+        log_root.mkdir()
+        source = self.root / "oversize.bin"
+        source.write_bytes(b"x" * (handoff.MAX_ARTIFACT_ZIP_BYTES + 65_536))
+        archive_path = self.root / "artifact.zip"
+        records = []
+        script = "import pathlib,sys;sys.stdout.buffer.write(pathlib.Path(sys.argv[1]).read_bytes())"
+        with self.assertRaisesRegex(ValueError, "response exceeds artifact ZIP byte budget"):
+            handoff.run_binary_download(
+                "oversize-download", [sys.executable, "-c", script, str(source)],
+                self.root, os.environ.copy(), archive_path, log_root, records)
+        self.assertFalse(archive_path.exists())
+        self.assertIsInstance(records[0]["exit_status"], int)
+        self.assertTrue(records[0]["response_too_large"])
+        self.assertGreater(records[0]["response_bytes_observed"],
+                           handoff.MAX_ARTIFACT_ZIP_BYTES)
+        self.assertGreater(records[0]["elapsed_seconds"], 0)
+
+    def test_binary_artifact_download_sanitizes_stderr_before_atomic_log_publish(self):
+        log_root = self.root / "commands"
+        log_root.mkdir()
+        archive_path = self.root / "artifact.zip"
+        records = []
+        token = "test-secret-token"
+        env = os.environ.copy()
+        env["GH_TOKEN"] = token
+        script = "import os,sys;sys.stderr.write(os.environ['GH_TOKEN']);sys.stdout.buffer.write(b'zip')"
+        handoff.run_binary_download(
+            "secret-stderr", [sys.executable, "-c", script], self.root, env,
+            archive_path, log_root, records)
+        log = (log_root / "secret-stderr.stderr").read_text()
+        self.assertEqual(archive_path.read_bytes(), b"zip")
+        self.assertNotIn(token, log)
+        self.assertIn("[redacted]", log)
+        self.assertEqual(records[0]["exit_status"], 0)
+        self.assertEqual(records[0]["archive_sha256"], hashlib.sha256(b"zip").hexdigest())
 
     def test_producer_child_environment_does_not_receive_download_token(self):
         with patch.dict(os.environ, {"GH_TOKEN": "artifact-read-token",

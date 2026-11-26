@@ -82,12 +82,6 @@ jobs:
           set -euo pipefail
           run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B tools/r3_linux_handoff.py docs/r3-release-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-      - name: Run bounded current-source corpus with same released producer
-        shell: bash
-        run: |
-          set -euo pipefail
-          run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          python3 -B -m tools.current_corpus_linux docs/r3-release-lock.json docs/current-corpus-source-v0.6.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Run released producer on source-pinned package members
         shell: bash
         env:
@@ -96,6 +90,12 @@ jobs:
           set -euo pipefail
           run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B tools/r25_package_handoff.py docs/r3-release-lock.json docs/r25-package-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Run bounded current-source corpus with same released producer
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B -m tools.current_corpus_linux docs/r3-release-lock.json docs/current-corpus-source-v0.6.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Retain normalized receipt and raw outputs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -120,7 +120,9 @@ jobs:
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/stages/luci-base/**
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/stages/wifi-scripts-ucode-y/**
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/stage-receipts/*.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/incoming/luci-base/artifact.zip
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/incoming/luci-base/luci-base.ipk
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/incoming/wifi-scripts-ucode-y/artifact.zip
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/incoming/wifi-scripts-ucode-y/y-wifi-scripts.ipk
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/producer-runs/luci-base/receipt.json
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/r25-package/producer-runs/luci-base/commands.json

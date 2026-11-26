@@ -9,13 +9,13 @@
         "--package",
         "luci-base",
         "--ipk",
-        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/input/luci-base/luci-base.ipk",
+        "<run-root>/input/luci-base/luci-base.ipk",
         "--workspace",
-        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d",
+        "<run-root>",
         "--stage",
-        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/stages/luci-base",
+        "<run-root>/stages/luci-base",
         "--receipt",
-        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/receipts/luci-base.json"
+        "<run-root>/receipts/luci-base.json"
       ],
       "environment": {
         "HOME": "<run-root>/home/luci",
@@ -36,13 +36,13 @@
         "--package",
         "wifi-scripts-ucode-y",
         "--ipk",
-        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/input/wifi-scripts-ucode-y/y-wifi-scripts.ipk",
+        "<run-root>/input/wifi-scripts-ucode-y/y-wifi-scripts.ipk",
         "--workspace",
-        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d",
+        "<run-root>",
         "--stage",
-        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/stages/wifi-scripts-ucode-y",
+        "<run-root>/stages/wifi-scripts-ucode-y",
         "--receipt",
-        "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/r25-package-stage-consumer-20261125-d/receipts/wifi-scripts-ucode-y.json"
+        "<run-root>/receipts/wifi-scripts-ucode-y.json"
       ],
       "environment": {
         "HOME": "<run-root>/home/wifi",
@@ -57,13 +57,13 @@
     }
   ],
   "consumer_checkout": {
-    "adapter_sha256": "84f8d08e79305d0f629e7b2c14ba674aab6a75d77478eec3416f7387566d9dbf",
+    "adapter_sha256": "a90b409146348973640755b4b7de09ef6c0beeac2314d57f3efddc7af4dc340f",
     "branch": "codex/r25-package-byte-adapter-20261125",
-    "dirty_porcelain_lines": 11,
-    "package_lock_sha256": "227fd9fe282946800531b06f146ed9b366922a43e48636178c0187488840fe0c",
+    "dirty_porcelain_lines": 7,
+    "package_lock_sha256": "907a68bc5ba9c841961c69b446ec08de688fabccb978af073d6742ed65a16800",
     "python": "Python 3.15.2",
     "repository": "lucas-albers-lz4/codeql-openwrt",
-    "sha": "c9691d32fa352e4d29fc8218fdcded7d5845b897",
+    "sha": "8a55ce6083990a2c52e9ee784fde3bb32967c0d2",
     "working_tree_dirty": true
   },
   "date": "2026-11-25",
@@ -87,7 +87,7 @@
       "exit_status": 0,
       "real_seconds": 0.04,
       "system_seconds": 0.01,
-      "user_seconds": 0.03
+      "user_seconds": 0.02
     },
     "peak_memory_available": false,
     "timer": "/usr/bin/time -p",
@@ -113,8 +113,8 @@
         "plain": 10
       },
       "selected_members": 18,
-      "stage_receipt_sha256": "e55434796d035b268b0ab8ff0f11d40468af178a3f8b70794ddc0f2462ee0efd",
-      "stdout_sha256": "e55434796d035b268b0ab8ff0f11d40468af178a3f8b70794ddc0f2462ee0efd"
+      "stage_receipt_sha256": "fc32f1ee913d354ef3e33e1e3bf9bc4021607e48372d2b27330d2b70faee61f4",
+      "stdout_sha256": "fc32f1ee913d354ef3e33e1e3bf9bc4021607e48372d2b27330d2b70faee61f4"
     },
     "wifi-scripts-ucode-y": {
       "all_staged_member_hashes_match_receipt": true,
@@ -140,14 +140,15 @@
         "plain": 17
       },
       "selected_members": 17,
-      "stage_receipt_sha256": "f482b05a1a6e4ff4c7acdcb85f8ee9fa6df66b7f824890f56164371a4535ec11",
-      "stdout_sha256": "f482b05a1a6e4ff4c7acdcb85f8ee9fa6df66b7f824890f56164371a4535ec11"
+      "stage_receipt_sha256": "6ba3fcb5eadb0af501578b051c8d712f9fb1fd5dd95fc335f6fb26d534a8b5b5",
+      "stdout_sha256": "6ba3fcb5eadb0af501578b051c8d712f9fb1fd5dd95fc335f6fb26d534a8b5b5"
     }
   },
   "raw_outputs_are_local_ignored_work": true,
-  "raw_run_root_relative_to_ledger": "work/r25-package-stage-consumer-20261125-d",
+  "raw_run_root_relative_to_ledger": "work/r25-package-stage-final-20261125-e",
   "schema": "openwrt-r25-consumer-stage-validation-v1",
-  "scope": "local package-byte-to-stage adapter check only; no released producer invocation or CodeQL query run",
+  "scope": "Final package-byte-to-stage check on IPKs extracted by the safe REST artifact ZIP consumer; no released producer invocation or CodeQL query run.",
+  "source_artifact_api_run_root_relative_to_ledger": "work/r25-artifact-api-live-20261125-d",
   "superseded_successful_attempts": [
     {
       "adapter_sha256": "168541bd3f31f3d7b46b574c6e385ca21b6ffd3dc3ec0c74a7831577bf47ffce",
@@ -160,7 +161,7 @@
         "wifi-scripts-ucode-y": 0
       },
       "run_root_relative_to_ledger": "work/r25-package-stage-consumer-20261125-c",
-      "superseded_reason": "completed before security review found that repeated tar root entries did not consume the archive header budget; final run d used the corrected adapter and is the result reported above."
+      "superseded_reason": "Completed before security review found that repeated tar root entries did not consume the archive header budget; final run e used the corrected adapter and current package lock."
     }
   ]
 }

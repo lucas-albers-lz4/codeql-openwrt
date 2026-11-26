@@ -1,13 +1,14 @@
 # Source-first R2.5 package member oracles
 
 The two JSON manifests in this directory are byte-for-byte copies of the
-producer fixtures at final `codeql-ucode` PR #170 head
-`d508217bfb5d31e205eb51dd797075e0277966ec`. The exact-head hosted R2.5 run
-`45748014676` passed. These manifests and the stage/runner source files have
-the same hashes as at the earlier passing R2.5 head
-`0fc65454b5e4b0b5f51bd1c0e0fa291286f948a2`; intervening producer changes did
-not alter these four files. The consumer lock pins the SHA-256 of each copied
-oracle and of each exact OpenWrt package artifact.
+producer fixtures at PR #170 fixture source commit
+`d508217bfb5d31e205eb51dd797075e0277966ec`. Its exact-head hosted R2.5 run
+`45748014676` passed before PR #170 incorporated main. The combined PR #170
+head `1fcf11ddaca88b77ed1e0c94e261c3dae4b0065a` then passed R2/R2.5 in run
+`45750828683`. These manifests and the stage/runner source files have the
+same hashes as at the earlier passing R2.5 head
+`0fc65454b5e4b0b5f51bd1c0e0fa291286f948a2`; the consumer lock pins the SHA-256
+of each copied oracle and each exact OpenWrt package artifact.
 
 | Package | Oracle SHA-256 | Regular members | Plain | Markup/inconclusive | Excluded |
 |---|---|---:|---:|---:|---:|
@@ -47,6 +48,13 @@ the input artifact identities, source-first oracle hashes, per-route and
 member counts, command statuses and timing, staged receipt digests, and two
 failed harness attempts. It is limited to the consumer adapter: no producer,
 CodeQL, or released workflow invocation was made.
+
+The live, read-only GitHub artifact REST downloads, ZIP metadata checks, raw
+archive hashes, API command receipts, and successive fail-closed attempts are
+summarized in
+[`artifact-api-validation.json`](artifact-api-validation.json). Only the
+expected pinned IPKs were expanded; build logs and the Wi-Fi `n` variant
+remain unexpanded.
 
 These manifests describe exact regular IPK `data.tar.gz` members at
 installation-shaped paths. They do not prove root-filesystem/device

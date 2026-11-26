@@ -295,6 +295,22 @@ def _load_lock(path: Path) -> tuple[dict, bytes]:
     packages = lock.get("packages")
     need(isinstance(packages, dict) and set(packages) == {"luci-base", "wifi-scripts-ucode-y"},
          "package lock profile set changed")
+    for package_id, profile in packages.items():
+        need(isinstance(profile, dict) and isinstance(profile.get("ipk"), dict),
+             f"package identity pin is missing: {package_id}")
+        artifact = profile["ipk"]
+        need(isinstance(artifact.get("sha256"), str) and
+             HEX64.fullmatch(artifact["sha256"]) is not None and
+             isinstance(artifact.get("archive_sha256"), str) and
+             HEX64.fullmatch(artifact["archive_sha256"]) is not None and
+             isinstance(artifact.get("filename"), str) and
+             artifact["filename"] not in ("", ".", "..") and
+             PurePosixPath(artifact["filename"]).name == artifact["filename"] and
+             "/" not in artifact["filename"] and "\\" not in artifact["filename"] and
+             type(artifact.get("run_id")) is int and artifact["run_id"] > 0 and
+             type(artifact.get("artifact_id")) is int and artifact["artifact_id"] > 0 and
+             isinstance(artifact.get("artifact_name"), str) and artifact["artifact_name"],
+             f"package IPK/artifact pins are incomplete: {package_id}")
     return lock, raw
 
 
