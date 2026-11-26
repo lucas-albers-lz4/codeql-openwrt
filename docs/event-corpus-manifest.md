@@ -16,7 +16,7 @@ head so a recipe change already present at the PR base is still detected.
 This bounded rule does not prove all possible build-system
 effects absent.
 
-The output records the upstream PR number, base and head commits, head tree,
+The output records the upstream PR number, base and head commits, their trees,
 frozen policy digest, input receipt and inventory digests, and the route-oracle
 script digest. The mirrored route precedence names its reviewed producer PR
 source and SHA-256; equivalence to a future immutable release remains unproved.
@@ -28,6 +28,8 @@ counts and zero-result SARIF expectation must not be relaxed to consume an
 event manifest. The event manifest is an input oracle only: it does not run
 CodeQL, prove installed bytes, infer previously unreviewed package recipes,
 or establish the released producer-to-consumer Gate 8 handoff.
+Incoming alerts use a separate [SARIF triage contract](event-sarif-triage.md)
+so valid new results remain visible for review.
 
 Run the focused controls with:
 

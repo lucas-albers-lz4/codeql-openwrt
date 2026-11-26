@@ -6,12 +6,24 @@ import sys
 import tempfile
 import unittest
 
-from tools.current_corpus_linux import (MANIFEST_SHA256, digest, index_and_validate_routes, run_current,
-                                        validate_manifest)
+from tools.current_corpus_linux import (MANIFEST_SHA256, digest, run_current,
+                                        validate_manifest, index_with_retained_routing)
 
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "docs/current-corpus-source-v0.6.json"
+
+
+def null_lock(path: Path) -> Path:
+    lock = json.loads((ROOT / "docs/r3-release-lock.json").read_text())
+    for key in ("tag", "commit", "asset_url", "asset_sha256", "manifest_sha256",
+                "verifier_sha256", "extractor_sha256", "library_lock_sha256",
+                "query_lock_sha256", "suite_sha256", "codeql_binary_sha256"):
+        lock["release"][key] = None
+    for part in ("library", "queries"):
+        lock["release"]["packs"][part]["version"] = None
+    path.write_text(json.dumps(lock))
+    return path
 
 
 class CurrentCorpusLinuxTests(unittest.TestCase):
@@ -40,63 +52,40 @@ class CurrentCorpusLinuxTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "missing selected source digest/blob"):
             validate_manifest(manifest)
 
-    def test_routing_retained_when_index_fails_after_report(self):
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            (root / "out").mkdir()
-            db = root / "db"
-            report = db / "trap/ucode/routing.json"
-            raw = b'{"partial": true}\n'
-
-            class FailedRun:
-                def __init__(self):
-                    self.root = root
-
-                def call(self, *args, **kwargs):
-                    report.parent.mkdir(parents=True)
-                    report.write_bytes(raw)
-                    raise RuntimeError("index failed")
-
-            with self.assertRaisesRegex(RuntimeError, "index failed"):
-                index_and_validate_routes(FailedRun(), db, root, root / "codeql", root, {}, self.manifest())
-            self.assertEqual((root / "out/routing.json").read_bytes(), raw)
-
-    def test_routing_retained_when_route_validation_fails(self):
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            (root / "out").mkdir()
-            db = root / "db"
-            report = db / "trap/ucode/routing.json"
-            raw = b'{"decisions": [], "input_count": 0}\n'
-
-            class MismatchedRun:
-                def __init__(self):
-                    self.root = root
-
-                def call(self, *args, **kwargs):
-                    report.parent.mkdir(parents=True)
-                    report.write_bytes(raw)
-
-            with self.assertRaisesRegex(RuntimeError, "route identities/counts differ"):
-                index_and_validate_routes(MismatchedRun(), db, root, root / "codeql", root, {}, self.manifest())
-            self.assertEqual((root / "out/routing.json").read_bytes(), raw)
-
     def test_null_release_lock_fails_before_new_run_root(self):
         with tempfile.TemporaryDirectory() as temp:
             prior = Path(temp) / "r3"
+            lock = null_lock(Path(temp) / "null-lock.json")
             with self.assertRaisesRegex(RuntimeError, "unpopulated/invalid release commit"):
-                run_current(ROOT / "docs/r3-release-lock.json", MANIFEST, prior, "test")
+                run_current(lock, MANIFEST, prior, "test")
             self.assertFalse((prior / "current-corpus").exists())
 
     def test_workflow_module_entrypoint_reaches_lock_preflight(self):
         with tempfile.TemporaryDirectory() as temp:
             prior = Path(temp) / "r3"
+            lock = null_lock(Path(temp) / "null-lock.json")
             process = subprocess.run([sys.executable, "-B", "-m", "tools.current_corpus_linux",
-                                      "docs/r3-release-lock.json", "docs/current-corpus-source-v0.6.json",
+                                      str(lock), "docs/current-corpus-source-v0.6.json",
                                       str(prior), "test"], cwd=ROOT, text=True, capture_output=True)
             self.assertNotEqual(process.returncode, 0)
             self.assertIn("unpopulated/invalid release commit", process.stderr)
             self.assertFalse(prior.exists())
+
+    def test_index_failure_retains_emitted_routing_report(self):
+        with tempfile.TemporaryDirectory() as temp:
+            route = Path(temp) / "routing.json"
+            retained = Path(temp) / "retained.json"
+
+            class FailingIndex:
+                def call(self, label, argv, *, env):
+                    if label != "db-index":
+                        raise AssertionError(label)
+                    route.write_text('{"decisions": []}')
+                    raise RuntimeError("index failed after routing")
+
+            with self.assertRaisesRegex(RuntimeError, "index failed after routing"):
+                index_with_retained_routing(FailingIndex(), ["codeql"], {}, route, retained)
+            self.assertEqual(retained.read_bytes(), route.read_bytes())
 
 
 if __name__ == "__main__":

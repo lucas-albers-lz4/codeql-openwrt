@@ -9,16 +9,19 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 
 REPOSITORIES = {
     "openwrt": "https://github.com/openwrt/openwrt.git",
     "luci": "https://github.com/openwrt/luci.git",
 }
 SHA = re.compile(r"[0-9a-f]{40}\Z")
+FETCH_TIMEOUT_SECONDS = 60
 
 
 class InvalidEvent(ValueError):
@@ -53,6 +56,55 @@ def commit_identity(path: Path, sha: str) -> dict[str, str]:
     require(git(path, "rev-parse", "HEAD") == sha, "checkout HEAD differs from requested SHA")
     require(not git(path, "status", "--porcelain=v1"), "checkout is dirty")
     return {"commit": commit, "tree": git(path, "rev-parse", f"{commit}^{{tree}}")}
+
+
+def _fetch_commit_identity(url: str, sha: str, protocol: str) -> dict[str, str]:
+    """Fetch one object in an empty repository with no inherited Git config.
+
+    The caller chooses the URL and allowed transport. Production passes only
+    REPOSITORIES[repo] and HTTPS; tests exercise the same commands with file://.
+    """
+    require(bool(SHA.fullmatch(sha)), "base commit must be a full 40-character lowercase SHA")
+    with tempfile.TemporaryDirectory(prefix="incoming-base-") as temporary:
+        root = Path(temporary)
+        repository = root / "objects.git"
+        template = root / "empty-template"
+        template.mkdir()
+        env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+        env.update({
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_GLOBAL": os.devnull,
+            "GIT_CONFIG_SYSTEM": os.devnull,
+            "GIT_TEMPLATE_DIR": str(template),
+            "GIT_TERMINAL_PROMPT": "0",
+        })
+
+        def run(*args: str) -> str:
+            command = ["git", "-c", "protocol.allow=never",
+                       "-c", f"protocol.{protocol}.allow=always",
+                       "-c", "http.followRedirects=false", *args]
+            try:
+                result = subprocess.run(command, env=env, text=True,
+                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                        check=True, timeout=FETCH_TIMEOUT_SECONDS)
+            except subprocess.TimeoutExpired as exc:
+                raise InvalidEvent("canonical base Git lookup timed out") from exc
+            except (OSError, subprocess.CalledProcessError) as exc:
+                detail = exc.stderr.strip() if isinstance(exc, subprocess.CalledProcessError) else str(exc)
+                raise InvalidEvent(f"canonical base Git lookup failed: {detail}") from exc
+            return result.stdout.strip()
+
+        run("init", "--bare", "-q", str(repository))
+        run("-C", str(repository), "fetch", "--no-tags", "--depth=1", url, sha)
+        commit = run("-C", str(repository), "rev-parse", "--verify", f"{sha}^{{commit}}")
+        require(commit == sha, "fetched base commit differs from requested SHA")
+        tree = run("-C", str(repository), "rev-parse", "--verify", f"{sha}^{{tree}}")
+        require(bool(SHA.fullmatch(tree)), "fetched base tree is not a full SHA")
+        return {"commit": commit, "tree": tree}
+
+
+def fetch_base_identity(repo: str, sha: str) -> dict[str, str]:
+    return _fetch_commit_identity(REPOSITORIES[repo], sha, "https")
 
 
 def validate(event: dict, api_pr: dict, source_checkout: Path,
@@ -107,6 +159,11 @@ def validate(event: dict, api_pr: dict, source_checkout: Path,
     canonical_repository(control_checkout, REPOSITORIES[repo])
     source = commit_identity(source_checkout, head_sha)
     control = commit_identity(control_checkout, control_sha)
+    base_identity = fetch_base_identity(repo, base_sha)
+    require(isinstance(base_identity, dict) and base_identity.get("commit") == base_sha and
+            isinstance(base_identity.get("tree"), str) and
+            bool(SHA.fullmatch(base_identity["tree"])),
+            "canonical base commit or tree differs from requested identity")
     return {
         "schema": "incoming-event-receipt-v1",
         "repository": repo,
@@ -118,11 +175,12 @@ def validate(event: dict, api_pr: dict, source_checkout: Path,
         "event_type": event["event_type"],
         "event_time": event_time,
         "source": source,
-        "base": {"commit": base_sha},
+        "base": base_identity,
         "control": control,
         "status": "identities_resolved_only",
         "limitations": [
             "PR membership is bound to the captured GitHub pull response and fetched PR head ref; it is not a scan result.",
+            "Base commit and tree were fetched from the canonical upstream URL; this does not re-fetch the PR API response.",
             "No source-policy discovery, CodeQL execution, SARIF, or consumer handoff is performed by this resolver.",
         ],
     }

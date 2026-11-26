@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from tools.sarif_accept import accept
+from tools.sarif_accept import accept, triage
 
 
 class SarifAcceptanceTests(unittest.TestCase):
@@ -57,6 +57,40 @@ class SarifAcceptanceTests(unittest.TestCase):
             self.receipt["sarif_sha256"] = hashlib.sha256(paths[0].read_bytes()).hexdigest()
         paths[2].write_text(json.dumps(self.receipt), encoding="utf-8")
         return accept(*paths, self.source)
+
+    def verify_event(self):
+        if self.manifest["schema"] != "ucode-sarif-event-triage-v1":
+            self.manifest["schema"] = "ucode-sarif-event-triage-v1"
+            self.manifest.pop("expected_results", None)
+        paths = [self.root / name for name in ("sarif.json", "manifest.json", "receipt.json")]
+        paths[0].write_text(json.dumps(self.sarif), encoding="utf-8")
+        paths[1].write_text(json.dumps(self.manifest), encoding="utf-8")
+        self.receipt["sarif_sha256"] = hashlib.sha256(paths[0].read_bytes()).hexdigest()
+        paths[2].write_text(json.dumps(self.receipt), encoding="utf-8")
+        return triage(*paths, self.source)
+
+    def test_event_result_is_retained_for_triage(self):
+        result = self.verify_event()
+        self.assertEqual(result["status"], "triage_required")
+        self.assertEqual(result["result_count"], 1)
+        self.assertEqual(result["results_for_triage"], [self.location])
+        self.assertNotIn("accepted_results", result)
+
+    def test_event_clean_scan_and_circular_expectation_rejected(self):
+        self.sarif["runs"][0]["results"] = []
+        self.assertEqual(self.verify_event()["status"], "clean_scan")
+        self.manifest["expected_results"] = []
+        with self.assertRaisesRegex(ValueError, "output-generated expected results"):
+            self.verify_event()
+
+    def test_event_unknown_rule_and_source_still_rejected(self):
+        self.sarif["runs"][0]["results"][0]["ruleId"] = "unknown"
+        with self.assertRaisesRegex(ValueError, "unknown SARIF rule"):
+            self.verify_event()
+        self.sarif["runs"][0]["results"][0]["ruleId"] = self.rule
+        self.sarif["runs"][0]["results"][0]["locations"][0]["physicalLocation"]["artifactLocation"]["uri"] = "other.uc"
+        with self.assertRaisesRegex(ValueError, "source outside selected stage"):
+            self.verify_event()
 
     def test_exact_alert_and_fixed_zero(self):
         self.assertEqual(len(self.verify()["accepted_results"]), 1)

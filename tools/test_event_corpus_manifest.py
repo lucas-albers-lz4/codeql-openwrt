@@ -55,7 +55,8 @@ class EventCorpusManifestTests(unittest.TestCase):
             "counts": {"selected": 1, "route_classes": {"plain": 1}},
         }
         self.receipt = {"status": "identities_resolved_only", "repository": "openwrt",
-                        "pr_number": 17, "base": {"commit": self.base},
+                        "pr_number": 17, "base": {"commit": self.base,
+                                                     "tree": git(self.repo, "rev-parse", f"{self.base}^{{tree}}")},
                         "source": {"commit": self.head, "tree": self.tree}}
         entries = []
         for path, status, events in ((self.selected, "selected", ["selected_content_changed_scan_eligible"]),
@@ -67,6 +68,7 @@ class EventCorpusManifestTests(unittest.TestCase):
                                      "sha256": hashlib.sha256(contents).hexdigest()}})
         self.inventory = {"status": "inventory_ready", "fail_closed": False,
                           "repository": "openwrt", "base_commit": self.base,
+                          "base_tree": git(self.repo, "rev-parse", f"{self.base}^{{tree}}"),
                           "head_commit": self.head, "head_tree": self.tree,
                           "policy_sha256": POLICY_SHA256, "events": entries}
 
@@ -89,6 +91,7 @@ class EventCorpusManifestTests(unittest.TestCase):
         self.assertEqual(row["source_sha256"], hashlib.sha256(b"return 2\n").hexdigest())
         self.assertEqual(row["git_blob"], git(self.repo, "rev-parse", f"{self.head}:{self.selected}"))
         self.assertEqual(result["pins"]["openwrt"], self.head)
+        self.assertEqual(result["event"]["base_tree"], self.receipt["base"]["tree"])
         self.assertEqual(result["event"]["head_tree"], self.tree)
         self.assertEqual(result["excluded"][0]["source_commit"], self.head)
         self.assertNotIn("prior_local_extraction", row)
@@ -113,6 +116,14 @@ class EventCorpusManifestTests(unittest.TestCase):
                          {"classification": "markup", "reason": "ut_markup_extension"})
 
     def test_inventory_identity_and_content_tampering_rejected(self):
+        receipt = json.loads(json.dumps(self.receipt))
+        receipt["base"]["tree"] = "0" * 40
+        with self.assertRaisesRegex(SelectorError, "identities differ"):
+            build(self.policy, receipt, self.inventory, self.repo)
+        bad = json.loads(json.dumps(self.inventory))
+        bad["base_tree"] = "0" * 40
+        with self.assertRaisesRegex(SelectorError, "identities differ"):
+            build(self.policy, self.receipt, bad, self.repo)
         bad = json.loads(json.dumps(self.inventory))
         bad["head_tree"] = "0" * 40
         with self.assertRaisesRegex(SelectorError, "identities differ"):
@@ -175,9 +186,11 @@ class EventCorpusManifestTests(unittest.TestCase):
         self.commit()
         head = git(self.repo, "rev-parse", "HEAD")
         self.receipt["base"]["commit"] = pr_base
+        self.receipt["base"]["tree"] = git(self.repo, "rev-parse", f"{pr_base}^{{tree}}")
         self.receipt["source"] = {"commit": head,
                                   "tree": git(self.repo, "rev-parse", "HEAD^{tree}")}
         self.inventory["base_commit"] = pr_base
+        self.inventory["base_tree"] = self.receipt["base"]["tree"]
         self.inventory["head_commit"] = head
         self.inventory["head_tree"] = self.receipt["source"]["tree"]
         self.inventory["events"][0]["head"]["git_blob"] = git(
