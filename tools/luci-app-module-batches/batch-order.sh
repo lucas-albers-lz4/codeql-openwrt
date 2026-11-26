@@ -9,6 +9,12 @@ check_inputs() {
   [[ $(realpath "$openwrt/package/feeds/packages/ddns-scripts") == "$packages_root/net/ddns-scripts" ]]
 }
 
+run_kernel_prelude() {
+  local callback=$1
+  "$callback" kernel-compile target/linux/compile
+  "$callback" kernel-package-compile package/kernel/linux/compile
+}
+
 run_app_batches() {
   local openwrt=$1 luci=$2 packages_root=$3 callback=$4 name
   local -a selected=(luci-app-ddns luci-app-advanced-reboot luci-app-wifihistory)
