@@ -983,7 +983,6 @@ def _store_intake(conn, previous_identity, current_identity, previous, current,
 
 def intake(database_root, previous_zip, previous_run_api, previous_artifacts_api,
            current_zip, current_run_api, current_artifacts_api):
-    root = private_root(database_root)
     previous_zip_raw = read_regular(previous_zip, MAX_ZIP, 'previous artifact ZIP')
     previous_run_raw = read_regular(previous_run_api, MAX_API, 'previous run API JSON')
     previous_artifacts_raw = read_regular(previous_artifacts_api, MAX_API,
@@ -992,6 +991,24 @@ def intake(database_root, previous_zip, previous_run_api, previous_artifacts_api
     current_run_raw = read_regular(current_run_api, MAX_API, 'current run API JSON')
     current_artifacts_raw = read_regular(current_artifacts_api, MAX_API,
                                          'current artifacts API JSON')
+    return intake_bytes(database_root, previous_zip_raw, previous_run_raw,
+                        previous_artifacts_raw, current_zip_raw, current_run_raw,
+                        current_artifacts_raw)
+
+
+def intake_bytes(database_root, previous_zip_raw, previous_run_raw,
+                 previous_artifacts_raw, current_zip_raw, current_run_raw,
+                 current_artifacts_raw):
+    for label, raw, limit in (
+            ('previous artifact ZIP', previous_zip_raw, MAX_ZIP),
+            ('previous run API JSON', previous_run_raw, MAX_API),
+            ('previous artifacts API JSON', previous_artifacts_raw, MAX_API),
+            ('current artifact ZIP', current_zip_raw, MAX_ZIP),
+            ('current run API JSON', current_run_raw, MAX_API),
+            ('current artifacts API JSON', current_artifacts_raw, MAX_API)):
+        require(type(raw) is bytes and 0 < len(raw) <= limit,
+                label + ' must be nonempty bounded bytes')
+    root = private_root(database_root)
     previous_identity = _run_identity(previous_run_raw, previous_artifacts_raw,
                                       previous_zip_raw)
     current_identity = _run_identity(current_run_raw, current_artifacts_raw,

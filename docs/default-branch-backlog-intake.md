@@ -47,15 +47,34 @@ mixed manual/scheduled run history to verify latest-successful selection. The
 separate raw manual and scheduled responses must reconstruct the combined
 history exactly; selected run identities must match their API records.
 
-This is explicitly `offline_retained_api_metadata` intake. The tool does not
-fetch GitHub API responses, authenticate their capture origin, or authenticate
-the ZIP download source. The API records and ZIP can be fabricated together;
-the `custody` field and SQLite receipt retain this limitation. Use a trusted
-operator session to capture the canonical API responses and ZIP, then keep
-those raw bytes beside the result. This intake is an internal backlog
-observation, not authenticated queue authority or coverage evidence. A later
-trusted custody/issuer path must independently authenticate the live API and
-artifact before any scan transition.
+The intake remains explicitly `offline_retained_api_metadata`: it does not
+fetch GitHub API responses or authenticate the origin of files supplied
+directly to it. The API records and ZIP can be fabricated together, and the
+`custody` field and SQLite receipt preserve that limitation.
+
+For operator capture, use
+[`tools/default_branch_backlog_capture.py`](../tools/default_branch_backlog_capture.py).
+It invokes `gh api --hostname github.com` for each exact run attempt, fetches
+the complete artifact listing, derives the unique
+`incoming-discovery-<run>-<attempt>` artifact ID, downloads that artifact, and
+re-fetches the run and listing responses around the download. It rejects
+non-successful or mismatched run metadata, an incomplete artifact listing,
+missing/expired/ambiguous artifacts, size or digest disagreement, wrong run
+linkage, and any byte change in the re-fetched API responses. Every response
+and ZIP is streamed within its byte bound into an exclusive mode-0600 file in
+a fresh operator-owned mode-0700 staging directory, with file and directory
+`fsync`, before the verified in-memory bytes are passed to the offline intake.
+
+The capture result reports the observed `gh` calls, API and ZIP digests,
+staging path, and nested intake result. It is not a signed transcript or an
+attestation of a particular human identity, and it does not establish
+continuous custody after the command. The API listing is requested as one
+page of at most 100 artifacts; a response with another page is rejected rather
+than combined into synthetic metadata. The capture remains an internal
+backlog observation, not authenticated queue authority or coverage evidence.
+No scan reservation, dispatch, completion, outcome or coverage state is
+created. A later trusted custody/issuer path must independently authenticate
+the live API and artifact before any scan transition.
 
 The receipt hash chain is internal tamper evidence only. It is not keyed or
 signed, and a party able to rewrite the database can recompute it. Keep the
@@ -74,27 +93,32 @@ Large raw files, databases and caches stay out of Git.
 
 ## Operator use
 
-Capture inputs with an authenticated `gh` session and preserve the exact
-responses and archive ZIP. For each run, use `gh api` for the canonical run
-endpoint and artifact metadata endpoint; download the exact named artifact by
-ID to a ZIP file. The run response must name the discovery workflow on `main`
-with a successful completion; the artifact record must include its digest.
-Keep these files in an operator-controlled incoming directory. The following
-example uses only read commands and local storage commands; use the actual run
-IDs and artifact IDs from the linked checkpoint pair:
+Capture the linked pair in one command using an authenticated `gh` session.
+Supply exact run IDs and attempt numbers; artifact IDs are derived from the
+complete canonical listing and are not caller inputs:
 
 ```sh
 umask 077
 mkdir -m 700 /private/operator/default-branch-backlog
-gh api repos/lucas-albers-lz4/codeql-openwrt/actions/runs/45790907027 \
-  > /private/operator/previous-run.json
-gh api repos/lucas-albers-lz4/codeql-openwrt/actions/artifacts/15103055535 \
-  > /private/operator/previous-artifact.json
-gh api repos/lucas-albers-lz4/codeql-openwrt/actions/artifacts/15103055535/zip \
-  > /private/operator/previous.zip
+python3 -B -m tools.default_branch_backlog_capture \
+  --private-root /private/operator/default-branch-backlog \
+  --previous-run-id 45790907027 --previous-attempt 1 \
+  --current-run-id 45793268436 --current-attempt 1
 ```
 
-Repeat for the successor, then run the intake with all six files:
+Use the exact predecessor/successor run IDs and attempts for the linked
+checkpoint pair. The command verifies that each run is the successful
+`incoming-discovery-manual.yml` workflow on `main`, captures the complete
+artifact listing and exact ZIP bytes into a unique private staging directory,
+and calls the offline intake. It prints a JSON result with capture identities
+and the actual intake status. Keep the private root and staging data under the
+operator's backup and deletion policy. On failure, any already captured files
+remain in that attempt's private staging directory; stderr reports its path so
+the operator can review or remove it.
+
+For an offline rehearsal with already-retained inputs, call the intake
+directly as below. This route checks consistency and ZIP digests but does not
+authenticate where the inputs came from:
 
 ```sh
 python3 -B -m tools.default_branch_backlog_intake \
@@ -134,9 +158,11 @@ analyzed.
 ## Bounds, oracle and regression gate
 
 The intake accepts ZIP files up to 64 MiB, API JSON files up to 16 MiB, at
-most 256 ZIP entries and 128 MiB expanded content. Each linked compare is
-bounded to 100 commits by `default_branch_gap.py`; this tool accepts at most
-that bound per repository. It does no CodeQL extraction, query or scan.
+most 256 ZIP entries and 128 MiB expanded content. Capture uses the same ZIP
+and API limits and accepts one complete artifact page of at most 100 records
+per run. Each linked compare is bounded to 100 commits by
+`default_branch_gap.py`; this tool accepts at most that bound per repository.
+Neither capture nor intake does CodeQL extraction, query or scan.
 
 The source-first oracle is the exact ordered `first_parent_commits` returned
 by replaying the linked gap response against both checkpoint byte digests.
@@ -152,9 +178,9 @@ The local regression command is:
 python3 -B -m unittest tools.test_default_branch_backlog_intake -v
 ```
 
-The same test is wired into the `contract` job of
+The intake test and mocked capture test are wired into the `contract` job of
 `.github/workflows/incoming-discovery-manual.yml`, which runs on pull requests
-touching `tools/**`. That is the planned hosted gate; it has not run on this
-uncommitted checkout. The test fixtures are synthetic schema-valid ZIPs and
-do not authenticate a hosted run. A separate operator rehearsal with actual
-canonical ZIPs/API responses is still required before relying on this tool.
+touching `tools/**`. These are offline contract checks: mocked `gh` calls and
+synthetic ZIPs do not authenticate a hosted run. A separate operator rehearsal
+with actual canonical API responses and artifact ZIPs is still required
+before relying on the capture path.
