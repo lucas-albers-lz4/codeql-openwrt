@@ -98,3 +98,60 @@ receipts before it can advance across gaps. GitHub discovery artifacts expire
 after 30 days. Source paths are projected to reviewed installed paths; actual
 installed package bytes remain unverified. This pilot does not satisfy Gate 8
 without a predeclared incoming known alert and control.
+
+## Private terminal capture
+
+The in-process `tools.default_branch_private_final_capture.capture` stage
+accepts a durable operator root, exact canonical sequence-one document
+bytes, run ID and attempt. It reads the fixed private start observation
+directory, rehashes all six retained bodies and the receipt, and checks the
+expected live run, scan job and early artifact before calling GitHub. The
+supplied document's MAC is only checked for format. Production orchestration
+must verify the signed head, policy, and queue state before treating the
+receipt as evidence for an issuer action.
+
+Run the capture on the private operator host with a dedicated Actions-read
+`GH_TOKEN` and trusted system `curl`. The collector fixes the
+GitHub repository and workflow IDs and takes two run, attempt-jobs, and
+run-artifacts observations. Metadata requests require direct HTTP 200
+responses without a redirect. The token is passed to curl through stdin
+on the fixed GitHub API requests. Listings are bounded to one full page of 100
+unique IDs. Both observations must identify the same successful terminal
+run and the expected scan job, an unexpired early artifact matching the
+retained bytes and a distinct unexpired final artifact matching the
+download. The ZIP download uses the canonical artifact ID and allows one
+HTTPS redirect to GitHub's `productionresultssa*.blob.core.windows.net`
+artifact storage. The download request receives no GitHub auth header.
+Alternate storage origins fail closed. The narrow hostname and path pattern
+is a fixture-tested candidate and requires confirmation against a live
+artifact endpoint before deployment. GitHub documents the 302 endpoint and
+lists Azure Blob Storage among its Actions artifact network destinations.
+[Artifact download API](https://docs.github.com/en/rest/actions/artifacts#download-an-artifact)
+[Actions artifact destinations](https://docs.github.com/en/actions/reference/runners/github-hosted-runners#communication-requirements-for-github-hosted-runners)
+
+The maximum raw retention is 160 MiB across six 16 MiB API bodies and one
+64 MiB ZIP. Live requests use 30-second metadata and redirect bounds and a
+60-second ZIP transfer bound. The private custody directory under
+`terminal-captures/default-branch-final-RUN-ATTEMPT` is exclusive. It
+contains the exact raw bodies and a digest inventory, with a create-only
+receipt published atomically after the second observation, raw digest
+readback and directory revalidation. Files and directory entries are
+synced. The pending receipt is never a completed capture. A crash during
+final publication requires manual reconciliation of the receipt, its full
+raw inventory and the failed invocation. A rejected or interrupted
+capture may leave partial raw custody without a receipt. Leave the queue
+unchanged. The operator must reconcile the preserved bytes and move the
+entire incomplete directory to private archival custody before explicitly
+retrying the same run and attempt. A subsequent invocation cannot overwrite
+the existing capture or infer an outcome from the incomplete directory.
+Keep the capture and early start directories under the operator's private
+account.
+
+A successful receipt has status `captured_bytes_only`. ZIP structure,
+frozen member consistency, released scan outputs, canonical source truth,
+consumer replay and terminal queue issuance remain separate checks. The
+two API observations narrow the observation window while GitHub can
+still change state afterward. The `contract` job exercises in-process
+fixtures without a GitHub credential, including a later attempt, same-name
+job substitution, listing truncation, post-download artifact drift, and
+private-path aliases.
