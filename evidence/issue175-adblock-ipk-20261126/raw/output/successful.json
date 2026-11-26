@@ -1,0 +1,8 @@
+{"#select":{"columns":[
+   {"name":"f","kind":"Entity"}
+  ,{"kind":"String"}]
+ ,"tuples":[
+   [{"id":0,"label":"/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage/usr/share/rpcd/ucode/luci.adblock-fast","url":{"uri":"file:///Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage/usr/share/rpcd/ucode/luci.adblock-fast","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"id":14,"label":"/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage/usr/share/ucode/issue175/near-miss.uc","url":{"uri":"file:///Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage/usr/share/ucode/issue175/near-miss.uc","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]
+  ,[{"id":17,"label":"/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage/usr/share/ucode/issue175/positive.uc","url":{"uri":"file:///Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage/usr/share/ucode/issue175/positive.uc","startLine":0,"startColumn":0,"endLine":0,"endColumn":0}},""]]
+ }}

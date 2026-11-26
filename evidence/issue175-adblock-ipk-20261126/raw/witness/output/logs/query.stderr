@@ -1,0 +1,10 @@
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1816 MB.
+Compiling query plan for /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/witness-producer/ql/src/m3/Issue175CoordinateWitness.ql.
+[1/1 comp 817ms] Compiled /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/witness-producer/ql/src/m3/Issue175CoordinateWitness.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/m3/Issue175CoordinateWitness.ql.
+[1/1 eval 65ms] Evaluation done; writing results to /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/witness/output/witness.bqrs.
+Shutting down query evaluator.
