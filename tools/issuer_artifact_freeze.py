@@ -8,10 +8,10 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import stat
 import subprocess
 import sys
+from contextlib import contextmanager, ExitStack
 
 from tools.current_corpus_linux import REPOSITORIES as SCAN_REPOSITORIES, validate_event_manifest
 from tools.incoming_event import REPOSITORIES, canonical_repository
@@ -52,20 +52,60 @@ def _no_alias(root: Path, relative: str, *, tracked_link: bool = False) -> Path:
     return path
 
 
-def _safe_file(path: Path, seen: set[tuple[int, int]]) -> dict:
-    mode = path.lstat()
-    need(stat.S_ISREG(mode.st_mode) and mode.st_nlink == 1, 'artifact is an alias or not regular: ' + str(path))
-    identity = (mode.st_dev, mode.st_ino)
-    need(identity not in seen, 'duplicate artifact inode')
-    seen.add(identity)
+@contextmanager
+def _open_regular(path: Path, anchor: Path | None = None):
+    """Open a regular file beneath a checked directory without following links."""
+    anchor = path.parent if anchor is None else anchor
+    need(anchor.is_absolute() and anchor.is_dir() and not anchor.is_symlink(),
+         'unsafe artifact anchor')
+    try:
+        parts = path.relative_to(anchor).parts
+    except ValueError as exc:
+        raise RuntimeError('artifact escaped anchor: ' + str(path)) from exc
+    need(parts and all(part not in ('', '.', '..') for part in parts),
+         'unsafe artifact relative path')
+    with ExitStack() as stack:
+        anchor_info = anchor.lstat()
+        directory = os.open(anchor, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        stack.callback(os.close, directory)
+        opened_anchor = os.fstat(directory)
+        need((anchor_info.st_dev, anchor_info.st_ino, anchor_info.st_mode) ==
+             (opened_anchor.st_dev, opened_anchor.st_ino, opened_anchor.st_mode),
+             'artifact anchor changed')
+        for part in parts[:-1]:
+            directory = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW,
+                                dir_fd=directory)
+            stack.callback(os.close, directory)
+        mode = os.stat(parts[-1], dir_fd=directory, follow_symlinks=False)
+        need(stat.S_ISREG(mode.st_mode) and mode.st_nlink == 1,
+             'artifact is an alias or not regular: ' + str(path))
+        descriptor = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK,
+                             dir_fd=directory)
+        stack.callback(os.close, descriptor)
+        opened = os.fstat(descriptor)
+        def identity(info):
+            return (info.st_dev, info.st_ino, info.st_mode, info.st_nlink,
+                    info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+        need(stat.S_ISREG(opened.st_mode) and opened.st_nlink == 1 and
+             identity(mode) == identity(opened),
+             'artifact changed before open: ' + str(path))
+        with os.fdopen(descriptor, 'rb', closefd=False) as stream:
+            yield stream, opened
+        after = os.fstat(descriptor)
+        current = os.stat(parts[-1], dir_fd=directory, follow_symlinks=False)
+        need(identity(opened) == identity(after) == identity(current),
+             'artifact changed while reading: ' + str(path))
+
+
+def _safe_file(path: Path, seen: set[tuple[int, int]], anchor: Path | None = None) -> dict:
     digest = hashlib.sha256()
-    with path.open('rb') as stream:
+    with _open_regular(path, anchor) as (stream, opened):
+        identity = (opened.st_dev, opened.st_ino)
+        need(identity not in seen, 'duplicate artifact inode')
+        seen.add(identity)
         while block := stream.read(1024 * 1024):
             digest.update(block)
-    after = path.lstat()
-    need((mode.st_dev, mode.st_ino, mode.st_size, mode.st_mtime_ns) ==
-         (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns), 'artifact changed while hashing')
-    return {'sha256': digest.hexdigest(), 'bytes': mode.st_size}
+    return {'sha256': digest.hexdigest(), 'bytes': opened.st_size}
 
 
 def _inventory(root: Path, expected: set[str], seen: set[tuple[int, int]]) -> dict:
@@ -81,11 +121,15 @@ def _inventory(root: Path, expected: set[str], seen: set[tuple[int, int]]) -> di
         for name in files:
             actual.add((parent / name).relative_to(root).as_posix())
     need(actual == expected, 'missing or unexpected artifacts: ' + repr(sorted(actual ^ expected)))
-    return {name: _safe_file(root / name, seen) for name in sorted(expected)}
+    return {name: _safe_file(root / name, seen, root) for name in sorted(expected)}
 
 
 def _command_files(root: Path) -> set[str]:
-    commands = json.loads((root / 'commands.json').read_text())
+    with _open_regular(root / 'commands.json', root) as (stream, opened):
+        need(opened.st_size <= 64 * 1024 * 1024, 'command receipt exceeds byte limit')
+        raw = stream.read(64 * 1024 * 1024 + 1)
+        need(len(raw) <= 64 * 1024 * 1024, 'command receipt exceeds byte limit')
+        commands = json.loads(raw)
     need(isinstance(commands, list) and commands, 'missing commands')
     names = {row[key] for row in commands for key in ('stdout', 'stderr', 'time')}
     need(all(isinstance(name, str) and len(Path(name).parts) == 2 and
@@ -110,7 +154,7 @@ def _stage_precheck(root: Path) -> None:
             path = Path(base) / name
             need(path.is_dir() and not path.is_symlink(), 'stage directory alias')
         for name in files:
-            _safe_file(Path(base) / name, set())
+            _safe_file(Path(base) / name, set(), root)
 
 
 def _source_recheck(source: Path, control: Path, inputs: Path, run: Path) -> dict:
@@ -141,9 +185,8 @@ def _source_recheck(source: Path, control: Path, inputs: Path, run: Path) -> dic
             source_file = _no_alias(scan / 'sources' / row['repo'], row['source_path'])
             stage_file = _no_alias(scan / 'stage', row['proposed_installed_path'])
             for path in (source_file, stage_file):
-                mode = path.lstat()
-                need(stat.S_ISREG(mode.st_mode) and mode.st_nlink == 1 and
-                     hashlib.sha256(path.read_bytes()).hexdigest() == row['source_sha256'],
+                anchor = scan / 'stage' if path == stage_file else scan / 'sources' / row['repo']
+                need(_safe_file(path, set(), anchor)['sha256'] == row['source_sha256'],
                      role + ' source/stage byte drift: ' + row['source_path'])
             need(_git(scan / 'sources' / row['repo'], 'rev-parse', row['source_commit'] + ':' + row['source_path']) == row['git_blob'],
                  role + ' Git blob drift')
@@ -163,9 +206,7 @@ def _source_recheck(source: Path, control: Path, inputs: Path, run: Path) -> dic
                 need(link_bytes == git_bytes and hashlib.sha256(link_bytes).hexdigest() == row['sha256'],
                      role + ' excluded link bytes drift')
             else:
-                mode = source_file.lstat()
-                need(stat.S_ISREG(mode.st_mode) and mode.st_nlink == 1 and
-                     hashlib.sha256(source_file.read_bytes()).hexdigest() == row['sha256'],
+                need(_safe_file(source_file, set(), repo_root)['sha256'] == row['sha256'],
                      role + ' excluded source drift: ' + row['source_path'])
         result[role] = {'checkout': identity, 'scan_sources': scan_pins,
                         'stage_files': [row['proposed_installed_path'] for row in oracle['selected']]}
@@ -289,18 +330,35 @@ def snapshot(temp: Path, run_id: str, inventory: dict) -> None:
                 source = root / prefix / name
                 target = destination / group / prefix / name
                 target.parent.mkdir(parents=True, exist_ok=True)
-                with source.open('rb') as reader, target.open('xb') as writer:
-                    shutil.copyfileobj(reader, writer)
-                need(hashlib.sha256(target.read_bytes()).hexdigest() == metadata['sha256'],
-                     'artifact changed during freeze copy: ' + str(source))
-                target.chmod(0o444)
+                with _open_regular(source, root) as (reader, opened), target.open('xb') as writer:
+                    need(opened.st_size == metadata['bytes'],
+                         'artifact size changed before freeze copy: ' + str(source))
+                    digest = hashlib.sha256()
+                    size = 0
+                    while block := reader.read(1024 * 1024):
+                        writer.write(block)
+                        digest.update(block)
+                        size += len(block)
+                    need(size == metadata['bytes'] and digest.hexdigest() == metadata['sha256'],
+                         'artifact changed during freeze copy: ' + str(source))
+                    writer.flush()
+                    os.fchmod(writer.fileno(), 0o444)
     lock_source = ROOT / 'docs/r3-release-lock.json'
     lock_target = destination / 'release-lock.json'
-    with lock_source.open('rb') as reader, lock_target.open('xb') as writer:
-        shutil.copyfileobj(reader, writer)
-    need(hashlib.sha256(lock_target.read_bytes()).hexdigest() == inventory['release_lock']['sha256'],
-         'release lock changed during freeze copy')
-    lock_target.chmod(0o444)
+    with _open_regular(lock_source, ROOT) as (reader, opened), lock_target.open('xb') as writer:
+        need(opened.st_size == inventory['release_lock']['bytes'],
+             'release lock size changed before freeze copy')
+        digest = hashlib.sha256()
+        size = 0
+        while block := reader.read(1024 * 1024):
+            writer.write(block)
+            digest.update(block)
+            size += len(block)
+        need(size == inventory['release_lock']['bytes'] and
+             digest.hexdigest() == inventory['release_lock']['sha256'],
+             'release lock changed during freeze copy')
+        writer.flush()
+        os.fchmod(writer.fileno(), 0o444)
 
 
 def create_output_root(temp: Path, run_id: str) -> Path:

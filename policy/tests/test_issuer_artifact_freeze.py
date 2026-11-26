@@ -23,6 +23,64 @@ class ArtifactInventoryTests(unittest.TestCase):
         rows = freeze._inventory(self.root, {'out/result.json'}, set())
         self.assertEqual(rows['out/result.json']['sha256'], hashlib.sha256(b'{"ok":true}\n').hexdigest())
 
+    def test_replacement_between_stat_and_open_is_rejected(self):
+        path = self.root / 'out/result.json'
+        actual_open = freeze.os.open
+        replaced = False
+        def replace_then_open(target, *args, **kwargs):
+            nonlocal replaced
+            if target == path.name and not replaced:
+                replaced = True
+                path.unlink()
+                path.write_text('{"ok":true}\n')
+            return actual_open(target, *args, **kwargs)
+        with patch.object(freeze.os, 'open', side_effect=replace_then_open):
+            with self.assertRaisesRegex(RuntimeError, 'changed before open'):
+                freeze._safe_file(path, set())
+
+    def test_same_inode_rewrite_between_stat_and_open_is_rejected(self):
+        path = self.root / 'out/result.json'
+        actual_open = freeze.os.open
+        changed = False
+        def rewrite_then_open(target, *args, **kwargs):
+            nonlocal changed
+            if target == path.name and not changed:
+                changed = True
+                before = path.stat()
+                path.write_text('{"no":true}\n')
+                os.utime(path, ns=(before.st_atime_ns, before.st_mtime_ns + 1_000_000_000))
+            return actual_open(target, *args, **kwargs)
+        with patch.object(freeze.os, 'open', side_effect=rewrite_then_open):
+            with self.assertRaisesRegex(RuntimeError, 'changed before open'):
+                freeze._safe_file(path, set())
+
+    def test_swapped_parent_symlink_is_not_followed(self):
+        anchor = self.root / 'out'
+        nested = anchor / 'nested'
+        nested.mkdir()
+        path = nested / 'data.json'
+        path.write_text('{"ok":true}\n')
+        outside = self.root / 'outside-dir'
+        actual_open = freeze.os.open
+        changed = False
+        def swap_then_open(target, *args, **kwargs):
+            nonlocal changed
+            if target == 'nested' and not changed:
+                changed = True
+                nested.rename(outside)
+                nested.symlink_to(outside, target_is_directory=True)
+            return actual_open(target, *args, **kwargs)
+        with patch.object(freeze.os, 'open', side_effect=swap_then_open):
+            with self.assertRaises(OSError):
+                freeze._safe_file(path, set(), anchor)
+
+    def test_command_receipt_symlink_is_rejected_before_read(self):
+        target = self.root / 'outside.json'
+        target.write_text('[]')
+        (self.root / 'commands.json').symlink_to(target)
+        with self.assertRaisesRegex(RuntimeError, 'alias or not regular'):
+            freeze._command_files(self.root)
+
     def test_snapshot_copies_then_checks_bytes(self):
         run_id = '123-1'
         inputs = self.root / ('event-input-' + run_id)
@@ -35,7 +93,7 @@ class ArtifactInventoryTests(unittest.TestCase):
         lock.write_text('lock')
         record = {'artifacts': {'inputs': {'receipt.json': {'sha256': digest, 'bytes': 8}},
                                 'event': {}, 'control': {}, 'r3': {}},
-                  'release_lock': {'sha256': hashlib.sha256(b'lock').hexdigest()}}
+                  'release_lock': {'sha256': hashlib.sha256(b'lock').hexdigest(), 'bytes': 4}}
         with patch.object(freeze, 'ROOT', self.root):
             freeze.snapshot(self.root, run_id, record)
         copied = self.root / ('issuer-freeze-' + run_id) / 'snapshot/inputs/receipt.json'

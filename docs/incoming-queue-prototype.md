@@ -123,6 +123,23 @@ This is a same-job *claim*, not authentication of the queue or a signed start.
 The older unclaimed scan remains comparable without that flag and reports
 `claim_bound: false`.
 
+If a manual reservation never started and the upstream PR head or base moved,
+the operator can recover that exact queue slot with
+`tools/incoming_queue_recover_stale.py`. Supply the private database, expected
+sequence/digest, retained canonical PR response from a failed
+`incoming-event-preflight.yml` run, that run's GitHub Actions API response,
+its retained `dispatch-inputs.json`, and its jobs API response. The command
+recomputes the four input-file digests itself and requires the dispatch file
+to name the exact reservation and old PR head/base. It also requires a failed `resolve-pins` step,
+a skipped released scan, changed head/base, and an unstarted exact
+reservation; it atomically marks the old event inactive and records the
+observed identities and evidence hashes. It rejects stale predecessors and
+cannot mark a started or completed scan recovered. Run it only as the local
+queue owner after reviewing those hosted files. Their GitHub custody is not
+authenticated by this offline command, so its `local_operator` authority is
+explicit; it does not create a signer or authenticate any scan result.
+Reconcile a fresh discovery checkpoint before reserving a new head.
+
 The `apply_attested` Python API accepts a start, failure, completion or recovery payload
 with an HMAC-SHA256 over canonical JSON using an externally provisioned secret
 of at least 32 bytes. The signer is a trust boundary: the MAC authenticates a
