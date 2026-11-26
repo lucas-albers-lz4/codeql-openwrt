@@ -30,6 +30,11 @@ on:
       - 'tools/test_event_corpus_manifest.py'
       - 'tools/event_corpus_linux.py'
       - 'tools/event_control_scan.py'
+      - 'tools/issuer_consumer_prerequisite.py'
+      - 'tools/issuer_workflow_graph.py'
+      - 'policy/tests/test_issuer_consumer_prerequisite.py'
+      - 'policy/tests/test_issuer_control_graph.py'
+      - 'policy/tests/test_issuer_workflow_graph.py'
       - 'tools/test_event_control_scan.py'
       - 'tools/current_corpus_linux.py'
       - 'tools/sarif_accept.py'
@@ -52,6 +57,7 @@ jobs:
           python3 -B -m unittest policy.tests.test_incoming_event -v
           python3 -B tools/test_full_tree_candidates.py -v
           python3 -B -m unittest tools.test_event_corpus_manifest tools.test_event_control_scan -v
+          python3 -B -m unittest policy.tests.test_issuer_consumer_prerequisite policy.tests.test_issuer_control_graph policy.tests.test_issuer_workflow_graph -v
           python3 -B -m unittest policy.tests.test_event_corpus_linux policy.tests.test_current_corpus_linux policy.tests.test_sarif_accept policy.tests.test_r3_linux_handoff -v
   resolve-pins:
     if: github.event_name == 'workflow_dispatch'
@@ -257,6 +263,7 @@ jobs:
           run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B tools/r3_linux_handoff.py docs/r3-release-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Run released producer and same-job event consumer
+        id: event-scan
         if: steps.r3.outcome == 'success'
         run: |
           set -euo pipefail
@@ -265,6 +272,7 @@ jobs:
           run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B -m tools.event_corpus_linux docs/r3-release-lock.json "$input_root/event-corpus-manifest.json" "$input_root/incoming-event-receipt.json" "$input_root/full-tree-candidates.json" "$source_root" "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Run independent released clean-control scan
+        id: control-scan
         if: always() && !cancelled() && steps.r3.outcome == 'success' && steps.control-oracle.outcome == 'success'
         run: |
           set -euo pipefail
@@ -272,6 +280,12 @@ jobs:
           control_root="$RUNNER_TEMP/event-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B -m tools.event_control_scan docs/r3-release-lock.json "$input_root/incoming-event-receipt.json" "$control_root" "$input_root/control-oracle" "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Check event and control consumer graph (non-issuing)
+        if: always() && !cancelled() && steps.release.outputs.ready == 'true'
+        env:
+          EVENT_OUTCOME: ${{ steps.event-scan.outcome }}
+          CONTROL_OUTCOME: ${{ steps.control-scan.outcome }}
+        run: python3 -B -m tools.issuer_workflow_graph
       - name: Summarize scan outcome and markup coverage gap
         if: always() && steps.release.outputs.ready == 'true'
         run: |
