@@ -26,6 +26,8 @@ on:
       - '.github/workflows/incoming-discovery-manual.yml'
       - 'tools/incoming_poll.py'
       - 'tools/test_incoming_poll.py'
+      - 'tools/discovery_pr_dispatch.py'
+      - 'tools/test_discovery_pr_dispatch.py'
 
 permissions:
   actions: read
@@ -39,7 +41,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Test read-only discovery contract
-        run: python3 -B -m unittest tools.test_incoming_poll -v
+        run: python3 -B -m unittest tools.test_incoming_poll tools.test_discovery_pr_dispatch -v
   discover:
     if: github.event_name == 'workflow_dispatch'
     needs: contract
