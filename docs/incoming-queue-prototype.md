@@ -223,6 +223,50 @@ invalidates its reservation and rejects late results. Store schema
 databases; there is no automatic migration. Existing queue history must not
 be silently upgraded because v1 completion records did not bind receipt or
 job identity. A restored database keeps its queue ID;
+
+## Local issued pilot (new v1 action family)
+
+The local operator issuer is separate from the historical `apply_attested`
+prototype. Its private key is a raw 32-byte mode `0600` file directly under
+an operator-owned mode `0700` directory; the same directory holds the exact
+policy and retained API/artifact bytes. Never give the key to GitHub Actions,
+put it in a repository, or run issuer entrypoints directly from a development
+checkout. Copy the reviewed `operator_issuer_launcher.py` template into that
+private directory at mode `0600`, record its SHA-256, and run that private
+copy. It reads the exact policy-approved commit's tree and blob objects into
+a fresh private directory using Git plumbing with replace refs disabled; it
+never runs checkout filters or uses the checkout's Git configuration after
+materialization. It rejects aliases and bytecode, then executes the selected
+issuer command with a minimal environment. The copied
+launcher and policy are operator-controlled trust roots; the issuer does not
+infer that a GitHub run is approved merely because it is green.
+
+For `start`, the launcher invokes `operator_queue_start.py`, which calls the
+live start observer, retains its raw API/ZIP bytes and receipt, checks the
+approved private source revision, and only then reads the key and applies one
+expected-sequence transaction. The issued start records the numeric run,
+attempt and job ID, consumer commit, reservation, source/control commits,
+policy digest, early artifact ID/ZIP digest and API/observation digests.
+The job must still be in progress at the observer's final recheck. This is
+an observed live start, not proof that the scan will finish.
+
+For `complete`, the launcher invokes `operator_queue_complete.py` only after
+the exact run succeeds. It verifies final GitHub artifact custody and the
+current issued start, rechecks the start MAC under the private key, compares
+all four early files byte for byte to the final freeze, derives source,
+manifest, extraction, SARIF, control and artifact hashes from those verified
+bytes, and advances the same event under queue CAS. It rejects a legacy v2
+start, a different numeric job ID, a moved queue head or a missing artifact.
+The signed record is a bounded scan disposition, not a vulnerability verdict.
+
+For a terminal failed or cancelled scan job, `operator_queue_failure.py`
+checks the exact canonical run/job API and records a signed failure transition
+that returns the event to pending with its attempt count incremented. A live
+job that appears stuck must be cancelled and observed terminal first; a poll
+timeout or missing artifact is not a failure. A later manual `--retry`
+reservation is allowed only after all pending unattempted identities have
+received their first attempt. A new dispatch and live observation are
+required for each retry. No unattended expiry or schedule is enabled.
 operator storage controls must prevent concurrent use of copied databases. A stale or superseded reservation cannot complete. A signed
 completion is final for that event, not a replacement for triage.
 

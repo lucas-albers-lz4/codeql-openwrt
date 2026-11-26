@@ -48,6 +48,8 @@ def main():
     parser.add_argument('--prepared-inputs', required=True, type=Path)
     parser.add_argument('--expected-sequence', required=True, type=int)
     parser.add_argument('--expected-sha256', required=True)
+    parser.add_argument('--retry', action='store_true',
+                        help='reserve a previously attempted pending PR only after all first attempts')
     args = parser.parse_args()
     try:
         check(args.expected_sequence >= 0 and isinstance(args.expected_sha256, str) and
@@ -59,11 +61,12 @@ def main():
         try:
             result, digest = reserve_exact_pr(
                 db, (args.expected_sequence, args.expected_sha256), prepared,
-                datetime.now(timezone.utc).isoformat())
+                datetime.now(timezone.utc).isoformat(), retry=args.retry)
         finally:
             db.close()
         print(json.dumps({'sequence': result['sequence'], 'sha256': digest,
                           'event_id': result['event_id'], 'status': result['status'],
+                          'attempts_before': result['attempts_before'],
                           'snapshot_sha256': result['snapshot_sha256']}))
         return 0
     except (PollError, ValueError, TypeError, KeyError, OSError, sqlite3.Error, RecursionError) as exc:

@@ -139,6 +139,20 @@ class QueueTests(unittest.TestCase):
             reserve_exact_pr(self.db, head, stale, '2026-01-01T00:00:00Z')
         self.assertEqual(self.db.execute('SELECT status FROM events WHERE id=?',
                                          (identity(self.events[0]),)).fetchone()[0], 'inactive')
+    def test_manual_retry_waits_for_first_attempts(self):
+        first, head = self.advance(None, 0)
+        eid = identity(self.events[0])
+        self.db.execute("UPDATE events SET attempts=1 WHERE id=?", (eid,))
+        candidate = prepared(self.events[0], first['snapshot_sha256'])
+        with self.assertRaises(PollError):
+            reserve_exact_pr(self.db, head, candidate,
+                             '2026-01-01T00:00:00Z', retry=True)
+        self.db.execute("UPDATE events SET status='completed' WHERE id<>?", (eid,))
+        result, digest = reserve_exact_pr(self.db, head, candidate,
+                                          '2026-01-01T00:00:00Z', retry=True)
+        self.assertEqual(result['attempts_before'], 1)
+        self.assertEqual(self.db.execute('SELECT status,attempts FROM events WHERE id=?',
+                                         (eid,)).fetchone(), ('reserved', 1))
     def stale_recovery_inputs(self):
         snapshot(self.snap, [self.events[0]])
         first, predecessor = self.advance(None, 0)

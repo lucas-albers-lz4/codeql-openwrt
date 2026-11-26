@@ -182,14 +182,19 @@ def check(database, work_root, run_id, attempt, consumer_commit):
                                   str(run_id), attempt, consumer_commit, True)
     require(link['status'] == 'linked_only' and link['claim_bound'] is True,
             'queue scan link did not pass')
+    require(link.get('started_job_id') is None or
+            link['started_job_id'] == job['id'],
+            'recorded start job ID differs from canonical completed job')
     return {'schema': 'operator-artifact-custody-v1', 'status': 'verified_read_only',
+            'queue_attestation_verified': False,
             'run_id': run_id, 'attempt': attempt, 'consumer_commit': consumer_commit,
             'job_id': job['id'], 'artifact_id': artifact['id'], 'artifact_sha256': digest,
             'run_api_sha256': hashlib.sha256(run_raw).hexdigest(),
             'jobs_api_sha256': hashlib.sha256(jobs_raw).hexdigest(),
             'artifacts_api_sha256': hashlib.sha256(artifacts_raw).hexdigest(),
             'link': link, 'operator_workspace': str(owner),
-            'limitations': ['Read-only local custody check; no queue start or completion.']}
+            'limitations': ['Read-only local custody check; queue start MAC and running-job evidence not verified here.',
+                            'No queue start or completion.']}
 
 
 def main():
