@@ -1,0 +1,250 @@
+{
+  "schema": "issue175-source-first-call-spans-v1",
+  "source_revision": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+  "query_revision": "a7bf614e2fb59200e303f04b6255af7e6d4007e2",
+  "query": "ql/src/m3/BuiltinSystem.ql",
+  "coordinate_convention": "1-based line and byte column, inclusive final close parenthesis; offsets are zero-based bytes, end exclusive; CodeQL mapping remains to be verified against producer coordinate contract",
+  "expected_rows": 14,
+  "rows": [
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 234,
+      "start": [
+        234,
+        3
+      ],
+      "end_inclusive": [
+        234,
+        51
+      ],
+      "byte_start_0": 8937,
+      "byte_end_exclusive_0": 8986,
+      "expression_sha256": "4bf37f305ec54b9361971b01ac597a55d5c00cec3acfa1dbaf9fa1c5c02388be",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 247,
+      "start": [
+        247,
+        17
+      ],
+      "end_inclusive": [
+        247,
+        58
+      ],
+      "byte_start_0": 9496,
+      "byte_end_exclusive_0": 9538,
+      "expression_sha256": "7ade1c08e4ab97ccfa740e7f5103c015e6fd6656eb49b4566a58078567bffb46",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 248,
+      "start": [
+        248,
+        34
+      ],
+      "end_inclusive": [
+        248,
+        83
+      ],
+      "byte_start_0": 9614,
+      "byte_end_exclusive_0": 9664,
+      "expression_sha256": "5dd1b578609115d6c2e93558d74c8278114681f156a48b02b090e9c4198e6f6b",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 249,
+      "start": [
+        249,
+        35
+      ],
+      "end_inclusive": [
+        249,
+        83
+      ],
+      "byte_start_0": 9705,
+      "byte_end_exclusive_0": 9754,
+      "expression_sha256": "80baada5d61e6cbc26f2b305244f4b5013a2415a5a855c4027e5530c2615a706",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 250,
+      "start": [
+        250,
+        3
+      ],
+      "end_inclusive": [
+        250,
+        39
+      ],
+      "byte_start_0": 9766,
+      "byte_end_exclusive_0": 9803,
+      "expression_sha256": "fc3f987a72a4ca160842769b0e3b11db380918e548358f83b89cd17cc7d38d64",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 429,
+      "start": [
+        429,
+        9
+      ],
+      "end_inclusive": [
+        429,
+        81
+      ],
+      "byte_start_0": 15821,
+      "byte_end_exclusive_0": 15894,
+      "expression_sha256": "e3f1fba1373c29aced4760a0b15517c00d5d2fd8a12eaf5c0032482d3727546a",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 444,
+      "start": [
+        444,
+        6
+      ],
+      "end_inclusive": [
+        444,
+        80
+      ],
+      "byte_start_0": 16483,
+      "byte_end_exclusive_0": 16558,
+      "expression_sha256": "5eca21840e6c7d039bc4732a126a00ee54c016f3c403840cf171915cc6115af3",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 446,
+      "start": [
+        446,
+        16
+      ],
+      "end_inclusive": [
+        446,
+        88
+      ],
+      "byte_start_0": 16595,
+      "byte_end_exclusive_0": 16668,
+      "expression_sha256": "e3f1fba1373c29aced4760a0b15517c00d5d2fd8a12eaf5c0032482d3727546a",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 504,
+      "start": [
+        504,
+        8
+      ],
+      "end_inclusive": [
+        504,
+        66
+      ],
+      "byte_start_0": 18344,
+      "byte_end_exclusive_0": 18403,
+      "expression_sha256": "827f5204771bbf86f4a7a7c02cf0598d8231d21968a52648170189340ec4d57f",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 505,
+      "start": [
+        505,
+        5
+      ],
+      "end_inclusive": [
+        507,
+        35
+      ],
+      "byte_start_0": 18416,
+      "byte_end_exclusive_0": 18578,
+      "expression_sha256": "cc8028f27f34926ecfe415f55f9c2840c6ead8f83f1b2f8e0c59f2afdddddea8",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 612,
+      "start": [
+        612,
+        5
+      ],
+      "end_inclusive": [
+        612,
+        57
+      ],
+      "byte_start_0": 21756,
+      "byte_end_exclusive_0": 21809,
+      "expression_sha256": "37723d6daf83dcabca6f90fbbfa920ff926b358ce8d89f8268f213c6b7ddffe1",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 638,
+      "start": [
+        638,
+        5
+      ],
+      "end_inclusive": [
+        638,
+        58
+      ],
+      "byte_start_0": 22709,
+      "byte_end_exclusive_0": 22763,
+      "expression_sha256": "2ba1bef6323ed14e6e65461e3e71b3eb0f77d834ec441f80eba385a24703a481",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "source_line": 662,
+      "start": [
+        662,
+        5
+      ],
+      "end_inclusive": [
+        662,
+        57
+      ],
+      "byte_start_0": 23465,
+      "byte_end_exclusive_0": 23518,
+      "expression_sha256": "afaea7e186769268e91018d20e433b3bc7cd9d25664fbabe0a9370840c375f91",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/ucode/issue175/positive.uc",
+      "source_line": 2,
+      "start": [
+        2,
+        3
+      ],
+      "end_inclusive": [
+        2,
+        29
+      ],
+      "byte_start_0": 29,
+      "byte_end_exclusive_0": 56,
+      "expression_sha256": "acd0d0640fa6dde7953e770afcb6f4547d94c17232051cb421a99e97fdf587e9",
+      "expected_rows": 1
+    },
+    {
+      "path": "usr/share/ucode/issue175/near-miss.uc",
+      "source_line": 2,
+      "start": [
+        2,
+        3
+      ],
+      "end_inclusive": [
+        2,
+        29
+      ],
+      "byte_start_0": 37,
+      "byte_end_exclusive_0": 64,
+      "expression_sha256": "acd0d0640fa6dde7953e770afcb6f4547d94c17232051cb421a99e97fdf587e9",
+      "expected_rows": 0
+    }
+  ]
+}

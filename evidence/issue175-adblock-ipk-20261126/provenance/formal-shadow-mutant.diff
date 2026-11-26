@@ -1,0 +1,10 @@
+--- Models.qll
++++ Models.formal-shadow-mutant.qll
+@@ -254,7 +254,6 @@
+ class BuiltinSystemCall extends NamedCall {
+   BuiltinSystemCall() {
+     this.getName() = "system" and
+-    not systemFormalInBody(this) and
+     not systemFunctionInScope(this) and
+     not systemVariableInScope(this) and
+     not exists(UCODE::ImportStatement imp |

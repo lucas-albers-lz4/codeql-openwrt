@@ -1,0 +1,10 @@
+Resolving data extensions.
+Finished resolving data extensions.
+Merging data extensions.
+Finished merging data extensions.
+WARNING: Not caching stages during query-loading, since max heap size is only 1816 MB.
+Compiling query plan for /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/producer/ql/src/diagnostics/ExtractionErrors.ql.
+[1/1 comp 476ms] Compiled /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/producer/ql/src/diagnostics/ExtractionErrors.ql.
+Starting evaluation of lucas-albers-lz4/ucode-queries/diagnostics/ExtractionErrors.ql.
+[1/1 eval 11ms] Evaluation done; writing results to /Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/output/errors.bqrs.
+Shutting down query evaluator.

@@ -1,0 +1,210 @@
+{
+  "scope": "private isolated macOS current-main CodeQL ucode extractor pack build and assembly; no CodeQL query resolution, query execution, database creation, or extraction",
+  "producer_revision": "104a398468f214961168d2edc9a10be45b80062f",
+  "grammar_source": "codeql-ucode-ledger/work/tree-sitter-cli-provenance-f2BNOj/extractor/tree-sitter",
+  "grammar_upstream_head": "4a243af329fae2f4ff01e0fc80133cbab8314600",
+  "grammar_patch_sha256": "6520260dba0f72437603f6aa977bbd5c8dd59d2f54c7df6cd41a1e642ef41ad5",
+  "grammar_cargo_toml_sha256": "60d7bc5b7b772df404050dbc458082a03dfc457fda2eef50b7e1de037ce78d4e",
+  "producer_relevant_inventory_sha256": "685ad568e69223bd52bf531bbbbcf0672cac99d46a767066c462ec262dcd568f",
+  "producer_cargo_lock_sha256": "20678c3cbb29632a9369bdb3c735af9ee63c9443879db38847fbda9813aa0a77",
+  "extractor_cargo_toml_sha256": "13853564e8eeb45d15ef89894e80959afd5180b10e38e2b2dee3cedba1ef01d0",
+  "generated_inputs": {
+    "ucode_parser_c_sha256": "6002d96df3aa22e2f2e5fd27d4a64a2bb4c0126f2f6aff4dc1197a65b70b9fae",
+    "ucode_node_types_sha256": "3c5a2ad8f83828495779f69ef650b37cf9f79a3a46c5f1354cf65bfe847ea5f3",
+    "ucode_grammar_json_sha256": "c59703860b908a0e8ee7a5241258182c5bd51593997bd3e141e3017971993f3b",
+    "markup_parser_c_sha256": "1b2f6331daeef2232b8da2c0556f0ecd6566ecdb8d5cb865771558ae2c00916f",
+    "markup_node_types_sha256": "5b55bc4968a9600ff4e2f40b3709eb20afebdb240b5bf111ab8c6970a54c098c",
+    "markup_grammar_json_sha256": "476c5d98e35b7892c7be1433963071faf385e44c2b41ed93ed7cdb0cf8fc4838"
+  },
+  "build": {
+    "binary_path": "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/target/aarch64-apple-darwin/release/codeql-extractor-ucode",
+    "binary_sha256": "ba8101bf4d851ce8c81915ca4c1f1e6382cb7f6cb12d77aa388f9148fdc03e18",
+    "cache_delta_names": [],
+    "cargo_home_after_sha256": "ec5631f2f2359a687f16e08433df956110f821b40bf3e3b9a7db169efce3693a",
+    "cargo_home_before_sha256": "ec5631f2f2359a687f16e08433df956110f821b40bf3e3b9a7db169efce3693a",
+    "elapsed_ns": 69840408625,
+    "exit": 0,
+    "limits": "Cargo --offline is not an OS sandbox; no CodeQL query or extraction",
+    "offline": true,
+    "phase": "cargo build",
+    "process_group": "gone",
+    "source_tree_sha256": "685ad568e69223bd52bf531bbbbcf0672cac99d46a767066c462ec262dcd568f",
+    "source_unchanged": true,
+    "stderr_sha256": "e398c5dd1363f6c4c1579eb352492688e10a84e49cafb3aa3316cd65012a3e3e",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "target": "aarch64-apple-darwin"
+  },
+  "build_command": {
+    "argv": [
+      "/opt/homebrew/Cellar/rust/1.100.0/bin/cargo",
+      "build",
+      "--release",
+      "--offline",
+      "--locked",
+      "--target",
+      "aarch64-apple-darwin",
+      "--jobs=1"
+    ],
+    "cwd": "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/producer",
+    "env": {
+      "AR": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar",
+      "CARGO_BUILD_JOBS": "1",
+      "CARGO_BUILD_TARGET": "aarch64-apple-darwin",
+      "CARGO_HOME": "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/cache-home",
+      "CARGO_NET_OFFLINE": "true",
+      "CARGO_TARGET_AARCH64_APPLE_DARWIN_LINKER": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "CARGO_TARGET_DIR": "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/target",
+      "CC": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang",
+      "HOME": "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/home",
+      "LC_ALL": "C",
+      "PATH": "/opt/homebrew/Cellar/rust/1.100.0/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+      "RUSTC": "/opt/homebrew/Cellar/rust/1.100.0/bin/rustc",
+      "SDKROOT": "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk",
+      "TMPDIR": "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/tmp",
+      "XDG_CACHE_HOME": "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/xdg"
+    },
+    "limits": "Cargo --offline; not an OS network sandbox"
+  },
+  "metadata_preflight": {
+    "cache_delta_count": 1,
+    "cache_delta_names": [
+      ".global-cache"
+    ],
+    "cargo_home_after_inventory_sha256": "b7602f1a2e8a9bb6bee5186cf9b8cbc5e9c0d62b671e6f2c7777ea9be248bd39",
+    "cargo_home_before_inventory_sha256": "b9e8ac0389c49cbcdd8d735de5b9108b163b4eb547008577a6c69d3d5465d296",
+    "elapsed_ns": 6427905167,
+    "exit": 0,
+    "offline": true,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "e9f2ad451cd41678750808c5999528d26a7f750222679c3b74e2e3c00939ba80",
+    "target": "aarch64-apple-darwin"
+  },
+  "codeql": {
+    "path": "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+    "version": "2.27.4",
+    "sha256": "bb3a754e126ed061b5f3356531cd5501872ab3864bd665b2d1afdbf8a67a146d",
+    "uses": [
+      "version",
+      "query format -i on generated TreeSitter.qll only"
+    ]
+  },
+  "generated_schema_and_qll": {
+    "cli_sha256": "bb3a754e126ed061b5f3356531cd5501872ab3864bd665b2d1afdbf8a67a146d",
+    "commands": [
+      {
+        "argv": [
+          "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+          "version"
+        ],
+        "elapsed_ns": 378254125,
+        "exit": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "69af999e72d7bf1ae994a093df4857cdf038f14526f17f3d9864c112e297e942"
+      },
+      {
+        "argv": [
+          "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+          "query",
+          "format",
+          "-i",
+          "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/producer/ql/lib/codeql/ucode/ast/internal/TreeSitter.qll"
+        ],
+        "elapsed_ns": 384612042,
+        "exit": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "dbscheme_sha256": "d4a9ef5db2dd934c94ddf59141331ded3531d4ec79d86702d8f75afc361fc9fd",
+    "treessitter_qll_sha256": "ea77ca72e96d493545798f5a83894f3e08e1df9f62f5928848692033b6182d4f"
+  },
+  "pack": {
+    "assembly_method": "explicit current-source copy; no generic destructive pack script",
+    "dbscheme_sha256": "d4a9ef5db2dd934c94ddf59141331ded3531d4ec79d86702d8f75afc361fc9fd",
+    "extractor_sha256": "ba8101bf4d851ce8c81915ca4c1f1e6382cb7f6cb12d77aa388f9148fdc03e18",
+    "file_count": 14,
+    "files": {
+      "codeql-extractor.yml": {
+        "bytes": 549,
+        "mode": 420,
+        "sha256": "ad5119282dfb1f46dee1c3091ce17d5bf4b5eb51aa8f93a01e399f560739e285"
+      },
+      "downgrades/qlpack.yml": {
+        "bytes": 96,
+        "mode": 420,
+        "sha256": "52302981ad5f13e5344cbd3927037b3546939d7ce93b8b450c59a22cbaff15bf"
+      },
+      "tools/autobuild.cmd": {
+        "bytes": 120,
+        "mode": 420,
+        "sha256": "f93d73fcc4669fab57cfa3391f2f42e19028d2576503a93ca673f23322dd7272"
+      },
+      "tools/autobuild.sh": {
+        "bytes": 93,
+        "mode": 493,
+        "sha256": "190d821560f9be595a1ba0a10361d3071168f4e7e6db985478fe79ee8fc522d3"
+      },
+      "tools/export_setblock_detect.py": {
+        "bytes": 4543,
+        "mode": 420,
+        "sha256": "a970c5c3350677ada8cfb5a342050f214e6e5eb5678313f01efd38115192ccd6"
+      },
+      "tools/index-files.cmd": {
+        "bytes": 626,
+        "mode": 420,
+        "sha256": "1867afda8666ae3871bc534ad1a80c117f68219dadf54e6df022ce17b29f004d"
+      },
+      "tools/index-files.sh": {
+        "bytes": 381,
+        "mode": 493,
+        "sha256": "1fc6de73c0ea285d944d0e9ab11beec34342808198a5716ce2d51e5c29fd995e"
+      },
+      "tools/osx64/extractor": {
+        "bytes": 4501280,
+        "mode": 493,
+        "sha256": "ba8101bf4d851ce8c81915ca4c1f1e6382cb7f6cb12d77aa388f9148fdc03e18"
+      },
+      "tools/pre-finalize.cmd": {
+        "bytes": 300,
+        "mode": 420,
+        "sha256": "9142cc3503e20cc507536c6c132be55d98fdd6d2b7bb19e84d5eb651fb7b6903"
+      },
+      "tools/pre-finalize.sh": {
+        "bytes": 303,
+        "mode": 493,
+        "sha256": "0636921f55488cbf1934543fe8ea113ea240817d15a0cda56e6e16a00743c4b6"
+      },
+      "tools/qltest.cmd": {
+        "bytes": 293,
+        "mode": 420,
+        "sha256": "6c9e02e6ad51155bf7512d338f1643be7a7388fc417e52c8b71710ce47d749dd"
+      },
+      "tools/qltest.sh": {
+        "bytes": 518,
+        "mode": 493,
+        "sha256": "ffda5bdd6df90e343e431b801cee093d38aaece142d5c1a519b0b6f41d9e8924"
+      },
+      "ucode.dbscheme": {
+        "bytes": 68350,
+        "mode": 420,
+        "sha256": "d4a9ef5db2dd934c94ddf59141331ded3531d4ec79d86702d8f75afc361fc9fd"
+      },
+      "ucode.dbscheme.stats": {
+        "bytes": 68,
+        "mode": 420,
+        "sha256": "90d6939a021bb0cb71fd491117d1ecb4c7968fb5a80262ddc44975a75bd97767"
+      }
+    },
+    "pack_path": "/Users/lalbers/gitroot/ucode/codeql-ucode-ledger/work/issue156-current-pack-104a398-20261124-a/extractor-pack",
+    "pack_tree_sha256": "0993f9c130a5decf28a605c155642c787dcb0c4cd4dfd7971d2753b30388372f",
+    "treessitter_qll_sha256": "ea77ca72e96d493545798f5a83894f3e08e1df9f62f5928848692033b6182d4f"
+  },
+  "architecture": "arm64 Mach-O, aarch64-apple-darwin",
+  "verification": "all 14 pack files rehashed and matched pack-result manifest; binary identified by macOS file as Mach-O 64-bit executable arm64",
+  "limitations": [
+    "Cargo --offline is not an OS network sandbox, though build used offline flag and no downloads were observed",
+    "binary provenance is this private local build with Homebrew Rust 1.100.0 and Xcode SDK; no reproducible independent build comparison",
+    "generated/pack artifacts establish assembly identity only, not successful CodeQL resolution, extraction, runtime behavior, or causal/security coverage",
+    "earlier rustup target-list preflight unexpectedly synchronized/installed a stable toolchain; parent inspected and directed preservation. This build used direct pinned Homebrew cargo/rustc paths and did not invoke rustup."
+  ]
+}

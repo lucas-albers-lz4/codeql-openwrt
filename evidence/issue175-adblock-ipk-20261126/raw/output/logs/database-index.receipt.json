@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+    "database",
+    "index-files",
+    "--language=ucode",
+    "--include=**/*",
+    "--working-dir=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage",
+    "--common-caches=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/cache/database",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/db"
+  ],
+  "artifacts": {
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/output/routing.json": "be7e2811c2d7fd6bb01f793eef20ea1abc5dd3ffd7ca0d9251a5d41f9014ea73"
+  },
+  "classified_warnings": [],
+  "cwd": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/producer",
+  "elapsed_seconds": 0.7885898749809712,
+  "env": {
+    "CODEQL_UCODE_STAGED_ROOT": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage",
+    "HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/cache"
+  },
+  "exit": 0,
+  "label": "database-index",
+  "peak_rss_bytes": null,
+  "raw_routing_sha256": "be7e2811c2d7fd6bb01f793eef20ea1abc5dd3ffd7ca0d9251a5d41f9014ea73",
+  "rss_note": "not measured on this run",
+  "stderr_path": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/output/logs/database-index.stderr",
+  "stderr_sha256": "153b9be73494c28a49ff90cd37d05e4eff042bf5018a557afb6fceae5e57551a",
+  "stdout_path": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/output/logs/database-index.stdout",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

@@ -1,0 +1,148 @@
+{
+  "code_sha256": {
+    "check.py": "ddf0c5605e1984da7c90ec70c2b4ee294fb374a99f3102473589732f7158a2ec",
+    "expected-call-spans.json": "378771758beee24fc1f32c91ffcfd573c0ff655a5287f8663c370c8834795297",
+    "near-miss.uc": "d7da956a8afbc3162a83f014c33cf82ebf923d9624011b09f3cb283365cde942",
+    "positive.uc": "b6284410ba2f2fc28ba43a8584506eb0afbaf0e864ef25c9ac5877a3a97a4e81",
+    "prepare.py": "0fa1e168d400dc4baba3a52e77dc3b36d101db8ddb9a14e914d96e707498c146",
+    "verify.py": "51f70af09f718aa2a521c1fb15ec39cabed31cf0fe41ac5066b7ef380ca15290"
+  },
+  "initial_run_tree": [
+    {
+      "mode": 493,
+      "path": "cache",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/compile",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "cache/queries",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "home",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "output",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "output/logs",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-errors.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-query.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/logs/resolve-success.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-errors.json",
+      "sha256": "61d7c20ebdd7bcfcfb4896ebb9f97c1438eb5b6be767993489efe0a298fb08af",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-query.json",
+      "sha256": "499acaf0e5aa088f4c3692c5d46b7471dbfd2e542c7f4a40e8db4a0ea3b153af",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolve-successful.json",
+      "sha256": "bec04c90bd1527bbfb3413bf8c61cebd1d67e0353763ab72b8bc8618c6c33df2",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "output/resolver-only-commands.json",
+      "sha256": "c61db56d9869fe75d663c7e01bf038fe185ac64d3407d45270969ab48a2b7983",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "stage",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share/rpcd",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share/rpcd/ucode",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "stage/usr/share/rpcd/ucode/luci.adblock-fast",
+      "sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share/ucode",
+      "type": "directory"
+    },
+    {
+      "mode": 493,
+      "path": "stage/usr/share/ucode/issue175",
+      "type": "directory"
+    },
+    {
+      "mode": 420,
+      "path": "stage/usr/share/ucode/issue175/near-miss.uc",
+      "sha256": "d7da956a8afbc3162a83f014c33cf82ebf923d9624011b09f3cb283365cde942",
+      "type": "file"
+    },
+    {
+      "mode": 420,
+      "path": "stage/usr/share/ucode/issue175/positive.uc",
+      "sha256": "b6284410ba2f2fc28ba43a8584506eb0afbaf0e864ef25c9ac5877a3a97a4e81",
+      "type": "file"
+    },
+    {
+      "mode": 493,
+      "path": "tmp",
+      "type": "directory"
+    }
+  ],
+  "lock_sha256": "80babfb3ac3dec5ce79d52f0201ecac914ec765ecdabd8017fe60110cfe677d2",
+  "resolver_only_sha256": "c61db56d9869fe75d663c7e01bf038fe185ac64d3407d45270969ab48a2b7983",
+  "shared_code_sha256": {
+    "archive.py": "224e748846138261c2d709b2932764ffeaabfd90378ccf2a8ffa7476e6630100",
+    "compare.py": "2cea4cc96279f75f0b1f1194639c7b6285f4e17403f8d49e587143ce2b1974ae"
+  }
+}
