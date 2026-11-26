@@ -11,6 +11,30 @@ interval fails before source selection or CodeQL. Pull requests run only the
 contract tests; their checkout cannot produce a released scan receipt. The
 scan itself remains a manual dispatch; scheduled discovery does not trigger it.
 
+The manual inputs also accept an optional all-or-none `queue_id`,
+`reservation_sequence`, and `reservation_sha256` triplet. After linked-gap replay,
+canonical commit resolution, and source-first manifest construction, the job
+retains `reservation-claim.json` in its always-upload scan artifact. On claim
+validation failure, the tool attempts to write `reservation-claim-failure.json`
+to that artifact with `status: claim_failed` and no asserted reservation
+values; if that write fails, the workflow still fails and reports the error in
+its logs. A generated claim record is either `absent` or
+`claimed_unverified` and binds any caller-asserted triplet to the exact
+repository/ref/commit/tree/first-parent/ordinal, predecessor and successor
+checkpoint and gap digests, discovery run IDs and attempts, workflow run and
+attempt, consumer head, identity receipt, and manifest bytes. Malformed or
+partial triplets fail the job before the scan.
+
+The hosted job does not read the private backlog, match a queue row or action,
+or compare this triplet with the private intake receipt or artifact origin. A
+well-formed forged triplet therefore remains
+`claimed_unverified`; it does not authorize a scan, record a start or completion,
+or establish queue state. The claim is retained before the scan. The scan receipt
+links the same manifest to its SARIF digest, but this increment adds no separate
+postscan link receipt and does not authenticate execution or artifact custody.
+The replayed linked discovery run/checkpoint/gap values are the supplied scan
+inputs; they are not a verified private queue origin.
+
 `tools/default_branch_corpus_manifest.py` applies frozen v0.6 candidate
 policy to the exact first-parent-to-commit interval. It stages the full
 selected corpus at the commit and retains the other repositories at their

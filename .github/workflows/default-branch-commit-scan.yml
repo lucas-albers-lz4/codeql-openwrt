@@ -46,6 +46,21 @@ on:
         description: Distinct canonical control object SHA; no clean assertion
         required: true
         type: string
+      queue_id:
+        description: Optional asserted reservation queue ID; not verified by this workflow
+        required: false
+        type: string
+        default: ''
+      reservation_sequence:
+        description: Optional asserted reservation action sequence; not verified by this workflow
+        required: false
+        type: string
+        default: ''
+      reservation_sha256:
+        description: Optional asserted reservation action digest; not verified by this workflow
+        required: false
+        type: string
+        default: ''
   pull_request:
     paths:
       - '.github/workflows/default-branch-commit-scan.yml'
@@ -66,7 +81,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Test default-branch and released corpus contracts
-        run: python3 -B -m unittest tools.test_default_branch_gap tools.test_default_branch_event tools.test_default_branch_corpus_manifest tools.test_default_branch_corpus_linux tools.test_event_corpus_manifest tools.test_direct_commit_corpus_linux policy.tests.test_current_corpus_linux -v
+        run: python3 -B -m unittest tools.test_default_branch_gap tools.test_default_branch_event tools.test_default_branch_corpus_manifest tools.test_default_branch_corpus_linux tools.test_default_branch_reservation_claim tools.test_event_corpus_manifest tools.test_direct_commit_corpus_linux policy.tests.test_current_corpus_linux -v
 
   released-default-branch-scan:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
@@ -152,6 +167,32 @@ jobs:
           base_sha=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["base"]["commit"])' "$inputs/identity.json")
           python3 -B tools/full_tree_candidates.py docs/current-corpus-source-v0.6.json "$short" "$source_checkout" "$base_sha" "$SOURCE_SHA" "$inputs/inventory.json"
           python3 -B -m tools.default_branch_corpus_manifest --previous "$inputs/previous/decisions.json" --current "$inputs/current/decisions.json" --gap "$inputs/current/gap/gap.json" --identity "$inputs/identity.json" --inventory "$inputs/inventory.json" --source-checkout "$source_checkout" --control-checkout "$control_checkout" --output "$inputs/manifest.json"
+      - name: Retain same-job default-branch reservation claim
+        shell: bash
+        env:
+          QUEUE_ID: ${{ inputs.queue_id }}
+          RESERVATION_SEQUENCE: ${{ inputs.reservation_sequence }}
+          RESERVATION_SHA256: ${{ inputs.reservation_sha256 }}
+          PREVIOUS_RUN_ID: ${{ inputs.previous_run_id }}
+          PREVIOUS_RUN_ATTEMPT: ${{ inputs.previous_run_attempt }}
+          PREVIOUS_SHA256: ${{ inputs.previous_sha256 }}
+          CURRENT_RUN_ID: ${{ inputs.current_run_id }}
+          CURRENT_RUN_ATTEMPT: ${{ inputs.current_run_attempt }}
+          CURRENT_SHA256: ${{ inputs.current_sha256 }}
+          GAP_SHA256: ${{ inputs.gap_sha256 }}
+          REPOSITORY: ${{ inputs.repository }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          CONTROL_SHA: ${{ inputs.control_sha }}
+        run: |
+          set -euo pipefail
+          inputs="$RUNNER_TEMP/default-branch-inputs-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          CONSUMER_HEAD="$(git rev-parse HEAD)" python3 -B -m tools.default_branch_reservation_claim \
+            --previous "$inputs/previous/decisions.json" \
+            --current "$inputs/current/decisions.json" \
+            --gap "$inputs/current/gap/gap.json" \
+            --identity "$inputs/identity.json" \
+            --manifest "$inputs/manifest.json" \
+            --output "$inputs/reservation-claim.json"
       - name: Verify pinned immutable release in same job
         shell: bash
         env:
@@ -182,6 +223,8 @@ jobs:
             ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/identity.json
             ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/inventory.json
             ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/manifest.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/reservation-claim.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/reservation-claim-failure.json
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/receipt.json
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/commands.json
             ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/default-branch-corpus/validated-default-branch-manifest.json
