@@ -95,38 +95,155 @@ def _valid_repository_ref(repository, ref):
 
 
 def _check_v2_schema(conn):
+    version = conn.execute('PRAGMA user_version').fetchone()[0]
     require(conn.execute('PRAGMA application_id').fetchone()[0] == intake.APP_ID and
-            conn.execute('PRAGMA user_version').fetchone()[0] ==
-            intake.RESERVATION_SCHEMA_VERSION,
+            version in (intake.RESERVATION_SCHEMA_VERSION,
+                        intake.ISSUED_SCHEMA_VERSION),
             'backlog database requires explicit v1 migration')
     expected_objects = {('table', name) for name in (
         'cursor', 'intakes', 'commit_backlog', 'receipts', 'queue_metadata',
         'reservation_actions', 'action_head')}
     expected_objects |= {('trigger', name) for name in (
         'reservation_actions_no_update', 'reservation_actions_no_delete')}
+    if version == intake.ISSUED_SCHEMA_VERSION:
+        expected_objects |= {('table', 'issued_actions'), ('table', 'issued_head'),
+                             ('trigger', 'issued_actions_no_update'),
+                             ('trigger', 'issued_actions_no_delete')}
     actual_objects = {(row['type'], row['name']) for row in conn.execute(
         "SELECT type,name FROM sqlite_master WHERE substr(name,1,7) != 'sqlite_'")}
     require(actual_objects == expected_objects,
             'reservation database has an unexpected table, view, index or trigger')
     expected_columns = {
+        'cursor': ('singleton', 'checkpoint_sha256', 'run_id', 'attempt', 'receipt_seq'),
+        'intakes': ('intake_id', 'previous_run_id', 'previous_attempt', 'current_run_id',
+                    'current_attempt', 'previous_artifact_id', 'previous_zip_sha256',
+                    'current_artifact_id', 'current_zip_sha256',
+                    'previous_checkpoint_sha256', 'current_checkpoint_sha256',
+                    'gap_sha256', 'commit_count', 'bootstrap', 'receipt_seq'),
+        'commit_backlog': ('repository', 'ref', 'ordinal', 'commit_sha', 'tree_sha',
+                           'first_parent_sha', 'status', 'intake_id',
+                           'previous_checkpoint_sha256', 'current_checkpoint_sha256',
+                           'gap_sha256'),
+        'receipts': ('receipt_seq', 'previous_hash', 'body_json', 'receipt_hash'),
         'queue_metadata': ('singleton', 'queue_id'),
         'reservation_actions': ('action_seq', 'previous_hash', 'body_json', 'action_hash'),
         'action_head': ('singleton', 'queue_id', 'action_seq', 'action_hash'),
     }
+    if version == intake.ISSUED_SCHEMA_VERSION:
+        expected_columns.update({
+            'issued_actions': ('seq', 'previous_sha256', 'document_json', 'action_sha256'),
+            'issued_head': ('singleton', 'queue_id', 'seq', 'hash'),
+        })
+    expected_table_sql = {
+        'cursor': '''CREATE TABLE cursor (
+                        singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
+                        checkpoint_sha256 TEXT NOT NULL,
+                        run_id INTEGER NOT NULL,
+                        attempt INTEGER NOT NULL,
+                        receipt_seq INTEGER NOT NULL
+                    )''',
+        'intakes': '''CREATE TABLE intakes (
+                        intake_id TEXT PRIMARY KEY,
+                        previous_run_id INTEGER NOT NULL,
+                        previous_attempt INTEGER NOT NULL,
+                        current_run_id INTEGER NOT NULL,
+                        current_attempt INTEGER NOT NULL,
+                        previous_artifact_id INTEGER NOT NULL,
+                        previous_zip_sha256 TEXT NOT NULL,
+                        current_artifact_id INTEGER NOT NULL,
+                        current_zip_sha256 TEXT NOT NULL,
+                        previous_checkpoint_sha256 TEXT NOT NULL,
+                        current_checkpoint_sha256 TEXT NOT NULL,
+                        gap_sha256 TEXT NOT NULL,
+                        commit_count INTEGER NOT NULL,
+                        bootstrap INTEGER NOT NULL CHECK(bootstrap IN (0, 1)),
+                        receipt_seq INTEGER NOT NULL UNIQUE,
+                        UNIQUE(current_run_id, current_attempt),
+                        UNIQUE(current_artifact_id)
+                    )''',
+        'commit_backlog': '''CREATE TABLE commit_backlog (
+                        repository TEXT NOT NULL,
+                        ref TEXT NOT NULL,
+                        ordinal INTEGER NOT NULL,
+                        commit_sha TEXT NOT NULL,
+                        tree_sha TEXT NOT NULL,
+                        first_parent_sha TEXT NOT NULL,
+                        status TEXT NOT NULL CHECK(status = 'pending'),
+                        intake_id TEXT NOT NULL REFERENCES intakes(intake_id),
+                        previous_checkpoint_sha256 TEXT NOT NULL,
+                        current_checkpoint_sha256 TEXT NOT NULL,
+                        gap_sha256 TEXT NOT NULL,
+                        PRIMARY KEY(repository, ref, commit_sha)
+                    )''',
+        'receipts': '''CREATE TABLE receipts (
+                        receipt_seq INTEGER PRIMARY KEY,
+                        previous_hash TEXT NOT NULL,
+                        body_json TEXT NOT NULL,
+                        receipt_hash TEXT NOT NULL UNIQUE
+                    )''',
+        'queue_metadata': '''CREATE TABLE queue_metadata (
+                singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
+                queue_id TEXT NOT NULL UNIQUE
+            )''',
+        'reservation_actions': '''CREATE TABLE reservation_actions (
+                action_seq INTEGER PRIMARY KEY,
+                previous_hash TEXT NOT NULL,
+                body_json TEXT NOT NULL,
+                action_hash TEXT NOT NULL UNIQUE
+            )''',
+        'action_head': '''CREATE TABLE action_head (
+                singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
+                queue_id TEXT NOT NULL,
+                action_seq INTEGER NOT NULL,
+                action_hash TEXT NOT NULL
+            )''',
+    }
+    if version == intake.ISSUED_SCHEMA_VERSION:
+        expected_table_sql.update({
+            'issued_actions': '''CREATE TABLE issued_actions (
+                seq INTEGER PRIMARY KEY,
+                previous_sha256 TEXT NOT NULL,
+                document_json TEXT NOT NULL,
+                action_sha256 TEXT NOT NULL UNIQUE
+            )''',
+            'issued_head': '''CREATE TABLE issued_head (
+                singleton INTEGER PRIMARY KEY CHECK(singleton = 1),
+                queue_id TEXT NOT NULL,
+                seq INTEGER NOT NULL,
+                hash TEXT NOT NULL
+            )''',
+        })
     for table, expected in expected_columns.items():
         actual = tuple(row['name'] for row in conn.execute(
             'PRAGMA table_info(' + table + ')'))
         require(actual == expected, 'unsupported reservation table schema: ' + table)
     triggers = {row['name']: _normal_sql(row['sql']) for row in conn.execute(
         "SELECT name,sql FROM sqlite_master WHERE type='trigger'")}
-    require(triggers == {
+    expected_triggers = {
         'reservation_actions_no_update': _normal_sql(
             "CREATE TRIGGER reservation_actions_no_update BEFORE UPDATE ON reservation_actions "
             "BEGIN SELECT RAISE(ABORT, 'reservation actions are append-only'); END"),
         'reservation_actions_no_delete': _normal_sql(
             "CREATE TRIGGER reservation_actions_no_delete BEFORE DELETE ON reservation_actions "
             "BEGIN SELECT RAISE(ABORT, 'reservation actions are append-only'); END"),
-    }, 'reservation action immutability triggers differ')
+    }
+    if version == intake.ISSUED_SCHEMA_VERSION:
+        expected_triggers.update({
+            'issued_actions_no_update': _normal_sql(
+                "CREATE TRIGGER issued_actions_no_update BEFORE UPDATE ON issued_actions "
+                "BEGIN SELECT RAISE(ABORT, 'issued actions are append-only'); END"),
+            'issued_actions_no_delete': _normal_sql(
+                "CREATE TRIGGER issued_actions_no_delete BEFORE DELETE ON issued_actions "
+                "BEGIN SELECT RAISE(ABORT, 'issued actions are append-only'); END"),
+        })
+    require(triggers == expected_triggers,
+            'reservation or issued action immutability triggers differ')
+    tables = {row['name']: _normal_sql(row['sql']) for row in conn.execute(
+        "SELECT name,sql FROM sqlite_master WHERE type='table' "
+        "AND substr(name,1,7) != 'sqlite_'" )}
+    require(tables == {name: _normal_sql(sql)
+                       for name, sql in expected_table_sql.items()},
+            'reservation backlog table definitions differ')
 
 
 def _legacy_snapshot(conn):
@@ -421,8 +538,8 @@ def action_head(private_root):
         conn.execute('BEGIN')
         try:
             intake._initialize_or_check_schema(conn)
-            require(conn.execute('PRAGMA user_version').fetchone()[0] ==
-                    intake.RESERVATION_SCHEMA_VERSION,
+            require(conn.execute('PRAGMA user_version').fetchone()[0] in
+                    (intake.RESERVATION_SCHEMA_VERSION, intake.ISSUED_SCHEMA_VERSION),
                     'pending-only v1 database needs explicit migration')
             intake._verify_receipt_chain(conn)
             result = verify_action_chain(conn)
@@ -476,8 +593,8 @@ def reserve(private_root, expected_seq, expected_hash, identity, policy_path,
     conn = _open_existing(private_root)
     try:
         intake._initialize_or_check_schema(conn)
-        require(conn.execute('PRAGMA user_version').fetchone()[0] ==
-                intake.RESERVATION_SCHEMA_VERSION,
+        require(conn.execute('PRAGMA user_version').fetchone()[0] in
+                (intake.RESERVATION_SCHEMA_VERSION, intake.ISSUED_SCHEMA_VERSION),
                 'pending-only v1 database needs explicit migration')
         conn.execute('BEGIN IMMEDIATE')
         try:
