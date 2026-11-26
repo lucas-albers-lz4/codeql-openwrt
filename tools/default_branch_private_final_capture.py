@@ -156,7 +156,7 @@ def _artifact_times(artifact):
                  for key in ('created_at', 'updated_at', 'expires_at'))
 
 
-def _start_evidence(root, start_raw, run_id, attempt):
+def _start_evidence(root, start_raw, run_id, attempt, *, expected_entries=None):
     _require(type(start_raw) is bytes and 0 < len(start_raw) <= MAX_START,
              'supplied sequence-one bytes are empty or unbounded')
     start, _, canonical = issued._load_document(start_raw.decode('utf-8'))
@@ -168,6 +168,9 @@ def _start_evidence(root, start_raw, run_id, attempt):
     path = f'default-branch-start-{run_id}-{attempt}'
     with _directory(root, private.OBSERVATION_DIR) as observations:
         with _directory(observations, path) as directory:
+            if expected_entries is not None:
+                _require(set(os.listdir(directory)) == expected_entries,
+                         'retained start directory inventory differs')
             receipt_raw = _read(directory, 'receipt.json', MAX_RECEIPT)
             receipt = reconcile.parse_json(receipt_raw, 'retained start observation receipt')
             _require(reconcile.digest(receipt_raw) == att['observation_sha256'] and
@@ -199,6 +202,9 @@ def _start_evidence(root, start_raw, run_id, attempt):
                 else:
                     _require(len(raw) == att['early_artifact']['size'],
                              'retained early ZIP size differs')
+            if expected_entries is not None:
+                _require(set(os.listdir(directory)) == expected_entries,
+                         'retained start directory changed during read')
     run = bodies['run']
     second_run = bodies['recheck_run']
     job = live._live_run_and_job(run, bodies['jobs'], run_id, attempt, att)
