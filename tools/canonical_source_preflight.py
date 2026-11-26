@@ -644,7 +644,7 @@ def _canonical_tree_pair(policy_base: str, event_head: str, *, api_dir: Path,
                          token: str, policy: dict[str, Any],
                          direct_git_fetch: dict[str, Any], home: Path, tmp: Path
                          ) -> tuple[dict[str, Any], dict[str, bytes]]:
-    """Verify the API-only base/head tree delta and frozen recipe-path policy."""
+    """Verify the canonical API base/head tree delta and frozen recipe policy."""
     if policy_base != POLICY_BASE_COMMIT:
         raise PreflightError("frozen OpenWrt policy base differs from the reviewed v0.6 pin")
     raw_responses: dict[str, bytes] = {}
@@ -706,13 +706,13 @@ def _canonical_tree_pair(policy_base: str, event_head: str, *, api_dir: Path,
             ("\n".join(changed) + "\n").encode("utf-8")).hexdigest(),
         "relevant_recipe_changes": relevant,
         "recipe_delta_clear_under_frozen_policy": not relevant,
-        "policy_base_git_commit_object_acquired":
-            direct_git_fetch.get("status") == "direct_sha_fetch_verified",
+        "policy_base_git_commit_object_acquired": _policy_base_git_object_verified(
+            direct_git_fetch, policy_base, commits["base"]["tree_sha"]),
         "direct_git_fetch": direct_git_fetch,
         "canonical_api_tree_delta_verified": True,
         "api_redirects_followed": False,
         "limits": [
-            "This API check establishes canonical GitHub commit/tree identities, not advertised branch reachability; the separate direct-SHA Git fetch result is recorded independently.",
+            "This API check establishes canonical GitHub commit/tree identities, not advertised branch reachability; the exact Git object acquisition receipt is recorded independently, and only an advertised-ref fallback proves reachability.",
             "Recursive Trees responses must be complete and each listed tree hash is recomputed; no source blob bytes are fetched by this API delta step.",
             "This recipe-path delta is checked against frozen v0.6 path policy; it does not prove package build effects or installed bytes.",
         ],
@@ -815,10 +815,53 @@ def _direct_fetch_only(root: Path, repo_name: str, oid: str, *, home: Path,
     if store > MAX_REPO_OBJECT_BYTES:
         raise PreflightError("OpenWrt object store exceeds budget after policy-base fetch")
     return {"status": "direct_sha_fetch_verified", "requested_oid": oid,
-            "fetch_head": fetch_head, "tree": tree,
+            "fetch_head": fetch_head, "commit": fetch_head, "tree": tree,
             "argv": fetched["argv"], "exit_code": fetched["exit_code"],
             "elapsed_seconds": round(fetched["elapsed_seconds"], 6),
             "object_store_bytes_after_fetch": store, "local_cache_used": False}
+
+
+def _already_fetched_commit_receipt(root: Path, oid: str, shared_with: str,
+                                    acquisition: dict[str, Any], *, home: Path,
+                                    tmp: Path) -> dict[str, Any]:
+    """Verify and identify an exact commit object already fetched from origin."""
+    commit = _git_text(root, ["rev-parse", "--verify", f"{oid}^{{commit}}"],
+                       home=home, tmp=tmp)[0]
+    tree = _git_text(root, ["rev-parse", "--verify", f"{oid}^{{tree}}"],
+                     home=home, tmp=tmp)[0]
+    if commit != oid or not HEX40.fullmatch(tree):
+        raise PreflightError("shared Git commit object identity is not exact")
+    return {"requested_oid": oid, "commit": commit, "tree": tree,
+            "shared_with": shared_with,
+            "acquired_by": acquisition.get("method", acquisition.get("status")),
+            "branch_reachability_proven":
+                acquisition.get("branch_reachability_proven") is True,
+            "local_cache_used": False}
+
+
+def _already_fetched_direct_only_receipt(root: Path, oid: str, shared_with: str,
+                                         acquisition: dict[str, Any], *, home: Path,
+                                         tmp: Path) -> dict[str, Any]:
+    """Report a direct-only pin already present via another exact origin fetch."""
+    return {"status": "already_fetched_exact_object",
+            **_already_fetched_commit_receipt(
+                root, oid, shared_with, acquisition, home=home, tmp=tmp)}
+
+
+def _policy_base_git_object_verified(fetch: dict[str, Any], commit: str,
+                                     tree: str) -> bool:
+    """Recognize direct or shared exact objects and bind both to API identities."""
+    status = fetch.get("status")
+    if status == "direct_sha_fetch_verified":
+        acquired_commit = fetch.get("fetch_head")
+    elif status == "already_fetched_exact_object":
+        acquired_commit = fetch.get("commit")
+    else:
+        return False
+    if (fetch.get("requested_oid") != commit or acquired_commit != commit or
+            fetch.get("tree") != tree):
+        raise PreflightError("acquired policy-base Git object differs from canonical API identity")
+    return True
 
 
 def _fetch_object(root: Path, repo_name: str, oid: str, *, home: Path,
@@ -903,27 +946,28 @@ def _acquire_repository(repo_name: str, commit: str, checkout: Path, *,
              home=home, tmp=tmp)
     source_fetch = _fetch_object(checkout, repo_name, commit, home=home, tmp=tmp)
     extra_fetches = {}
-    fetched_oids = {commit: "source_commit"}
+    fetched_oids = {commit: ("source_commit", source_fetch)}
     for label, oid in (extra_objects or {}).items():
         if oid in fetched_oids:
-            extra_fetches[label] = {"method": "already_fetched_exact_object",
-                                    "requested_oid": oid,
-                                    "shared_with": fetched_oids[oid]}
+            shared_with, acquisition = fetched_oids[oid]
+            shared = _already_fetched_commit_receipt(
+                checkout, oid, shared_with, acquisition, home=home, tmp=tmp)
+            extra_fetches[label] = {"method": "already_fetched_exact_object", **shared}
         else:
             extra_fetches[label] = _fetch_object(checkout, repo_name, oid,
                                                  home=home, tmp=tmp)
-            fetched_oids[oid] = label
+            fetched_oids[oid] = (label, extra_fetches[label])
     direct_only_fetches = {}
     for label, oid in (direct_only_objects or {}).items():
         if oid in fetched_oids:
-            direct_only_fetches[label] = {"status": "already_fetched_exact_object",
-                                          "requested_oid": oid,
-                                          "shared_with": fetched_oids[oid]}
+            shared_with, acquisition = fetched_oids[oid]
+            direct_only_fetches[label] = _already_fetched_direct_only_receipt(
+                checkout, oid, shared_with, acquisition, home=home, tmp=tmp)
         else:
             direct_only_fetches[label] = _direct_fetch_only(
                 checkout, repo_name, oid, home=home, tmp=tmp)
             if direct_only_fetches[label].get("status") == "direct_sha_fetch_verified":
-                fetched_oids[oid] = label
+                fetched_oids[oid] = (label, direct_only_fetches[label])
     tree_bytes, tracked_blob_count = _tree_blob_size(checkout, commit, home=home, tmp=tmp)
     head_result = _run_git(checkout, ["-c", "core.hooksPath=/dev/null",
                                       "checkout", "--quiet", "--detach", commit],
@@ -1007,8 +1051,10 @@ def _allowed_run_root(value: Path) -> tuple[Path, Path]:
         if any(part in (".", "..") for part in value.parts):
             raise PreflightError("run root path traversal is not allowed")
         requested = work_root / value
-    if requested.parent.resolve(strict=True) != work_root:
+    canonical_parent = requested.parent.resolve(strict=True)
+    if canonical_parent != work_root:
         raise PreflightError("run root must be a unique direct child of ledger work/")
+    requested = work_root / requested.name
     if not RUN_NAME.fullmatch(requested.name):
         raise PreflightError("run root name contains unsupported characters")
     if requested.exists() or requested.is_symlink():
@@ -1020,6 +1066,8 @@ def _launcher_cache_receipt(work_root: Path) -> dict[str, Any]:
     supplied = os.environ.get("PYTHONPYCACHEPREFIX")
     if not supplied:
         raise PreflightError("launcher requires a fresh PYTHONPYCACHEPREFIX under ledger work/")
+    if not sys.dont_write_bytecode:
+        raise PreflightError("launcher must suppress Python bytecode writes with -B")
     raw_path = Path(supplied)
     if raw_path.is_symlink():
         raise PreflightError("launcher bytecode-cache path is a symlink")
@@ -1028,6 +1076,15 @@ def _launcher_cache_receipt(work_root: Path) -> dict[str, Any]:
         info = os.lstat(cache)
     except OSError as exc:
         raise PreflightError("launcher bytecode-cache directory must already exist") from exc
+    effective_prefix = sys.pycache_prefix
+    if not effective_prefix:
+        raise PreflightError("Python has no effective bytecode-cache prefix")
+    try:
+        effective_cache = Path(effective_prefix).resolve(strict=True)
+    except OSError as exc:
+        raise PreflightError("effective Python bytecode-cache prefix is unavailable") from exc
+    if effective_cache != cache:
+        raise PreflightError("effective Python bytecode-cache prefix differs from the supplied run-owned path")
     if (not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or
             info.st_mode & 0o077 or cache.parent != work_root or
             not cache.name.startswith("canonical-source-launcher-cache-") or
@@ -1289,9 +1346,10 @@ def run(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                 raise PreflightError("canonical API event tree differs from fetched source commit tree")
             if delta["base_tree"] != POLICY_BASE_TREE:
                 raise PreflightError("canonical API base tree differs from reviewed policy-base tree")
-            if policy_base_git.get("status") == "direct_sha_fetch_verified" and \
-                    policy_base_git.get("tree") != delta["base_tree"]:
-                raise PreflightError("canonical API base tree differs from direct Git policy-base object")
+            if policy_base_git.get("status") in {
+                    "direct_sha_fetch_verified", "already_fetched_exact_object"}:
+                _policy_base_git_object_verified(
+                    policy_base_git, event["policy_base_commit"], delta["base_tree"])
             receipt["policy_base_provenance"] = delta
         except PreflightError as exc:
             receipt["policy_base_provenance"] = {
@@ -1301,7 +1359,8 @@ def run(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                 "direct_git_fetch": policy_base_git,
                 "canonical_api_tree_delta_verified": False,
                 "policy_base_git_commit_object_acquired":
-                    policy_base_git.get("status") == "direct_sha_fetch_verified",
+                    _policy_base_git_object_verified(
+                        policy_base_git, event["policy_base_commit"], POLICY_BASE_TREE),
             }
         oracle_code, oracle_raw, oracle_stderr, oracle_elapsed, oracle_argv = _run_oracle(
             snapshots, repo_checkouts, run_root, home, tmp, timeout=MAX_ORACLE_SECONDS)

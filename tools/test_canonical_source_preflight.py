@@ -144,6 +144,41 @@ class CanonicalSourcePreflightTests(unittest.TestCase):
             preflight._final_status("unresolved", False, 3),
             ("policy_base_provenance_unresolved", 4))
 
+    def test_shared_direct_only_pin_records_and_verifies_commit_tree(self):
+        commit, tree = "a" * 40, "b" * 40
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            home, tmp = root / "home", root / "tmp"
+            home.mkdir()
+            tmp.mkdir()
+            with mock.patch.object(preflight, "_git_text",
+                                  side_effect=[(commit, {}), (tree, {})]) as git_text:
+                receipt = preflight._already_fetched_direct_only_receipt(
+                    root, commit, "event_base",
+                    {"method": "direct_sha_fetch", "branch_reachability_proven": False},
+                    home=home, tmp=tmp)
+        self.assertEqual(receipt["status"], "already_fetched_exact_object")
+        self.assertEqual(receipt["requested_oid"], commit)
+        self.assertEqual(receipt["commit"], commit)
+        self.assertEqual(receipt["tree"], tree)
+        self.assertEqual(receipt["shared_with"], "event_base")
+        self.assertEqual(receipt["acquired_by"], "direct_sha_fetch")
+        self.assertFalse(receipt["branch_reachability_proven"])
+        self.assertEqual(git_text.call_count, 2)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            home, tmp = root / "home", root / "tmp"
+            home.mkdir()
+            tmp.mkdir()
+            with mock.patch.object(preflight, "_git_text",
+                                  side_effect=[("c" * 40, {}), (tree, {})]):
+                with self.assertRaisesRegex(preflight.PreflightError,
+                                            "shared Git commit object identity"):
+                    preflight._already_fetched_direct_only_receipt(
+                        root, commit, "event_base", {"method": "direct_sha_fetch"},
+                        home=home, tmp=tmp)
+
     def test_http_read_preserves_chunk_framing_and_checks_content_length(self):
         class MemorySocket:
             def __init__(self, response_bytes: bytes):
@@ -222,6 +257,43 @@ class CanonicalSourcePreflightTests(unittest.TestCase):
         self.assertEqual(delta["status"], "canonical_api_tree_delta_verified")
         self.assertFalse(delta["policy_base_git_commit_object_acquired"])
 
+        shared = {"status": "already_fetched_exact_object",
+                  "requested_oid": base_commit, "commit": base_commit,
+                  "tree": base_tree, "shared_with": "event_base",
+                  "local_cache_used": False}
+        calls.clear()
+        with tempfile.TemporaryDirectory() as directory:
+            api_dir = Path(directory) / "api-shared"
+            api_dir.mkdir()
+            home = Path(directory) / "home"
+            tmp = Path(directory) / "tmp"
+            home.mkdir()
+            tmp.mkdir()
+            with mock.patch.object(preflight, "POLICY_BASE_TREE", base_tree), \
+                    mock.patch.object(preflight, "_api_get", side_effect=fake_get):
+                shared_delta, _raw = preflight._canonical_tree_pair(
+                    base_commit, head_commit, api_dir=api_dir, token="t" * 32,
+                    policy=self.policy, direct_git_fetch=shared, home=home, tmp=tmp)
+        self.assertTrue(shared_delta["policy_base_git_commit_object_acquired"])
+        self.assertEqual(shared_delta["direct_git_fetch"]["shared_with"], "event_base")
+
+        wrong_tree = {**shared, "tree": "f" * 40}
+        calls.clear()
+        with tempfile.TemporaryDirectory() as directory:
+            api_dir = Path(directory) / "api-wrong-tree"
+            api_dir.mkdir()
+            home = Path(directory) / "home"
+            tmp = Path(directory) / "tmp"
+            home.mkdir()
+            tmp.mkdir()
+            with mock.patch.object(preflight, "POLICY_BASE_TREE", base_tree), \
+                    mock.patch.object(preflight, "_api_get", side_effect=fake_get):
+                with self.assertRaisesRegex(preflight.PreflightError,
+                                            "acquired policy-base Git object differs"):
+                    preflight._canonical_tree_pair(
+                        base_commit, head_commit, api_dir=api_dir, token="t" * 32,
+                        policy=self.policy, direct_git_fetch=wrong_tree, home=home, tmp=tmp)
+
     def test_offline_run_wiring_keeps_source_verifier_partial_separate_from_fetch(self):
         work_layout = tempfile.TemporaryDirectory(prefix="preflight-work-layout-")
         self.addCleanup(work_layout.cleanup)
@@ -291,6 +363,8 @@ class CanonicalSourcePreflightTests(unittest.TestCase):
                  "head_tree": event["head_tree"]}
         with mock.patch.object(preflight, "ROOT", consumer_root), \
                 mock.patch.dict(os.environ, {"PYTHONPYCACHEPREFIX": str(cache_root)}), \
+                mock.patch.object(preflight.sys, "pycache_prefix", str(cache_root)), \
+                mock.patch.object(preflight.sys, "dont_write_bytecode", True), \
                 mock.patch.object(preflight.shutil, "disk_usage",
                                   return_value=SimpleNamespace(free=20_000_000_000)), \
                 mock.patch.object(preflight, "_base_checkout_receipt", return_value={"commit": preflight.BASE_COMMIT}), \
@@ -329,6 +403,43 @@ class CanonicalSourcePreflightTests(unittest.TestCase):
                     preflight._allowed_run_root(Path("../outside"))
                 with self.assertRaisesRegex(preflight.PreflightError, "traversal"):
                     preflight._allowed_run_root(Path("/tmp/../outside"))
+                alias = Path(directory) / "work-alias"
+                alias.symlink_to(work_root, target_is_directory=True)
+                canonical, allowed_work = preflight._allowed_run_root(
+                    alias / "preflight-absolute-alias")
+                self.assertEqual(allowed_work, work_root.resolve())
+                self.assertEqual(canonical,
+                                 work_root.resolve() / "preflight-absolute-alias")
+                self.assertEqual(canonical.parent, allowed_work)
+
+    def test_launcher_cache_checks_effective_python_configuration(self):
+        with tempfile.TemporaryDirectory(prefix="preflight-work-layout-") as directory:
+            ledger_root = Path(directory) / "ledger"
+            work_root = ledger_root / "work"
+            work_root.mkdir(parents=True)
+            cache = work_root / "canonical-source-launcher-cache-contract"
+            cache.mkdir(mode=0o700)
+            other = work_root / "other-cache"
+            other.mkdir(mode=0o700)
+            os.chmod(cache, 0o700)
+            os.chmod(other, 0o700)
+            with mock.patch.dict(os.environ, {"PYTHONPYCACHEPREFIX": str(cache)}), \
+                    mock.patch.object(preflight.sys, "pycache_prefix", str(cache)), \
+                    mock.patch.object(preflight.sys, "dont_write_bytecode", True):
+                receipt = preflight._launcher_cache_receipt(work_root.resolve())
+                self.assertTrue(receipt["empty_at_start"])
+            with mock.patch.dict(os.environ, {"PYTHONPYCACHEPREFIX": str(cache)}), \
+                    mock.patch.object(preflight.sys, "pycache_prefix", str(other)), \
+                    mock.patch.object(preflight.sys, "dont_write_bytecode", True):
+                with self.assertRaisesRegex(preflight.PreflightError,
+                                            "effective Python bytecode-cache prefix differs"):
+                    preflight._launcher_cache_receipt(work_root.resolve())
+            with mock.patch.dict(os.environ, {"PYTHONPYCACHEPREFIX": str(cache)}), \
+                    mock.patch.object(preflight.sys, "pycache_prefix", str(cache)), \
+                    mock.patch.object(preflight.sys, "dont_write_bytecode", False):
+                with self.assertRaisesRegex(preflight.PreflightError,
+                                            "must suppress Python bytecode writes"):
+                    preflight._launcher_cache_receipt(work_root.resolve())
 
     def test_cli_summary_reports_api_base_commit_and_git_acquisition(self):
         receipt = {

@@ -20,10 +20,13 @@ parent. All repository URLs are fixed in the tool:
 | OpenWrt | `https://github.com/openwrt/openwrt.git` | `refs/heads/main` |
 | Packages | `https://github.com/openwrt/packages.git` | `refs/heads/master` |
 
-The run root must be a new direct child of ledger `work/`; the tool refuses an
-existing path, parent traversal, a symlinked path, or a checkout outside that
-layout. It copies the four input documents into its private run root before
-using them. It initializes distinct object stores from the fixed HTTPS
+The run root must be a new direct child of ledger `work/`. The tool resolves
+and validates the supplied parent against that directory, then returns and
+creates the canonical `work/<run-name>` path, so an absolute parent symlink
+alias cannot redirect creation. It rejects parent traversal, an existing or
+symlinked final path, and a checkout outside that layout. It copies the four
+input documents into its private run root before using them. It initializes
+distinct object stores from the fixed HTTPS
 remotes, fetches exact commits, binds successful direct fetches to the exact
 `FETCH_HEAD`, and checks exact commits and trees in clean detached checkouts.
 If a direct fetch fails, the only fallback is one depth-2048 fetch of the
@@ -34,22 +37,25 @@ does not establish branch reachability; only the advertised-ref fallback
 checks that relationship.
 
 The OpenWrt policy-base pin is `bce40f6a15c273778061e8fceced7b9e0f58d99b`.
-The tool tries one direct SHA fetch without a local fallback and always makes
+If the policy-base SHA has not already been acquired as an exact event or
+control object, the tool tries one direct Git SHA fetch without a local
+fallback. A shared object receipt records its exact commit and tree plus the
+object from which it was shared. In either case, the tool always makes
 authenticated, no-redirect GitHub Git Commit and recursive Trees API requests
 for the frozen base and event head. The API tree delta is always performed,
-independent of the direct Git fetch outcome. If the direct fetch fails, the
-policy-base identity is supported by API responses only and its Git commit
-object remains unavailable; if it succeeds, both identity sources are recorded
-and compared. The API host and repository are fixed. The
+independent of Git acquisition. If no Git object was acquired, policy-base
+identity is supported by API responses only; if a Git object was acquired, its
+exact commit and tree are compared to the API identities. Neither direct SHA
+fetch nor API identity alone proves advertised branch reachability; only the
+advertised-ref fallback does. The API host and repository are fixed. The
 body limits are 1 MiB for a
 commit response and 32 MiB/100,000 entries for a recursive tree response.
 Each response must be complete; the commit SHA/tree relation is checked, every
 listed Git tree object (including empty trees) is reconstructed and hashed,
 and all non-tree path/mode/type/object-ID tuples are compared. The frozen
 recipe-path policy is then applied to the resulting delta. A nonempty
-relevant recipe delta requires review. This API-only proof does not acquire
-the policy-base Git commit object or fetch its blob contents, and does not
-prove build effects or installed package bytes.
+relevant recipe delta requires review. The API delta itself does not fetch
+source blob contents or prove build effects or installed package bytes.
 
 GitHub API authentication uses `GH_TOKEN`, `GITHUB_TOKEN`, or `gh auth token`
 for `github.com`. The token is held in memory and sent to the fixed API host
@@ -64,7 +70,8 @@ routing bytes plus the three owned source roots. Its source-oracle JSON is
 retained separately from the preflight receipt. The verifier's own
 `canonical_git_provenance_verified: false` remains unchanged; the enclosing
 preflight records the canonical remote, commit, tree, checkout state, fetch
-commands, source-oracle digest, and the API-only policy-base limits. The
+commands, source-oracle digest, and the distinct Git/API policy-base evidence
+and limits. The
 manifest and producer artifacts remain supplied observations and do not
 authenticate a signed start, hosted scan, or live completion.
 
@@ -84,9 +91,12 @@ per-file process limits; they are not filesystem quotas. The actual
 materialized worktree size and Git object-store size are checked and retained.
 `HOME`, `TMPDIR`, and child Python bytecode-cache prefixes are fresh and
 run-owned. The launcher itself must start with a fresh, empty, mode-0700
-`PYTHONPYCACHEPREFIX` direct child of ledger `work/`; this prevents `-B` from
-loading stale ignored bytecode while suppressing cache writes. Peak RSS is not
-measured by this wrapper.
+`PYTHONPYCACHEPREFIX` direct child of ledger `work/`. The tool checks that
+Python's effective `sys.pycache_prefix` resolves to that directory and that
+`sys.dont_write_bytecode` is enabled (normally with `-B`); an overriding
+`-X pycache_prefix` or an invocation without bytecode-write suppression is
+rejected. This prevents loading stale ignored bytecode while suppressing cache
+writes. Peak RSS is not measured by this wrapper.
 
 ## Invocation
 
@@ -127,6 +137,7 @@ These network-free controls cover frozen pin derivation, control separation,
 fixed API scope, no-follow redirects, chunked response framing and
 `Content-Length` checks, nested and empty Git tree hashing, duplicate and
 truncated tree rejection, tree mode/type constraints, omitted descendants,
-recipe-review versus unresolved outcomes, create-only output, path traversal,
-and an offline launcher orchestration that preserves the source verifier's
-exit-3 partial result.
+recipe-review versus unresolved outcomes, shared policy-base commit/tree
+identity, create-only output, traversal and absolute symlink aliases,
+effective Python bytecode-cache settings, and an offline launcher orchestration
+that preserves the source verifier's exit-3 partial result.
