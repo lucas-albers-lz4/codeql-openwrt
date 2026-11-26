@@ -40,8 +40,10 @@ def _record_request(requests, path, value, link=''):
     })
 
 
-def event(repo, commit_sha, tree_sha):
-    return {'repository': repo, 'kind': 'default_branch', 'ref': 'main',
+def event(repo, commit_sha, tree_sha, ref=None):
+    if ref is None:
+        ref = 'master' if repo == 'openwrt/luci' else 'main'
+    return {'repository': repo, 'kind': 'default_branch', 'ref': ref,
             'source': {'commit': commit_sha, 'tree': tree_sha}}
 
 
@@ -50,9 +52,10 @@ def _snapshot_requests(tips):
     for repo in poll.REPOS:
         tip = tips[repo]
         repo_id = REPO_IDS[repo]
+        branch = tip['ref']
         _record_request(requests, '/repos/' + repo,
-                        {'full_name': repo, 'id': repo_id, 'default_branch': 'main'})
-        _record_request(requests, f"/repos/{repo}/commits/main",
+                        {'full_name': repo, 'id': repo_id, 'default_branch': branch})
+        _record_request(requests, f"/repos/{repo}/commits/{branch}",
                         {'sha': tip['source']['commit']})
         _record_request(requests,
                         f"/repos/{repo}/git/commits/{tip['source']['commit']}",
@@ -80,15 +83,15 @@ def _compare_commit(commit_sha, tree_sha, *parents):
             'parents': [{'sha': parent} for parent in parents]}
 
 
-def gap_record(previous_doc, current_doc, commits):
+def gap_record(previous_doc, current_doc, commits, repository='openwrt/openwrt'):
     previous_sha = hashlib.sha256(json_bytes(previous_doc)).hexdigest()
     current_sha = hashlib.sha256(json_bytes(current_doc)).hexdigest()
     previous_observed = poll.replay_observed_doc(previous_doc)
     current_observed = poll.replay_observed_doc(current_doc)
     old_openwrt = next(item for item in previous_observed
-                       if item['repository'] == 'openwrt/openwrt')
+                       if item['repository'] == repository)
     new_openwrt = next(item for item in current_observed
-                       if item['repository'] == 'openwrt/openwrt')
+                       if item['repository'] == repository)
     request_rows = []
     compare_data = {
         'status': 'ahead', 'ahead_by': len(commits), 'behind_by': 0,
@@ -255,12 +258,12 @@ class Fixture:
                                      prior_attempt=1, version=version, gap=gap_doc)
         return previous, current, gap_doc, prev_bundle, current_bundle, commits
 
-    def make_empty_successor(self, previous, previous_bundle):
+    def make_empty_successor(self, previous, previous_bundle, run_id=1003):
         tips = {item['repository']: item for item in poll.replay_observed_doc(previous)}
         previous_raw = json_bytes(previous)
         current = checkpoint(tips, previous['decisions'], hashlib.sha256(previous_raw).hexdigest())
         gap_doc = gap_record(previous, current, [])
-        current_bundle = self.bundle(1003, 1, current, prior_run=previous_bundle['run_doc']['id'],
+        current_bundle = self.bundle(run_id, 1, current, prior_run=previous_bundle['run_doc']['id'],
                                      prior_attempt=previous_bundle['run_doc']['run_attempt'],
                                      version=2, gap=gap_doc)
         return current, gap_doc, current_bundle

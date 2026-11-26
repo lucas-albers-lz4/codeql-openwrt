@@ -30,8 +30,10 @@ the reconciliation after writes, before committing the intake transaction.
 Each backlog row contains repository, ref, one-based first-parent ordinal,
 commit, tree, parent, its source gap/checkpoint digests, and a fixed
 `pending` status. Stable ordering is `(intake receipt_seq, repository, ref,
-ordinal)`. The schema has no reservation, start, completion, scan, or coverage
-state.
+ordinal)`. The pending-only v1 schema has no reservation, start, completion,
+scan, or coverage state. The separate, explicitly migrated queue-only
+reservation increment is documented in
+[default-branch-backlog-reservation.md](default-branch-backlog-reservation.md).
 
 ## Custody boundary and limits
 
@@ -132,8 +134,9 @@ python3 -B -m tools.default_branch_backlog_intake \
 ```
 
 The private root must already exist and be mode 0700. The database is created
-there as `default-branch-backlog.sqlite3`; a preexisting file must be the exact
-private schema. Source files are checked for symlinks, hardlinks, owner,
+there as `default-branch-backlog.sqlite3`; a preexisting file must use the
+pending-only v1 schema or its explicit v2 reservation extension. Source files
+are checked for symlinks, hardlinks, owner,
 regular-file type and byte bounds before read. ZIP members are bounded,
 unique regular files from the discovery artifact contract. The database path
 and inode are checked before and after SQLite opens it.

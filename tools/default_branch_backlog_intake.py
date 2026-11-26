@@ -37,6 +37,7 @@ MAX_COMPRESSION_RATIO = 1000
 ZERO_HASH = '0' * 64
 APP_ID = 0x44424931  # DBI1
 SCHEMA_VERSION = 1
+RESERVATION_SCHEMA_VERSION = 2
 SHA256 = re.compile(r'[0-9a-f]{64}\Z')
 FULL_SHA = re.compile(r'[0-9a-f]{40}\Z')
 RUN_INPUT_V1 = 'incoming-discovery-run-input-v1'
@@ -673,14 +674,36 @@ def _initialize_or_check_schema(conn):
             raise
         application_id = conn.execute('PRAGMA application_id').fetchone()[0]
         version = conn.execute('PRAGMA user_version').fetchone()[0]
-    require(application_id == APP_ID and version == SCHEMA_VERSION,
+    require(application_id == APP_ID and
+            version in (SCHEMA_VERSION, RESERVATION_SCHEMA_VERSION),
             'database is not the default-branch backlog schema')
     expected = {('table', name) for name in
                 ('cursor', 'intakes', 'commit_backlog', 'receipts')}
+    if version == RESERVATION_SCHEMA_VERSION:
+        expected |= {('table', 'queue_metadata'), ('table', 'reservation_actions'),
+                     ('table', 'action_head'),
+                     ('trigger', 'reservation_actions_no_update'),
+                     ('trigger', 'reservation_actions_no_delete')}
     actual = {(row['type'], row['name']) for row in conn.execute(
         "SELECT type,name FROM sqlite_master WHERE substr(name,1,7) != 'sqlite_'")}
     require(actual == expected,
             'backlog database has an unexpected table, view, index or trigger')
+    if version == RESERVATION_SCHEMA_VERSION:
+        # A reservation action is a separate append-only chain. Intake may
+        # continue to advance discovery while preserving its exact origin.
+        from tools.default_branch_backlog_reservation import verify_action_chain
+        own_snapshot = not conn.in_transaction
+        if own_snapshot:
+            conn.execute('BEGIN')
+        try:
+            _verify_receipt_chain(conn)
+            verify_action_chain(conn)
+            if own_snapshot:
+                conn.commit()
+        except BaseException:
+            if own_snapshot:
+                conn.rollback()
+            raise
 
 
 def _verify_receipt_chain(conn):
@@ -866,6 +889,9 @@ def _store_intake(conn, previous_identity, current_identity, previous, current,
     conn.execute('BEGIN IMMEDIATE')
     try:
         next_seq, previous_receipt_hash = _verify_receipt_chain(conn)
+        if conn.execute('PRAGMA user_version').fetchone()[0] == RESERVATION_SCHEMA_VERSION:
+            from tools.default_branch_backlog_reservation import verify_action_chain
+            verify_action_chain(conn)
         existing = conn.execute(
             'SELECT * FROM intakes WHERE current_run_id=? AND current_attempt=?',
             (current_identity['run_id'], current_identity['attempt'])).fetchone()
