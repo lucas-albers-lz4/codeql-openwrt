@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Offline v2→v3 migration and first issued-start MAC/CAS primitives.
+"""Offline v2→v3 migration and bounded issued-action MAC/CAS primitives.
 
 This module intentionally has no command-line entry point and never reads a
 key file. It provides bounded primitives for tests and a future reviewed
-operator verifier; it does not authenticate live GitHub observations.
+operator verifier; it does not authenticate live GitHub observations or
+caller-supplied terminal evidence.
 """
 from __future__ import annotations
 
@@ -21,6 +22,7 @@ from tools import default_branch_backlog_reservation as reservation
 
 ISSUED_SCHEMA = 'default-branch-issued-action-v1'
 START_SCHEMA = 'default-branch-issued-start-v1'
+TERMINAL_SCHEMA = 'default-branch-issued-terminal-v1'
 DOMAIN = b'codeql-openwrt/default-branch-issued-action-v1\n'
 ZERO_HASH = '0' * 64
 SHA256 = re.compile(r'[0-9a-f]{64}\Z')
@@ -28,6 +30,12 @@ FULL_SHA = re.compile(r'[0-9a-f]{40}\Z')
 QUEUE_ID = re.compile(r'[0-9a-f]{32}\Z')
 DATABASE_NAME = reservation.DATABASE_NAME
 START_JOB = 'released-default-branch-scan'
+TERMINAL_KINDS = frozenset({'complete', 'failed_execution', 'indeterminate'})
+FAILURE_CONCLUSIONS = frozenset({'failure', 'cancelled', 'timed_out'})
+INDETERMINATE_REASONS = frozenset({
+    'missing_artifact', 'inconsistent_api_state', 'failed_proof',
+    'operator_quarantine',
+})
 MAX_SQLITE_INT = (1 << 63) - 1
 
 START_KEYS = {
@@ -38,6 +46,25 @@ START_KEYS = {
     'job', 'early_artifact', 'observation_sha256', 'run_api_sha256',
     'jobs_api_sha256', 'artifacts_api_sha256', 'recheck_run_api_sha256',
     'recheck_jobs_api_sha256',
+}
+TERMINAL_KEYS = {
+    'schema', 'kind', 'queue_id', 'reservation_sequence',
+    'reservation_sha256', 'identity', 'run_id', 'run_attempt', 'job_id',
+    'workflow', 'job', 'start_sha256', 'evidence',
+}
+COMPLETE_EVIDENCE_KEYS = {
+    'schema', 'proof_status', 'proof_sha256', 'source_truth',
+    'source_oracle_sha256', 'final_artifact',
+    'early_artifact', 'early_final_equal_frozen_inputs',
+    'claim_origin_replay_status', 'consumer_status', 'sarif_result_count',
+    'alert_disposition', 'actual_package_installed_bytes_verified',
+}
+FAILURE_EVIDENCE_KEYS = {
+    'schema', 'run_api_sha256', 'jobs_api_sha256', 'run_status',
+    'run_conclusion', 'job_status', 'job_conclusion',
+}
+INDETERMINATE_EVIDENCE_KEYS = {
+    'schema', 'reason', 'evidence_sha256',
 }
 IDENTITY_KEYS = {
     'repository', 'ref', 'ordinal', 'commit_sha', 'tree_sha',
@@ -216,19 +243,7 @@ def migrate_v2_to_v3(private_root):
         conn.close()
 
 
-def _validate_start(attestation):
-    require(type(attestation) is dict and set(attestation) == START_KEYS,
-            'invalid issued-start attestation fields')
-    require(attestation.get('schema') == START_SCHEMA and
-            attestation.get('kind') == 'start' and
-            isinstance(attestation.get('queue_id'), str) and
-            QUEUE_ID.fullmatch(attestation['queue_id']) is not None and
-            type(attestation.get('reservation_sequence')) is int and
-            attestation['reservation_sequence'] == 1 and
-            isinstance(attestation.get('reservation_sha256'), str) and
-            SHA256.fullmatch(attestation['reservation_sha256']) is not None,
-            'invalid issued-start queue or reservation identity')
-    identity = attestation.get('identity')
+def _validate_exact_identity(identity, label):
     require(type(identity) is dict and set(identity) == IDENTITY_KEYS and
             identity.get('repository') in intake.poll.REPOS and
             isinstance(identity.get('ref'), str) and
@@ -244,7 +259,23 @@ def _validate_start(attestation):
             isinstance(identity.get('intake_id'), str) and identity['intake_id'] and
             type(identity.get('receipt_seq')) is int and
             0 < identity['receipt_seq'] <= MAX_SQLITE_INT,
-            'invalid issued-start exact identity')
+            'invalid ' + label)
+
+
+def _validate_start(attestation):
+    require(type(attestation) is dict and set(attestation) == START_KEYS,
+            'invalid issued-start attestation fields')
+    require(attestation.get('schema') == START_SCHEMA and
+            attestation.get('kind') == 'start' and
+            isinstance(attestation.get('queue_id'), str) and
+            QUEUE_ID.fullmatch(attestation['queue_id']) is not None and
+            type(attestation.get('reservation_sequence')) is int and
+            attestation['reservation_sequence'] == 1 and
+            isinstance(attestation.get('reservation_sha256'), str) and
+            SHA256.fullmatch(attestation['reservation_sha256']) is not None,
+            'invalid issued-start queue or reservation identity')
+    _validate_exact_identity(attestation.get('identity'),
+                             'issued-start exact identity')
     for key in ('origin_receipt_sha256', 'origin_gap_sha256',
                 'policy_sha256', 'release_lock_sha256',
                 'observation_sha256', 'run_api_sha256', 'jobs_api_sha256',
@@ -275,6 +306,106 @@ def _validate_start(attestation):
             'invalid issued-start early artifact identity')
 
 
+def _validate_artifact_identity(value, label):
+    require(type(value) is dict and set(value) == ARTIFACT_KEYS and
+            type(value.get('id')) is int and
+            0 < value['id'] <= MAX_SQLITE_INT and
+            isinstance(value.get('sha256'), str) and
+            SHA256.fullmatch(value['sha256']) is not None and
+            type(value.get('size')) is int and
+            0 < value['size'] <= MAX_SQLITE_INT,
+            'invalid terminal ' + label + ' identity')
+
+
+def _validate_terminal_evidence(kind, evidence):
+    require(type(evidence) is dict, 'invalid terminal evidence object')
+    require(type(kind) is str and kind in TERMINAL_KINDS,
+            'invalid terminal outcome kind')
+    if kind == 'complete':
+        require(set(evidence) == COMPLETE_EVIDENCE_KEYS and
+                evidence.get('schema') ==
+                'operator-default-branch-authenticated-final-proof-v1' and
+                evidence.get('proof_status') == 'independently_authenticated' and
+                isinstance(evidence.get('proof_sha256'), str) and
+                SHA256.fullmatch(evidence['proof_sha256']) is not None and
+                evidence.get('source_truth') ==
+                'verified_from_canonical_git_objects' and
+                isinstance(evidence.get('source_oracle_sha256'), str) and
+                SHA256.fullmatch(evidence['source_oracle_sha256']) is not None,
+                'invalid complete terminal proof fields')
+        _validate_artifact_identity(evidence.get('final_artifact'), 'final artifact')
+        _validate_artifact_identity(evidence.get('early_artifact'), 'early artifact')
+        require(evidence['final_artifact']['id'] != evidence['early_artifact']['id'],
+                'complete terminal final and early artifacts must be distinct')
+        count = evidence.get('sarif_result_count')
+        status = evidence.get('consumer_status')
+        require(type(evidence.get('early_final_equal_frozen_inputs')) is int and
+                evidence['early_final_equal_frozen_inputs'] == 9 and
+                evidence.get('claim_origin_replay_status') ==
+                'replayed_and_verified' and
+                status in ('clean_scan', 'triage_required') and
+                type(count) is int and 0 <= count <= MAX_SQLITE_INT and
+                ((status == 'clean_scan' and count == 0) or
+                 (status == 'triage_required' and count > 0)) and
+                evidence.get('alert_disposition') ==
+                ('no_results' if status == 'clean_scan' else 'triage_required_open') and
+                evidence.get('actual_package_installed_bytes_verified') is False and
+                type(evidence.get('actual_package_installed_bytes_verified')) is bool,
+                'invalid complete terminal proof summary')
+        return
+    if kind == 'failed_execution':
+        require(set(evidence) == FAILURE_EVIDENCE_KEYS and
+                evidence.get('schema') ==
+                'operator-default-branch-terminal-observation-v1' and
+                all(isinstance(evidence.get(name), str) and
+                    SHA256.fullmatch(evidence[name]) is not None
+                    for name in ('run_api_sha256', 'jobs_api_sha256')) and
+                evidence.get('run_status') == 'completed' and
+                evidence.get('job_status') == 'completed' and
+                type(evidence.get('run_conclusion')) is str and
+                evidence['run_conclusion'] in FAILURE_CONCLUSIONS and
+                type(evidence.get('job_conclusion')) is str and
+                evidence['job_conclusion'] in FAILURE_CONCLUSIONS,
+                'invalid failed-execution terminal evidence')
+        return
+    require(kind == 'indeterminate' and
+            set(evidence) == INDETERMINATE_EVIDENCE_KEYS and
+            evidence.get('schema') ==
+            'operator-default-branch-indeterminate-evidence-v1' and
+            type(evidence.get('reason')) is str and
+            evidence['reason'] in INDETERMINATE_REASONS and
+            isinstance(evidence.get('evidence_sha256'), str) and
+            SHA256.fullmatch(evidence['evidence_sha256']) is not None,
+            'invalid indeterminate terminal evidence')
+
+
+def _validate_terminal(attestation):
+    require(type(attestation) is dict and set(attestation) == TERMINAL_KEYS and
+            attestation.get('schema') == TERMINAL_SCHEMA and
+            type(attestation.get('kind')) is str and
+            attestation['kind'] in TERMINAL_KINDS and
+            isinstance(attestation.get('queue_id'), str) and
+            QUEUE_ID.fullmatch(attestation['queue_id']) is not None and
+            type(attestation.get('reservation_sequence')) is int and
+            attestation['reservation_sequence'] == 1 and
+            isinstance(attestation.get('reservation_sha256'), str) and
+            SHA256.fullmatch(attestation['reservation_sha256']) is not None and
+            isinstance(attestation.get('start_sha256'), str) and
+            SHA256.fullmatch(attestation['start_sha256']) is not None and
+            type(attestation.get('run_id')) is int and
+            0 < attestation['run_id'] <= MAX_SQLITE_INT and
+            type(attestation.get('run_attempt')) is int and
+            0 < attestation['run_attempt'] <= MAX_SQLITE_INT and
+            type(attestation.get('job_id')) is int and
+            0 < attestation['job_id'] <= MAX_SQLITE_INT and
+            attestation.get('workflow') == reservation.WORKFLOW and
+            attestation.get('job') == START_JOB,
+            'invalid issued-terminal identity fields')
+    _validate_exact_identity(attestation.get('identity'),
+                             'issued-terminal exact identity')
+    _validate_terminal_evidence(attestation['kind'], attestation['evidence'])
+
+
 def _validate_approved_policy(policy):
     require(type(policy) is dict and set(policy) == APPROVED_POLICY_KEYS and
             isinstance(policy.get('consumer_commit'), str) and
@@ -284,14 +415,24 @@ def _validate_approved_policy(policy):
             'invalid explicit approved policy')
 
 
-def _signed_document(attestation, key, observed_at):
+def _signed_document(attestation, key, observed_at, *, issued_seq=1,
+                     previous_issued_sha256=ZERO_HASH):
     _validate_key(key)
-    _validate_start(attestation)
+    if issued_seq == 1:
+        _validate_start(attestation)
+        require(previous_issued_sha256 == ZERO_HASH,
+                'issued start must extend the zero head')
+    else:
+        _validate_terminal(attestation)
+        require(issued_seq == 2 and isinstance(previous_issued_sha256, str) and
+                SHA256.fullmatch(previous_issued_sha256) is not None and
+                previous_issued_sha256 != ZERO_HASH,
+                'issued terminal must extend a verified start')
     observed = _canonical_time(observed_at, 'issued observation time')
     unsigned = {
         'schema': ISSUED_SCHEMA,
-        'issued_seq': 1,
-        'previous_issued_sha256': ZERO_HASH,
+        'issued_seq': issued_seq,
+        'previous_issued_sha256': previous_issued_sha256,
         'observed_at': observed.isoformat(timespec='seconds').replace('+00:00', 'Z'),
         'attestation': attestation,
     }
@@ -310,7 +451,7 @@ def _check_monotonic_deadline(deadline):
             'live observation deadline expired before issued start CAS')
 
 
-def _load_document(document_json):
+def _load_action_document(document_json):
     require(isinstance(document_json, str), 'invalid issued document bytes')
     raw = document_json.encode('utf-8')
     document = _parse_json(raw, 'issued document')
@@ -320,12 +461,31 @@ def _load_document(document_json):
     unsigned = {key: value for key, value in document.items() if key != 'mac'}
     require(set(unsigned) == ENVELOPE_KEYS and
             unsigned.get('schema') == ISSUED_SCHEMA and
-            type(unsigned.get('issued_seq')) is int and unsigned['issued_seq'] == 1 and
-            unsigned.get('previous_issued_sha256') == ZERO_HASH,
+            type(unsigned.get('issued_seq')) is int and
+            unsigned['issued_seq'] in (1, 2) and
+            isinstance(unsigned.get('previous_issued_sha256'), str) and
+            SHA256.fullmatch(unsigned['previous_issued_sha256']) is not None and
+            ((unsigned['issued_seq'] == 1 and
+              unsigned['previous_issued_sha256'] == ZERO_HASH) or
+             (unsigned['issued_seq'] == 2 and
+              unsigned['previous_issued_sha256'] != ZERO_HASH)),
             'unsupported issued document envelope')
     require(isinstance(document.get('mac'), str) and
             SHA256.fullmatch(document['mac']) is not None,
             'invalid issued document MAC')
+    return unsigned, document, raw
+
+
+def _load_document(document_json):
+    """Load the original sequence-1 start document interface.
+
+    The final-proof verifier intentionally consumes a start, never a terminal.
+    Keep this strict wrapper so adding sequence 2 cannot broaden that API.
+    """
+    unsigned, document, raw = _load_action_document(document_json)
+    require(unsigned['issued_seq'] == 1 and
+            unsigned['previous_issued_sha256'] == ZERO_HASH,
+            'issued document is not a sequence-1 start')
     return unsigned, document, raw
 
 
@@ -362,6 +522,47 @@ def _validate_start_binding(attestation, observed_at, body, action_hash):
             'issued start must be observed after an unexpired reservation')
 
 
+def _validate_terminal_binding(attestation, observed_at, start_attestation,
+                               start_observed_at, start_hash, body,
+                               reservation_hash):
+    _validate_terminal(attestation)
+    _validate_start_binding(start_attestation, start_observed_at, body,
+                            reservation_hash)
+    require(attestation['queue_id'] == start_attestation['queue_id'] ==
+            body.get('queue_id') and
+            attestation['reservation_sequence'] ==
+            start_attestation['reservation_sequence'] == 1 and
+            attestation['reservation_sha256'] ==
+            start_attestation['reservation_sha256'] == reservation_hash and
+            attestation['identity'] == start_attestation['identity'] ==
+            body.get('identity') and
+            attestation['run_id'] == start_attestation['run_id'] and
+            attestation['run_attempt'] == start_attestation['run_attempt'] and
+            attestation['job_id'] == start_attestation['job_id'] and
+            attestation['workflow'] == start_attestation['workflow'] and
+            attestation['job'] == start_attestation['job'] and
+            attestation['start_sha256'] == start_hash,
+            'issued terminal differs from verified start identity or digest')
+    if attestation['kind'] == 'complete':
+        require(attestation['evidence']['early_artifact'] ==
+                start_attestation['early_artifact'],
+                'complete terminal early artifact differs from issued start')
+    terminal_time = _canonical_time(observed_at, 'terminal observation time')
+    start_time = _canonical_time(start_observed_at, 'issued observation time')
+    require(terminal_time >= start_time,
+            'issued terminal observation precedes its start')
+
+
+def _verify_document_mac(unsigned, document, key):
+    if key is None:
+        return False
+    expected_mac = hmac.new(
+        key, DOMAIN + canonical_bytes(unsigned), hashlib.sha256).hexdigest()
+    require(hmac.compare_digest(document['mac'], expected_mac),
+            'issued action MAC mismatch')
+    return True
+
+
 def verify_issued_chain(conn, key=None):
     """Verify issued chain bytes/head; verify MAC too when a key is supplied."""
     _check_v3_schema(conn)
@@ -377,29 +578,42 @@ def verify_issued_chain(conn, key=None):
     rows = conn.execute(
         'SELECT seq,previous_sha256,document_json,action_sha256 '
         'FROM issued_actions ORDER BY seq').fetchall()
-    require(len(rows) <= 1,
-            'issued start chain supports only the first start action')
+    require(len(rows) <= 2,
+            'issued action chain exceeds the single-start single-terminal limit')
     previous = ZERO_HASH
-    verified = False
+    verified = bool(rows) and key is not None
+    start_attestation = None
+    start_observed_at = None
+    start_hash = None
+    reservation_body = None
+    reservation_hash = None
     if rows:
-        reservation_chain, body, action_hash = _load_reservation(conn)
+        reservation_chain, reservation_body, reservation_hash = _load_reservation(conn)
         require(reservation_chain == chain,
-                'reservation chain changed while verifying issued start')
-        row = rows[0]
-        require(row['seq'] == 1 and row['previous_sha256'] == ZERO_HASH,
-                'issued action sequence or predecessor mismatch')
-        unsigned, document, raw = _load_document(row['document_json'])
-        require(digest(raw) == row['action_sha256'],
-                'issued action hash mismatch')
-        attestation = unsigned.get('attestation')
-        _validate_start_binding(attestation, unsigned.get('observed_at'), body, action_hash)
-        if key is not None:
-            expected_mac = hmac.new(
-                key, DOMAIN + canonical_bytes(unsigned), hashlib.sha256).hexdigest()
-            require(hmac.compare_digest(document['mac'], expected_mac),
-                    'issued action MAC mismatch')
-            verified = True
-        previous = row['action_sha256']
+                'reservation chain changed while verifying issued actions')
+        for expected_seq, row in enumerate(rows, 1):
+            require(row['seq'] == expected_seq and row['previous_sha256'] == previous,
+                    'issued action sequence or predecessor mismatch')
+            unsigned, document, raw = _load_action_document(row['document_json'])
+            require(unsigned['issued_seq'] == expected_seq and
+                    unsigned['previous_issued_sha256'] == previous and
+                    digest(raw) == row['action_sha256'],
+                    'issued action envelope or hash mismatch')
+            attestation = unsigned.get('attestation')
+            if expected_seq == 1:
+                _validate_start_binding(attestation, unsigned.get('observed_at'),
+                                        reservation_body, reservation_hash)
+                start_attestation = attestation
+                start_observed_at = unsigned['observed_at']
+                start_hash = row['action_sha256']
+            else:
+                _validate_terminal_binding(
+                    attestation, unsigned.get('observed_at'), start_attestation,
+                    start_observed_at, start_hash, reservation_body,
+                    reservation_hash)
+            if not _verify_document_mac(unsigned, document, key):
+                verified = False
+            previous = row['action_sha256']
     head = head_rows[0]
     require(head['seq'] == len(rows) and head['hash'] == previous,
             'issued action head differs from append-only history')
@@ -471,6 +685,79 @@ def issue_start(private_root, expected_seq, expected_sha256, key,
             return {'status': 'issued_start', 'queue_id': reservation_chain['queue_id'],
                     'issued_seq': 1, 'issued_sha256': action_hash,
                     'reservation_sha256': reservation_hash,
+                    'run_id': attestation['run_id'],
+                    'run_attempt': attestation['run_attempt'],
+                    'job_id': attestation['job_id']}
+        except BaseException:
+            conn.rollback()
+            raise
+    finally:
+        conn.close()
+
+
+def issue_terminal(private_root, expected_seq, expected_sha256, key,
+                   attestation, observed_at):
+    """Append one typed sequence-2 terminal action after a verified start.
+
+    The terminal action is deliberately offline. Its typed evidence is still
+    caller supplied; this primitive does not fetch or authenticate GitHub API,
+    ZIP, final-proof, or failure-observation bytes.
+    """
+    _validate_key(key)
+    _validate_terminal(attestation)
+    _canonical_time(observed_at, 'terminal observation time')
+    conn = _open_existing(private_root)
+    try:
+        conn.execute('BEGIN IMMEDIATE')
+        try:
+            intake._initialize_or_check_schema(conn)
+            require(conn.execute('PRAGMA user_version').fetchone()[0] ==
+                    intake.ISSUED_SCHEMA_VERSION,
+                    'backlog database requires explicit v2 to v3 migration')
+            intake._verify_receipt_chain(conn)
+            head = verify_issued_chain(conn, key)
+            require(type(expected_seq) is int and expected_seq == 1 and
+                    isinstance(expected_sha256, str) and
+                    SHA256.fullmatch(expected_sha256) is not None and
+                    (head['seq'], head['sha256']) ==
+                    (expected_seq, expected_sha256),
+                    'stale issued action head')
+            require(head['action_count'] == 1 and head['hmac_verified'],
+                    'terminal action requires one HMAC-verified issued start')
+            start_rows = conn.execute(
+                'SELECT document_json,action_sha256 FROM issued_actions WHERE seq=1'
+            ).fetchall()
+            require(len(start_rows) == 1 and
+                    start_rows[0]['action_sha256'] == expected_sha256,
+                    'verified issued start row is missing')
+            start_unsigned, _, _ = _load_document(start_rows[0]['document_json'])
+            start_attestation = start_unsigned['attestation']
+            reservation_chain, body, reservation_hash = _load_reservation(conn)
+            require(reservation_chain['queue_id'] == head['queue_id'],
+                    'issued start reservation queue changed')
+            _validate_terminal_binding(
+                attestation, observed_at, start_attestation,
+                start_unsigned['observed_at'], expected_sha256, body,
+                reservation_hash)
+            document, document_raw, action_hash = _signed_document(
+                attestation, key, observed_at, issued_seq=2,
+                previous_issued_sha256=expected_sha256)
+            conn.execute('INSERT INTO issued_actions VALUES (2, ?, ?, ?)',
+                         (expected_sha256, document_raw.decode('utf-8'), action_hash))
+            changed = conn.execute('''
+                UPDATE issued_head SET seq=2, hash=?
+                WHERE singleton=1 AND queue_id=? AND seq=1 AND hash=?
+            ''', (action_hash, head['queue_id'], expected_sha256)).rowcount
+            require(changed == 1, 'compare-and-swap issued terminal head update failed')
+            final = verify_issued_chain(conn, key)
+            require(final['seq'] == 2 and final['sha256'] == action_hash and
+                    final['action_count'] == 2 and final['hmac_verified'],
+                    'issued terminal append did not advance exact authenticated head')
+            conn.commit()
+            return {'status': 'issued_terminal', 'kind': attestation['kind'],
+                    'queue_id': head['queue_id'], 'issued_seq': 2,
+                    'issued_sha256': action_hash,
+                    'start_sha256': expected_sha256,
                     'run_id': attestation['run_id'],
                     'run_attempt': attestation['run_attempt'],
                     'job_id': attestation['job_id']}
