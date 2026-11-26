@@ -175,20 +175,57 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit,
          'GitHub run metadata does not match completed released workflow')
     db = open_readonly_queue(str(database))
     try:
+        db.execute('BEGIN')
         head = db.execute('SELECT seq,digest,document FROM history ORDER BY seq DESC LIMIT 1').fetchone()
         need(head is not None, 'queue has no history')
-        sequence, digest, raw = head
-        need(hashlib.sha256(raw).hexdigest() == digest, 'queue history digest mismatch')
-        reservation = json.loads(raw, object_pairs_hook=unique_object)
+        head_sequence, head_digest, raw = head
+        need(hashlib.sha256(raw).hexdigest() == head_digest, 'queue history digest mismatch')
+        current = json.loads(raw, object_pairs_hook=unique_object)
+        need(type(current) is dict, 'invalid queue history document')
+        started = current.get('schema') == 'incoming-queue-action-v2'
+        if started:
+            attestation = current.get('attestation', {})
+            need(type(attestation) is dict and
+                 isinstance(current.get('mac'), str) and
+                 re.fullmatch(r'[0-9a-f]{64}', current['mac']) and
+                 current.get('sequence') == head_sequence and
+                 attestation.get('kind') == 'start' and
+                 current.get('previous_sha256') == attestation.get('reservation_digest') and
+                 attestation.get('run_id') == identity and
+                 attestation.get('job') == {
+                     'workflow': '.github/workflows/incoming-event-preflight.yml',
+                     'job': 'released-event-scan', 'run_id': int(run_id),
+                     'attempt': attempt}, 'queue head is not the matching recorded start')
+            sequence, digest = attestation['reservation'], attestation['reservation_digest']
+            need(type(sequence) is int and head_sequence == sequence + 1,
+                 'start does not immediately follow reservation')
+            saved = db.execute('SELECT digest,document FROM history WHERE seq=?',
+                               (sequence,)).fetchone()
+            need(saved is not None and saved[0] == digest and
+                 hashlib.sha256(saved[1]).hexdigest() == digest,
+                 'start does not bind the retained reservation')
+            reservation = json.loads(saved[1], object_pairs_hook=unique_object)
+        else:
+            sequence, digest = head_sequence, head_digest
+            reservation = current
         need(reservation.get('schema') == 'incoming-queue-manual-reservation-v1' and
              reservation.get('status') == 'reserved_only' and reservation.get('sequence') == sequence,
-             'queue head is not an exact PR reservation')
+             'queue history does not contain an exact PR reservation')
         queue_id = db.execute("SELECT value FROM metadata WHERE key='queue_id'").fetchone()[0]
         need(reservation['queue_id'] == queue_id, 'queue ID mismatch')
-        row = db.execute('SELECT event,status,reservation,reservation_digest FROM events WHERE id=?',
+        row = db.execute('SELECT event,status,reservation,reservation_digest,reason,started_job FROM events WHERE id=?',
                          (reservation['event_id'],)).fetchone()
-        need(row is not None and row[1:] == ('reserved', sequence, digest),
+        need(row is not None and row[2:4] == (sequence, digest),
              'queue event is not held by this reservation')
+        if started:
+            need(attestation.get('queue_id') == queue_id and
+                 attestation.get('event_id') == reservation['event_id'] and
+                 row[1] == 'started' and row[4] == identity and
+                 row[5] == json.dumps(attestation['job'], sort_keys=True,
+                                      separators=(',', ':')) + '\n',
+                 'queue started row does not match recorded start')
+        else:
+            need(row[1] == 'reserved', 'queue event is not reserved')
         queued_event = json.loads(row[0], object_pairs_hook=unique_object)
     finally:
         db.close()
@@ -355,9 +392,10 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit,
             'reservation_sha256': digest, 'run_id': identity,
             'consumer_commit': consumer_commit, 'source': receipt['source'],
             'snapshot_files_verified': count, 'scan_status': scan['status'],
-            'claim_bound': claim_bound,
+            'claim_bound': claim_bound, 'queue_state': 'started' if started else 'reserved',
             'selected_count': scan['selected_count'], 'result_count': triage['result_count'],
-            'limitations': ['Offline comparison; no artifact custody or queue attestation.']}
+            'limitations': ['Offline comparison; no artifact custody or queue attestation.',
+                            'Queue start MAC and running-job evidence are not verified here.']}
 
 
 def main():
