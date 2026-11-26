@@ -26,6 +26,7 @@ from urllib.parse import quote
 from zipfile import BadZipFile, ZipFile
 
 from tools import default_branch_backlog_intake as intake
+from tools import default_branch_backlog_issued as issued
 from tools import default_branch_backlog_reservation as reservation
 from tools import default_branch_reservation_claim as scan_claim
 from tools import incoming_poll as poll
@@ -243,15 +244,23 @@ def _check_database_unchanged(conn, database, before):
 
 
 def _load_local_action(conn, root, requested_queue_id, requested_sequence,
-                       requested_hash):
+                       requested_hash, *, require_v3=False):
     try:
         intake._initialize_or_check_schema(conn)
+        expected_version = (intake.ISSUED_SCHEMA_VERSION if require_v3 else
+                            intake.RESERVATION_SCHEMA_VERSION)
         require(conn.execute('PRAGMA application_id').fetchone()[0] == intake.APP_ID and
-                conn.execute('PRAGMA user_version').fetchone()[0] ==
-                intake.RESERVATION_SCHEMA_VERSION,
-                'reservation reconciliation requires backlog schema v2')
+                conn.execute('PRAGMA user_version').fetchone()[0] == expected_version,
+                'reservation reconciliation requires backlog schema v' +
+                str(expected_version))
         intake._verify_receipt_chain(conn)
         reservation.verify_action_chain(conn)
+        if require_v3:
+            issued_head = issued.verify_issued_chain(conn)
+            require(issued_head['seq'] == 0 and
+                    issued_head['sha256'] == issued.ZERO_HASH and
+                    issued_head['action_count'] == 0,
+                    'live observation requires an empty v3 issued head')
     except (intake.IntakeError, reservation.ReservationError, sqlite3.Error,
             ValueError, TypeError, KeyError, AttributeError, OverflowError,
             RecursionError) as exc:

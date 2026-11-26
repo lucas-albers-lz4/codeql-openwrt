@@ -113,6 +113,7 @@ class DefaultBranchReservationReconcileTests(unittest.TestCase):
             current_raw = archive.read('decisions.json')
             gap_raw = archive.read('gap/gap.json')
         gap_sha = digest(gap_raw)
+        inventory_raw = b'{"inventory":"synthetic source-first inventory"}\n'
         identity = {
             'schema': 'default-branch-event-identity-v1',
             'status': 'identities_resolved_only',
@@ -144,6 +145,7 @@ class DefaultBranchReservationReconcileTests(unittest.TestCase):
                 'current_checkpoint_sha256': current_sha,
                 'consumer_commit': self.consumer,
                 'identity_receipt_sha256': digest(identity_raw),
+                'candidate_inventory_sha256': digest(inventory_raw),
             },
         }
         manifest_raw = json_bytes(manifest)
@@ -179,6 +181,7 @@ class DefaultBranchReservationReconcileTests(unittest.TestCase):
             prefix + 'current/gap/gap.json': gap_raw,
             prefix + 'identity.json': identity_raw,
             prefix + 'manifest.json': manifest_raw,
+            prefix + 'inventory.json': inventory_raw,
             prefix + 'reservation-claim.json': json_bytes(claim_record),
             f'r3-ucode-{scan_run_id}-{scan_attempt}/receipt.json': b'{"status":"retained"}\n',
         }
