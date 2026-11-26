@@ -335,7 +335,7 @@ def _trusted_network_environment(test_overrides=None):
     return env
 
 
-def _fetch(endpoint, limit, gh_path, env):
+def _fetch(endpoint, limit, gh_path, env, *, timeout=GH_TIMEOUT_SECONDS, cwd=None):
     command = [gh_path, 'api', '--hostname', 'github.com', endpoint]
     _resolve_gh(gh_path)
     executable_info = Path(gh_path).stat()
@@ -347,7 +347,7 @@ def _fetch(endpoint, limit, gh_path, env):
     try:
         process = subprocess.Popen(
             command, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL, close_fds=True, env=env)
+            stderr=subprocess.DEVNULL, close_fds=True, env=env, cwd=cwd)
         after_exec = Path(gh_path).stat()
         require((after_exec.st_dev, after_exec.st_ino, after_exec.st_mtime_ns,
                  after_exec.st_ctime_ns) == executable_identity,
@@ -357,7 +357,7 @@ def _fetch(endpoint, limit, gh_path, env):
         size = 0
         selector.register(process.stdout, selectors.EVENT_READ)
         while True:
-            remaining = GH_TIMEOUT_SECONDS - (time.monotonic() - started)
+            remaining = timeout - (time.monotonic() - started)
             require(remaining > 0, 'GitHub API request timed out')
             ready = selector.select(min(remaining, 1.0))
             if not ready:
@@ -369,9 +369,9 @@ def _fetch(endpoint, limit, gh_path, env):
                 selector.unregister(process.stdout)
                 break
             size += len(block)
-            require(size <= limit, 'GitHub API or early ZIP response exceeds its byte bound')
+            require(size <= limit, 'GitHub API response exceeds its byte bound')
             chunks.append(block)
-        remaining = GH_TIMEOUT_SECONDS - (time.monotonic() - started)
+        remaining = timeout - (time.monotonic() - started)
         require(remaining > 0, 'GitHub API request timed out')
         try:
             exit_status = process.wait(timeout=remaining)
