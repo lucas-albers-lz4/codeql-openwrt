@@ -32,9 +32,11 @@ on:
       - 'tools/event_control_scan.py'
       - 'tools/issuer_consumer_prerequisite.py'
       - 'tools/issuer_workflow_graph.py'
+      - 'tools/issuer_artifact_freeze.py'
       - 'policy/tests/test_issuer_consumer_prerequisite.py'
       - 'policy/tests/test_issuer_control_graph.py'
       - 'policy/tests/test_issuer_workflow_graph.py'
+      - 'policy/tests/test_issuer_artifact_freeze.py'
       - 'tools/test_event_control_scan.py'
       - 'tools/current_corpus_linux.py'
       - 'tools/sarif_accept.py'
@@ -57,7 +59,7 @@ jobs:
           python3 -B -m unittest policy.tests.test_incoming_event -v
           python3 -B tools/test_full_tree_candidates.py -v
           python3 -B -m unittest tools.test_event_corpus_manifest tools.test_event_control_scan -v
-          python3 -B -m unittest policy.tests.test_issuer_consumer_prerequisite policy.tests.test_issuer_control_graph policy.tests.test_issuer_workflow_graph -v
+          python3 -B -m unittest policy.tests.test_issuer_consumer_prerequisite policy.tests.test_issuer_control_graph policy.tests.test_issuer_workflow_graph policy.tests.test_issuer_artifact_freeze -v
           python3 -B -m unittest policy.tests.test_event_corpus_linux policy.tests.test_current_corpus_linux policy.tests.test_sarif_accept policy.tests.test_r3_linux_handoff -v
   resolve-pins:
     if: github.event_name == 'workflow_dispatch'
@@ -280,12 +282,20 @@ jobs:
           control_root="$RUNNER_TEMP/event-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           run_root="$RUNNER_TEMP/r3-event-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B -m tools.event_control_scan docs/r3-release-lock.json "$input_root/incoming-event-receipt.json" "$control_root" "$input_root/control-oracle" "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-      - name: Check event and control consumer graph (non-issuing)
+      - name: Validate same-job artifact paths before graph replay
+        id: graph-precheck
         if: always() && !cancelled() && steps.release.outputs.ready == 'true'
+        run: python3 -B -m tools.issuer_artifact_freeze --precheck
+      - name: Check event and control consumer graph (non-issuing)
+        id: graph
+        if: always() && !cancelled() && steps.release.outputs.ready == 'true' && steps.graph-precheck.outcome == 'success'
         env:
           EVENT_OUTCOME: ${{ steps.event-scan.outcome }}
           CONTROL_OUTCOME: ${{ steps.control-scan.outcome }}
         run: python3 -B -m tools.issuer_workflow_graph
+      - name: Freeze same-job artifact inventory and recheck sources (non-issuing)
+        if: always() && !cancelled() && steps.release.outputs.ready == 'true' && steps.graph.outcome == 'success'
+        run: python3 -B -m tools.issuer_artifact_freeze
       - name: Summarize scan outcome and markup coverage gap
         if: always() && steps.release.outputs.ready == 'true'
         run: |
@@ -332,6 +342,9 @@ jobs:
           name: released-event-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: warn
           path: |
+            ${{ runner.temp }}/issuer-freeze-${{ github.run_id }}-${{ github.run_attempt }}/inventory.json
+            ${{ runner.temp }}/issuer-freeze-${{ github.run_id }}-${{ github.run_attempt }}/graph-recheck.json
+            ${{ runner.temp }}/issuer-freeze-${{ github.run_id }}-${{ github.run_attempt }}/snapshot/**
             ${{ runner.temp }}/event-input-${{ github.run_id }}-${{ github.run_attempt }}/**/*.json
             ${{ runner.temp }}/event-input-${{ github.run_id }}-${{ github.run_attempt }}/*.json
             ${{ runner.temp }}/r3-event-${{ github.run_id }}-${{ github.run_attempt }}/preflight.json
