@@ -89,7 +89,7 @@ jobs:
         run: |
           set -euo pipefail
           run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          python3 -B tools/r25_package_handoff.py docs/r3-release-lock.json docs/r25-package-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B -m tools.r25_package_handoff docs/r3-release-lock.json docs/r25-package-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Run bounded current-source corpus with same released producer
         shell: bash
         run: |

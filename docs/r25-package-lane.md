@@ -119,10 +119,10 @@ Raw outputs remain under ignored ledger `work/`. Earlier timing-wrapper,
 archive-shape and harness failures are recorded and are not counted as passes.
 These local consumer checks did not run the producer or CodeQL.
 
-The earlier hosted producer R2.5 pass establishes the producer's pretag
-package gate only. This consumer workflow has not yet run: no immutable
-producer release exists, so no release lock is populated and no released
-runner invocation or downstream package handoff is claimed. The selected IPK
+The producer R2.5 package gate passed both before the tag and on the tagged
+commit. The immutable producer prerelease now exists and the R3 lock is
+populated. A released runner invocation and downstream package handoff remain
+unclaimed until the hosted live consumer job passes and its output is reviewed. The selected IPK
 artifacts are retention-limited. If they expire before R3, rebuild them from
 the same recorded source/configuration pins and prepare/review new oracle and
 artifact digests before changing the package lock. A package member is not

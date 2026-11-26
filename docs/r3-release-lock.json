@@ -3,22 +3,28 @@
   "source_oracle_sha256": "c3098f828d8df4817716030724a1041a6b9113d6b5ae77efac6e7acb3eccf0c2",
   "release": {
     "repository": "https://github.com/lucas-albers-lz4/codeql-ucode",
-    "tag": null,
-    "commit": null,
-    "asset_url": null,
-    "asset_sha256": null,
-    "manifest_sha256": null,
-    "verifier_sha256": null,
+    "tag": "v0.1.0-rc.1",
+    "commit": "131605a726b7a79eb926886d07bf44eb721fe450",
+    "asset_url": "https://github.com/lucas-albers-lz4/codeql-ucode/releases/download/v0.1.0-rc.1/codeql-ucode-linux-x64.tar.gz",
+    "asset_sha256": "efd10ca853ad94c63e12f40ce92b10523d5cb9be5e647fb4312f82ed62c1e153",
+    "manifest_sha256": "1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9",
+    "verifier_sha256": "e155c87afdb7acf61b6ca3f70ee677aebaf4e5b76bf19044a19f561f2dcbccdc",
     "artifact_kind": "versioned-release",
     "expected_prerelease": true,
-    "extractor_sha256": null,
-    "library_lock_sha256": null,
-    "query_lock_sha256": null,
-    "suite_sha256": null,
-    "codeql_binary_sha256": null,
+    "extractor_sha256": "c8ec9e8951c7c069280be994a0c806ec8177750a39007b142567beff3c124a21",
+    "library_lock_sha256": "bce2891940f09fcac3337b250707047ba9fd06d307abdbc7cb42c2ed193751a3",
+    "query_lock_sha256": "bce2891940f09fcac3337b250707047ba9fd06d307abdbc7cb42c2ed193751a3",
+    "suite_sha256": "6d343f93e37c309b8461da9fafcf67d089737980d7ac42a5409e75df3bd442e5",
+    "codeql_binary_sha256": "bb3a754e126ed061b5f3356531cd5501872ab3864bd665b2d1afdbf8a67a146d",
     "packs": {
-      "library": {"name": "lucas-albers-lz4/ucode-all", "version": null},
-      "queries": {"name": "lucas-albers-lz4/ucode-queries", "version": null}
+      "library": {
+        "name": "lucas-albers-lz4/ucode-all",
+        "version": "0.1.0"
+      },
+      "queries": {
+        "name": "lucas-albers-lz4/ucode-queries",
+        "version": "0.1.0"
+      }
     },
     "expected_rules": [
       "ucode/m4/direct-rpc-shell-word",
