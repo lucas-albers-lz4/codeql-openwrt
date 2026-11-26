@@ -71,6 +71,45 @@ class GuardTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unknown metadata profile"):
             check.profile_values("statistics;unexpected")
 
+    def test_dockerman_only_seed_and_config_isolation(self):
+        expected = (
+            "CONFIG_TARGET_x86=y\nCONFIG_TARGET_x86_64=y\nCONFIG_PACKAGE_luci-base=m\n"
+            "CONFIG_PACKAGE_luci-app-dockerman=m\n"
+            "# CONFIG_PACKAGE_luci-app-statistics is not set\n"
+            "CONFIG_PER_FEED_REPO=y\nCONFIG_USE_APK=n\n# CONFIG_LUCI_JSMIN is not set\n"
+            "# CONFIG_LUCI_CSSTIDY is not set\n"
+        )
+        self.assertEqual(check.DOCKERMAN_SEED, expected)
+        self.assertEqual(
+            check.profile_values("dockerman-only")[2], ("luci-app-dockerman",)
+        )
+        final = (expected + "CONFIG_HAVE_DOT_CONFIG=y\n").encode()
+        selected = check.validate_final_config(final, "dockerman-only")
+        self.assertEqual(selected["CONFIG_PACKAGE_luci-app-statistics"], "n")
+        for change in (
+            "CONFIG_PACKAGE_luci-app-statistics=m",
+            "CONFIG_PACKAGE_luci-app-statistics=y",
+            "",
+        ):
+            modified = expected.replace(
+                "# CONFIG_PACKAGE_luci-app-statistics is not set", change
+            )
+            with self.assertRaisesRegex(
+                ValueError, "config symbol differs: CONFIG_PACKAGE_luci-app-statistics"
+            ):
+                check.validate_final_config(
+                    (modified + "CONFIG_HAVE_DOT_CONFIG=y\n").encode(), "dockerman-only"
+                )
+        graph = (
+            "package-$(CONFIG_PACKAGE_luci-app-dockerman) += feeds/luci/luci-app-dockerman\n"
+            "$(curdir)/feeds/luci/luci-app-dockerman/compile += $(curdir)/feeds/packages/docker/compile\n"
+        ).encode()
+        check.validate_packagedeps(graph, "dockerman-only")
+        with self.assertRaisesRegex(
+            ValueError, "package graph declaration differs: luci-app-statistics"
+        ):
+            check.validate_packagedeps(graph, "joint")
+
     def test_statistics_graph_requires_only_selected_app(self):
         graph = (
             "package-$(CONFIG_PACKAGE_luci-app-statistics) += feeds/luci/luci-app-statistics\n"
@@ -185,11 +224,15 @@ class ProbeTests(unittest.TestCase):
         self.p = run.Probe(self.root, "1" * 40)
 
     def test_nonzero_phase_retains_exact_receipt(self):
-        with patch.object(
+        # Popen is synthetic here: its PID is not an owned process-group ID.
+        with patch.object(run, "group_exists", return_value=False), patch.object(
+            run.os, "killpg"
+        ) as killpg, patch.object(
             subprocess, "Popen", return_value=SimpleNamespace(pid=999, wait=lambda timeout=None: 7)
         ):
             with self.assertRaisesRegex(RuntimeError, "phase failed"):
                 self.p.invoke("fake-phase", ["fake"], self.root)
+        killpg.assert_not_called()
         row = json.loads((self.p.out / "fake-phase.receipt.json").read_text())
         self.assertEqual(row["exit"], 7)
         self.assertEqual(row["argv"], ["fake"])
@@ -214,9 +257,13 @@ class ProbeTests(unittest.TestCase):
             path.symlink_to(actual)
             return SimpleNamespace(pid=999, wait=lambda timeout=None: 0)
 
-        with patch.object(subprocess, "Popen", side_effect=fake):
+        # The fake PID can collide with an unrelated host process group (e.g. 999 on CI).
+        with patch.object(run, "group_exists", return_value=False), patch.object(
+            run.os, "killpg"
+        ) as killpg, patch.object(subprocess, "Popen", side_effect=fake):
             with self.assertRaisesRegex(RuntimeError, "phase failed"):
                 self.p.invoke("defconfig", ["make", "defconfig"], self.root)
+        killpg.assert_not_called()
         row = json.loads((self.p.out / "defconfig.receipt.json").read_text())
         self.assertIn("unsafe file", row["stdout_capture_error"])
         self.assertEqual(self.p.diags, [])
@@ -226,8 +273,11 @@ class ProbeTests(unittest.TestCase):
             kw["stdout"].write(b"$(error ERROR: recipe literal, not execution)\n")
             return SimpleNamespace(pid=999, wait=lambda timeout=None: 0)
 
-        with patch.object(subprocess, "Popen", side_effect=fake):
+        with patch.object(run, "group_exists", return_value=False), patch.object(
+            run.os, "killpg"
+        ) as killpg, patch.object(subprocess, "Popen", side_effect=fake):
             self.p.invoke("scheduler-sources-0", ["git", "show", "blob"], self.root)
+        killpg.assert_not_called()
         self.assertEqual(self.p.phases[-1]["exit"], 0)
         self.assertEqual(self.p.diags, [])
 
@@ -236,9 +286,12 @@ class ProbeTests(unittest.TestCase):
             kw["stderr"].write(b"WARNING: synthetic warning\nERROR: synthetic failure\n")
             return SimpleNamespace(pid=999, wait=lambda timeout=None: 2)
 
-        with patch.object(subprocess, "Popen", side_effect=fake):
+        with patch.object(run, "group_exists", return_value=False), patch.object(
+            run.os, "killpg"
+        ) as killpg, patch.object(subprocess, "Popen", side_effect=fake):
             with self.assertRaisesRegex(RuntimeError, "phase failed"):
                 self.p.invoke("defconfig", ["make", "defconfig"], self.root)
+        killpg.assert_not_called()
         self.assertIn("WARNING: synthetic warning", self.p.diags[-1]["warnings"])
         self.assertIn("ERROR: synthetic failure", self.p.diags[-1]["unexpected_errors"])
 
@@ -329,6 +382,11 @@ class ProbeTests(unittest.TestCase):
         self.root = self.root.parent / "statistics-run"
         self.p = run.Probe(self.root, "1" * 40, "statistics-only")
         self.simulated_sequence("statistics-only")
+
+    def test_dockerman_real_runner_path_and_selection(self):
+        self.root = self.root.parent / "dockerman-run"
+        self.p = run.Probe(self.root, "1" * 40, "dockerman-only")
+        self.simulated_sequence("dockerman-only")
 
     def simulated_sequence(self, profile):
         calls = []
@@ -434,11 +492,14 @@ class ProbeTests(unittest.TestCase):
             self.assertNotIn("profile", result)
             self.assertNotIn("selected_app_packages", result)
         else:
-            self.assertEqual(result["profile"], "statistics-only")
-            self.assertEqual(result["selected_app_packages"], ["luci-app-statistics"])
-            self.assertEqual(
-                result["selected_config_index"]["CONFIG_PACKAGE_luci-app-dockerman"], "n"
+            self.assertEqual(result["profile"], profile)
+            self.assertEqual(result["selected_app_packages"], list(self.p.selected_packages))
+            disabled = (
+                "CONFIG_PACKAGE_luci-app-dockerman"
+                if profile == "statistics-only"
+                else "CONFIG_PACKAGE_luci-app-statistics"
             )
+            self.assertEqual(result["selected_config_index"][disabled], "n")
         self.assertEqual(
             [argv for _, argv in calls if argv[0] == "make"],
             [["make", "--version"], ["make", "defconfig"]],
@@ -480,6 +541,20 @@ class ProbeTests(unittest.TestCase):
             ],
         )
         result = subprocess.run(
+            ["bash", str(script), "dockerman-only", str(temp)],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        self.assertEqual(
+            result.stdout.splitlines(),
+            [
+                f"root={temp}/issue173-app-metadata-dockerman-only",
+                f"archive={temp}/issue173-app-metadata-dockerman-only-evidence.tar",
+                "suffix=-dockerman-only",
+            ],
+        )
+        result = subprocess.run(
             ["bash", str(script), "other", str(temp)], capture_output=True, text=True
         )
         self.assertNotEqual(result.returncode, 0)
@@ -502,7 +577,7 @@ class ProbeTests(unittest.TestCase):
         self.assertEqual(result.stdout, "")
 
     def test_failure_receipt_distinguishes_requested_packages(self):
-        for profile in ("joint", "statistics-only"):
+        for profile in ("joint", "statistics-only", "dockerman-only"):
             target = self.root.parent / ("failure-" + profile)
             argv = ["run.py", "--root", str(target), "--consumer-commit", "1" * 40, "--profile", profile]
             with patch.object(sys, "argv", argv), patch.object(
@@ -516,8 +591,13 @@ class ProbeTests(unittest.TestCase):
                 self.assertNotIn("profile", manifest)
                 self.assertNotIn("requested_app_packages", manifest)
             else:
-                self.assertEqual(manifest["profile"], "statistics-only")
-                self.assertEqual(manifest["requested_app_packages"], ["luci-app-statistics"])
+                self.assertEqual(manifest["profile"], profile)
+                expected = (
+                    ["luci-app-statistics"]
+                    if profile == "statistics-only"
+                    else ["luci-app-dockerman"]
+                )
+                self.assertEqual(manifest["requested_app_packages"], expected)
                 self.assertNotIn("selected_app_packages", manifest)
     def test_config_present_during_feeds_stops(self):
         ow = self.root / "openwrt"

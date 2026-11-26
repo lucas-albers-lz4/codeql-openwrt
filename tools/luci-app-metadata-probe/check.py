@@ -28,7 +28,11 @@ STATISTICS_SEED = SEED.replace(
     "CONFIG_PACKAGE_luci-app-dockerman=m\n",
     "# CONFIG_PACKAGE_luci-app-dockerman is not set\n",
 )
-PROFILES = ("joint", "statistics-only")
+DOCKERMAN_SEED = SEED.replace(
+    "CONFIG_PACKAGE_luci-app-statistics=m\n",
+    "# CONFIG_PACKAGE_luci-app-statistics is not set\n",
+)
+PROFILES = ("joint", "statistics-only", "dockerman-only")
 
 
 def profile_values(profile):
@@ -36,8 +40,11 @@ def profile_values(profile):
     if profile == "joint":
         return SEED, REQUIRED.copy(), ("luci-app-dockerman", "luci-app-statistics")
     required = REQUIRED.copy()
-    required["CONFIG_PACKAGE_luci-app-dockerman"] = "n"
-    return STATISTICS_SEED, required, ("luci-app-statistics",)
+    if profile == "statistics-only":
+        required["CONFIG_PACKAGE_luci-app-dockerman"] = "n"
+        return STATISTICS_SEED, required, ("luci-app-statistics",)
+    required["CONFIG_PACKAGE_luci-app-statistics"] = "n"
+    return DOCKERMAN_SEED, required, ("luci-app-dockerman",)
 
 
 def need(ok, message):

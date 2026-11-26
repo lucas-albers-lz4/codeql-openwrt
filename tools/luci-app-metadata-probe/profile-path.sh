@@ -11,6 +11,7 @@ base=$2
 case "$profile" in
   joint) suffix='' ;;
   statistics-only) suffix='-statistics-only' ;;
+  dockerman-only) suffix='-dockerman-only' ;;
   *) echo 'unknown metadata profile' >&2; exit 2 ;;
 esac
 printf 'root=%s/issue173-app-metadata%s\n' "$base" "$suffix"

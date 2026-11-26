@@ -15,6 +15,7 @@ on:
         options:
           - joint
           - statistics-only
+          - dockerman-only
 permissions:
   contents: read
 jobs:
