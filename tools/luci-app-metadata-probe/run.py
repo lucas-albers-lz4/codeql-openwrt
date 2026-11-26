@@ -368,7 +368,7 @@ class Probe:
                                 "rrdtool1",
                                 "containerd",
                             )
-                            if self.profile == "joint"
+                            if self.profile in ("joint", "dockerman-only")
                             else ("collectd", "rrdtool1")
                         )
                     },

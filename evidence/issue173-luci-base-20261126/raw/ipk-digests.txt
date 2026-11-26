@@ -1,0 +1,2 @@
+41376c6774b35ff140ff3fa441643a184be252070cd3f462f645c6a98e527d6b  bin/packages/x86_64/luci/luci-base_26.317.52279~1c75ea4_x86_64.ipk
+41376c6774b35ff140ff3fa441643a184be252070cd3f462f645c6a98e527d6b  /home/runner/work/_temp/issue173-lucibase/output/luci-base.ipk
