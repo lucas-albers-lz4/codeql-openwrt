@@ -18,10 +18,10 @@ import sys
 from tools.r3_linux_handoff import (EXPECTED_QUERIES, ROOT, Run, digest,
                                     file_rows, need, pinned, query_id, write_json)
 
-MANIFEST_SHA256 = "1e25cf9c2adc40c854502fed8d1ccc0977a3c4825d6ee4a1c0a543ffe0a76699"
+MANIFEST_SHA256 = "9c004ed477665f6567a071eac45051445c61019af927bfa4e51bae4c50ebd490"
 PINS = {
     "luci": "b2e0be4b46ec0fd43394c081fa7c50657af14011",
-    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "openwrt": "bce40f6a15c273778061e8fceced7b9e0f58d99b",
     "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
 }
 REPOSITORIES = {
@@ -42,10 +42,10 @@ def relative_path(value: object) -> str:
 
 
 def validate_manifest(manifest: dict) -> None:
-    need(manifest.get("schema") == "mvp-bounded-corpus-v0.4", "unreviewed corpus schema")
+    need(manifest.get("schema") == "mvp-bounded-corpus-v0.6", "unreviewed corpus schema")
     need(manifest.get("pins") == PINS, "unreviewed source pins")
     selected, excluded = manifest.get("selected"), manifest.get("excluded")
-    need(isinstance(selected, list) and len(selected) == 111 and
+    need(isinstance(selected, list) and len(selected) == 128 and
          isinstance(excluded, list) and len(excluded) == 13, "corpus denominator changed")
     identities, staged = [], []
     routes = Counter()
@@ -66,9 +66,9 @@ def validate_manifest(manifest: dict) -> None:
         staged.append(stage)
         repos[repo] += 1
         routes[route["classification"]] += 1
-    need(len(set(identities)) == 111 and len(set(staged)) == 111, "duplicate selected identity/stage")
-    need(repos == Counter({"luci": 65, "openwrt": 34, "packages": 12}) and
-         routes == Counter({"plain": 76, "markup": 35}), "corpus selection/route count drift")
+    need(len(set(identities)) == 128 and len(set(staged)) == 128, "duplicate selected identity/stage")
+    need(repos == Counter({"luci": 65, "openwrt": 51, "packages": 12}) and
+         routes == Counter({"plain": 93, "markup": 35}), "corpus selection/route count drift")
     excluded_ids = []
     for row in excluded:
         need(isinstance(row, dict) and row.get("repo") in PINS, "invalid excluded row")
@@ -106,8 +106,8 @@ def index_and_validate_routes(run: Run, db: Path, stage: Path, codeql: Path,
                                row["expected_route"]["reason"],
                                "plain_route_selected" if row["expected_route"]["classification"] == "plain" else "inconclusive")
                               for row in manifest["selected"])
-    need(actual_routes == expected_routes and routing.get("input_count") == 111 and
-         routing.get("plain_count") == 76 and routing.get("markup_count") == 35 and
+    need(actual_routes == expected_routes and routing.get("input_count") == 128 and
+         routing.get("plain_count") == 93 and routing.get("markup_count") == 35 and
          routing.get("markup_inconclusive_count") == 35 and
          all(routing.get(k) == 0 for k in ("excluded_count", "uncertain_count", "duplicate_input_count")),
          "route identities/counts differ from source oracle")
@@ -205,7 +205,7 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                    "release_commit": release["commit"], "source_pins": PINS,
                    "free_disk_bytes": free_bytes, "cpu_count": os.cpu_count(),
                    "available_memory_kib": int(available.group(1)),
-                   "selected_count": 111, "excluded_count": 13,
+                   "selected_count": 128, "excluded_count": 13,
                    "actual_package_installed_bytes_verified": False,
                    "wifi_scripts_config_assumed": "CONFIG_WIFI_SCRIPTS_UCODE=y"})
         db = run.root / "db/current"
@@ -239,11 +239,11 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
              "successful identity or extraction-error mismatch")
         decisions = {d["installed_path"]: d for d in routing["decisions"]}
         success_counts = Counter(successes)
-        coverage = {"schema": "ucode-current-corpus-coverage-v0.4",
+        coverage = {"schema": "ucode-current-corpus-coverage-v0.6",
                     "source_manifest_sha256": digest(manifest_path),
                     "release_tag": release["tag"], "producer_commit": release["commit"],
                     "source_pins": PINS, "actual_package_installed_bytes_verified": False,
-                    "counts": {"selected": 111, "extracted_once": 111, "errored": 0,
+                    "counts": {"selected": 128, "extracted_once": 128, "errored": 0,
                                "modeled_markup_inconclusive": 35, "excluded": 13},
                     "selected": [{"repo": row["repo"], "source_commit": row["source_commit"],
                                   "source_path": row["source_path"],
@@ -257,7 +257,7 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                                   "extraction_error_count": 0}
                                  for row in manifest["selected"]],
                     "excluded": manifest["excluded"]}
-        write_json(out / "coverage-v0.4.json", coverage)
+        write_json(out / "coverage-v0.6.json", coverage)
         resolved = json.loads(run.call("resolve-suite", [codeql, "resolve", "queries", "--format=json", suite,
                                                        f"--search-path={search}", f"--common-caches={common}"]))
         rules = []
@@ -316,7 +316,7 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                     ("input_count", "plain_count", "markup_count", "markup_inconclusive_count",
                      "uncertain_count", "excluded_count", "duplicate_input_count")},
                    "successful_count": len(successes), "extraction_error_count": 0,
-                   "coverage_sha256": digest(out / "coverage-v0.4.json"),
+                   "coverage_sha256": digest(out / "coverage-v0.6.json"),
                    "resolved_rules": rules, "sarif_sha256": digest(sarif),
                    "accepted_sha256": digest(out / "accepted.json"),
                    "commands_sha256": digest(run.root / "commands.json"),
