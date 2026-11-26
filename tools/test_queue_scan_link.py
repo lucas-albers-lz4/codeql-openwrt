@@ -196,6 +196,12 @@ class ScanLinkTests(unittest.TestCase):
             'reservation_sequence': 2, 'reservation_sha256': digest,
             'event_id': self.event_id, 'source_sha': self.head,
             'control_sha': self.base}
+        self.files['inputs/dispatch-inputs.json'] = {
+            'schema': 'incoming-dispatch-inputs-v1', 'status': 'claimed_unverified',
+            'run_id': '123-1', 'upstream': 'openwrt', 'pr_number': 17,
+            'source_sha': self.head, 'control_sha': self.base,
+            'queue_id': self.reservation['queue_id'], 'reservation_sequence': 2,
+            'reservation_sha256': digest}
         self.write_freeze()
 
     def test_exact_link_is_read_only(self):
@@ -216,6 +222,20 @@ class ScanLinkTests(unittest.TestCase):
         self.files['inputs/reservation-claim.json']['reservation_sha256'] = '0'*64
         self.write_freeze()
         with self.assertRaisesRegex(LinkError, 'reservation claim mismatch'):
+            self.verify(require_claim=True)
+
+    def test_wrong_pre_resolution_dispatch_rejected(self):
+        self.set_claim()
+        self.files['inputs/dispatch-inputs.json']['control_sha'] = 'e'*40
+        self.write_freeze()
+        with self.assertRaisesRegex(LinkError, 'pre-resolution dispatch inputs'):
+            self.verify(require_claim=True)
+
+    def test_boolean_dispatch_sequence_rejected(self):
+        self.set_claim()
+        self.files['inputs/dispatch-inputs.json']['reservation_sequence'] = True
+        self.write_freeze()
+        with self.assertRaisesRegex(LinkError, 'pre-resolution dispatch inputs'):
             self.verify(require_claim=True)
 
     def test_changed_snapshot_file_rejected(self):

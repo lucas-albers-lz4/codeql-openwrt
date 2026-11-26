@@ -94,7 +94,10 @@ def verify_snapshot(snapshot, inventory, require_claim=False):
     if require_claim:
         need(input_names == INPUT_FILES, 'incomplete input inventory')
     else:
-        need(input_names in (INPUT_FILES, INPUT_FILES - {'reservation-claim.json'}),
+        need(input_names in (INPUT_FILES,
+                             INPUT_FILES - {'reservation-claim.json'},
+                             INPUT_FILES - {'dispatch-inputs.json'},
+                             INPUT_FILES - {'reservation-claim.json', 'dispatch-inputs.json'}),
              'incomplete input inventory')
     for role in ('event', 'control'):
         sections = records[role]
@@ -221,6 +224,24 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit,
                  'same-job reservation claim mismatch')
             claim_bound = True
     need(not require_claim or claim_bound, 'same-job reservation claim missing')
+    if require_claim:
+        dispatch = read_json(snapshot / 'inputs/dispatch-inputs.json')
+        need(set(dispatch) == {'schema', 'status', 'run_id', 'upstream',
+                               'pr_number', 'source_sha', 'control_sha',
+                               'queue_id', 'reservation_sequence', 'reservation_sha256'} and
+             dispatch.get('schema') == 'incoming-dispatch-inputs-v1' and
+             dispatch.get('status') == 'claimed_unverified' and
+             dispatch.get('run_id') == identity and
+             dispatch.get('upstream') == receipt['repository'] and
+             type(dispatch.get('pr_number')) is int and
+             dispatch.get('pr_number') == receipt['pr_number'] and
+             dispatch.get('source_sha') == receipt['source']['commit'] and
+             dispatch.get('control_sha') == receipt['control']['commit'] and
+             dispatch.get('queue_id') == queue_id and
+             type(dispatch.get('reservation_sequence')) is int and
+             dispatch.get('reservation_sequence') == sequence and
+             dispatch.get('reservation_sha256') == digest,
+             'pre-resolution dispatch inputs differ from reservation')
     need(safe_bytes(snapshot / 'inputs/incoming-event-receipt.json') ==
          safe_bytes(snapshot / 'inputs/replayed-receipt.json'),
          'original and replayed PR receipts differ')
