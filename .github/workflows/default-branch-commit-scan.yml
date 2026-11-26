@@ -81,7 +81,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Test default-branch and released corpus contracts
-        run: python3 -B -m unittest tools.test_default_branch_gap tools.test_default_branch_event tools.test_default_branch_corpus_manifest tools.test_default_branch_corpus_linux tools.test_default_branch_reservation_claim tools.test_default_branch_reservation_reconcile tools.test_event_corpus_manifest tools.test_direct_commit_corpus_linux policy.tests.test_current_corpus_linux -v
+        run: python3 -B -m unittest tools.test_default_branch_gap tools.test_default_branch_event tools.test_default_branch_corpus_manifest tools.test_default_branch_corpus_linux tools.test_default_branch_reservation_claim tools.test_default_branch_start_artifact tools.test_default_branch_reservation_reconcile tools.test_event_corpus_manifest tools.test_direct_commit_corpus_linux policy.tests.test_current_corpus_linux -v
 
   released-default-branch-scan:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
@@ -193,6 +193,26 @@ jobs:
             --identity "$inputs/identity.json" \
             --manifest "$inputs/manifest.json" \
             --output "$inputs/reservation-claim.json"
+      - name: Prepare early non-issuing default-branch observation
+        id: early-start
+        shell: bash
+        run: |
+          set -euo pipefail
+          inputs="$RUNNER_TEMP/default-branch-inputs-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          early="$RUNNER_TEMP/default-branch-start-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          result="$(python3 -B -m tools.default_branch_start_artifact --inputs "$inputs" --output "$early")"
+          case "$result" in
+            claimed) echo 'claimed=true' >> "$GITHUB_OUTPUT" ;;
+            absent) echo 'claimed=false' >> "$GITHUB_OUTPUT" ;;
+            *) echo "unexpected early-artifact result: $result" >&2; exit 2 ;;
+          esac
+      - name: Upload early non-issuing default-branch observation
+        if: steps.early-start.outputs.claimed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: default-branch-start-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          path: ${{ runner.temp }}/default-branch-start-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Verify pinned immutable release in same job
         shell: bash
         env:
