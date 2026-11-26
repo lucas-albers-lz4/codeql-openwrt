@@ -11,7 +11,9 @@ from datetime import datetime, timezone
 import hashlib
 import hmac
 import json
+import math
 import re
+import time
 
 from tools import default_branch_backlog_intake as intake
 from tools import default_branch_backlog_reservation as reservation
@@ -300,6 +302,14 @@ def _signed_document(attestation, key, observed_at):
     return document, document_raw, digest(document_raw)
 
 
+def _check_monotonic_deadline(deadline):
+    if deadline is None:
+        return
+    require(type(deadline) in (int, float) and math.isfinite(deadline) and
+            time.monotonic() <= deadline,
+            'live observation deadline expired before issued start CAS')
+
+
 def _load_document(document_json):
     require(isinstance(document_json, str), 'invalid issued document bytes')
     raw = document_json.encode('utf-8')
@@ -399,12 +409,16 @@ def verify_issued_chain(conn, key=None):
 
 
 def issue_start(private_root, expected_seq, expected_sha256, key,
-                approved_policy, attestation, observed_at):
+                approved_policy, attestation, observed_at, *,
+                deadline_monotonic=None):
     """Append the one exact start under an immediate transaction and CAS.
 
     `attestation` is a typed, exact-field mapping. This offline primitive does
-    not authenticate its API or artifact claims; the future private verifier
-    must construct it from freshly checked canonical responses and ZIP bytes.
+    not authenticate its API or artifact claims; a private verifier must
+    construct it from freshly checked canonical responses and ZIP bytes.
+    When supplied, `deadline_monotonic` is checked after acquiring the write
+    transaction, before signing, and before commit so a delayed local CAS
+    cannot use an observation past its freshness window.
     """
     _validate_key(key)
     _validate_approved_policy(approved_policy)
@@ -414,6 +428,7 @@ def issue_start(private_root, expected_seq, expected_sha256, key,
     try:
         conn.execute('BEGIN IMMEDIATE')
         try:
+            _check_monotonic_deadline(deadline_monotonic)
             intake._initialize_or_check_schema(conn)
             require(conn.execute('PRAGMA user_version').fetchone()[0] ==
                     intake.ISSUED_SCHEMA_VERSION,
@@ -430,6 +445,7 @@ def issue_start(private_root, expected_seq, expected_sha256, key,
                 'release_lock_sha256': policy['release_lock_sha256'],
             } and attestation['policy_sha256'] == policy['policy_sha256'],
                     'approved policy differs from exact v2 reservation policy')
+            _check_monotonic_deadline(deadline_monotonic)
             document, document_raw, action_hash = _signed_document(
                 attestation, key, observed_at)
             head = verify_issued_chain(conn, key)
@@ -450,6 +466,7 @@ def issue_start(private_root, expected_seq, expected_sha256, key,
             require(final['seq'] == 1 and final['sha256'] == action_hash and
                     final['hmac_verified'],
                     'issued start append did not advance exact authenticated head')
+            _check_monotonic_deadline(deadline_monotonic)
             conn.commit()
             return {'status': 'issued_start', 'queue_id': reservation_chain['queue_id'],
                     'issued_seq': 1, 'issued_sha256': action_hash,
