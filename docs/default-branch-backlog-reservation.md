@@ -138,3 +138,7 @@ python3 -B -m unittest tools.test_default_branch_backlog_reservation -v
 
 The test creates its own ignored `work/` database and does not use or modify an
 operator rehearsal store.
+
+The additive offline issued-action schema is documented in
+[default-branch-backlog-issued.md](default-branch-backlog-issued.md). It does
+not make this queue-only reservation a signed start.
