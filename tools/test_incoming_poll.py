@@ -12,6 +12,7 @@ from tools.test_direct_commit_admission import (DirectCommitAdmissionTests,
                                                 FrozenAdmissionArtifactTests)  # Frozen admission input controls.
 from tools.test_historical_openvpn_policy import HistoricalOpenvpnPolicyTests  # Versioned historical selector controls.
 from tools.test_direct_commit_corpus_manifest import DirectCommitCorpusManifestTests  # Historical manifest binding controls.
+from tools.test_direct_commit_corpus_linux import DirectCommitRunnerContractTests  # Released-runner dispatch contract.
 
 A = 'a' * 40
 B = 'b' * 40

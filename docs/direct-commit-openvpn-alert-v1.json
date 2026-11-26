@@ -1,0 +1,22 @@
+{
+  "schema": "direct-commit-openvpn-alert-oracle-v1",
+  "release_tag": "v0.1.0-rc.1",
+  "source_commit": "5306e007656fe9a77aee2d2a94072d003b0b5a7d",
+  "source_sha256": "051c8162f826683333e11264615806df5ab08415676c0bd098921cb1b05af991",
+  "historical_policy_sha256": "16d372ac21d87576c3ed3cd90036059e54f3cb0d8082f3094a032bd33190403a",
+  "expected_result": {
+    "rule_id": "ucode/m4/direct-rpc-shell-word",
+    "uri": "usr/share/rpcd/ucode/luci.openvpn.uc",
+    "start_line": 71,
+    "start_column": 115,
+    "end_line": 71,
+    "end_column": 132,
+    "level": "warning"
+  },
+  "expected_multiplicity": 1,
+  "limits": [
+    "Other results from the broader selected corpus remain triage findings; this oracle asserts only the pinned OpenVPN location.",
+    "The fixed revision requires a separate released no-alert control run.",
+    "Historical source-staged alert proof is not live incoming Gate 8 proof or installed IPK evidence."
+  ]
+}
