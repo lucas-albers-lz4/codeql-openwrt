@@ -108,7 +108,8 @@ jobs:
               .id == ($run | tonumber) and .run_attempt == ($attempt | tonumber) and
               .repository.full_name == $repo and
               .path == ".github/workflows/incoming-discovery-manual.yml" and
-              .event == "workflow_dispatch" and .head_branch == "main" and
+              (.event == "workflow_dispatch" or .event == "schedule") and
+              .head_branch == "main" and
               .status == "completed" and .conclusion == "success"
             ' "$inputs/$role-run-api.json" > /dev/null
             mkdir "$inputs/$role"

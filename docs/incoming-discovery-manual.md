@@ -1,51 +1,63 @@
-# Manual incoming discovery pilot
+# Scheduled read-only incoming discovery pilot
 
 `Incoming read-only discovery` inventories observed open PR heads and default
 tips in `openwrt/openwrt` and `openwrt/luci`. It runs `tools/incoming_poll.py`
-on a clean Linux runner and retains the complete request/decision receipt.
-It does not dispatch CodeQL scans, resolve PR trees, authenticate queue
-completion or claim that every upstream transition was seen.
+on a clean Linux runner and retains the complete request/decision receipt. The
+workflow can run by manual dispatch and once daily at 07:17 UTC. Pull requests
+run contract tests only. Discovery does not dispatch CodeQL scans, resolve PR
+trees, authenticate queue completion or claim that every upstream transition
+was seen.
 
-For the first run, manually dispatch the workflow on the reviewed consumer
-commit with `genesis=true` and no previous run ID or SHA. For each later run,
-set `genesis=false`, `previous_run_id` and `previous_run_attempt` from the last
-**successful** discovery run, and `previous_sha256` to the SHA-256 of that
-run's `decisions.json`. The workflow verifies the earlier run's identity and
-success, downloads its named artifact, checks the digest and validates the
-checkpoint before any new upstream API request. If the artifact expired or
+Seed the history with a manual run on reviewed `main` and `genesis=true`, with
+no previous run ID or SHA. A scheduled run never starts a genesis: it requires
+the latest successful manual or scheduled discovery run. The first scheduled
+attempt before that seed fails visibly and retains a failure artifact. A
+scheduled successor resolves the latest successful run automatically from the
+canonical Actions API, downloads that exact run/attempt artifact, verifies its
+run metadata and `run-input.json`, checks `decisions.sha256` against the
+downloaded `decisions.json`, and validates the checkpoint before making any
+upstream discovery request. Manual successors still require
+`genesis=false`, the latest successful run ID/attempt (which may be manual or
+scheduled), and the exact `decisions.json` SHA-256. If the artifact expired or
 any check fails, stop and investigate; do not silently start a new genesis.
-The discovery job runs only from `main`; a pull request runs contract tests
-without producing a successor checkpoint.
-The job serializes main discovery attempts and retains GitHub's
-`latest-successful-run-api.json` response. A genesis is accepted only when
-that API reports no prior successful main dispatch. A successor must name
-the latest successful main discovery run and attempt; a stale predecessor
-or parallel fork fails before polling. The query inspects at most 100 main
-dispatches, including the current run. It rejects reruns and other active
-runs because their mutable status can hide an earlier successful checkpoint
-from filtered API views. A larger history or any rerun requires explicit
-custody reconciliation.
-This check relies on the canonical Actions API response and does not make
-the 30-day artifact retention durable.
+
+The discovery job runs only from `main` and serializes main discovery attempts.
+It retains separate `workflow_dispatch` and `schedule` Actions API responses
+and a combined `discovery-history-api.json`. Each event query is bounded to
+100 runs; more history, an active competing run, a rerun or a stale manual
+predecessor requires explicit custody reconciliation. `discovery_latest_predecessor.py`
+checks the event filters before resolving the latest successful run, so PR
+contract runs cannot silently enter the checkpoint chain.
+The `run-input.json` v2 receipt records the trigger, current and predecessor
+run identities, exact checkpoint digest, and hashes of the combined history,
+both event-filtered history responses and predecessor run API response. This
+binds the schedule to the same checkpoint lineage as manual discovery. It
+relies on canonical Actions API responses and does not make the 30-day artifact
+retention durable.
 
 The artifact `incoming-discovery-<run-id>-<attempt>` contains `run-input.json`
-and `latest-successful-run-api.json`
-after valid input preparation and, on success, `decisions.json`,
-`decisions.sha256` and `poll/decisions.json`. A successful non-genesis run
-also retains `gap/gap.json` and `gap/gap.sha256`, after an offline replay of
-the exact retained compare responses. A non-fast-forward, truncated or
-unverifiable gap fails the workflow and retains `gap/failure.json` when
-available. A failed preparation or poll
-retains `workflow-failure.json`; a poll failure also retains
-`poll/failure.json` when the poller could write one. A checkout or contract-job
-failure can prevent artifact creation entirely. Failed runs are never valid
-predecessors. Artifacts expire after 30 days;
-before that point, decide how to maintain durable checkpoint custody. The
-current workflow has no schedule or automatic dispatch and does not advance a
-shared queue. Its `capacity=1` selects at most one observation for *review*;
-this can be a default tip rather than a PR head. Because v3 has no completion
-transition, the same prior selected identity can retain retry priority on
-later polls. Selection is not a scan result or a fair scan scheduler.
+and both raw event-filtered API responses plus their combined history after
+valid preparation and, on success,
+`decisions.json`, `decisions.sha256` and `poll/decisions.json`. A successful
+non-genesis run also retains `gap/gap.json` and `gap/gap.sha256`, after offline
+replay of the exact retained compare responses. A non-fast-forward, truncated
+or unverifiable gap fails the workflow and retains `gap/failure.json` when
+available. A failed preparation or poll retains `workflow-failure.json`; a
+poll failure also retains `poll/failure.json` when the poller could write one.
+Failed runs are never valid predecessors, so the next run still extends the
+last successful checkpoint. A checkout or contract-job failure can prevent
+artifact creation entirely. Artifacts expire after 30 days; this remains an
+operator-maintained checkpoint, not durable queue custody.
+
+The scheduled mode is discovery-only. The earlier hosted snapshot made 82
+successful upstream API requests; use each new receipt to measure actual
+request counts and API headroom rather than treating that observation as an
+upper bound. The workflow retains first-parent gap records, but it does not
+persist their commits as scan backlog. Its `capacity=1` selects at most one
+observed identity for *review*; this can be a default tip rather than a PR
+head. Because v3 has no completion transition, the same prior selected
+identity can retain retry priority on later polls. Selection is not a scan
+result or a fair scan scheduler.
 
 Review selected identities against a fresh canonical upstream API response
 before passing an exact head and control SHA to
@@ -86,4 +98,6 @@ authorization. The actual
 `incoming-event-preflight.yml` dispatch must fetch a fresh PR response,
 resolve source and control trees, check the source-first oracle, then run the
 released scan and consumer. A moved head or base requires a new discovery
-decision; do not silently use a different SHA.
+decision; do not silently use a different SHA. Scheduled discovery does not
+automatically run this PR scan or the default-branch direct-commit scan and
+does not establish PR-time coverage.
