@@ -66,8 +66,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir discovery-output
-          gh api "repos/$GH_REPO/actions/workflows/incoming-discovery-manual.yml/runs?event=workflow_dispatch&branch=main&status=completed&per_page=100" > discovery-output/latest-successful-run-api.json
-          python3 -B -m tools.discovery_latest_predecessor --api-response discovery-output/latest-successful-run-api.json --repository "$GH_REPO" --genesis "$GENESIS" --prior-run "$PRIOR_RUN" --prior-attempt "$PRIOR_ATTEMPT"
+          gh api "repos/$GH_REPO/actions/workflows/incoming-discovery-manual.yml/runs?event=workflow_dispatch&branch=main&per_page=100" > discovery-output/latest-successful-run-api.json
+          python3 -B -m tools.discovery_latest_predecessor --api-response discovery-output/latest-successful-run-api.json --repository "$GH_REPO" --genesis "$GENESIS" --prior-run "$PRIOR_RUN" --prior-attempt "$PRIOR_ATTEMPT" --current-run "$RUN_ID"
           if [[ "$GENESIS" == 'true' ]]; then
             [[ -z "$PRIOR_RUN" && -z "$PRIOR_SHA256" ]]
           else

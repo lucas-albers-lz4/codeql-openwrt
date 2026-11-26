@@ -12,13 +12,13 @@ import sys
 
 from tools import incoming_poll as poll
 
-MAX_API_BYTES = 1_000_000
+MAX_API_BYTES = 8_000_000
 MAX_RUNS = 100
 WORKFLOW = '.github/workflows/incoming-discovery-manual.yml'
 
 
 def verify(doc: dict, repository: str, genesis: bool,
-           prior_run: str, prior_attempt: str) -> dict:
+           prior_run: str, prior_attempt: str, current_run: str = '') -> dict:
     poll.check(isinstance(doc, dict), 'latest discovery API response is not an object')
     count, runs = doc.get('total_count'), doc.get('workflow_runs')
     poll.check(type(count) is int and 0 <= count <= MAX_RUNS and
@@ -26,6 +26,8 @@ def verify(doc: dict, repository: str, genesis: bool,
                'invalid latest discovery run API response')
     poll.check(bool(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository)),
                'invalid repository')
+    poll.check(not current_run or bool(re.fullmatch(r'[1-9][0-9]*', current_run)),
+               'invalid current discovery run ID')
     completed = []
     seen = set()
     for run in runs:
@@ -38,8 +40,6 @@ def verify(doc: dict, repository: str, genesis: bool,
                    run.get('path') == WORKFLOW and
                    run.get('event') == 'workflow_dispatch' and
                    run.get('head_branch') == 'main' and
-                   run.get('status') == 'completed' and
-                   isinstance(run.get('conclusion'), str) and run['conclusion'] and
                    isinstance(run.get('created_at'), str),
                    'invalid or rerun discovery history requires reconciliation')
         try:
@@ -48,8 +48,18 @@ def verify(doc: dict, repository: str, genesis: bool,
             raise poll.PollError('invalid completed discovery timestamp') from exc
         poll.check(created.tzinfo is not None, 'missing discovery timestamp timezone')
         seen.add(run_id)
+        if current_run and str(run_id) == current_run:
+            poll.check(run.get('status') == 'in_progress' and
+                       run.get('conclusion') is None,
+                       'current discovery run API state differs')
+            continue
+        poll.check(run.get('status') == 'completed' and
+                   isinstance(run.get('conclusion'), str) and run['conclusion'],
+                   'other discovery run is not terminal')
         if run['conclusion'] == 'success':
             completed.append((created, run_id, run))
+    poll.check(not current_run or int(current_run) in seen,
+               'current discovery run missing from API response')
     latest = max(completed, default=None)
     if genesis:
         poll.check(latest is None and not prior_run,
@@ -81,10 +91,12 @@ def main(argv=None) -> int:
     parser.add_argument('--genesis', choices=('true', 'false'), required=True)
     parser.add_argument('--prior-run', default='')
     parser.add_argument('--prior-attempt', default='')
+    parser.add_argument('--current-run', default='')
     args = parser.parse_args(argv)
     try:
         result = verify(read_api(args.api_response), args.repository,
-                        args.genesis == 'true', args.prior_run, args.prior_attempt)
+                        args.genesis == 'true', args.prior_run, args.prior_attempt,
+                        args.current_run)
         print(json.dumps(result, sort_keys=True))
         return 0
     except (poll.PollError, OSError, ValueError, TypeError, KeyError,

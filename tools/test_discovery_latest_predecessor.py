@@ -45,12 +45,16 @@ class LatestPredecessorTests(unittest.TestCase):
 
     def test_rejects_wrong_workflow_repository_and_state(self):
         for key, value in (('path', 'other.yml'), ('head_branch', 'topic'),
-                           ('status', 'in_progress'), ('event', 'pull_request')):
+                           ('event', 'pull_request')):
             changed = copy.deepcopy(self.response)
             changed['workflow_runs'][0][key] = value
             with self.subTest(key=key), self.assertRaisesRegex(poll.PollError,
                                                                 'invalid or rerun'):
                 self.verify(changed)
+        changed = copy.deepcopy(self.response)
+        changed['workflow_runs'][0]['status'] = 'in_progress'
+        with self.assertRaisesRegex(poll.PollError, 'other discovery run is not terminal'):
+            self.verify(changed)
         changed = copy.deepcopy(self.response)
         changed['workflow_runs'][0]['repository']['full_name'] = 'other/repo'
         with self.assertRaisesRegex(poll.PollError, 'invalid or rerun'):
@@ -69,6 +73,31 @@ class LatestPredecessorTests(unittest.TestCase):
         failed['run_attempt'] = 2
         with self.assertRaisesRegex(poll.PollError, 'rerun discovery history'):
             self.verify(response)
+
+    def test_current_run_and_concurrent_or_rerun_history(self):
+        current = copy.deepcopy(self.run)
+        current.update(id=45833426577, status='in_progress', conclusion=None,
+                       created_at='2026-11-26T13:52:28Z')
+        response = {'total_count': 2, 'workflow_runs': [current, self.run]}
+        self.assertEqual(latest.verify(response, self.REPO, False,
+                                       '45790907027', '1', '45833426577')['status'],
+                         'latest_predecessor_verified')
+        with self.assertRaisesRegex(poll.PollError, 'current discovery run missing'):
+            latest.verify(self.response, self.REPO, False,
+                          '45790907027', '1', '45833426577')
+        changed = copy.deepcopy(response)
+        changed['workflow_runs'][1]['status'] = 'in_progress'
+        changed['workflow_runs'][1]['conclusion'] = None
+        with self.assertRaisesRegex(poll.PollError, 'other discovery run is not terminal'):
+            latest.verify(changed, self.REPO, False,
+                          '45790907027', '1', '45833426577')
+        changed = copy.deepcopy(response)
+        changed['workflow_runs'][1]['run_attempt'] = 2
+        changed['workflow_runs'][1]['status'] = 'in_progress'
+        changed['workflow_runs'][1]['conclusion'] = None
+        with self.assertRaisesRegex(poll.PollError, 'rerun discovery history'):
+            latest.verify(changed, self.REPO, False,
+                          '45790907027', '1', '45833426577')
 
     def test_rejects_malformed_api_and_symlink(self):
         for response in ({'total_count': True, 'workflow_runs': []},
