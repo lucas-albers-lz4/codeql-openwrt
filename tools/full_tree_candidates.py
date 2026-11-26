@@ -78,7 +78,7 @@ def make_inventory(root, rev, policy, repository):
     candidate_paths=set(selected)|set(excluded)|shebang_matches
     for path in all_paths:
         name=PurePosixPath(path).name
-        if name.endswith(SUFFIXES) or ("." not in name and under_installed_root(path)): candidate_paths.add(path)
+        if name.endswith(SUFFIXES) or under_installed_root(path): candidate_paths.add(path)
     present={p:all_paths[p] for p in candidate_paths if p in all_paths}
     data_by_blob=blob_contents(root, sorted({x["git_blob"] for x in present.values() if x["kind"] == "blob"}))
     entries=[]
@@ -96,7 +96,7 @@ def make_inventory(root, rev, policy, repository):
         data=data_by_blob[info["git_blob"]]; name=PurePosixPath(path).name; hits=[]
         if name.endswith(SUFFIXES): hits.append("ucode_suffix")
         if info["mode"] != "120000" and path in shebang_matches and data.splitlines()[:1] and data.splitlines()[0].startswith(b"#!") and b"ucode" in data.splitlines()[0].lower(): hits.append("first_line_ucode_shebang")
-        if "." not in name and under_installed_root(path): hits.append("extensionless_installed_ucode_root")
+        if under_installed_root(path): hits.append("installed_ucode_root" if "." in name else "extensionless_installed_ucode_root")
         if not hits and baseline is None: continue
         entries.append({"source_path":path,"git_blob":info["git_blob"],"sha256":hashlib.sha256(data).hexdigest(),"mode":info["mode"],"signals":hits,"explicit_policy":baseline is not None,"status":"selected" if path in selected else "excluded" if path in excluded else "unreviewed","policy":baseline})
     return entries
