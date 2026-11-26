@@ -11,8 +11,9 @@ import unittest
 from unittest.mock import patch
 from pathlib import Path
 from incoming_poll import PollError, plan, replay_observed, replay_observed_doc
-from incoming_queue import open_queue, transition, reserve_exact_pr, apply_attested, encoded, identity
+from incoming_queue import open_queue, transition, reserve_exact_pr, recover_stale_reserved_pr, apply_attested, encoded, identity
 from incoming_queue_reserve import load_prepared
+from incoming_queue_recover_stale import load_evidence
 
 
 def event(repo, number, sha):
@@ -74,13 +75,13 @@ class QueueTests(unittest.TestCase):
                 [row['event'] for row in doc['decisions']],
                 hashlib.sha256(prior_raw).hexdigest() if prior_raw is not None else None,
                 prior_doc['observed_at'] if prior_doc is not None else None)
-    def advance(self, pred, capacity=1, preserve=False):
+    def advance(self, pred, capacity=1, preserve=False, now='2026-01-01T00:00:00Z'):
         if pred is not None and not preserve:
             doc = json.loads(self.snap.read_text())
             doc['genesis'] = False
             doc['previous_sha256'] = self.last_snapshot_hash
             self.snap.write_text(json.dumps(doc))
-        result, digest = transition(self.db,pred,self.snap,capacity,'2026-01-01T00:00:00Z',
+        result, digest = transition(self.db,pred,self.snap,capacity,now,
                                     self.prior_copy if pred is not None else None)
         self.last_snapshot_hash = result['snapshot_sha256']
         self.prior_copy.write_bytes(self.snap.read_bytes())
@@ -138,6 +139,100 @@ class QueueTests(unittest.TestCase):
             reserve_exact_pr(self.db, head, stale, '2026-01-01T00:00:00Z')
         self.assertEqual(self.db.execute('SELECT status FROM events WHERE id=?',
                                          (identity(self.events[0]),)).fetchone()[0], 'inactive')
+    def stale_recovery_inputs(self):
+        snapshot(self.snap, [self.events[0]])
+        first, predecessor = self.advance(None, 0)
+        reservation, digest = reserve_exact_pr(
+            self.db, predecessor, prepared(self.events[0], first['snapshot_sha256']),
+            '2026-01-01T00:00:00Z')
+        pull = {'number': 1, 'state': 'open', 'head': {'sha': 'e'*40},
+                'base': {'sha': 'f'*40, 'repo': {'full_name': 'openwrt/openwrt'}}}
+        run = {'repository': {'full_name': 'lucas-albers-lz4/codeql-openwrt'},
+               'id': 101, 'run_attempt': 1,
+               'path': '.github/workflows/incoming-event-preflight.yml',
+               'event': 'workflow_dispatch', 'status': 'completed',
+               'conclusion': 'failure', 'head_sha': 'c'*40,
+               'created_at': '2026-01-01T00:01:00Z'}
+        jobs = {'total_count': 3, 'jobs': [
+            {'name': name, 'status': 'completed', 'conclusion': conclusion,
+             'run_id': 101, 'run_attempt': 1, 'head_sha': 'c'*40,
+             'steps': ([{'name': 'Fetch exact GitHub pull API response',
+                        'conclusion': 'failure'}] if name == 'resolve-pins' else [])}
+            for name, conclusion in [('contract', 'success'),
+                                      ('resolve-pins', 'failure'),
+                                      ('released-event-scan', 'skipped')]]}
+        dispatch = {'schema': 'incoming-dispatch-inputs-v1',
+                    'status': 'claimed_unverified', 'run_id': '101-1',
+                    'upstream': 'openwrt', 'pr_number': 1,
+                    'source_sha': self.events[0]['source']['commit'],
+                    'control_sha': self.events[0]['base_commit'],
+                    'queue_id': reservation['queue_id'],
+                    'reservation_sequence': reservation['sequence'],
+                    'reservation_sha256': digest}
+        raw_files = {key: encoded(value) for key, value in
+                     [('pull', pull), ('run', run), ('jobs', jobs), ('dispatch', dispatch)]}
+        return reservation, (reservation['sequence'], digest), raw_files
+
+    def test_manual_stale_recovery_releases_only_unstarted_reservation(self):
+        reservation, predecessor, raw_files = self.stale_recovery_inputs()
+        result, digest = recover_stale_reserved_pr(
+            self.db, predecessor, raw_files, '2026-01-01T00:02:00Z')
+        self.assertEqual((result['status'], result['authority']),
+                         ('recovered_unstarted', 'local_operator'))
+        self.assertEqual(self.db.execute('SELECT status,attempts,reservation,reservation_digest FROM events WHERE id=?',
+                                         (reservation['event_id'],)).fetchone(),
+                         ('inactive', 0, None, None))
+        with self.assertRaises(PollError):
+            recover_stale_reserved_pr(self.db, predecessor, raw_files,
+                                      '2026-01-01T00:02:00Z')
+        replacement = event('openwrt/openwrt', 1, 'e')
+        replacement['base_commit'] = 'f'*40
+        replacement['base']['commit'] = 'f'*40
+        snapshot(self.snap, [replacement])
+        second, _ = self.advance((result['sequence'], digest), 0,
+                                 now='2026-01-01T00:03:00Z')
+        self.assertEqual(next(r for r in second['events'] if r['event']['source']['commit'] == 'e'*40)['status'],
+                         'pending')
+
+    def test_manual_stale_recovery_rejects_unchanged_pr_and_scanned_run(self):
+        reservation, predecessor, raw_files = self.stale_recovery_inputs()
+        pull = json.loads(raw_files['pull'])
+        original = dict(pull, head={'sha': self.events[0]['source']['commit']},
+                        base={'sha': self.events[0]['base_commit'],
+                              'repo': {'full_name': 'openwrt/openwrt'}})
+        with self.assertRaises(PollError):
+            recover_stale_reserved_pr(self.db, predecessor,
+                                      {**raw_files, 'pull': encoded(original)},
+                                      '2026-01-01T00:02:00Z')
+        bad_jobs = json.loads(raw_files['jobs'])
+        bad_jobs['jobs'][2]['conclusion'] = 'success'
+        with self.assertRaises(PollError):
+            recover_stale_reserved_pr(self.db, predecessor,
+                                      {**raw_files, 'jobs': encoded(bad_jobs)},
+                                      '2026-01-01T00:02:00Z')
+        bad_dispatch = json.loads(raw_files['dispatch'])
+        bad_dispatch['reservation_sha256'] = '0'*64
+        with self.assertRaises(PollError):
+            recover_stale_reserved_pr(self.db, predecessor,
+                                      {**raw_files, 'dispatch': encoded(bad_dispatch)},
+                                      '2026-01-01T00:02:00Z')
+        self.assertEqual(self.db.execute('SELECT status FROM events WHERE id=?',
+                                         (reservation['event_id'],)).fetchone()[0], 'reserved')
+
+    def test_manual_stale_recovery_evidence_rejects_alias_and_fifo(self):
+        path = self.path / 'hosted.json'
+        path.write_text('{"status":"failed"}')
+        raw = load_evidence(path)
+        self.assertEqual(json.loads(raw), {'status': 'failed'})
+        self.assertEqual(raw, path.read_bytes())
+        alias = self.path / 'alias-hosted.json'
+        alias.symlink_to(path)
+        with self.assertRaises(PollError):
+            load_evidence(alias)
+        fifo = self.path / 'hosted.fifo'
+        os.mkfifo(fifo)
+        with self.assertRaises(PollError):
+            load_evidence(fifo)
     def test_prepared_input_rejects_alias_and_fifo(self):
         path = self.path/'candidate.json'
         candidate = prepared(self.events[0], 'a'*64)
