@@ -1,0 +1,87 @@
+{
+  "schema": "issue173-adblock-service-source-oracle-v1",
+  "packages_feed_revision": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+  "recipe": {
+    "path": "net/adblock-fast/Makefile",
+    "git_blob": "8b3f12549826e4796e18a9bf7c6403fe05ca4dd2",
+    "sha256": "2fb9177f3f92056fff594af91a590db4ec3aa08f3a38b82ce90cdbec9511f20b",
+    "pkg_version": "1.2.4",
+    "pkg_release": "4",
+    "projected_package_version": "1.2.4-r4",
+    "projected_package_arch": "all"
+  },
+  "openwrt_revision": "4e9642517b48bae612ff10fb72fb9199e559500e",
+  "rules_mk_install_modes": {
+    "INSTALL_BIN": "0755",
+    "INSTALL_DATA": "0644",
+    "INSTALL_CONF": "0600"
+  },
+  "source_mapping": [
+    {
+      "source_path": "net/adblock-fast/files/etc/init.d/adblock-fast",
+      "git_mode": "100644",
+      "git_blob": "ecbd00488c5f9960ba3a3c5a290ee9f4532106c1",
+      "source_size": 5422,
+      "source_sha256": "630f27de08507520a03e1378c1a7018cb64bc7b499b0e7456cbc8697e80fa9e2",
+      "projected_member": "etc/init.d/adblock-fast",
+      "expected_member_mode": "0755",
+      "expected_member_sha256": "630f27de08507520a03e1378c1a7018cb64bc7b499b0e7456cbc8697e80fa9e2",
+      "expected_member_size": 5422,
+      "recipe_action": "install_bin",
+      "status": "source-first recipe projection; actual bytes and membership unobserved"
+    },
+    {
+      "source_path": "net/adblock-fast/files/lib/adblock-fast/adblock-fast.uc",
+      "git_mode": "100644",
+      "git_blob": "55cfd30bfb0849701ebae44705df23a29ed17f91",
+      "source_size": 113455,
+      "source_sha256": "19727b189472f380b9791b1fc37c4acdec60eea06650f7d845fea8fafbd49315",
+      "projected_member": "lib/adblock-fast/adblock-fast.uc",
+      "expected_member_mode": "0644",
+      "expected_member_sha256": "8bd395045ed87d7fe55db7760c623dcad51fc7c16052e83c3861da4f5d604c28",
+      "expected_member_size": 113455,
+      "recipe_action": "version_sed",
+      "status": "source-first recipe projection; actual bytes and membership unobserved"
+    },
+    {
+      "source_path": "net/adblock-fast/files/lib/adblock-fast/cli.uc",
+      "git_mode": "100644",
+      "git_blob": "6c6314531521cd25fc512aecfd0526b1d08eef75",
+      "source_size": 1683,
+      "source_sha256": "97d650438ffb335bdb575122225beb4057e551f5e1fc23cc53ad79f61198f7c9",
+      "projected_member": "lib/adblock-fast/cli.uc",
+      "expected_member_mode": "0644",
+      "expected_member_sha256": "97d650438ffb335bdb575122225beb4057e551f5e1fc23cc53ad79f61198f7c9",
+      "expected_member_size": 1683,
+      "recipe_action": "install_data",
+      "status": "source-first recipe projection; actual bytes and membership unobserved"
+    },
+    {
+      "source_path": "net/adblock-fast/files/etc/config/adblock-fast",
+      "git_mode": "100644",
+      "git_blob": "6ef939b8715dd942df32776388cdbf37f088932f",
+      "source_size": 4787,
+      "source_sha256": "f77f42b71bc2a0a320fc3ed53e133943cb3ea774d0af2e4d41b8210425dde79d",
+      "projected_member": "etc/config/adblock-fast",
+      "expected_member_mode": "0600",
+      "expected_member_sha256": "f77f42b71bc2a0a320fc3ed53e133943cb3ea774d0af2e4d41b8210425dde79d",
+      "expected_member_size": 4787,
+      "recipe_action": "install_conf",
+      "status": "source-first recipe projection; actual bytes and membership unobserved"
+    },
+    {
+      "source_path": "net/adblock-fast/files/etc/uci-defaults/90-adblock-fast",
+      "git_mode": "100644",
+      "git_blob": "f5c489ffcd62df9befaedc32672d94d1d0c7cba6",
+      "source_size": 4049,
+      "source_sha256": "eba9407687cdc89fba11df5fc9764c1adf0f149648d048a5e91fb98665137222",
+      "projected_member": "etc/uci-defaults/90-adblock-fast",
+      "expected_member_mode": "0755",
+      "expected_member_sha256": "eba9407687cdc89fba11df5fc9764c1adf0f149648d048a5e91fb98665137222",
+      "expected_member_size": 4049,
+      "recipe_action": "install_bin",
+      "status": "source-first recipe projection; actual bytes and membership unobserved"
+    }
+  ],
+  "scope_note": "Five recipe-installed source files only; enumerate and classify all package output including generated files, reject unexpected differences. No package build or output inspected."
+}
