@@ -1,4 +1,5 @@
 import importlib.util
+import hashlib
 from pathlib import Path
 import tempfile
 from types import SimpleNamespace
@@ -67,10 +68,44 @@ class RunnerTests(unittest.TestCase):
             (ow / '.config').write_bytes(b'changed config')
             (ow / 'tmp/.packagedeps').write_bytes(b'changed graph')
             probe = SimpleNamespace(root=root, out=output)
-            with self.assertRaisesRegex(ValueError, 'frozen Statistics config or graph differs'):
+            with self.assertRaisesRegex(ValueError, 'frozen Statistics config differs'):
                 runner.frozen_metadata(probe, 'sample')
             self.assertEqual((output / 'metadata-sample-config').read_bytes(), b'changed config')
             self.assertEqual((output / 'metadata-sample-packagedeps').read_bytes(), b'changed graph')
+
+    def test_exact_initial_graph_allowlist_and_in_run_lock(self):
+        self.assertEqual(runner.GRAPH_SHAS, frozenset({
+            '48bbf0a4525d53718fb8271f52857082e7917b09c268873706261b897ecf3b69',
+            '2f934e455a22f63289ebb82e87f59866f002167dae7418b5ed5464cf6a608a80',
+        }))
+        variants = (b'graph variant A\n', b'graph variant B\n')
+        digests = frozenset(hashlib.sha256(x).hexdigest() for x in variants)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            ow, output = root / 'openwrt', root / 'output'
+            (ow / 'tmp').mkdir(parents=True)
+            output.mkdir()
+            (ow / '.config').write_bytes(b'fixture config')
+            graph = ow / 'tmp/.packagedeps'
+            probe = SimpleNamespace(root=root, out=output)
+            with patch.object(runner, 'CONFIG_SHA', hashlib.sha256(b'fixture config').hexdigest()), patch.object(runner, 'GRAPH_SHAS', digests), patch.object(runner.check, 'validate_final_config'), patch.object(runner.check, 'validate_packagedeps'):
+                for index, variant in enumerate(variants):
+                    graph.write_bytes(variant)
+                    # Each separate run starts with the actual pre-build label.
+                    run_output = root / ('output-' + str(index))
+                    run_output.mkdir()
+                    probe.out = run_output
+                    _, chosen = runner.frozen_metadata(probe, 'pre-build')
+                    self.assertEqual(chosen, hashlib.sha256(variant).hexdigest())
+                    runner.frozen_metadata(probe, 'phase-before', chosen)
+                    graph.write_bytes(variants[1 - index])
+                    with self.assertRaisesRegex(ValueError, 'Statistics graph changed after initial lock'):
+                        runner.frozen_metadata(probe, 'phase-after', chosen)
+                    graph.write_bytes(variant + b'unexpected edge\n')
+                    probe.out = root / ('unexpected-' + str(index))
+                    probe.out.mkdir()
+                    with self.assertRaisesRegex(ValueError, 'initial Statistics graph not approved'):
+                        runner.frozen_metadata(probe, 'pre-build')
 
     def test_kernel_ipk_inventory_identity_and_ambiguity(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -129,11 +164,11 @@ class RunnerTests(unittest.TestCase):
                 ipk.write_bytes(b'ipk')
                 probe = SimpleNamespace(root=root, out=output, run=lambda: {'source_before': {}})
                 calls = []
-                def invoke(probe, label, target, sources):
+                def invoke(probe, label, target, sources, graph_lock):
                     calls.append(target)
                     if fail and target == 'package/kernel/linux/compile':
                         raise ValueError('missing kernel module')
-                with patch.object(runner, 'invoke_make', side_effect=invoke), patch.object(runner, 'host_preflight'), patch.object(runner, 'source_preflight'), patch.object(runner, 'frozen_metadata', return_value=b'config'), patch.object(runner.compare, 'load_oracle', return_value={}), patch.object(runner.compare, 'physical_directory'), patch.object(runner.compare, 'compare', return_value={}), patch.object(runner.kernel, 'inventory', return_value={'kernel': 'same'}), patch.object(runner, 'kernel_package_inventory', return_value={'kernel_test.ipk': 'same'}):
+                with patch.object(runner, 'invoke_make', side_effect=invoke), patch.object(runner, 'host_preflight'), patch.object(runner, 'source_preflight'), patch.object(runner, 'frozen_metadata', return_value=(b'config', 'locked')), patch.object(runner.compare, 'load_oracle', return_value={}), patch.object(runner.compare, 'physical_directory'), patch.object(runner.compare, 'compare', return_value={}), patch.object(runner.kernel, 'inventory', return_value={'kernel': 'same'}), patch.object(runner, 'kernel_package_inventory', return_value={'kernel_test.ipk': 'same'}):
                     if fail:
                         with self.assertRaisesRegex(ValueError, 'missing kernel module'):
                             runner.run_build(probe)
@@ -159,7 +194,7 @@ class RunnerTests(unittest.TestCase):
             probe.invoke = invoke
             with patch.object(runner, 'frozen_metadata') as guard, patch.object(runner.check, 'validate_link'), patch.object(runner, 'post_sources'):
                 with self.assertRaisesRegex(RuntimeError, 'selected kernel package generated empty'):
-                    runner.invoke_make(probe, 'kernel-compile', 'target/linux/compile', {})
+                    runner.invoke_make(probe, 'kernel-compile', 'target/linux/compile', {}, 'locked')
             self.assertEqual(guard.call_count, 2)
             self.assertEqual(calls[0][1][-4:], ['make', '-j2', 'target/linux/compile', 'V=s'])
 
@@ -173,7 +208,7 @@ class RunnerTests(unittest.TestCase):
             probe.invoke = invoke
             with patch.object(runner, 'frozen_metadata') as guard:
                 with self.assertRaisesRegex(RuntimeError, 'process not quiescent'):
-                    runner.invoke_make(probe, 'kernel-compile', 'target/linux/compile', {})
+                    runner.invoke_make(probe, 'kernel-compile', 'target/linux/compile', {}, 'locked')
             self.assertEqual(guard.call_count, 1)
 
 if __name__ == '__main__':
