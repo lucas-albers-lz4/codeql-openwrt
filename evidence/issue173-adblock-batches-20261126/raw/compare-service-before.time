@@ -1,0 +1,23 @@
+	Command being timed: "python3 -B /home/runner/work/codeql-openwrt/codeql-openwrt/tools/adblock-package-batches/compare.py --kind service --run-root /home/runner/work/_temp/issue173-adblock-batches --luci /home/runner/work/_temp/issue173-adblock-batches/luci --packages /home/runner/work/_temp/issue173-adblock-batches/packages --config-root /home/runner/work/_temp/issue173-adblock-batches/openwrt --config-sha256 8946db83b06e591ffd3ea9bf48e47595a40bdfb56fa8a1a45cfe8099cb3324d6 --stage /home/runner/work/_temp/issue173-adblock-batches/openwrt/build_dir/target-x86_64_musl/adblock-fast-1.2.4/ipkg-all/adblock-fast --ipk /home/runner/work/_temp/issue173-adblock-batches/output/adblock-fast.ipk --receipt /home/runner/work/_temp/issue173-adblock-batches/output/service-before.json"
+	User time (seconds): 0.10
+	System time (seconds): 0.22
+	Percent of CPU this job got: 117%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.27
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 21468
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 17012
+	Voluntary context switches: 232
+	Involuntary context switches: 52
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,229 @@
+{
+  "config": {
+    "config": {
+      "path": ".config",
+      "sha256": "8946db83b06e591ffd3ea9bf48e47595a40bdfb56fa8a1a45cfe8099cb3324d6"
+    },
+    "feeds": {
+      "path": "feeds.conf",
+      "sha256": "52b3e3c257411fc5de4caf088d2fab73a242ca33dfe182088113f217d0239848"
+    },
+    "js_minification": true,
+    "per_feed_repo": "CONFIG_PER_FEED_REPO=y"
+  },
+  "control": {
+    "Architecture": "all",
+    "Package": "adblock-fast",
+    "Version": "1.2.4-r4"
+  },
+  "control_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "conffiles",
+      "sha256": "4457174d49a4ec4c1e6d0d8aae487dc62319b0e2eb587106c945523f19309949",
+      "size": 25,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "control",
+      "sha256": "b6c6d924f14cda7f7c188043aa672a6972b8363237aa8fc2adb8c65d0c8835b1",
+      "size": 801,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst",
+      "sha256": "61511dd6dcc9e5ae9038f7ea8b0ecdf3bdd17612af012c3d9536e9aca03691df",
+      "size": 160,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "prerm",
+      "sha256": "41e62438f65308026184be1d4d931ae9100923e5ae97b146fb678e5b6cd0fc6c",
+      "size": 117,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "prerm-pkg",
+      "sha256": "4af28e6c8787badf2b595b5f69c5e821ec217353bf8ee8592169975d3349ee85",
+      "size": 178,
+      "type": "file"
+    }
+  ],
+  "data_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/config",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0600",
+      "path": "etc/config/adblock-fast",
+      "sha256": "f77f42b71bc2a0a320fc3ed53e133943cb3ea774d0af2e4d41b8210425dde79d",
+      "size": 4787,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/init.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/init.d/adblock-fast",
+      "sha256": "630f27de08507520a03e1378c1a7018cb64bc7b499b0e7456cbc8697e80fa9e2",
+      "size": 5422,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/uci-defaults",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/uci-defaults/90-adblock-fast",
+      "sha256": "eba9407687cdc89fba11df5fc9764c1adf0f149648d048a5e91fb98665137222",
+      "size": 4049,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "lib",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "lib/adblock-fast",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "lib/adblock-fast/adblock-fast.uc",
+      "sha256": "8bd395045ed87d7fe55db7760c623dcad51fc7c16052e83c3861da4f5d604c28",
+      "size": 113455,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "lib/adblock-fast/cli.uc",
+      "sha256": "97d650438ffb335bdb575122225beb4057e551f5e1fc23cc53ad79f61198f7c9",
+      "size": 1683,
+      "type": "file"
+    }
+  ],
+  "ipk_sha256": "b7fd7dee577d32a2485fb65bf6205629f07e415c488ddc4b999c3825d2719dd7",
+  "oracle_sha256": "ddbe34ee43f78824045ad60e1a114fd313b380ac7eaddb238407105603cd0758",
+  "outer_sha256": {
+    "control.tar.gz": "6a1c77a367ca48b914de3cb84c8c4036e0f99e8c583ebf760c4216c903739f18",
+    "data.tar.gz": "08ca8e270cbc2d4100b66d1472796e59eb41ffd229c48da9fc588e1d71ecd738",
+    "debian-binary": "d526eb4e878a23ef26ae190031b4efd2d58ed66789ac049ea3dbaf74c9df7402"
+  },
+  "package": "service",
+  "source_mappings": [
+    {
+      "disposition": "install_bin",
+      "ipk_mode": "0755",
+      "ipk_sha256": "630f27de08507520a03e1378c1a7018cb64bc7b499b0e7456cbc8697e80fa9e2",
+      "path": "etc/init.d/adblock-fast",
+      "prepared_mode": null,
+      "prepared_sha256": null,
+      "source_git_mode": "100644",
+      "source_sha256": "630f27de08507520a03e1378c1a7018cb64bc7b499b0e7456cbc8697e80fa9e2",
+      "staged_mode": "0755",
+      "staged_sha256": "630f27de08507520a03e1378c1a7018cb64bc7b499b0e7456cbc8697e80fa9e2",
+      "transform_provenance": "recipe_expected_hash"
+    },
+    {
+      "disposition": "version_sed",
+      "ipk_mode": "0644",
+      "ipk_sha256": "8bd395045ed87d7fe55db7760c623dcad51fc7c16052e83c3861da4f5d604c28",
+      "path": "lib/adblock-fast/adblock-fast.uc",
+      "prepared_mode": null,
+      "prepared_sha256": null,
+      "source_git_mode": "100644",
+      "source_sha256": "19727b189472f380b9791b1fc37c4acdec60eea06650f7d845fea8fafbd49315",
+      "staged_mode": "0644",
+      "staged_sha256": "8bd395045ed87d7fe55db7760c623dcad51fc7c16052e83c3861da4f5d604c28",
+      "transform_provenance": "recipe_expected_hash"
+    },
+    {
+      "disposition": "install_data",
+      "ipk_mode": "0644",
+      "ipk_sha256": "97d650438ffb335bdb575122225beb4057e551f5e1fc23cc53ad79f61198f7c9",
+      "path": "lib/adblock-fast/cli.uc",
+      "prepared_mode": null,
+      "prepared_sha256": null,
+      "source_git_mode": "100644",
+      "source_sha256": "97d650438ffb335bdb575122225beb4057e551f5e1fc23cc53ad79f61198f7c9",
+      "staged_mode": "0644",
+      "staged_sha256": "97d650438ffb335bdb575122225beb4057e551f5e1fc23cc53ad79f61198f7c9",
+      "transform_provenance": "recipe_expected_hash"
+    },
+    {
+      "disposition": "install_conf",
+      "ipk_mode": "0600",
+      "ipk_sha256": "f77f42b71bc2a0a320fc3ed53e133943cb3ea774d0af2e4d41b8210425dde79d",
+      "path": "etc/config/adblock-fast",
+      "prepared_mode": null,
+      "prepared_sha256": null,
+      "source_git_mode": "100644",
+      "source_sha256": "f77f42b71bc2a0a320fc3ed53e133943cb3ea774d0af2e4d41b8210425dde79d",
+      "staged_mode": "0600",
+      "staged_sha256": "f77f42b71bc2a0a320fc3ed53e133943cb3ea774d0af2e4d41b8210425dde79d",
+      "transform_provenance": "recipe_expected_hash"
+    },
+    {
+      "disposition": "install_bin",
+      "ipk_mode": "0755",
+      "ipk_sha256": "eba9407687cdc89fba11df5fc9764c1adf0f149648d048a5e91fb98665137222",
+      "path": "etc/uci-defaults/90-adblock-fast",
+      "prepared_mode": null,
+      "prepared_sha256": null,
+      "source_git_mode": "100644",
+      "source_sha256": "eba9407687cdc89fba11df5fc9764c1adf0f149648d048a5e91fb98665137222",
+      "staged_mode": "0755",
+      "staged_sha256": "eba9407687cdc89fba11df5fc9764c1adf0f149648d048a5e91fb98665137222",
+      "transform_provenance": "recipe_expected_hash"
+    }
+  ],
+  "source_pins": {
+    "luci": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4"
+  }
+}

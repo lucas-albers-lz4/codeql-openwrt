@@ -1,0 +1,169 @@
+{
+  "schema": "issue173-adblock-fast-source-oracle-v1",
+  "status": "source-first projection only; no build or output examined",
+  "source": {
+    "repository": "https://github.com/openwrt/luci.git",
+    "commit": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "tree": "1d7bf89bc8708fca69d005b0690ca823c9071692",
+    "clean_at_inspection": true
+  },
+  "baseline_inventory": {
+    "consumer_revision": "460c6ed45c445fbe9de199e324f08fc7542dc2bc",
+    "sha256": "91fcf7f84e2934a1df21c7438f898fb5cd097eb9f6cfde3bc80239369c0d7cbc"
+  },
+  "package": {
+    "name": "luci-app-adblock-fast",
+    "recipe": "applications/luci-app-adblock-fast/Makefile",
+    "recipe_blob": "37b49b58402a12a09f323d428b50a68695f4ce57",
+    "recipe_sha256": "7de3922a10944c8fa2f4a97b3f1d7d85db3aeb2f3404147f0df15430e26f0990",
+    "luci_mk_sha256": "9716c9a7a1c276b867df5887558e2b63b78f7d3695915adb7fcd0a7f0182ed0d",
+    "pkg_version": "1.2.4",
+    "pkg_release": "4",
+    "projected_package_version": "1.2.4-r4",
+    "declared_dependencies": [
+      "luci-base",
+      "adblock-fast",
+      "rpcd-mod-ucode"
+    ]
+  },
+  "build_pins": {
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+    "config": "CONFIG_TARGET_x86=y; CONFIG_TARGET_x86_64=y; CONFIG_PACKAGE_luci-app-adblock-fast=m; CONFIG_USE_APK=n",
+    "config_status": "proposed; defconfig and package output unknown"
+  },
+  "expected_source_inventory": {
+    "selected_ucode_rpcd": 1,
+    "unknown_extensionless_reviewed_as_shell_non_ucode": 2,
+    "auxiliary_acl_evidence": 2,
+    "auxiliary_menu": 1,
+    "auxiliary_htdocs_js": 3
+  },
+  "projected_files": [
+    {
+      "source_path": "applications/luci-app-adblock-fast/htdocs/luci-static/resources/adblock-fast/status.js",
+      "git_mode": "100644",
+      "git_blob": "99b200c9c0daf955ee554bffdf00359e1da90de9",
+      "source_sha256": "4e94751b8ca58b87fa1f12089d2dc796478ddd3cc86ec7f9522d2db6505cd665",
+      "source_bytes": 24714,
+      "first_line": "// Copyright MOSSDeF, 2023 Stan Grishin <stangri@melmac.ca>",
+      "projected_member_path": "www/luci-static/resources/adblock-fast/status.js",
+      "projected_mode_bits": 420,
+      "disposition": "auxiliary_htdocs_js",
+      "route_expectation": "not_selected",
+      "transform_expectation": "conditional JsMin on htdocs; source hash only until config/transform verified"
+    },
+    {
+      "source_path": "applications/luci-app-adblock-fast/htdocs/luci-static/resources/view/adblock-fast/overview.js",
+      "git_mode": "100644",
+      "git_blob": "1fcb782911116e56494484907de8a4145679dd04",
+      "source_sha256": "ac0678c6d1f1fa58fd1c1b603784d02f5381b6833ebeed59a3bdab60be0dc9b2",
+      "source_bytes": 32823,
+      "first_line": "// Copyright 2023 MOSSDeF, Stan Grishin <stangri@melmac.ca>",
+      "projected_member_path": "www/luci-static/resources/view/adblock-fast/overview.js",
+      "projected_mode_bits": 420,
+      "disposition": "auxiliary_htdocs_js",
+      "route_expectation": "not_selected",
+      "transform_expectation": "conditional JsMin on htdocs; source hash only until config/transform verified"
+    },
+    {
+      "source_path": "applications/luci-app-adblock-fast/htdocs/luci-static/resources/view/status/include/70_adblock-fast.js",
+      "git_mode": "100644",
+      "git_blob": "bec206e2a4d84259a5ac50fad07442e22f5a4141",
+      "source_sha256": "b4a5a4ccfbbb1b028252eab9d8fa2236cdb4e7e2b292066258cea40119255109",
+      "source_bytes": 1820,
+      "first_line": "\"require ui\";",
+      "projected_member_path": "www/luci-static/resources/view/status/include/70_adblock-fast.js",
+      "projected_mode_bits": 420,
+      "disposition": "auxiliary_htdocs_js",
+      "route_expectation": "not_selected",
+      "transform_expectation": "conditional JsMin on htdocs; source hash only until config/transform verified"
+    },
+    {
+      "source_path": "applications/luci-app-adblock-fast/root/etc/uci-defaults/40_luci-adblock-fast",
+      "git_mode": "100644",
+      "git_blob": "ef86c35544079fa80b29691780a5aa9b1ea23283",
+      "source_sha256": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36",
+      "source_bytes": 742,
+      "first_line": "#!/bin/sh",
+      "projected_member_path": "etc/uci-defaults/40_luci-adblock-fast",
+      "projected_mode_bits": 420,
+      "disposition": "excluded_shell_route_control",
+      "route_expectation": "no_ucode_route",
+      "transform_expectation": "root/ copy: source byte equality projected, not observed"
+    },
+    {
+      "source_path": "applications/luci-app-adblock-fast/root/etc/uci-defaults/95_adblock-fast-api",
+      "git_mode": "100644",
+      "git_blob": "d16ecfa7a7fb5ee9bc374bec5ac303268bc96182",
+      "source_sha256": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18",
+      "source_bytes": 1198,
+      "first_line": "#!/bin/sh",
+      "projected_member_path": "etc/uci-defaults/95_adblock-fast-api",
+      "projected_mode_bits": 420,
+      "disposition": "excluded_shell_second_control",
+      "route_expectation": "no_ucode_route",
+      "transform_expectation": "root/ copy: source byte equality projected, not observed"
+    },
+    {
+      "source_path": "applications/luci-app-adblock-fast/root/usr/share/luci/menu.d/luci-app-adblock-fast.json",
+      "git_mode": "100644",
+      "git_blob": "542a75988c3f2af175565eba0b9fa644ee78e096",
+      "source_sha256": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53",
+      "source_bytes": 248,
+      "first_line": "{",
+      "projected_member_path": "usr/share/luci/menu.d/luci-app-adblock-fast.json",
+      "projected_mode_bits": 420,
+      "disposition": "auxiliary_menu",
+      "route_expectation": "not_selected",
+      "transform_expectation": "root/ copy: source byte equality projected, not observed"
+    },
+    {
+      "source_path": "applications/luci-app-adblock-fast/root/usr/share/rpcd/acl.d/adblock-fast-api.json",
+      "git_mode": "100644",
+      "git_blob": "cb8d983e60eb6449d3dc2e1190ff9da324207497",
+      "source_sha256": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed",
+      "source_bytes": 277,
+      "first_line": "{",
+      "projected_member_path": "usr/share/rpcd/acl.d/adblock-fast-api.json",
+      "projected_mode_bits": 420,
+      "disposition": "auxiliary_acl_evidence",
+      "route_expectation": "not_selected",
+      "transform_expectation": "root/ copy: source byte equality projected, not observed"
+    },
+    {
+      "source_path": "applications/luci-app-adblock-fast/root/usr/share/rpcd/acl.d/luci-app-adblock-fast.json",
+      "git_mode": "100644",
+      "git_blob": "aaa3023289e8b17076f47eda59faa50c8e54134a",
+      "source_sha256": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d",
+      "source_bytes": 636,
+      "first_line": "{",
+      "projected_member_path": "usr/share/rpcd/acl.d/luci-app-adblock-fast.json",
+      "projected_mode_bits": 420,
+      "disposition": "auxiliary_acl_evidence",
+      "route_expectation": "not_selected",
+      "transform_expectation": "root/ copy: source byte equality projected, not observed"
+    },
+    {
+      "source_path": "applications/luci-app-adblock-fast/root/usr/share/rpcd/ucode/luci.adblock-fast",
+      "git_mode": "100644",
+      "git_blob": "f7062814454328a5dd0bdbe7d7e724c410c95ae3",
+      "source_sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+      "source_bytes": 23660,
+      "first_line": "// SPDX-License-Identifier: AGPL-3.0-or-later",
+      "projected_member_path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "projected_mode_bits": 420,
+      "disposition": "selected_ucode_rpcd",
+      "route_expectation": "plain:rpcd_raw_mode_full_path",
+      "transform_expectation": "root/ copy: source byte equality projected, not observed"
+    }
+  ],
+  "caveats": [
+    "candidate paths and expected bytes are recipe projections, not package membership",
+    "enumerate all archive members, generated/transformed/unknown and extras; fail closed on unsafe/duplicate/special entries",
+    "actual stage and package modes, PKG version and minification config remain unknown",
+    "translations may produce separate packages; no src/ucode/luasrc subtree at this pin",
+    "shell near miss must be explicitly selected to a future classifier check; it must not be silently filtered",
+    "companion adblock-fast package and rpcd are separate dependencies; no runtime or semantic claim"
+  ]
+}

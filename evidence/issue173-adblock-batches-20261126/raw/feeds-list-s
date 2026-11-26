@@ -1,0 +1,2 @@
+luci       src-link local    ../../luci
+packages   src-link local    ../../packages

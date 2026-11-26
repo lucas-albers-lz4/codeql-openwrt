@@ -1,0 +1,2 @@
+b7fd7dee577d32a2485fb65bf6205629f07e415c488ddc4b999c3825d2719dd7  /home/runner/work/_temp/issue173-adblock-batches/output/adblock-fast.ipk
+b3d18c736a970f0ba17919e1249c837dae393b04f5ec541950a6cce737110e0f  /home/runner/work/_temp/issue173-adblock-batches/output/luci-app-adblock-fast.ipk

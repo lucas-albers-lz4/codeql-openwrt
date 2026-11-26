@@ -1,0 +1,23 @@
+	Command being timed: "make -j2 tools/install V=s"
+	User time (seconds): 2914.37
+	System time (seconds): 521.50
+	Percent of CPU this job got: 297%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 19:15.18
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 534520
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 5097
+	Minor (reclaiming a frame) page faults: 113305680
+	Voluntary context switches: 774701
+	Involuntary context switches: 1059266
+	Swaps: 0
+	File system inputs: 1003480
+	File system outputs: 6105000
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
