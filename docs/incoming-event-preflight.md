@@ -27,6 +27,10 @@ signals, changed exclusions and unresolved candidates. These comparisons do
 not infer install recipes or full source coverage, invoke the released
 producer, or pass SARIF to the consumer. They do not establish Gate 8 or
 security behavior.
+The following [source-first event corpus oracle](event-corpus-manifest.md)
+refreshes selected Git blobs and hashes from the verified head and checks
+routes before extraction. It remains an input contract for a later released
+scanner job.
 On changes to the workflow, selector, resolver, tests or v0.6 manifest, a
 separate pull-request contract job runs the resolver and selector controls.
 It does not fetch upstream source or execute the manual drill.
@@ -38,6 +42,7 @@ Run the mechanical tests with:
 ```sh
 python3 -B -m unittest policy.tests.test_incoming_event -v
 python3 -B tools/test_full_tree_candidates.py -v
+python3 -B -m unittest tools.test_event_corpus_manifest -v
 ```
 
 The tests use temporary local Git repositories and mocked pull API JSON; they
