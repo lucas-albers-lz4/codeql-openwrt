@@ -89,6 +89,15 @@ def validate_release_state(release: dict, published: dict, immutability: dict) -
          "GitHub release prerelease status mismatch")
 
 
+def historical_event_manifest(acceptance: dict) -> dict:
+    need(acceptance.get("schema") == "ucode-sarif-acceptance-v1" and
+         isinstance(acceptance.get("expected_results"), list),
+         "invalid source-first historical oracle")
+    return {key: value for key, value in acceptance.items() if key != "expected_results"} | {
+        "schema": "ucode-sarif-event-triage-v1"
+    }
+
+
 class Run:
     def __init__(self, root: Path, run_id: str):
         need(not root.exists(), f"run root already exists: {root}")
@@ -330,6 +339,7 @@ def run_handoff(lock_path: Path, run_root: Path, run_id: str) -> None:
         out = run.root / "out" / name
         out.mkdir()
         write_json(out / "source-first-manifest.json", acceptance)
+        write_json(out / "historical-event-manifest.json", historical_event_manifest(acceptance))
         db = run.root / "db" / name
         db_cache = run.root / "cache" / "database" / name
         common = run.root / "cache" / "query" / name
@@ -372,9 +382,18 @@ def run_handoff(lock_path: Path, run_root: Path, run_id: str) -> None:
         accepted = run.call(f"{name}-accept", [sys.executable, "-B", ROOT / "tools/sarif_accept.py", "--sarif", sarif,
                         "--manifest", out / "source-first-manifest.json", "--receipt", out / "producer-receipt.json", "--source-root", stage])
         (out / "accepted.json").write_text(accepted)
+        event_triage = run.call(f"{name}-event-triage", [sys.executable, "-B", ROOT / "tools/sarif_accept.py",
+                      "--sarif", sarif, "--manifest", out / "historical-event-manifest.json",
+                      "--receipt", out / "producer-receipt.json", "--source-root", stage, "--event-triage"])
+        (out / "historical-event-triage.json").write_text(event_triage)
+        event_result = json.loads(event_triage)
+        need(event_result.get("status") == ("triage_required" if name == "openvpn-parent" else "clean_scan") and
+             event_result.get("result_count") == len(case["expected_results"]) and
+             event_result.get("results_for_triage") == case["expected_results"],
+             "historical event triage differs from source-first oracle")
         summary["cases"][name] = {"source": source_receipt, "routing_sha256": digest(out / "routing.json"),
                                   "successful_files": successful, "extraction_errors": [], "sarif_sha256": digest(sarif),
-                                  "accepted": json.loads(accepted)}
+                                  "accepted": json.loads(accepted), "historical_event_triage": event_result}
         write_json(run.root / "receipt.json", summary)
     need(set(summary["cases"]) == {"openvpn-parent", "openvpn-fixed"}, "case set incomplete")
     summary["status"] = "accepted"

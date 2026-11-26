@@ -5,8 +5,8 @@ import tempfile
 import unittest
 import zipfile
 
-from tools.r3_linux_handoff import (bootstrap_verified_release, pinned, run_handoff,
-                                    safe_unzip, validate_release_state)
+from tools.r3_linux_handoff import (bootstrap_verified_release, historical_event_manifest,
+                                    pinned, run_handoff, safe_unzip, validate_release_state)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -30,6 +30,21 @@ def populated_lock(expected_prerelease=True, artifact_kind="versioned-release"):
 
 
 class R3LinuxHandoffTests(unittest.TestCase):
+    def test_historical_event_manifest_is_source_first_without_result_expectation(self):
+        acceptance = {"schema": "ucode-sarif-acceptance-v1",
+                      "producer": {"sha": "a" * 40},
+                      "sources": [{"uri": "usr/share/rpcd/ucode/luci.openvpn.uc", "sha256": "b" * 64}],
+                      "expected_extracted": ["usr/share/rpcd/ucode/luci.openvpn.uc"],
+                      "expected_rules": ["ucode/m4/direct-rpc-shell-word"],
+                      "expected_sarif_descriptors": ["ucode/m4/direct-rpc-shell-word"],
+                      "expected_results": [{"rule_id": "ucode/m4/direct-rpc-shell-word"}]}
+        event = historical_event_manifest(acceptance)
+        self.assertEqual(event["schema"], "ucode-sarif-event-triage-v1")
+        self.assertNotIn("expected_results", event)
+        self.assertEqual(event["sources"], acceptance["sources"])
+        self.assertEqual(event["producer"], acceptance["producer"])
+        self.assertIn("expected_results", acceptance)
+
     def test_unpopulated_release_lock_fails_before_run_creation(self):
         with tempfile.TemporaryDirectory() as temp:
             run_root = Path(temp) / "run"
