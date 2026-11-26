@@ -1,0 +1,640 @@
+{
+  "archive_control_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "control",
+      "sha256": "864f2628593d2a4be3a0ec6e66cc99fc1eeed553b77b676de8105b1f90a149de",
+      "size": 767,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst",
+      "sha256": "61511dd6dcc9e5ae9038f7ea8b0ecdf3bdd17612af012c3d9536e9aca03691df",
+      "size": 160,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst-pkg",
+      "sha256": "ab1fbeaaef80ce81cc4a8e403d96ff0e564088417d52e735c7c4a1adb4cc7a95",
+      "size": 138,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "prerm",
+      "sha256": "41e62438f65308026184be1d4d931ae9100923e5ae97b146fb678e5b6cd0fc6c",
+      "size": 117,
+      "type": "file"
+    }
+  ],
+  "archive_data_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/uci-defaults",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "etc/uci-defaults/40_luci-advanced-reboot",
+      "sha256": "7a99ff784bf442d5abc8880f5500e4200fb1f2afd6440ee5ddafc74bb87d0c5d",
+      "size": 127,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/advanced-reboot",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/advanced-reboot/devices.json",
+      "sha256": "83338e92781a1535df23cc255cf76fdafd2a3fbaf21c6a64b0ef6c93e735c548",
+      "size": 25061,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/advanced-reboot/helpers",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/advanced-reboot/helpers/linksys-mx6200.sh",
+      "sha256": "b437c3cd662e95cb2c75ec6bdb23f9e81e975d037b1e8caa4cc2393605a7d516",
+      "size": 473,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci/menu.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/menu.d/luci-app-advanced-reboot.json",
+      "sha256": "8b05f5772f7c00912a6c028724d5a7e052231ea65b2fce8d6e66eb59981bda85",
+      "size": 221,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/acl.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/acl.d/luci-app-advanced-reboot.json",
+      "sha256": "e0b17bd9784e460b069bb18439738ace608571b085db90c5bc3e0517073d7282",
+      "size": 360,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/ucode",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/ucode/luci.advanced-reboot",
+      "sha256": "b6b5562036c1f2f93ec9ea9261943a17d667d5a742c71ce128ec4859279d4b11",
+      "size": 21454,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/system",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/system/advanced-reboot.js",
+      "sha256": "106aa28e80de43230b2e2b758a0d1c157296b103fa9e58a8fec509e8b27fc1c9",
+      "size": 9381,
+      "type": "file"
+    }
+  ],
+  "built_ipk_path": "bin/packages/x86_64/luci/luci-app-advanced-reboot_1.1.2-r6_all.ipk",
+  "built_ipk_sha256": "0748aa14823d95241d52fb63a97c561beb3e3a4e9366c139ab0cd20226f7ee5b",
+  "config": {
+    "config": {
+      "path": ".config",
+      "sha256": "80d8c0b67b7dfd176068b06ea3e0abb8c99cc93fdc365555e5a131e48056cbcb"
+    },
+    "css_minification": true,
+    "dependency_modes": {
+      "ddns-scripts": "m",
+      "jshn": "y",
+      "rpcd-mod-iwinfo": "m",
+      "ucode": "y",
+      "ucode-mod-fs": "y",
+      "ucode-mod-ubus": "y"
+    },
+    "feeds": {
+      "path": "feeds.conf",
+      "sha256": "52b3e3c257411fc5de4caf088d2fab73a242ca33dfe182088113f217d0239848"
+    },
+    "js_minification": true,
+    "per_feed_repo": "CONFIG_PER_FEED_REPO=y"
+  },
+  "control": {
+    "Architecture": "all",
+    "Package": "luci-app-advanced-reboot",
+    "Version": "1.1.2-r6"
+  },
+  "ipk_sha256": "0748aa14823d95241d52fb63a97c561beb3e3a4e9366c139ab0cd20226f7ee5b",
+  "js_minification_enabled": true,
+  "members": [
+    {
+      "classification": "auxiliary_htdocs_js",
+      "ipk_mode": "0644",
+      "ipk_sha256": "106aa28e80de43230b2e2b758a0d1c157296b103fa9e58a8fec509e8b27fc1c9",
+      "path": "www/luci-static/resources/view/system/advanced-reboot.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "31b090ed382455668bec936df8b173c56be4642298ffcdd37bd600e7a9a3ae04",
+      "source_git_blob": "92b6ba6f72531087dfdee04ae8e0aeed118c0c0b",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-advanced-reboot/htdocs/luci-static/resources/view/system/advanced-reboot.js",
+      "source_sha256": "31b090ed382455668bec936df8b173c56be4642298ffcdd37bd600e7a9a3ae04",
+      "stage_mode": "0644",
+      "stage_sha256": "106aa28e80de43230b2e2b758a0d1c157296b103fa9e58a8fec509e8b27fc1c9",
+      "transform_provenance": "js_minification_unverified"
+    },
+    {
+      "classification": "extensionless installed-root candidate: unsupported/unknown",
+      "ipk_mode": "0644",
+      "ipk_sha256": "7a99ff784bf442d5abc8880f5500e4200fb1f2afd6440ee5ddafc74bb87d0c5d",
+      "path": "etc/uci-defaults/40_luci-advanced-reboot",
+      "prepared_mode": "0644",
+      "prepared_sha256": "7a99ff784bf442d5abc8880f5500e4200fb1f2afd6440ee5ddafc74bb87d0c5d",
+      "source_git_blob": "b42fa5859fb2691e1092d6aad5f3208b2ae4d180",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-advanced-reboot/root/etc/uci-defaults/40_luci-advanced-reboot",
+      "source_sha256": "7a99ff784bf442d5abc8880f5500e4200fb1f2afd6440ee5ddafc74bb87d0c5d",
+      "stage_mode": "0644",
+      "stage_sha256": "7a99ff784bf442d5abc8880f5500e4200fb1f2afd6440ee5ddafc74bb87d0c5d",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "auxiliary_root",
+      "ipk_mode": "0755",
+      "ipk_sha256": "b437c3cd662e95cb2c75ec6bdb23f9e81e975d037b1e8caa4cc2393605a7d516",
+      "path": "usr/share/advanced-reboot/helpers/linksys-mx6200.sh",
+      "prepared_mode": "0755",
+      "prepared_sha256": "b437c3cd662e95cb2c75ec6bdb23f9e81e975d037b1e8caa4cc2393605a7d516",
+      "source_git_blob": "0c0ceb26ad069353f16a5e73a268597474267d03",
+      "source_git_mode": "100755",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/helpers/linksys-mx6200.sh",
+      "source_sha256": "b437c3cd662e95cb2c75ec6bdb23f9e81e975d037b1e8caa4cc2393605a7d516",
+      "stage_mode": "0755",
+      "stage_sha256": "b437c3cd662e95cb2c75ec6bdb23f9e81e975d037b1e8caa4cc2393605a7d516",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "auxiliary_menu",
+      "ipk_mode": "0644",
+      "ipk_sha256": "8b05f5772f7c00912a6c028724d5a7e052231ea65b2fce8d6e66eb59981bda85",
+      "path": "usr/share/luci/menu.d/luci-app-advanced-reboot.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "8b05f5772f7c00912a6c028724d5a7e052231ea65b2fce8d6e66eb59981bda85",
+      "source_git_blob": "d3e865832216ec6d00dad3bd45f645f74e555aa2",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-advanced-reboot/root/usr/share/luci/menu.d/luci-app-advanced-reboot.json",
+      "source_sha256": "8b05f5772f7c00912a6c028724d5a7e052231ea65b2fce8d6e66eb59981bda85",
+      "stage_mode": "0644",
+      "stage_sha256": "8b05f5772f7c00912a6c028724d5a7e052231ea65b2fce8d6e66eb59981bda85",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "auxiliary_acl",
+      "ipk_mode": "0644",
+      "ipk_sha256": "e0b17bd9784e460b069bb18439738ace608571b085db90c5bc3e0517073d7282",
+      "path": "usr/share/rpcd/acl.d/luci-app-advanced-reboot.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "e0b17bd9784e460b069bb18439738ace608571b085db90c5bc3e0517073d7282",
+      "source_git_blob": "281d59c8d24996c4c880c4baf99ce2c3a0f8c089",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-advanced-reboot/root/usr/share/rpcd/acl.d/luci-app-advanced-reboot.json",
+      "source_sha256": "e0b17bd9784e460b069bb18439738ace608571b085db90c5bc3e0517073d7282",
+      "stage_mode": "0644",
+      "stage_sha256": "e0b17bd9784e460b069bb18439738ace608571b085db90c5bc3e0517073d7282",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "selected source candidate",
+      "ipk_mode": "0644",
+      "ipk_sha256": "b6b5562036c1f2f93ec9ea9261943a17d667d5a742c71ce128ec4859279d4b11",
+      "path": "usr/share/rpcd/ucode/luci.advanced-reboot",
+      "prepared_mode": "0644",
+      "prepared_sha256": "b6b5562036c1f2f93ec9ea9261943a17d667d5a742c71ce128ec4859279d4b11",
+      "source_git_blob": "f903b6297ea68b43398f5e091e2409f5e162edf7",
+      "source_git_mode": "100644",
+      "source_inputs": [],
+      "source_path": "applications/luci-app-advanced-reboot/root/usr/share/rpcd/ucode/luci.advanced-reboot",
+      "source_sha256": "b6b5562036c1f2f93ec9ea9261943a17d667d5a742c71ce128ec4859279d4b11",
+      "stage_mode": "0644",
+      "stage_sha256": "b6b5562036c1f2f93ec9ea9261943a17d667d5a742c71ce128ec4859279d4b11",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "classification": "generated_advanced_devices",
+      "ipk_mode": "0644",
+      "ipk_sha256": "83338e92781a1535df23cc255cf76fdafd2a3fbaf21c6a64b0ef6c93e735c548",
+      "path": "usr/share/advanced-reboot/devices.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "83338e92781a1535df23cc255cf76fdafd2a3fbaf21c6a64b0ef6c93e735c548",
+      "source_git_blob": null,
+      "source_git_mode": null,
+      "source_inputs": [
+        {
+          "git_blob": "77547d94d2bc74d5d2a274378c368c2e91fb9cbb",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/dlink-fgs1210-28.json",
+          "source_sha256": "ae8b9ff75b935752812cb09fc4b2de0798de7462e1a04e530c90a62a6c57b659"
+        },
+        {
+          "git_blob": "29c0d4702febfeef17e31bfe064bd3e145385cf9",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-e4200v2-ea4500.json",
+          "source_sha256": "69d056481392b38f0656c03e72e92d511069059e2f21c12fe14b2d2bd87d0850"
+        },
+        {
+          "git_blob": "b691cbeeddb8bbbc67bf965692ecbd364d3ca70c",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-e4200v2.json",
+          "source_sha256": "9985f12bf30ea500801f7d78f500b046d28b431a1454c36834e9db9eddee7e1c"
+        },
+        {
+          "git_blob": "5a53dc6ce2d03d7dfcd94efdfe22d6b9416f1d09",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-e7350.json",
+          "source_sha256": "41828710b1a2ec643d64567a9f93d66430898533d7b7d949556afe9a97e23ac1"
+        },
+        {
+          "git_blob": "a7332d45e7e2d28abaee201a3854233a65ddf477",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea3500.json",
+          "source_sha256": "7abb96dfa2d62d2c430c710a63c7191c63e85cdc4fa1a2973833bfa984b5670b"
+        },
+        {
+          "git_blob": "6aeb3ccee5d012c9abe9bddf1570ac08ab50833d",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea4500.json",
+          "source_sha256": "7b309b45cfd4f9fd286cc03c40ed393443820d792f69461c539fcdc016949da8"
+        },
+        {
+          "git_blob": "f7e0f1106abb9ae78c6a6ec94b0cedbde5983b8c",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea6350v3.json",
+          "source_sha256": "b8111408ba71f99e471cc770920a34db94409ddb95d16b0e0fd8b4de3ff3739e"
+        },
+        {
+          "git_blob": "ee475eb0f5c7056c4dfb1688075d68ee86c99f6f",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea6350v4.json",
+          "source_sha256": "da37a5dd08decbf49b2ffc198212837be25ef00b041accdc2188078a8b284dd9"
+        },
+        {
+          "git_blob": "31d8fee763d7e654563d135ea086b2ba0ac3043c",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea7300v1.json",
+          "source_sha256": "f6ed4d09827b25c689568d31c04819b7f53ad4d0f2f78968b74b1230f6b45e38"
+        },
+        {
+          "git_blob": "b79d552b8e95c27155ae28c8acc408e737f99cb1",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea7300v2.json",
+          "source_sha256": "782bd0b5c9c13d57405a0828c97c97c132c9aff55f93d5427b149a1f9e0a9091"
+        },
+        {
+          "git_blob": "7bfcbde6f6f4af03effd26ee50656f0809305ad4",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea7500v1.json",
+          "source_sha256": "96557dc70bafb987c5ae2ed6c00fa775570341404a9cd7ac03889a7668d96dee"
+        },
+        {
+          "git_blob": "2ed0b3dc69059268ff1a8936df2574e5368cb676",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea7500v2.json",
+          "source_sha256": "8da4f087e37c9f3a09cbe1dd426177c266806e40223aa73e830e4357b420e968"
+        },
+        {
+          "git_blob": "ca19a310ac59e5f2b36b4aa0e20d74a72b2ffa80",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea7500v3.json",
+          "source_sha256": "01df9e7013218ac9898871376bdbe6067b96fd7c70f360ed8954297f1f74cde9"
+        },
+        {
+          "git_blob": "5cfe6c63437249fea4bc9a4036505e8415125f71",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea8100v1.json",
+          "source_sha256": "c122b9fde04917e3be845c439805c29a4331ab346f28fff587ddb7f328c7e672"
+        },
+        {
+          "git_blob": "9e655ecbb224cf5b6a72bffe7c69715ffee0cc90",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea8100v2.json",
+          "source_sha256": "7405b2ccbf4ece7cfbfa87040a3effc3cfdd67cb1da0b86fbfcce38a7d99328a"
+        },
+        {
+          "git_blob": "d7f61d3985e036476db9fa0a02e86151021c2b98",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea8300.json",
+          "source_sha256": "1f1a2d6e1f1c8489d4181dec8389f5d8c4109a0fcab26c1deb4bb405b67d0292"
+        },
+        {
+          "git_blob": "a70e40195885a4df14dd5822b3c7beafcece7684",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-ea8500.json",
+          "source_sha256": "5fbc2c5460d465368b192248d6cddeba566b72dee000d5993e36fc533918e101"
+        },
+        {
+          "git_blob": "b0754c474edc10f1394460e834715de35926bdca",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mr5500.json",
+          "source_sha256": "65dc09e13da5d851a5a267b8438b349ce2b96c8a4ac7f225b5244f2e2bdddc8c"
+        },
+        {
+          "git_blob": "9d500c364ba13baded6f0019f9da9df2e1479c61",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mr7350.json",
+          "source_sha256": "1f5cf3a06fa94f41c5c76871bd22214ef6914e3d7984aaab0113c2684ddc930f"
+        },
+        {
+          "git_blob": "2353f64ec1647c25c0285162f6a3d43ae690c0e4",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mr7500.json",
+          "source_sha256": "cac59f314767f884e42b77dd91358d14d95c01ece75ddbb99a904b4cf0493f75"
+        },
+        {
+          "git_blob": "3a66e32a12841eb5364d33940ead7391ff1e41a8",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mr8300.json",
+          "source_sha256": "c1db348086ac5aa11cc2d153f115e30835b8a99a4b7ec03ff13777abadf4342e"
+        },
+        {
+          "git_blob": "ae89fd86aaa5b8c64fd2591d690bfaa5e4279c3f",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mr9000.json",
+          "source_sha256": "901dc2f3979ed9655687c434680bd094b0487ec2079e274ed9e641cf643fea88"
+        },
+        {
+          "git_blob": "f0bf3e5b5abf5297e5a8afdfd8db4a3bd753f0f8",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mx2000.json",
+          "source_sha256": "8029686e1fe8fc6feb2857a1cf60f23b39ed4e1eeb4c6b0f834d954e8288918f"
+        },
+        {
+          "git_blob": "0be21758f429f5871911bf1872127d2cc68bdb4e",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mx4200v1.json",
+          "source_sha256": "a5b7e38ae073d8f823c75b94b6f32e9a47d8f4d52c9790035c87d2a43e2dcdc6"
+        },
+        {
+          "git_blob": "d1eaa653acb2dfac5377c8c1dae0efc0efa3fa9b",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mx4200v2.json",
+          "source_sha256": "39f38c313651f81178ce7adb052b992597e4b37cba41439ac776b30cbe4fa6ca"
+        },
+        {
+          "git_blob": "84fc45e56c40a4b667b666604cd40554288114ee",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mx4300.json",
+          "source_sha256": "ac0f0e7e811d37ceda434d2cde63dbb57ebb928225a9374fb2e497f2d43cf58c"
+        },
+        {
+          "git_blob": "6d7d78c6c870e6abf07a0ded6a3e5bb049ba5b4c",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mx5300.json",
+          "source_sha256": "b4a5d3bc516c51bcbb63a856067c55f0334d63bb9e8b9663af932a6a0d40bb71"
+        },
+        {
+          "git_blob": "e79c1f583955b66d50640e434ac64e64e4daf282",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mx5500.json",
+          "source_sha256": "75aab07ad8a8fc479b182720af69a05c33ee21a9766520cf6e7d522a3fe2905e"
+        },
+        {
+          "git_blob": "56b7a4f00ca9394ba37d3b32185c4fd4bb844482",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mx6200.json",
+          "source_sha256": "9b3bf89b68abacc0e95f42298cf24148f4ebf1b2a6d0d984a25fe9f74644676c"
+        },
+        {
+          "git_blob": "5b976d8cd754474d077f7d53709a45832057c3b2",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-mx8500.json",
+          "source_sha256": "a14c2642854fba976ec2880266c27f0b8f53e7e25cd64bae823b34c30bce71f2"
+        },
+        {
+          "git_blob": "110cddef380ef136e8c5de33c86e44753b3e65da",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-spnmx56.json",
+          "source_sha256": "cf794264b3467795b0720a8c0c7c7c8e545f2c646b156831b306f22d0eb39d39"
+        },
+        {
+          "git_blob": "962b7b3993038eed85adc46a239d4b4c7684c209",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-whw01v1.json",
+          "source_sha256": "02d982a5654abfa9205c939c8eda7f3aa23ab64bd3642ea15e98834409ce6495"
+        },
+        {
+          "git_blob": "cc7fd86cc13022ed824f34ba53162411fc1b995a",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-whw03.json",
+          "source_sha256": "f518ecef3ebf557d9c1c26635a4f7ee241a8b73dbbe33d13244e751751d3f041"
+        },
+        {
+          "git_blob": "748f2e25acdde0ee89d57fa3f8789ef920720d7d",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-whw03v2.json",
+          "source_sha256": "510847b71e13b1e3e13f7deda3e5c3338f931781a6a891ab301e12a656e36d3b"
+        },
+        {
+          "git_blob": "438422904eea64f25f85ff37fb6197ec866a8b9c",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-wrt1200ac.json",
+          "source_sha256": "e0b558e35d003d59bb4b9a1fb40b6e9438194729ad0cf8be83525cd20fa4e44d"
+        },
+        {
+          "git_blob": "c8289f105a3a720c3b492cd354e5b2f84dcb332e",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-wrt1900ac.json",
+          "source_sha256": "4eb081d776115a8f2bed685fb10ecba719d0e6acfa90d4caa757bc700cf5da26"
+        },
+        {
+          "git_blob": "8c5b0575b9b854c7c5eb3ecff38e951e9928a400",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-wrt1900acs.json",
+          "source_sha256": "f6835284ae778230accba4adff5516931892538ae30f78baae9656a645e3c10c"
+        },
+        {
+          "git_blob": "6749cc4c190e9615e71ca84f6544f4c2531150df",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-wrt1900acv2.json",
+          "source_sha256": "3607a3524d51805b1e4cf6be08f085556620589182669d53a7b8df4247b0b0f4"
+        },
+        {
+          "git_blob": "9c69fffdd70dc5f72603dc821f7d258213ec26a6",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-wrt3200acm.json",
+          "source_sha256": "3cd123a2e96fbd878e1de2bb9a87294b6738ac2f88a294b90cc25519d1d30c9f"
+        },
+        {
+          "git_blob": "84028d09f10409965aeeed89f5042dd7c8283920",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/linksys-wrt32x.json",
+          "source_sha256": "37725bde418ea7a9ed6af35325dce55cdf0b334cf6c09a0208bc4e8e3fa73c8d"
+        },
+        {
+          "git_blob": "3c020a5eccab7c4d4202bf0aeb0c94b4e21eeaf6",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/mercusys-mr90xv1.json",
+          "source_sha256": "803460cc70eca487fa961eb720da6e04898bccc4d0c0f4d262f4615508637e58"
+        },
+        {
+          "git_blob": "10b53126c8d6c96e60023222ae0bcaf7bcbdc7c6",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/netgear-gs308t-v1.json",
+          "source_sha256": "04deb0957e89d035023eb2d3c5677ca5e5e4ff7f54edf11175491db0b61e36c2"
+        },
+        {
+          "git_blob": "fedf46fdb353b0aa1a2b88cd6480314aac6d0dc4",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/zyxel-nbg6817.json",
+          "source_sha256": "ccf0649b2e6896ef28a0c3b7d6d17762e5371841c898fa20f970baf1fe21b758"
+        },
+        {
+          "git_blob": "5e7bd5e7ea52621a1672d0481e06f52bb75a06c8",
+          "git_mode": "100644",
+          "source_path": "applications/luci-app-advanced-reboot/root/usr/share/advanced-reboot/devices/zyxel-wsm20.json",
+          "source_sha256": "8c2a5b166282c76de121ee7e1d3fb05d44fc30e09819c6560505effc0914b044"
+        }
+      ],
+      "source_path": null,
+      "source_sha256": null,
+      "stage_mode": "0644",
+      "stage_sha256": "83338e92781a1535df23cc255cf76fdafd2a3fbaf21c6a64b0ef6c93e735c548",
+      "transform_provenance": "recipe_generated_projection; individual inputs removed during Prepare"
+    }
+  ],
+  "oracle_sha256": "05906176f0830f311e2872d9d4b7743825cb80dfe1cb89af22673feac212d72a",
+  "outer_member_sha256": {
+    "control.tar.gz": "c1471565ada7592706d8ab30a9693b22b43bff27e67384ab5a9802ad7aaf0e8c",
+    "data.tar.gz": "07e00f2dbe08dd80ca689a4167139827658893f89156f87c1cc9b26bc158c004",
+    "debian-binary": "d526eb4e878a23ef26ae190031b4efd2d58ed66789ac049ea3dbaf74c9df7402"
+  },
+  "package": "luci-app-advanced-reboot",
+  "prepared_path": "build_dir/target-x86_64_musl/luci-app-advanced-reboot",
+  "retained_ipk_path": "output/luci-app-advanced-reboot.ipk",
+  "retained_ipk_sha256": "0748aa14823d95241d52fb63a97c561beb3e3a4e9366c139ab0cd20226f7ee5b",
+  "source_pins": {
+    "ddns_scripts_recipe": {
+      "git_blob": "c0f6aef5047bd4b07f1e1708557bdf41ff763c34",
+      "git_mode": "100644",
+      "source_path": "net/ddns-scripts/Makefile",
+      "source_sha256": "eaf326cffdd5436c0fe039030b40279a24ab2b7104dc7ddd5fa014957c66177b"
+    },
+    "luci": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4"
+  },
+  "stage_path": "build_dir/target-x86_64_musl/luci-app-advanced-reboot/ipkg-all/luci-app-advanced-reboot"
+}

@@ -1,0 +1,15 @@
+CONFIG_TARGET_x86=y
+CONFIG_TARGET_x86_64=y
+CONFIG_USE_MUSL=y
+CONFIG_PACKAGE_luci-base=m
+CONFIG_PACKAGE_luci-app-ddns=m
+CONFIG_PACKAGE_luci-app-advanced-reboot=m
+CONFIG_PACKAGE_luci-app-wifihistory=m
+CONFIG_PACKAGE_ddns-scripts=m
+CONFIG_PACKAGE_jshn=m
+CONFIG_PACKAGE_rpcd-mod-iwinfo=m
+CONFIG_PACKAGE_ucode=m
+CONFIG_PACKAGE_ucode-mod-fs=m
+CONFIG_PACKAGE_ucode-mod-ubus=m
+CONFIG_PER_FEED_REPO=y
+CONFIG_USE_APK=n

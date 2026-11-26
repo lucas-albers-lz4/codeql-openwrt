@@ -1,0 +1,25 @@
+name: LuCI three-app package evidence
+on:
+  pull_request:
+    paths:
+      - 'evidence/issue173-three-app-packages-20261126/**'
+      - '.github/workflows/issue173-three-app-evidence.yml'
+permissions:
+  contents: read
+jobs:
+  portable:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Verify retained evidence via GNU tar
+        run: |
+          set -eu
+          COPYFILE_DISABLE=1 tar --format=ustar --no-xattrs --no-acls --no-selinux -C evidence -cf "$RUNNER_TEMP/issue173-three-app.tar" issue173-three-app-packages-20261126
+          mkdir "$RUNNER_TEMP/issue173-three-app"
+          tar -xf "$RUNNER_TEMP/issue173-three-app.tar" -C "$RUNNER_TEMP/issue173-three-app"
+          cd /
+          python3 -B "$RUNNER_TEMP/issue173-three-app/issue173-three-app-packages-20261126/verify.py"
+          python3 -B -m unittest discover -s "$RUNNER_TEMP/issue173-three-app/issue173-three-app-packages-20261126" -p 'test_*.py'
+          python3 -O -B -m unittest discover -s "$RUNNER_TEMP/issue173-three-app/issue173-three-app-packages-20261126" -p 'test_*.py'
