@@ -47,11 +47,13 @@ def group_exists(pid):
 
 
 class Probe:
-    def __init__(self, root, consumer_commit):
+    def __init__(self, root, consumer_commit, profile="joint"):
         check.need(
             len(consumer_commit) == 40 and all(c in "0123456789abcdef" for c in consumer_commit),
             "invalid consumer commit",
         )
+        self.seed, _, self.selected_packages = check.profile_values(profile)
+        self.profile = profile
         self.consumer_commit = consumer_commit
         self.root = check.fresh_root(root)
         for name in ("output", "home", "tmp"):
@@ -348,7 +350,7 @@ class Probe:
                     data,
                     {
                         x: "feeds/luci/applications/" + x + "/Makefile"
-                        for x in ("luci-app-dockerman", "luci-app-statistics")
+                        for x in self.selected_packages
                     },
                 )
             else:
@@ -357,13 +359,17 @@ class Probe:
                     {
                         x: "feeds/packages/utils/" + x + "/Makefile"
                         for x in (
-                            "docker",
-                            "dockerd",
-                            "docker-compose",
-                            "ttyd",
-                            "collectd",
-                            "rrdtool1",
-                            "containerd",
+                            (
+                                "docker",
+                                "dockerd",
+                                "docker-compose",
+                                "ttyd",
+                                "collectd",
+                                "rrdtool1",
+                                "containerd",
+                            )
+                            if self.profile == "joint"
+                            else ("collectd", "rrdtool1")
                         )
                     },
                 )
@@ -374,7 +380,7 @@ class Probe:
         self.dumps()
         for n in ("luci", "packages"):
             check.validate_link(ow / "feeds" / n, self.root / n)
-        for n in ("luci-app-dockerman", "luci-app-statistics"):
+        for n in self.selected_packages:
             check.validate_link(ow / "package/feeds/luci" / n, self.root / "luci/applications" / n)
         for n in ("s", "fs"):
             self.invoke("feeds-list-" + n, ["./scripts/feeds", "list", "-" + n], ow)
@@ -385,7 +391,7 @@ class Probe:
                 data = check.physical_file(path, ow, True)
                 with (self.out / ("pre-defconfig-" + path.name.lstrip("."))).open("xb") as f:
                     f.write(data)
-        seed = check.SEED.encode()
+        seed = self.seed.encode()
         with (ow / ".config").open("xb") as f:
             f.write(seed)
         with (self.out / "config-input").open("xb") as f:
@@ -401,23 +407,20 @@ class Probe:
             "tmp-.config-package.in",
         ):
             captured[name] = check.physical_file(self.out / name, self.out, True)
-        choices = check.validate_final_config(captured["config-final"])
-        check.validate_packagedeps(captured["tmp-.packagedeps"])
+        choices = check.validate_final_config(captured["config-final"], self.profile)
+        check.validate_packagedeps(captured["tmp-.packagedeps"], self.profile)
         check.validate_packageinfo(
             captured["tmp-.packageinfo"],
-            {
-                x: "package/feeds/luci/" + x + "/Makefile"
-                for x in ("luci-app-dockerman", "luci-app-statistics")
-            },
+            {x: "package/feeds/luci/" + x + "/Makefile" for x in self.selected_packages},
         )
         after = self.sources("after")
         consumer_after = self.consumer_identity("after")
         for n in ("luci", "packages"):
             check.validate_link(ow / "feeds" / n, self.root / n)
             check.validate_feed_index(ow, n)
-        for n in ("luci-app-dockerman", "luci-app-statistics"):
+        for n in self.selected_packages:
             check.validate_link(ow / "package/feeds/luci" / n, self.root / "luci/applications" / n)
-        return {
+        result = {
             "status": "metadata_collected_review_required",
             "source_before": before,
             "source_after": after,
@@ -427,6 +430,10 @@ class Probe:
             "diagnostics": self.diags,
             "scope": "raw metadata only; host prereq/Kconfig and pinned recipe DUMP scans may compile/run; no tools/toolchain, target/kernel, package or image build, package membership or dependency-closure approval",
         }
+        if self.profile != "joint":
+            result["profile"] = self.profile
+            result["selected_app_packages"] = list(self.selected_packages)
+        return result
 
     def finish(self, result):
         files = {}
@@ -481,9 +488,10 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--root", required=True, type=Path)
     p.add_argument("--consumer-commit", required=True)
+    p.add_argument("--profile", choices=check.PROFILES, default="joint")
     a = p.parse_args()
     os.umask(0o022)
-    probe = Probe(a.root, a.consumer_commit)
+    probe = Probe(a.root, a.consumer_commit, a.profile)
     failure = None
     try:
         result = probe.run()
@@ -496,6 +504,9 @@ def main():
             "diagnostics": probe.diags,
             "scope": "partial metadata only; host prereq/Kconfig and pinned recipe DUMP scans may compile/run; no target/toolchain/package build approval",
         }
+        if probe.profile != "joint":
+            result["profile"] = probe.profile
+            result["requested_app_packages"] = list(probe.selected_packages)
         capture_failure_evidence(probe, result)
     output_ok = probe.finish(result)
     if failure or not output_ok:
