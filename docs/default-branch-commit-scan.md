@@ -25,6 +25,29 @@ checkpoint and gap digests, discovery run IDs and attempts, workflow run and
 attempt, consumer head, identity receipt, and manifest bytes. Malformed or
 partial triplets fail the job before the scan.
 
+After a successful claim, the job uploads a separate
+`default-branch-start-<run>-<attempt>` artifact **only** when the claim status
+is `claimed_unverified`. It is prepared and uploaded before the R3 handoff and
+corpus scan. The artifact contains the exact `reservation-claim.json`,
+`identity.json`, `manifest.json`, `inventory.json`, `previous/decisions.json`,
+`current/decisions.json`, `current/gap/gap.json`, and the fetched
+`previous-run-api.json` and `current-run-api.json`, plus `receipt.json` with
+the byte count and SHA-256 for every payload file. The writer reads bounded
+regular files without following their final symlink, requires private run
+inputs and exclusive private outputs, checks the claim-bound identity,
+manifest, checkpoint and gap digests, checks the inventory bytes against the
+manifest digest, verifies the linked discovery run API identities, and reads
+the frozen copies back to compare them with the captured source bytes. The
+decision and gap paths match the final artifact's relative layout. The final
+`default-branch-scan-<run>-<attempt>` artifact remains an independent
+always-uploaded artifact.
+
+This early artifact is an observation and has no signer or queue mutation. Its
+name does not attest that the job was live when an operator fetched it, that
+R3 started, that the scan completed, or that the asserted triplet matches the
+private backlog. It does not authorize a start or establish queue state. A
+`claimed_unverified` status remains an unverified caller assertion.
+
 The hosted job does not read the private backlog, match a queue row or action,
 or compare this triplet with the private intake receipt or artifact origin. A
 well-formed forged triplet therefore remains
