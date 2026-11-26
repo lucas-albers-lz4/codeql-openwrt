@@ -42,5 +42,11 @@ The CI artifact retains the raw SARIF, decoded diagnostics, routing decisions,
 accepted consumer record, command logs and normalized receipt; database and
 downloaded archives stay only on the ephemeral runner. An unpopulated lock,
 failed command, unexpected warning, mismatched identity or parser rejection
-fails the job. The Tailscale historical matrix remains a separate producer
-release regression because its testing query is outside this default suite.
+fails the job. The same job also prepares a historical event-triage manifest before database
+creation, without `expected_results`, and passes each case's actual released
+suite SARIF and producer receipt to the event consumer. It requires
+`triage_required` with the predeclared OpenVPN parent location and `clean_scan`
+for the fixed source. This is a historical consumer drill; it does not claim
+an incoming upstream event or Gate 8 completion. The Tailscale historical
+matrix remains a separate producer release regression because its testing
+query is outside this default suite.
