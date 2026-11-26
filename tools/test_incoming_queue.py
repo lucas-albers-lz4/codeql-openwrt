@@ -10,7 +10,7 @@ from threading import Barrier
 import unittest
 from unittest.mock import patch
 from pathlib import Path
-from incoming_poll import PollError, replay_observed
+from incoming_poll import PollError, plan, replay_observed, replay_observed_doc
 from incoming_queue import open_queue, transition, apply_attested, encoded, identity
 
 
@@ -53,18 +53,28 @@ class QueueTests(unittest.TestCase):
         self.events = [event('openwrt/openwrt',1,'a'),event('openwrt/luci',2,'c'),event('openwrt/openwrt',3,'d')]
         snapshot(self.snap,self.events)
         self.last_snapshot_hash = None
-        self.replay_patch = patch('incoming_queue.replay_observed',
-                                  side_effect=lambda path, digest:
-                                  [row['event'] for row in json.loads(Path(path).read_text())['decisions']])
+        self.prior_copy = self.path / 'previous.json'
+        self.replay_patch = patch('incoming_queue.verify_checkpoint_decisions',
+                                  side_effect=self.fake_verify)
         self.replay_patch.start(); self.addCleanup(self.replay_patch.stop)
+    def fake_verify(self, path, previous):
+        raw = Path(path).read_bytes(); doc = json.loads(raw)
+        prior_raw = Path(previous).read_bytes() if previous is not None else None
+        prior_doc = json.loads(prior_raw) if prior_raw is not None else None
+        return (doc, hashlib.sha256(raw).hexdigest(),
+                [row['event'] for row in doc['decisions']],
+                hashlib.sha256(prior_raw).hexdigest() if prior_raw is not None else None,
+                prior_doc['observed_at'] if prior_doc is not None else None)
     def advance(self, pred, capacity=1, preserve=False):
         if pred is not None and not preserve:
             doc = json.loads(self.snap.read_text())
             doc['genesis'] = False
             doc['previous_sha256'] = self.last_snapshot_hash
             self.snap.write_text(json.dumps(doc))
-        result, digest = transition(self.db,pred,self.snap,capacity,'2026-01-01T00:00:00Z')
+        result, digest = transition(self.db,pred,self.snap,capacity,'2026-01-01T00:00:00Z',
+                                    self.prior_copy if pred is not None else None)
         self.last_snapshot_hash = result['snapshot_sha256']
+        self.prior_copy.write_bytes(self.snap.read_bytes())
         return result,(result['sequence'],digest)
     def test_first_attempts_before_retries_and_stale_cas(self):
         a,p = self.advance(None,3); b,q = self.advance(p,3); c,r = self.advance(q,3)
@@ -360,9 +370,8 @@ class QueueTests(unittest.TestCase):
                      'limitations': []}
         self.snap.write_text(json.dumps(successor))
         observed = replay_observed(self.snap, hashlib.sha256(self.snap.read_bytes()).hexdigest())
-        successor['decisions'].extend({'event': item, 'status': 'pending',
-                                       'decision': 'backlog', 'reason': 'new'}
-                                      for item in observed if item['kind'] == 'default_branch')
+        prior_rows = json.loads(self.prior_copy.read_text())['decisions']
+        successor['decisions'] = plan(prior_rows, observed, successor['capacity'])
         self.snap.write_text(json.dumps(successor))
         self.replay_patch.stop()
         missing = dict(successor, decisions=[row for row in successor['decisions']
@@ -417,8 +426,7 @@ class QueueTests(unittest.TestCase):
                      'http_errors': [], 'decisions': [], 'limitations': []}
         self.snap.write_text(json.dumps(successor))
         current = replay_observed(self.snap, hashlib.sha256(self.snap.read_bytes()).hexdigest())
-        successor['decisions'] = [{'event': item, 'status': 'pending',
-                                   'decision': 'backlog', 'reason': 'new'} for item in current]
+        successor['decisions'] = plan([], current, successor['capacity'])
         self.snap.write_text(json.dumps(successor))
         self.replay_patch.stop()
         with self.assertRaises(PollError):
@@ -431,5 +439,34 @@ class QueueTests(unittest.TestCase):
                               '2026-01-01T00:00:01Z', prior_file)
         self.assertEqual(state['sequence'], 1)
         self.assertEqual(len([row for row in state['events'] if row['status'] == 'pending']), 3)
+
+    def test_real_replay_genesis_action_successor_and_forged_genesis(self):
+        snapshot(self.snap, [])
+        genesis = json.loads(self.snap.read_text())
+        genesis['requests'] = retained_requests()
+        genesis['capacity'] = 1
+        observed = replay_observed_doc(genesis)
+        genesis['decisions'] = plan([], observed, 1)
+        self.replay_patch.stop()
+        forged = json.loads(json.dumps(genesis))
+        forged['decisions'][0]['decision'] = 'backlog'
+        self.snap.write_text(json.dumps(forged))
+        with self.assertRaises(PollError): self.advance(None, 1, preserve=True)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM history').fetchone()[0], 0)
+        self.snap.write_text(json.dumps(genesis))
+        first, head = self.advance(None, 1, preserve=True)
+        recover = {'kind': 'recover', 'event_id': first['selected'][0],
+                   'reservation': first['sequence'], 'reservation_digest': head[1],
+                   'queue_id': first['queue_id'], 'run_id': 'recover'}
+        _, action_head = self.attested(head, recover)
+        successor = dict(genesis, genesis=False,
+                         previous_sha256=hashlib.sha256(self.prior_copy.read_bytes()).hexdigest(),
+                         observed_at='2026-01-01T00:00:01Z',
+                         decisions=plan(genesis['decisions'], observed, 1))
+        self.snap.write_text(json.dumps(successor))
+        second, _ = self.advance(action_head, 1, preserve=True)
+        self.assertEqual(second['sequence'], 2)
+        self.assertEqual(len(second['selected']), 1)
+        self.assertEqual(len(second['events']), 3)
 
 if __name__ == '__main__': unittest.main()

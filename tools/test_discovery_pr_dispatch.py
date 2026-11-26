@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from tools.discovery_pr_dispatch import prepare
+from tools import incoming_poll as p
 from tools.incoming_poll import PollError
 
 A, B, C = 'a' * 40, 'b' * 40, 'c' * 40
@@ -133,6 +134,40 @@ class DispatchInputsTests(unittest.TestCase):
         self.write_api(changed)
         with patch('tools.discovery_pr_dispatch.replay_observed', return_value=[same]):
             with self.assertRaises(PollError): self.run_prepare()
+
+    def test_genesis_decision_replay_rejects_forged_row(self):
+        doc = json.loads(self.checkpoint.read_text())
+        observed = p.replay_observed_doc(doc)
+        doc['decisions'] = p.plan([], observed, 1)
+        self.checkpoint.write_text(json.dumps(doc))
+        verified, digest, current, prior_digest, prior_time = p.verify_checkpoint_decisions(self.checkpoint)
+        self.assertEqual((verified['decisions'], current, prior_digest, prior_time),
+                         (doc['decisions'], observed, None, None))
+        self.assertEqual(digest, hashlib.sha256(self.checkpoint.read_bytes()).hexdigest())
+        doc['decisions'][0]['decision'] = 'backlog'
+        self.checkpoint.write_text(json.dumps(doc))
+        with self.assertRaises(PollError): p.verify_checkpoint_decisions(self.checkpoint)
+
+    def test_successor_decisions_require_exact_prior_bytes(self):
+        genesis = json.loads(self.checkpoint.read_text())
+        observed = p.replay_observed_doc(genesis)
+        genesis['decisions'] = p.plan([], observed, 1)
+        self.checkpoint.write_text(json.dumps(genesis))
+        digest = hashlib.sha256(self.checkpoint.read_bytes()).hexdigest()
+        successor = dict(genesis, genesis=False, previous_sha256=digest,
+                         observed_at='2026-11-26T00:00:01Z',
+                         decisions=p.plan(genesis['decisions'], observed, 1))
+        current = self.root / 'successor.json'; current.write_text(json.dumps(successor))
+        verified, _, replayed, previous_hash, _ = p.verify_checkpoint_decisions(current, self.checkpoint)
+        self.assertEqual((verified['decisions'], replayed, previous_hash),
+                         (successor['decisions'], observed, digest))
+        successor['decisions'].pop()
+        current.write_text(json.dumps(successor))
+        with self.assertRaises(PollError): p.verify_checkpoint_decisions(current, self.checkpoint)
+        successor['decisions'] = p.plan(genesis['decisions'], observed, 1)
+        successor['previous_sha256'] = '0' * 64
+        current.write_text(json.dumps(successor))
+        with self.assertRaises(PollError): p.verify_checkpoint_decisions(current, self.checkpoint)
 
 
 if __name__ == '__main__':

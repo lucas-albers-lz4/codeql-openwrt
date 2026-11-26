@@ -236,7 +236,7 @@ def validate_event(event):
     else:
         raise PollError('invalid event kind')
 
-def read_checkpoint(path):
+def load_checkpoint(path):
     with path.open('rb') as handle:
         raw = handle.read(MAX_RECORD + 1)
     check(len(raw) <= MAX_RECORD, 'checkpoint exceeds byte limit')
@@ -262,7 +262,12 @@ def read_checkpoint(path):
             raise PollError('invalid checkpoint response encoding') from exc
         check(len(raw_body) <= MAX_RESPONSE and hashlib.sha256(raw_body).hexdigest() == request['sha256'], 'invalid checkpoint response digest')
     check((doc['genesis'] and doc['previous_sha256'] is None) or (not doc['genesis'] and isinstance(doc['previous_sha256'], str) and bool(re.fullmatch(r'[0-9a-f]{64}', doc['previous_sha256']))), 'invalid checkpoint predecessor')
-    return doc['decisions'], hashlib.sha256(raw).hexdigest()
+    return doc, hashlib.sha256(raw).hexdigest()
+
+
+def read_checkpoint(path):
+    doc, digest = load_checkpoint(path)
+    return doc['decisions'], digest
 
 
 def replay_observed(path, expected_digest):
@@ -271,11 +276,12 @@ def replay_observed(path, expected_digest):
     This checks internal consistency only; it does not authenticate the original
     API fetch, the checkpoint artifact, or predecessor history.
     """
-    with Path(path).open('rb') as handle:
-        raw = handle.read(MAX_RECORD + 1)
-    check(len(raw) <= MAX_RECORD and hashlib.sha256(raw).hexdigest() == expected_digest,
-          'checkpoint changed after validation')
-    doc = json.loads(raw, object_pairs_hook=unique_object)
+    doc, digest = load_checkpoint(Path(path))
+    check(digest == expected_digest, 'checkpoint digest differs from caller')
+    return replay_observed_doc(doc)
+
+
+def replay_observed_doc(doc):
     requests = iter(doc['requests'])
 
     def get(requested_path):
@@ -290,6 +296,32 @@ def replay_observed(path, expected_digest):
         observed.extend(snapshot(repo, get, 401))
     check(next(requests, None) is None, 'unused API request in checkpoint')
     return observed
+
+
+def verify_checkpoint_decisions(path, previous_path=None):
+    """Replay observations and the exact v3 decision plan from checkpoint bytes.
+
+    A successor needs the exact prior checkpoint. Digest linkage and replay
+    establish an internally consistent chain, not authenticated API custody.
+    """
+    doc, digest = load_checkpoint(Path(path))
+    prior_digest = None
+    prior_time = None
+    if doc['genesis']:
+        check(previous_path is None, 'genesis must not have a prior checkpoint')
+        previous = []
+    else:
+        check(previous_path is not None, 'successor requires exact prior checkpoint')
+        prior_doc, prior_digest = load_checkpoint(Path(previous_path))
+        check(doc['previous_sha256'] == prior_digest,
+              'successor does not match previous checkpoint bytes')
+        previous = prior_doc['decisions']
+        prior_time = prior_doc['observed_at']
+        plan(previous, [], 0)
+    observed = replay_observed_doc(doc)
+    check(doc['decisions'] == plan(previous, observed, doc['capacity']),
+          'checkpoint decisions differ from replayed poller plan')
+    return doc, digest, observed, prior_digest, prior_time
 
 def atomic_write(path, value):
     raw = (json.dumps(value, indent=2) + '\n').encode()
