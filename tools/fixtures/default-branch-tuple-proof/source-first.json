@@ -1,0 +1,64 @@
+{
+  "cases": {
+    "absent_parent": {
+      "commit": "7f6ba9d46028635f0d5aa2e15fcab9ffd163a688",
+      "expected_rule_results": [],
+      "selected_file_multiset": {},
+      "source_path_status": "absent"
+    },
+    "fixed": {
+      "commit": "e4ff45ecbc6ad212951815c8c99b2749fbd7de6b",
+      "expected_extraction_errors": [],
+      "expected_rule_results": [],
+      "git_blob": "eb3b418f855d24ae0a34d5d09a289b9342098129",
+      "route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "selected_file_multiset": {
+        "usr/share/rpcd/ucode/luci.openvpn.uc": 1
+      },
+      "source_path_status": "present",
+      "source_sha256": "6593792678951fd500c2b090d17d9e500a05a642cfb996ee02c1649473152410",
+      "staged_path": "usr/share/rpcd/ucode/luci.openvpn.uc"
+    },
+    "introduced": {
+      "commit": "5306e007656fe9a77aee2d2a94072d003b0b5a7d",
+      "expected_extraction_errors": [],
+      "expected_rule_results": [
+        {
+          "end_column": 132,
+          "end_line": 71,
+          "multiplicity": 1,
+          "rule_id": "ucode/m4/direct-rpc-shell-word",
+          "start_column": 115,
+          "start_line": 71,
+          "uri": "usr/share/rpcd/ucode/luci.openvpn.uc"
+        }
+      ],
+      "git_blob": "da389170328212f8f0a3b7bea42be11d42bd0c38",
+      "route": {
+        "classification": "plain",
+        "reason": "rpcd_raw_mode_full_path"
+      },
+      "selected_file_multiset": {
+        "usr/share/rpcd/ucode/luci.openvpn.uc": 1
+      },
+      "source_path_status": "present",
+      "source_sha256": "051c8162f826683333e11264615806df5ab08415676c0bd098921cb1b05af991",
+      "staged_path": "usr/share/rpcd/ucode/luci.openvpn.uc"
+    }
+  },
+  "installed_path": "usr/share/rpcd/ucode/luci.openvpn.uc",
+  "limits": [
+    "Source-staged bytes are not verified installed package bytes.",
+    "The absent parent is a selection control, not a query negative.",
+    "A historical commit replay is not live incoming PR detection or Gate 8 completion."
+  ],
+  "producer_release_commit": "131605a726b7a79eb926886d07bf44eb721fe450",
+  "producer_release_tag": "v0.1.0-rc.1",
+  "schema": "openvpn-historical-introduction-replay-oracle-v1",
+  "selection_policy": "explicit one-file historical source-stage replay; select this path when present, report absent otherwise; no whole-corpus coverage claim",
+  "source_path": "protocols/luci-proto-openvpn/root/usr/share/rpcd/ucode/luci.openvpn.uc",
+  "source_repo": "openwrt/luci"
+}

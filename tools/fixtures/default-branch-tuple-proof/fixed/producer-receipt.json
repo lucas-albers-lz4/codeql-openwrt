@@ -1,0 +1,912 @@
+{
+  "codeql_binary_sha256": "bb3a754e126ed061b5f3356531cd5501872ab3864bd665b2d1afdbf8a67a146d",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "init",
+        "--bare",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/producer.git"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "producer-init",
+      "peak_rss_bytes": 4669440,
+      "stderr": "commands/producer-init.stderr",
+      "stdout": "commands/producer-init.stdout",
+      "time": "commands/producer-init.time",
+      "wall_seconds": 0.018
+    },
+    {
+      "argv": [
+        "git",
+        "--git-dir",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/producer.git",
+        "remote",
+        "add",
+        "origin",
+        "https://github.com/lucas-albers-lz4/codeql-ucode.git"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "producer-remote",
+      "peak_rss_bytes": 4681728,
+      "stderr": "commands/producer-remote.stderr",
+      "stdout": "commands/producer-remote.stdout",
+      "time": "commands/producer-remote.time",
+      "wall_seconds": 0.003
+    },
+    {
+      "argv": [
+        "git",
+        "--git-dir",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/producer.git",
+        "fetch",
+        "--depth=1",
+        "origin",
+        "refs/tags/v0.1.0-rc.1:refs/tags/v0.1.0-rc.1"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "producer-fetch-tag",
+      "peak_rss_bytes": 16941056,
+      "stderr": "commands/producer-fetch-tag.stderr",
+      "stdout": "commands/producer-fetch-tag.stdout",
+      "time": "commands/producer-fetch-tag.time",
+      "wall_seconds": 0.715
+    },
+    {
+      "argv": [
+        "git",
+        "--git-dir",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/producer.git",
+        "rev-parse",
+        "v0.1.0-rc.1^{}"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "producer-tag-commit",
+      "peak_rss_bytes": 5042176,
+      "stderr": "commands/producer-tag-commit.stderr",
+      "stdout": "commands/producer-tag-commit.stdout",
+      "time": "commands/producer-tag-commit.time",
+      "wall_seconds": 0.002
+    },
+    {
+      "argv": [
+        "gh",
+        "api",
+        "https://api.github.com/repos/lucas-albers-lz4/codeql-ucode/releases/tags/v0.1.0-rc.1"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "release-api",
+      "peak_rss_bytes": 44048384,
+      "stderr": "commands/release-api.stderr",
+      "stdout": "commands/release-api.stdout",
+      "time": "commands/release-api.time",
+      "wall_seconds": 0.492
+    },
+    {
+      "argv": [
+        "gh",
+        "release",
+        "view",
+        "v0.1.0-rc.1",
+        "--repo",
+        "lucas-albers-lz4/codeql-ucode",
+        "--json",
+        "isImmutable"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "release-immutability",
+      "peak_rss_bytes": 45924352,
+      "stderr": "commands/release-immutability.stderr",
+      "stdout": "commands/release-immutability.stdout",
+      "time": "commands/release-immutability.time",
+      "wall_seconds": 0.479
+    },
+    {
+      "argv": [
+        "curl",
+        "--fail",
+        "--location",
+        "--retry",
+        "3",
+        "--output",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/downloads/producer.tar.gz",
+        "https://github.com/lucas-albers-lz4/codeql-ucode/releases/download/v0.1.0-rc.1/codeql-ucode-linux-x64.tar.gz"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "producer-download",
+      "peak_rss_bytes": 15155200,
+      "stderr": "commands/producer-download.stderr",
+      "stdout": "commands/producer-download.stdout",
+      "time": "commands/producer-download.time",
+      "wall_seconds": 0.325
+    },
+    {
+      "argv": [
+        "curl",
+        "--fail",
+        "--location",
+        "--retry",
+        "3",
+        "--output",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/downloads/codeql-linux64.zip",
+        "https://github.com/github/codeql-cli-binaries/releases/download/v2.27.4/codeql-linux64.zip"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "codeql-download",
+      "peak_rss_bytes": 20819968,
+      "stderr": "commands/codeql-download.stderr",
+      "stdout": "commands/codeql-download.stdout",
+      "time": "commands/codeql-download.time",
+      "wall_seconds": 2.938
+    },
+    {
+      "argv": [
+        "git",
+        "--git-dir",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/producer.git",
+        "show",
+        "131605a726b7a79eb926886d07bf44eb721fe450:scripts/verify-linux-release-bundle.py"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "fetch-verifier",
+      "peak_rss_bytes": 5468160,
+      "stderr": "commands/fetch-verifier.stderr",
+      "stdout": "commands/fetch-verifier.stdout",
+      "time": "commands/fetch-verifier.time",
+      "wall_seconds": 0.003
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/downloads/verify-linux-release-bundle.py",
+        "--archive",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/downloads/producer.tar.gz",
+        "--expected-sha256",
+        "efd10ca853ad94c63e12f40ce92b10523d5cb9be5e647fb4312f82ed62c1e153",
+        "--output-dir",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle",
+        "--expected-release-tag",
+        "v0.1.0-rc.1",
+        "--expected-producer-commit",
+        "131605a726b7a79eb926886d07bf44eb721fe450",
+        "--expected-manifest-sha256",
+        "1d999c5d5b15eb8c7539b95eb64d2febeac14b7d3835be344712969b9b4f2bc9"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "verify-extract-bundle",
+      "peak_rss_bytes": 24072192,
+      "stderr": "commands/verify-extract-bundle.stderr",
+      "stdout": "commands/verify-extract-bundle.stdout",
+      "time": "commands/verify-extract-bundle.time",
+      "wall_seconds": 0.122
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "version"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "codeql-version",
+      "peak_rss_bytes": 89997312,
+      "stderr": "commands/codeql-version.stderr",
+      "stdout": "commands/codeql-version.stdout",
+      "time": "commands/codeql-version.time",
+      "wall_seconds": 0.336
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "pack",
+        "install",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/lib"
+      ],
+      "cwd": "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux",
+      "exit": 0,
+      "label": "pack-install-lib",
+      "peak_rss_bytes": 153255936,
+      "stderr": "commands/pack-install-lib.stderr",
+      "stdout": "commands/pack-install-lib.stdout",
+      "time": "commands/pack-install-lib.time",
+      "wall_seconds": 5.381
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "pack",
+        "install",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src"
+      ],
+      "cwd": "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux",
+      "exit": 0,
+      "label": "pack-install-src",
+      "peak_rss_bytes": 142462976,
+      "stderr": "commands/pack-install-src.stderr",
+      "stdout": "commands/pack-install-src.stdout",
+      "time": "commands/pack-install-src.time",
+      "wall_seconds": 4.217
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "resolve",
+        "queries",
+        "--format=json",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src/codeql-suites/code-scanning.qls",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/lib:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "resolve-suite",
+      "peak_rss_bytes": 115376128,
+      "stderr": "commands/resolve-suite.stderr",
+      "stdout": "commands/resolve-suite.stdout",
+      "time": "commands/resolve-suite.time",
+      "wall_seconds": 0.731
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-parent"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-init",
+      "peak_rss_bytes": 5066752,
+      "stderr": "commands/openvpn-parent-init.stderr",
+      "stdout": "commands/openvpn-parent-init.stdout",
+      "time": "commands/openvpn-parent-init.time",
+      "wall_seconds": 0.082
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-parent",
+        "remote",
+        "add",
+        "origin",
+        "https://github.com/openwrt/luci.git"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-remote",
+      "peak_rss_bytes": 4591616,
+      "stderr": "commands/openvpn-parent-remote.stderr",
+      "stdout": "commands/openvpn-parent-remote.stdout",
+      "time": "commands/openvpn-parent-remote.time",
+      "wall_seconds": 0.042
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-parent",
+        "fetch",
+        "--depth=1",
+        "origin",
+        "b45584b4e6068b9b096872dd02494a048d869c36"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-fetch",
+      "peak_rss_bytes": 16961536,
+      "stderr": "commands/openvpn-parent-fetch.stderr",
+      "stdout": "commands/openvpn-parent-fetch.stdout",
+      "time": "commands/openvpn-parent-fetch.time",
+      "wall_seconds": 4.613
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-parent",
+        "checkout",
+        "--detach",
+        "b45584b4e6068b9b096872dd02494a048d869c36"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-checkout",
+      "peak_rss_bytes": 58839040,
+      "stderr": "commands/openvpn-parent-checkout.stderr",
+      "stdout": "commands/openvpn-parent-checkout.stdout",
+      "time": "commands/openvpn-parent-checkout.time",
+      "wall_seconds": 0.426
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-parent",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-head",
+      "peak_rss_bytes": 4796416,
+      "stderr": "commands/openvpn-parent-head.stderr",
+      "stdout": "commands/openvpn-parent-head.stdout",
+      "time": "commands/openvpn-parent-head.time",
+      "wall_seconds": 0.002
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-parent",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-status",
+      "peak_rss_bytes": 8294400,
+      "stderr": "commands/openvpn-parent-status.stderr",
+      "stdout": "commands/openvpn-parent-status.stdout",
+      "time": "commands/openvpn-parent-status.time",
+      "wall_seconds": 0.303
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-parent",
+        "rev-parse",
+        "b45584b4e6068b9b096872dd02494a048d869c36:protocols/luci-proto-openvpn/root/usr/share/rpcd/ucode/luci.openvpn.uc"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-blob",
+      "peak_rss_bytes": 5361664,
+      "stderr": "commands/openvpn-parent-blob.stderr",
+      "stdout": "commands/openvpn-parent-blob.stdout",
+      "time": "commands/openvpn-parent-blob.time",
+      "wall_seconds": 0.003
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "database",
+        "init",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-parent",
+        "--language=ucode",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/database/openvpn-parent",
+        "--source-root=/home/runner/work/_temp/r3-ucode-45833426577-1/stage/openvpn-parent"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-db-init",
+      "peak_rss_bytes": 123785216,
+      "stderr": "commands/openvpn-parent-db-init.stderr",
+      "stdout": "commands/openvpn-parent-db-init.stdout",
+      "time": "commands/openvpn-parent-db-init.time",
+      "wall_seconds": 0.77
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "database",
+        "index-files",
+        "--language=ucode",
+        "--include=**/rpcd/ucode/*",
+        "--working-dir=/home/runner/work/_temp/r3-ucode-45833426577-1/stage/openvpn-parent",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/database/openvpn-parent",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-parent"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-db-index",
+      "peak_rss_bytes": 114364416,
+      "stderr": "commands/openvpn-parent-db-index.stderr",
+      "stdout": "commands/openvpn-parent-db-index.stdout",
+      "time": "commands/openvpn-parent-db-index.time",
+      "wall_seconds": 0.639
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "database",
+        "finalize",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-parent",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/database/openvpn-parent"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-db-finalize",
+      "peak_rss_bytes": 217284608,
+      "stderr": "commands/openvpn-parent-db-finalize.stderr",
+      "stdout": "commands/openvpn-parent-db-finalize.stdout",
+      "time": "commands/openvpn-parent-db-finalize.time",
+      "wall_seconds": 1.693
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "query",
+        "run",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+        "--database=/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-parent",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/lib:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/query/openvpn-parent",
+        "--compilation-cache=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/compile/openvpn-parent",
+        "--no-default-compilation-cache",
+        "--output=/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/successful.bqrs",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-successful-query",
+      "peak_rss_bytes": 322338816,
+      "stderr": "commands/openvpn-parent-successful-query.stderr",
+      "stdout": "commands/openvpn-parent-successful-query.stdout",
+      "time": "commands/openvpn-parent-successful-query.time",
+      "wall_seconds": 3.147
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "bqrs",
+        "decode",
+        "--format=json",
+        "--entities=url,string",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/successful.bqrs"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-successful-decode",
+      "peak_rss_bytes": 94093312,
+      "stderr": "commands/openvpn-parent-successful-decode.stderr",
+      "stdout": "commands/openvpn-parent-successful-decode.stdout",
+      "time": "commands/openvpn-parent-successful-decode.time",
+      "wall_seconds": 0.345
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "query",
+        "run",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src/diagnostics/ExtractionErrors.ql",
+        "--database=/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-parent",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/lib:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/query/openvpn-parent",
+        "--compilation-cache=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/compile/openvpn-parent",
+        "--no-default-compilation-cache",
+        "--output=/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/errors.bqrs",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-errors-query",
+      "peak_rss_bytes": 274182144,
+      "stderr": "commands/openvpn-parent-errors-query.stderr",
+      "stdout": "commands/openvpn-parent-errors-query.stdout",
+      "time": "commands/openvpn-parent-errors-query.time",
+      "wall_seconds": 2.505
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "bqrs",
+        "decode",
+        "--format=json",
+        "--entities=url,string",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/errors.bqrs"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-errors-decode",
+      "peak_rss_bytes": 93839360,
+      "stderr": "commands/openvpn-parent-errors-decode.stderr",
+      "stdout": "commands/openvpn-parent-errors-decode.stdout",
+      "time": "commands/openvpn-parent-errors-decode.time",
+      "wall_seconds": 0.332
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "database",
+        "analyze",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-parent",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src/codeql-suites/code-scanning.qls",
+        "--format=sarifv2.1.0",
+        "--output=/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/default-suite.sarif",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/lib:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/query/openvpn-parent",
+        "--compilation-cache=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/compile/openvpn-parent",
+        "--no-default-compilation-cache",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-analyze",
+      "peak_rss_bytes": 440672256,
+      "stderr": "commands/openvpn-parent-analyze.stderr",
+      "stdout": "commands/openvpn-parent-analyze.stdout",
+      "time": "commands/openvpn-parent-analyze.time",
+      "wall_seconds": 6.424
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/runner/work/codeql-openwrt/codeql-openwrt/tools/sarif_accept.py",
+        "--sarif",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/default-suite.sarif",
+        "--manifest",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/source-first-manifest.json",
+        "--receipt",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/producer-receipt.json",
+        "--source-root",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/stage/openvpn-parent"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-accept",
+      "peak_rss_bytes": 18067456,
+      "stderr": "commands/openvpn-parent-accept.stderr",
+      "stdout": "commands/openvpn-parent-accept.stdout",
+      "time": "commands/openvpn-parent-accept.time",
+      "wall_seconds": 0.026
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/runner/work/codeql-openwrt/codeql-openwrt/tools/sarif_accept.py",
+        "--sarif",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/default-suite.sarif",
+        "--manifest",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/historical-event-manifest.json",
+        "--receipt",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-parent/producer-receipt.json",
+        "--source-root",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/stage/openvpn-parent",
+        "--event-triage"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-parent-event-triage",
+      "peak_rss_bytes": 18079744,
+      "stderr": "commands/openvpn-parent-event-triage.stderr",
+      "stdout": "commands/openvpn-parent-event-triage.stdout",
+      "time": "commands/openvpn-parent-event-triage.time",
+      "wall_seconds": 0.026
+    },
+    {
+      "argv": [
+        "git",
+        "init",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-fixed"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-init",
+      "peak_rss_bytes": 4726784,
+      "stderr": "commands/openvpn-fixed-init.stderr",
+      "stdout": "commands/openvpn-fixed-init.stdout",
+      "time": "commands/openvpn-fixed-init.time",
+      "wall_seconds": 0.003
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-fixed",
+        "remote",
+        "add",
+        "origin",
+        "https://github.com/openwrt/luci.git"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-remote",
+      "peak_rss_bytes": 4677632,
+      "stderr": "commands/openvpn-fixed-remote.stderr",
+      "stdout": "commands/openvpn-fixed-remote.stdout",
+      "time": "commands/openvpn-fixed-remote.time",
+      "wall_seconds": 0.002
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-fixed",
+        "fetch",
+        "--depth=1",
+        "origin",
+        "e4ff45ecbc6ad212951815c8c99b2749fbd7de6b"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-fetch",
+      "peak_rss_bytes": 16957440,
+      "stderr": "commands/openvpn-fixed-fetch.stderr",
+      "stdout": "commands/openvpn-fixed-fetch.stdout",
+      "time": "commands/openvpn-fixed-fetch.time",
+      "wall_seconds": 4.739
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-fixed",
+        "checkout",
+        "--detach",
+        "e4ff45ecbc6ad212951815c8c99b2749fbd7de6b"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-checkout",
+      "peak_rss_bytes": 59006976,
+      "stderr": "commands/openvpn-fixed-checkout.stderr",
+      "stdout": "commands/openvpn-fixed-checkout.stdout",
+      "time": "commands/openvpn-fixed-checkout.time",
+      "wall_seconds": 0.654
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-fixed",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-head",
+      "peak_rss_bytes": 4431872,
+      "stderr": "commands/openvpn-fixed-head.stderr",
+      "stdout": "commands/openvpn-fixed-head.stdout",
+      "time": "commands/openvpn-fixed-head.time",
+      "wall_seconds": 0.002
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-fixed",
+        "status",
+        "--porcelain=v1"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-status",
+      "peak_rss_bytes": 8327168,
+      "stderr": "commands/openvpn-fixed-status.stderr",
+      "stdout": "commands/openvpn-fixed-status.stdout",
+      "time": "commands/openvpn-fixed-status.time",
+      "wall_seconds": 0.091
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/sources/openvpn-fixed",
+        "rev-parse",
+        "e4ff45ecbc6ad212951815c8c99b2749fbd7de6b:protocols/luci-proto-openvpn/root/usr/share/rpcd/ucode/luci.openvpn.uc"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-blob",
+      "peak_rss_bytes": 5386240,
+      "stderr": "commands/openvpn-fixed-blob.stderr",
+      "stdout": "commands/openvpn-fixed-blob.stdout",
+      "time": "commands/openvpn-fixed-blob.time",
+      "wall_seconds": 0.002
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "database",
+        "init",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-fixed",
+        "--language=ucode",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/database/openvpn-fixed",
+        "--source-root=/home/runner/work/_temp/r3-ucode-45833426577-1/stage/openvpn-fixed"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-db-init",
+      "peak_rss_bytes": 123944960,
+      "stderr": "commands/openvpn-fixed-db-init.stderr",
+      "stdout": "commands/openvpn-fixed-db-init.stdout",
+      "time": "commands/openvpn-fixed-db-init.time",
+      "wall_seconds": 0.756
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "database",
+        "index-files",
+        "--language=ucode",
+        "--include=**/rpcd/ucode/*",
+        "--working-dir=/home/runner/work/_temp/r3-ucode-45833426577-1/stage/openvpn-fixed",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/database/openvpn-fixed",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-fixed"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-db-index",
+      "peak_rss_bytes": 114327552,
+      "stderr": "commands/openvpn-fixed-db-index.stderr",
+      "stdout": "commands/openvpn-fixed-db-index.stdout",
+      "time": "commands/openvpn-fixed-db-index.time",
+      "wall_seconds": 0.599
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "database",
+        "finalize",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-fixed",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/database/openvpn-fixed"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-db-finalize",
+      "peak_rss_bytes": 220340224,
+      "stderr": "commands/openvpn-fixed-db-finalize.stderr",
+      "stdout": "commands/openvpn-fixed-db-finalize.stdout",
+      "time": "commands/openvpn-fixed-db-finalize.time",
+      "wall_seconds": 1.589
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "query",
+        "run",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src/diagnostics/SuccessfullyExtractedFiles.ql",
+        "--database=/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-fixed",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/lib:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/query/openvpn-fixed",
+        "--compilation-cache=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/compile/openvpn-fixed",
+        "--no-default-compilation-cache",
+        "--output=/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-fixed/successful.bqrs",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-successful-query",
+      "peak_rss_bytes": 310878208,
+      "stderr": "commands/openvpn-fixed-successful-query.stderr",
+      "stdout": "commands/openvpn-fixed-successful-query.stdout",
+      "time": "commands/openvpn-fixed-successful-query.time",
+      "wall_seconds": 3.023
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "bqrs",
+        "decode",
+        "--format=json",
+        "--entities=url,string",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-fixed/successful.bqrs"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-successful-decode",
+      "peak_rss_bytes": 94347264,
+      "stderr": "commands/openvpn-fixed-successful-decode.stderr",
+      "stdout": "commands/openvpn-fixed-successful-decode.stdout",
+      "time": "commands/openvpn-fixed-successful-decode.time",
+      "wall_seconds": 0.385
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "query",
+        "run",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src/diagnostics/ExtractionErrors.ql",
+        "--database=/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-fixed",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/lib:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/query/openvpn-fixed",
+        "--compilation-cache=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/compile/openvpn-fixed",
+        "--no-default-compilation-cache",
+        "--output=/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-fixed/errors.bqrs",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-errors-query",
+      "peak_rss_bytes": 264790016,
+      "stderr": "commands/openvpn-fixed-errors-query.stderr",
+      "stdout": "commands/openvpn-fixed-errors-query.stdout",
+      "time": "commands/openvpn-fixed-errors-query.time",
+      "wall_seconds": 2.678
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "bqrs",
+        "decode",
+        "--format=json",
+        "--entities=url,string",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-fixed/errors.bqrs"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-errors-decode",
+      "peak_rss_bytes": 93724672,
+      "stderr": "commands/openvpn-fixed-errors-decode.stderr",
+      "stdout": "commands/openvpn-fixed-errors-decode.stdout",
+      "time": "commands/openvpn-fixed-errors-decode.time",
+      "wall_seconds": 0.482
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/cli/codeql/codeql",
+        "database",
+        "analyze",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/db/openvpn-fixed",
+        "/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src/codeql-suites/code-scanning.qls",
+        "--format=sarifv2.1.0",
+        "--output=/home/runner/work/_temp/r3-ucode-45833426577-1/out/openvpn-fixed/default-suite.sarif",
+        "--search-path=/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/extractor-pack:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/lib:/home/runner/work/_temp/r3-ucode-45833426577-1/bundle/codeql-ucode-linux/ql/src",
+        "--common-caches=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/query/openvpn-fixed",
+        "--compilation-cache=/home/runner/work/_temp/r3-ucode-45833426577-1/cache/compile/openvpn-fixed",
+        "--no-default-compilation-cache",
+        "--threads=1",
+        "--ram=2048"
+      ],
+      "cwd": "/home/runner/work/codeql-openwrt/codeql-openwrt",
+      "exit": 0,
+      "label": "openvpn-fixed-analyze",
+      "peak_rss_bytes": 444403712,
+      "stderr": "commands/openvpn-fixed-analyze.stderr",
+      "stdout": "commands/openvpn-fixed-analyze.stdout",
+      "time": "commands/openvpn-fixed-analyze.time",
+      "wall_seconds": 6.679
+    }
+  ],
+  "consumer_sha": "929dc12b0434b38d0d17e8b65cfc3450170c5b11",
+  "extraction_errors": [],
+  "producer": {
+    "codeql_version": "2.27.4",
+    "pack_sha256": "efd10ca853ad94c63e12f40ce92b10523d5cb9be5e647fb4312f82ed62c1e153",
+    "sha": "131605a726b7a79eb926886d07bf44eb721fe450",
+    "suite_sha256": "6d343f93e37c309b8461da9fafcf67d089737980d7ac42a5409e75df3bd442e5"
+  },
+  "release_tag": "v0.1.0-rc.1",
+  "resolved_rules": [
+    "ucode/m4/direct-rpc-shell-word",
+    "ucode/diagnostics/successfully-extracted-files",
+    "ucode/diagnostics/extraction-errors"
+  ],
+  "route_sha256": "4ff91d54355c82dcf0270278d2b7125afb2e974ade5b078fb00382fb33cb44fe",
+  "run_id": "45833426577-1",
+  "sarif_sha256": "0e46ce61a2c5e9ae3196042c510aed4b43a7f8b5555be1711394523bc09da7cc",
+  "schema": "ucode-sarif-run-v1",
+  "source": {
+    "actual_package_installed_bytes_verified": false,
+    "blob": "eb3b418f855d24ae0a34d5d09a289b9342098129",
+    "commit": "e4ff45ecbc6ad212951815c8c99b2749fbd7de6b",
+    "source_path": "protocols/luci-proto-openvpn/root/usr/share/rpcd/ucode/luci.openvpn.uc",
+    "source_sha256": "6593792678951fd500c2b090d17d9e500a05a642cfb996ee02c1649473152410",
+    "stage_path": "usr/share/rpcd/ucode/luci.openvpn.uc",
+    "stage_sha256": "6593792678951fd500c2b090d17d9e500a05a642cfb996ee02c1649473152410"
+  },
+  "successful_files": [
+    "usr/share/rpcd/ucode/luci.openvpn.uc"
+  ]
+}
