@@ -1,0 +1,54 @@
+{
+  "config": {
+    "apk": "disabled",
+    "config_sha256": "32dcd3e6663d22a79d522c78793a83ff019c11a46eabaf30b16deac917e17948",
+    "css_tidy": "CONFIG_LUCI_CSSTIDY=y",
+    "js_minification": "CONFIG_LUCI_JSMIN=y",
+    "package_selection": {
+      "luci-mod-network": "m",
+      "luci-mod-status": "m",
+      "luci-mod-system": "m"
+    },
+    "resolved_dependencies": {
+      "libiwinfo": "m",
+      "luci-base": "m",
+      "luci-lib-uqr": "m",
+      "rpcd-mod-iwinfo": "m"
+    },
+    "target": "x86_64"
+  },
+  "pins": {
+    "luci": {
+      "dirty": false,
+      "sha": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+      "tree": "1d7bf89bc8708fca69d005b0690ca823c9071692"
+    },
+    "openwrt": {
+      "dirty": false,
+      "sha": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "tree": "328d4df01c038d365176b72753b778e10c3ff413"
+    },
+    "packages": {
+      "dirty": false,
+      "sha": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "tree": "a6b0fc0935cbfeedb810e6e991b6940f71548ea7"
+    }
+  },
+  "source_preflight": {
+    "admin_full_dependency_collection": {
+      "blob": "b376b35e55622803f2088a7491c3e1679578c4e5",
+      "direct_payload": false,
+      "sha256": "c64544d6700cc3068b8708f84b66dfdcdc2f49730cc99aae2d3c75fbdd130205",
+      "source_path": "modules/luci-mod-admin-full/Makefile"
+    },
+    "luci": {
+      "dirty": false,
+      "sha": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+      "tree": "1d7bf89bc8708fca69d005b0690ca823c9071692"
+    },
+    "luci_mk_sha256": "9716c9a7a1c276b867df5887558e2b63b78f7d3695915adb7fcd0a7f0182ed0d",
+    "oracle_sha256": "afa112d09dce539a3e51845cd0786938194cb8c8af7d4c67d9713361b83693a5",
+    "source_rows": 73
+  },
+  "status": "PREFLIGHT_PASS"
+}

@@ -1,0 +1,5 @@
+11a51c7597da4d013e24b3e670e6760f2392e258b90951bba2db2b91154edef5  /home/runner/work/_temp/issue173-core-module-batches/openwrt/rules.mk
+9716c9a7a1c276b867df5887558e2b63b78f7d3695915adb7fcd0a7f0182ed0d  /home/runner/work/_temp/issue173-core-module-batches/luci/luci.mk
+912800ee5a94aa7bf70ef5fb12d1f7fa5e058d123965bc745ff5ac02e701dcdb  /home/runner/work/_temp/issue173-core-module-batches/luci/modules/luci-mod-status/Makefile
+6655bfdd158af34233396a24fac0a3f671e543553f8c14b377ac2948932d09d6  /home/runner/work/_temp/issue173-core-module-batches/luci/modules/luci-mod-network/Makefile
+315224a6aed5598eb229533eb73cc846e79f9d1f6fba4d1e75587910ef95cfe7  /home/runner/work/_temp/issue173-core-module-batches/luci/modules/luci-mod-system/Makefile
