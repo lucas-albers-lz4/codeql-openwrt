@@ -36,6 +36,9 @@ def read_small(path: Path) -> tuple[bytes, dict]:
 
 def build(previous: Path, current: Path, gap_path: Path, identity_path: Path,
           inventory_path: Path, source_checkout: Path, control_checkout: Path) -> dict:
+    poll.check(not branch_event.safe_git(ROOT, 'status', '--porcelain=v1',
+                                         '--untracked-files=all'),
+               'consumer checkout is dirty')
     poll.check(digest(POLICY) == POLICY_SHA256, 'frozen v0.6 policy digest differs')
     policy_raw, policy = read_small(POLICY)
     identity_raw, identity = read_small(identity_path)

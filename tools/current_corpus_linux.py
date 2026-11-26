@@ -21,6 +21,7 @@ from tools.event_corpus_manifest import build as build_event_manifest
 from tools.event_corpus_manifest import POLICY_SHA256 as EVENT_POLICY_SHA256
 from tools.full_tree_candidates import compare as compare_candidates
 from tools import direct_commit_corpus_manifest as direct_manifest
+from tools import default_branch_corpus_manifest as branch_manifest
 from tools import direct_commit_admission as direct_admission
 
 MANIFEST_SHA256 = "9c004ed477665f6567a071eac45051445c61019af927bfa4e51bae4c50ebd490"
@@ -157,6 +158,28 @@ def validate_direct_commit_manifest(manifest_path: Path, identity_path: Path,
     return actual, manifest_raw
 
 
+def validate_default_branch_manifest(manifest_path: Path, previous_path: Path,
+                                     current_path: Path, gap_path: Path,
+                                     identity_path: Path, inventory_path: Path,
+                                     source_checkout: Path,
+                                     control_checkout: Path) -> tuple[dict, bytes]:
+    manifest_raw, actual = branch_manifest.read_small(manifest_path)
+    expected = branch_manifest.build(previous_path, current_path, gap_path,
+                                     identity_path, inventory_path,
+                                     source_checkout, control_checkout)
+    need(actual == expected, 'default-branch manifest differs from fresh linked oracle')
+    need(actual.get('schema') == 'mvp-default-branch-commit-corpus-v1' and
+         actual.get('status') == 'source_first_default_branch_oracle_only' and
+         len(actual['selected']) == 128 and len(actual['excluded']) == 13 and
+         actual['event'].get('kind') == 'default_branch_commit' and
+         actual['event'].get('source_role') == 'incoming_default_branch_first_parent' and
+         actual['event'].get('base_commit') == actual['event'].get('first_parent_commit') and
+         'pr_number' not in actual['event'] and
+         actual['event'].get('policy_sha256') == branch_manifest.POLICY_SHA256,
+         'default-branch corpus contract differs')
+    return actual, manifest_raw
+
+
 def assert_direct_known_alert(triage: dict, manifest: dict, release: dict) -> dict:
     oracle_raw = direct_admission.read_regular_bounded(DIRECT_ALERT_ORACLE, 100_000)
     need(hashlib.sha256(oracle_raw).hexdigest() == DIRECT_ALERT_ORACLE_SHA256,
@@ -191,17 +214,26 @@ def assert_direct_known_alert(triage: dict, manifest: dict, release: dict) -> di
 
 def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: str,
                 *, event_context: tuple[Path, ...] | None = None,
+                default_branch_context: tuple[Path, ...] | None = None,
                 run_label: str | None = None) -> None:
     lock = json.loads(lock_path.read_text())
     pinned(lock)
-    event = event_context is not None
-    direct = event and len(event_context) == 5
+    need(not (event_context is not None and default_branch_context is not None),
+         'conflicting corpus contexts')
+    branch = default_branch_context is not None
+    event = event_context is not None or branch
+    direct = event_context is not None and len(event_context) == 5
     validated_manifest_raw = None
     need(run_label in (None, "control-corpus"), "invalid corpus run label")
     need(run_label is None or event, "control requires event oracle")
     need(not direct or run_label is None, "direct-commit control requires separate contract")
+    need(not branch or run_label is None, 'default-branch control requires separate contract')
     if event:
-        if direct:
+        if branch:
+            need(len(default_branch_context) == 7, 'invalid default-branch context')
+            manifest, validated_manifest_raw = validate_default_branch_manifest(
+                manifest_path, *default_branch_context)
+        elif direct:
             identity_path, admission_path, inventory_path, source_checkout, control_checkout = event_context
             manifest, validated_manifest_raw = validate_direct_commit_manifest(
                 manifest_path, identity_path, admission_path, inventory_path,
@@ -257,11 +289,13 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
     available = re.search(r"(?m)^MemAvailable:\s*(\d+) kB$", memory)
     need(available is not None and int(available.group(1)) >= 2 * 1024**2,
          "less than 2 GiB available memory")
-    run = Run(prior_root / ("direct-commit-corpus" if direct else
+    run = Run(prior_root / ("default-branch-corpus" if branch else
+                            "direct-commit-corpus" if direct else
                             (run_label or ("event-corpus" if event else "current-corpus"))), run_id)
     try:
-        if direct:
-            snapshot = run.root / "validated-direct-manifest.json"
+        if direct or branch:
+            snapshot = run.root / ("validated-default-branch-manifest.json" if branch else
+                                   "validated-direct-manifest.json")
             snapshot.write_bytes(validated_manifest_raw)
             need(digest(snapshot) == hashlib.sha256(validated_manifest_raw).hexdigest(),
                  "validated direct manifest snapshot differs")
@@ -378,8 +412,9 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
              "successful identity or extraction-error mismatch")
         decisions = {d["installed_path"]: d for d in routing["decisions"]}
         success_counts = Counter(successes)
-        coverage_name = "coverage-direct-commit.json" if direct else "coverage-event.json" if event else "coverage-v0.6.json"
-        coverage = {"schema": "ucode-direct-commit-corpus-coverage-v1" if direct else
+        coverage_name = "coverage-default-branch.json" if branch else "coverage-direct-commit.json" if direct else "coverage-event.json" if event else "coverage-v0.6.json"
+        coverage = {"schema": "ucode-default-branch-corpus-coverage-v1" if branch else
+                    "ucode-direct-commit-corpus-coverage-v1" if direct else
                     "ucode-event-corpus-coverage-v1" if event else
                     "ucode-current-corpus-coverage-v0.6",
                     "source_manifest_sha256": digest(manifest_path),
@@ -463,7 +498,8 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
             need(hashlib.sha256(source_bytes(repos[row["repo"]] / row["source_path"])).hexdigest()
                  == row["sha256"], f"excluded source changed during run: {row['source_path']}")
         triage = json.loads(accepted_text) if event else None
-        write_json(run.root / "receipt.json", {"schema": "ucode-direct-commit-corpus-linux-v1" if direct else
+        write_json(run.root / "receipt.json", {"schema": "ucode-default-branch-corpus-linux-v1" if branch else
+                   "ucode-direct-commit-corpus-linux-v1" if direct else
                    "ucode-event-corpus-linux-v1" if event else
                    "ucode-current-corpus-linux-v1",
                    "status": triage["status"] if event else "accepted",
