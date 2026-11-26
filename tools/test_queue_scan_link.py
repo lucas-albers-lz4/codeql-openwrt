@@ -1,4 +1,5 @@
 import hashlib
+import hmac
 import json
 import sys
 import tempfile
@@ -6,7 +7,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from incoming_queue import encoded, open_queue
+from incoming_queue import apply_attested, encoded, open_queue
 from issuer_artifact_freeze import INPUT_FILES, R3_OUT, SCAN_OUT
 from queue_scan_link import LinkError, verify
 
@@ -210,6 +211,37 @@ class ScanLinkTests(unittest.TestCase):
         self.assertEqual(result['status'], 'linked_only')
         self.assertEqual(self.database.read_bytes(), before)
         self.assertFalse(self.database.with_name('queue.db-journal').exists())
+
+    def start_queue(self, run_id='123-1'):
+        db = open_queue(self.database)
+        digest = db.execute('select digest from history where seq=2').fetchone()[0]
+        job = {'workflow': '.github/workflows/incoming-event-preflight.yml',
+               'job': 'released-event-scan', 'run_id': 123, 'attempt': 1}
+        payload = {'kind': 'start', 'queue_id': self.reservation['queue_id'],
+                   'event_id': self.event_id, 'reservation': 2,
+                   'reservation_digest': digest, 'run_id': run_id, 'job': job}
+        key = b'k' * 32
+        mac = hmac.new(key, encoded(payload), hashlib.sha256).hexdigest()
+        try:
+            apply_attested(db, (2, digest), payload, mac, key,
+                           '2026-01-01T00:01:30Z')
+        finally:
+            db.close()
+
+    def test_exact_link_after_signed_start(self):
+        self.set_claim()
+        self.start_queue()
+        before = self.database.read_bytes()
+        result = self.verify(require_claim=True)
+        self.assertEqual(result['queue_state'], 'started')
+        self.assertEqual(result['reservation_sequence'], 2)
+        self.assertEqual(self.database.read_bytes(), before)
+
+    def test_wrong_started_run_rejected(self):
+        self.set_claim()
+        self.start_queue(run_id='999-1')
+        with self.assertRaisesRegex(LinkError, 'matching recorded start'):
+            self.verify(require_claim=True)
 
     def test_same_job_claim_is_required_when_requested(self):
         with self.assertRaisesRegex(LinkError, 'claim missing'):

@@ -111,6 +111,15 @@ download and run API response together for review. A fabricated matching
 artifact and API file can still satisfy this offline comparison; a trusted
 same-job issuer is needed for completion.
 
+The read-only linker also accepts an immediate recorded `start` action as the
+queue head when that action binds the retained exact reservation, workflow,
+job, run ID and attempt, and the event row remains `started` with the same
+job. It reports `queue_state: started`. This lets a completed artifact be
+compared after a start recorded in the queue. The linker checks the record's
+shape and chain, not its HMAC or external running-job evidence, and does not
+advance the queue. Later unrelated queue transitions are not yet supported
+on this path.
+
 For an operator-owned read-only custody check, create a private, operator-owned
 mode `0700` directory and run `tools/operator_artifact_custody.py` with
 `--database <private-queue> --work-root <private-dir> --run-id <number>
