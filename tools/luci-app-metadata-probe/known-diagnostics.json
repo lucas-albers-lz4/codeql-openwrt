@@ -1,0 +1,69 @@
+{
+  "schema": "issue173-historical-scan-diagnostics-v1",
+  "source_run": "https://github.com/lucas-albers-lz4/codeql-openwrt/actions/runs/45756197469",
+  "source_log_sha256": "b52936e74fc161e8c810259a4b4cbd749188040ae4994fc662ac05a2e1f84aa8",
+  "scope": "historical same-pin scan diagnostics for metadata collection only; all require graph review; never a build approval",
+  "feeds_install_warnings": [
+    "WARNING: Makefile 'package/boot/arm-trusted-firmware-microchipsw/Makefile' has a build dependency on 'ruby/host', which does not exist",
+    "WARNING: Makefile 'package/utils/audit/Makefile' has a dependency on 'libev', which does not exist",
+    "WARNING: Makefile 'package/utils/busybox/Makefile' has a dependency on 'libpam', which does not exist",
+    "WARNING: Makefile 'package/utils/busybox/Makefile' has a dependency on 'libtirpc', which does not exist",
+    "WARNING: Makefile 'package/utils/busybox/Makefile' has a dependency on 'libpam', which does not exist",
+    "WARNING: Makefile 'package/utils/busybox/Makefile' has a dependency on 'libtirpc', which does not exist",
+    "WARNING: Makefile 'package/utils/busybox/Makefile' has a build dependency on 'libpam', which does not exist",
+    "WARNING: Makefile 'package/boot/kexec-tools/Makefile' has a dependency on 'liblzma', which does not exist",
+    "WARNING: Makefile 'package/network/services/lldpd/Makefile' has a dependency on 'libnetsnmp', which does not exist",
+    "WARNING: Makefile 'package/utils/policycoreutils/Makefile' has a dependency on 'libpam', which does not exist",
+    "WARNING: Makefile 'package/utils/policycoreutils/Makefile' has a dependency on 'libpam', which does not exist",
+    "WARNING: Makefile 'package/utils/policycoreutils/Makefile' has a build dependency on 'libpam', which does not exist"
+  ],
+  "defconfig_warnings": [
+    "WARNING: Makefile 'package/feeds/packages/bmx7-dnsupdate/Makefile' has a dependency on 'bmx7', which does not exist",
+    "WARNING: Makefile 'package/feeds/packages/bmx7-dnsupdate/Makefile' has a dependency on 'bmx7-json', which does not exist",
+    "WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libmesa', which does not exist",
+    "WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libwayland', which does not exist",
+    "WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libgraphene', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-babeld/Makefile' has a dependency on 'babeld', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-uci-config', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-json', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-tun', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-iwinfo', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd-mod-jsoninfo', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd-mod-sgwdynspeed', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-olsr-services/Makefile' has a dependency on 'olsrd', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-olsr-services/Makefile' has a dependency on 'olsrd-mod-nameservice', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-olsr-viz/Makefile' has a dependency on 'olsrd', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-app-olsr-viz/Makefile' has a dependency on 'olsrd-mod-txtinfo', which does not exist",
+    "WARNING: Makefile 'package/feeds/luci/luci-proto-batman-adv/Makefile' has a dependency on 'kmod-batman-adv', which does not exist",
+    "WARNING: Makefile 'package/feeds/packages/prometheus-node-exporter-lua/Makefile' has a dependency on 'bmx7', which does not exist",
+    "WARNING: Makefile 'package/feeds/packages/prometheus-node-exporter-lua/Makefile' has a dependency on 'bmx7-json', which does not exist"
+  ],
+  "defconfig_recursive_pairs": [
+    [
+      "tmp/.config-package.in:104132:error: recursive dependency detected!",
+      "tmp/.config-package.in:104132:\tsymbol PACKAGE_dnsdist depends on PACKAGE_dnsdist"
+    ],
+    [
+      "tmp/.config-package.in:64514:error: recursive dependency detected!",
+      "tmp/.config-package.in:64514:\tsymbol PACKAGE_luci-app-weechat depends on PACKAGE_luci-app-weechat"
+    ],
+    [
+      "tmp/.config-package.in:104162:error: recursive dependency detected!",
+      "tmp/.config-package.in:104162:\tsymbol PACKAGE_dnsdist-full depends on PACKAGE_dnsdist-full"
+    ],
+    [
+      "tmp/.config-package.in:102575:error: recursive dependency detected!",
+      "tmp/.config-package.in:102575:\tsymbol PACKAGE_snort3 depends on PACKAGE_snort3"
+    ],
+    [
+      "tmp/.config-package.in:104586:error: recursive dependency detected!",
+      "tmp/.config-package.in:104586:\tsymbol PACKAGE_knot-resolver depends on PACKAGE_knot-resolver"
+    ],
+    [
+      "tmp/.config-package.in:102448:error: recursive dependency detected!",
+      "tmp/.config-package.in:102448:\tsymbol PACKAGE_openappid depends on PACKAGE_openappid"
+    ]
+  ]
+}

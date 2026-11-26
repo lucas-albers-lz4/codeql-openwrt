@@ -1,0 +1,82 @@
+{
+  "schema": "issue173-companion-recipe-source-v1",
+  "entries": [
+    {
+      "name": "collectd",
+      "repo": "openwrt/packages",
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/collectd/Makefile",
+      "url": "https://github.com/openwrt/packages/blob/07e0d16305d2b5903b37ad7913e33e18795f81a4/utils/collectd/Makefile",
+      "git_blob": "77138875d3abbbdd09d0785f396b1f95c6ac8594",
+      "sha256": "0a4c5b6cf81f9e8234ec3c72d58a089c981ee83c0071187e6269a44a07d45dd7",
+      "retained_path": "companion-recipes/collectd.Makefile",
+      "scope": "recipe source only; no resolved dependencies or runtime evidence"
+    },
+    {
+      "name": "docker",
+      "repo": "openwrt/packages",
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/docker/Makefile",
+      "url": "https://github.com/openwrt/packages/blob/07e0d16305d2b5903b37ad7913e33e18795f81a4/utils/docker/Makefile",
+      "git_blob": "9f74b071dc380b38715dd3ce2f9c8257a090433c",
+      "sha256": "61426fc4206fb530a4bfdf3fd395b44d6b0c818388560d0041a728dde4b78b98",
+      "retained_path": "companion-recipes/docker.Makefile",
+      "scope": "recipe source only; no resolved dependencies or runtime evidence"
+    },
+    {
+      "name": "docker-compose",
+      "repo": "openwrt/packages",
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/docker-compose/Makefile",
+      "url": "https://github.com/openwrt/packages/blob/07e0d16305d2b5903b37ad7913e33e18795f81a4/utils/docker-compose/Makefile",
+      "git_blob": "3d12ba545ffa73678487ea7bb55272f3b1fb95d5",
+      "sha256": "30c05f9a233c89afe24b50c009bcefd84fe91b49550272defdb964d3dc7ae764",
+      "retained_path": "companion-recipes/docker-compose.Makefile",
+      "scope": "recipe source only; no resolved dependencies or runtime evidence"
+    },
+    {
+      "name": "dockerd",
+      "repo": "openwrt/packages",
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/dockerd/Makefile",
+      "url": "https://github.com/openwrt/packages/blob/07e0d16305d2b5903b37ad7913e33e18795f81a4/utils/dockerd/Makefile",
+      "git_blob": "884fb362ef7266815a48718690d4deed9c1b1c45",
+      "sha256": "44aea8585e78623c5904e408c7281eb37d048f55c5eb2a4e4b5b294fd46c39e7",
+      "retained_path": "companion-recipes/dockerd.Makefile",
+      "scope": "recipe source only; no resolved dependencies or runtime evidence"
+    },
+    {
+      "name": "rrdtool1",
+      "repo": "openwrt/packages",
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/rrdtool1/Makefile",
+      "url": "https://github.com/openwrt/packages/blob/07e0d16305d2b5903b37ad7913e33e18795f81a4/utils/rrdtool1/Makefile",
+      "git_blob": "afe3452f56aea4698d177186d8d8924d45ea1101",
+      "sha256": "9267bdb915df7f47a9ff880895675a415a6f68700ce76c057b487abcf0c9719a",
+      "retained_path": "companion-recipes/rrdtool1.Makefile",
+      "scope": "recipe source only; no resolved dependencies or runtime evidence"
+    },
+    {
+      "name": "ttyd",
+      "repo": "openwrt/packages",
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/ttyd/Makefile",
+      "url": "https://github.com/openwrt/packages/blob/07e0d16305d2b5903b37ad7913e33e18795f81a4/utils/ttyd/Makefile",
+      "git_blob": "c6733c47e90d933e681ce007c4780fd9b7f47870",
+      "sha256": "88320a3ff42b4ad17ec4c2ced77a3c6c1b15337eb2a16e0cf8530cec0ac6352f",
+      "retained_path": "companion-recipes/ttyd.Makefile",
+      "scope": "recipe source only; no resolved dependencies or runtime evidence"
+    },
+    {
+      "name": "ucode",
+      "repo": "openwrt/openwrt",
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/utils/ucode/Makefile",
+      "url": "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/package/utils/ucode/Makefile",
+      "git_blob": "2060ce98176b11b1bfd621b22ae0ad2c4783b4f8",
+      "sha256": "ba4caa324097efcdbd9ca6ea257bc95c5f3188e57f8e5e4138ad882a9c059728",
+      "retained_path": "companion-recipes/ucode.Makefile",
+      "scope": "recipe source only; no resolved dependencies or runtime evidence"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "schema": "issue173-scheduler-source-v1",
+  "entries": [
+    {
+      "name": "containerd",
+      "repo": "openwrt/packages",
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "utils/containerd/Makefile",
+      "url": "https://github.com/openwrt/packages/blob/07e0d16305d2b5903b37ad7913e33e18795f81a4/utils/containerd/Makefile",
+      "git_blob": "8291567ca3b2940e1c2dda2fcb7aaf17eaa4dcc2",
+      "sha256": "ef7cf0ba5dcddb87edf09aa617d53f632ec6fc84bda98092d4fbd6264018609a",
+      "retained_path": "scheduler-sources/containerd"
+    },
+    {
+      "name": "golang-values",
+      "repo": "openwrt/packages",
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "source_path": "lang/golang/golang-values.mk",
+      "url": "https://github.com/openwrt/packages/blob/07e0d16305d2b5903b37ad7913e33e18795f81a4/lang/golang/golang-values.mk",
+      "git_blob": "4d2c61e64c9e9980c033b074c55a27202aa07937",
+      "sha256": "4061d38ecaa25342836b9ecaab738a4fca9a090bea904e2d5021b51b8756093c",
+      "retained_path": "scheduler-sources/golang-values"
+    },
+    {
+      "name": "package-metadata",
+      "repo": "openwrt/openwrt",
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "scripts/package-metadata.pl",
+      "url": "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/scripts/package-metadata.pl",
+      "git_blob": "82bd4360f3bb9f0bf214a3fb10b68910e537c6e6",
+      "sha256": "ffa8d04ca34fd706e415131b1c99c423b3ff39b6907cb65b4fadf7378ff49646",
+      "retained_path": "scheduler-sources/package-metadata"
+    },
+    {
+      "name": "subdir",
+      "repo": "openwrt/openwrt",
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "include/subdir.mk",
+      "url": "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/include/subdir.mk",
+      "git_blob": "b4edbf8b96c784cd8a7ed78996bb1ff715ceb9d0",
+      "sha256": "3896d8f3b9f95cd8ec3ff8283f475746c48c60137e422d3158d6b62f8ce7a513",
+      "retained_path": "scheduler-sources/subdir"
+    },
+    {
+      "name": "toplevel",
+      "repo": "openwrt/openwrt",
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "include/toplevel.mk",
+      "url": "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/include/toplevel.mk",
+      "git_blob": "c55c92077f6863dd81e47bdcd3081b933f951605",
+      "sha256": "256788f3059518b42c35826589c78bf2ef337cc2b8582c7c1a57c01c064509c2",
+      "retained_path": "scheduler-sources/toplevel"
+    },
+    {
+      "name": "package",
+      "repo": "openwrt/openwrt",
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/Makefile",
+      "url": "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/package/Makefile",
+      "git_blob": "73c8968daf7e4b031a92fdd32326794ca6a0f177",
+      "sha256": "9af7561b7794755b1d6178c178a99ea3607cc48eb6d3cb1f9d0d3349549c8cd8",
+      "retained_path": "scheduler-sources/package"
+    },
+    {
+      "name": "top-make",
+      "repo": "openwrt/openwrt",
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "Makefile",
+      "url": "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/Makefile",
+      "git_blob": "7c52acccba416a86a347d2e852195b6ebd33d057",
+      "sha256": "71c6b04f81f84710381a32b3eb83028fdd1f2e5b55927ba6d8f71dd93c9f2946",
+      "retained_path": "scheduler-sources/top-make"
+    },
+    {
+      "name": "kernel-linux",
+      "repo": "openwrt/openwrt",
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "package/kernel/linux/Makefile",
+      "url": "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/package/kernel/linux/Makefile",
+      "git_blob": "347cdee1290e0b8e3730f918de626dd77cf60b56",
+      "sha256": "1863b4e4bff85d5dad50f1805ec14cdd3cd510caa8a0d8ae8e8b965129f239d2",
+      "retained_path": "scheduler-sources/kernel-linux"
+    },
+    {
+      "name": "metadata-pm",
+      "repo": "openwrt/openwrt",
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "source_path": "scripts/metadata.pm",
+      "url": "https://github.com/openwrt/openwrt/blob/4e9642517b48bae612ff10fb72fb9199e559500e/scripts/metadata.pm",
+      "git_blob": "6cb63608d23683773d2b9972c6063cdcb1421421",
+      "sha256": "41596b6581c98ade640bdab0e54af9c7ee8eac72fee79057c6c5263202be5fd9",
+      "retained_path": "scheduler-sources/metadata-pm"
+    }
+  ]
+}
