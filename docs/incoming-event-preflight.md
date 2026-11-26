@@ -31,6 +31,19 @@ The following [source-first event corpus oracle](event-corpus-manifest.md)
 refreshes selected Git blobs and hashes from the verified head and checks
 routes before extraction. It remains an input contract for a later released
 scanner job.
+When the immutable release lock is populated, a second Ubuntu job re-fetches
+the captured PR and control SHAs, replays the resolver, selector and oracle,
+and requires byte-identical input reports before R3 release verification and
+the event corpus scan. It passes actual SARIF to the
+[event triage consumer](event-sarif-triage.md). With the current null lock,
+that scan step does not run; the workflow summary says so. The scan job fetches a fresh PR API response and validates it against the captured event and clean canonical checkouts; closed PRs or changed head/base identities fail before oracle replay. A populated lock
+and a successful hosted manual run are still required for Gate 8 evidence.
+The released job separately records whether the tagged producer's
+`extractor/src/extractor.rs` bytes match the route-oracle source digest. This
+is a source-file comparison, not a claim that the entire released bundle and
+local PR tree are identical. Its job summary shows `triage_required` or
+`clean_scan`, selected-file count, markup-inconclusive count, and up to 20
+result tuples; the artifact retains the complete set.
 On changes to the workflow, selector, resolver, tests or v0.6 manifest, a
 separate pull-request contract job runs the resolver and selector controls.
 It does not fetch upstream source or execute the manual drill.
@@ -47,3 +60,22 @@ python3 -B -m unittest tools.test_event_corpus_manifest -v
 
 The tests use temporary local Git repositories and mocked pull API JSON; they
 do not access GitHub.
+
+With a populated release lock, the same job also prepares a control oracle
+from the exact canonical control commit before either corpus scan. It compares
+that commit with the frozen policy pin, fails closed on candidate or recipe
+changes requiring review, and binds the oracle to the captured control commit,
+tree and receipt digest. A derived receipt adapts the existing event oracle;
+it is not a claim that the control is the PR head. The control manifest and
+scan receipt carry `event.source_role: clean_control`, which the runner
+validates against its separate control run label. The job replays the oracle
+and runs the same released producer and triage consumer in a separate
+`control-corpus` database, stage, caches and outputs. The control assertion
+requires an empty result tuple list and `clean_scan`. A nonempty control fails
+the clean-control assertion and its full output remains available for review.
+After R3 verification, the control scan still runs if the event scan fails;
+the job summary reports both outcomes. Oracle and replay failures retain a
+stage-specific JSON failure record alongside any prepared inventory.
+The event and control scans are bounded source-staged observations; a clean
+control does not establish safety or actual installed bytes. With the current
+null release lock neither scan has run.

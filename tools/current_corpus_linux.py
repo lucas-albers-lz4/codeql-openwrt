@@ -17,6 +17,9 @@ import sys
 
 from tools.r3_linux_handoff import (EXPECTED_QUERIES, ROOT, Run, digest,
                                     file_rows, need, pinned, query_id, write_json)
+from tools.event_corpus_manifest import build as build_event_manifest
+from tools.event_corpus_manifest import POLICY_SHA256 as EVENT_POLICY_SHA256
+from tools.full_tree_candidates import compare as compare_candidates
 
 MANIFEST_SHA256 = "9c004ed477665f6567a071eac45051445c61019af927bfa4e51bae4c50ebd490"
 PINS = {
@@ -87,39 +90,65 @@ def source_bytes(path: Path) -> bytes:
     return path.read_bytes()
 
 
-def index_and_validate_routes(run: Run, db: Path, stage: Path, codeql: Path,
-                              common: Path, env: dict, manifest: dict) -> dict:
-    route_path = db / "trap/ucode/routing.json"
-    retained = run.root / "out/routing.json"
+def index_with_retained_routing(run: Run, argv: list, env: dict,
+                                route_path: Path, retained_path: Path) -> None:
     try:
-        run.call("db-index", [codeql, "database", "index-files", "--language=ucode",
-                              "--include=**/*", f"--working-dir={stage}",
-                              f"--common-caches={common}", "--threads=1", "--ram=2048", db], env=env)
+        run.call("db-index", argv, env=env)
     finally:
         if route_path.is_file():
-            shutil.copyfile(route_path, retained)
-    routing = json.loads(retained.read_text())
-    actual_routes = Counter((d["installed_path"], d["classification"], d["reason"], d["status"])
-                            for d in routing["decisions"])
-    expected_routes = Counter((row["proposed_installed_path"],
-                               row["expected_route"]["classification"],
-                               row["expected_route"]["reason"],
-                               "plain_route_selected" if row["expected_route"]["classification"] == "plain" else "inconclusive")
-                              for row in manifest["selected"])
-    need(actual_routes == expected_routes and routing.get("input_count") == 128 and
-         routing.get("plain_count") == 93 and routing.get("markup_count") == 35 and
-         routing.get("markup_inconclusive_count") == 35 and
-         all(routing.get(k) == 0 for k in ("excluded_count", "uncertain_count", "duplicate_input_count")),
-         "route identities/counts differ from source oracle")
-    return routing
+            shutil.copyfile(route_path, retained_path)
 
 
-def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: str) -> None:
+def validate_event_manifest(manifest_path: Path, receipt_path: Path,
+                            inventory_path: Path, source_checkout: Path,
+                            *, source_role: str = "incoming_pr_head") -> dict:
+    need(source_role in ("incoming_pr_head", "clean_control"), "invalid event source role")
+    baseline_path = ROOT / "docs/current-corpus-source-v0.6.json"
+    need(digest(baseline_path) == MANIFEST_SHA256 == EVENT_POLICY_SHA256,
+         "event baseline policy digest drift")
+    baseline_bytes = baseline_path.read_bytes()
+    baseline = json.loads(baseline_bytes)
+    validate_manifest(baseline)
+    receipt = json.loads(receipt_path.read_text())
+    inventory = json.loads(inventory_path.read_text())
+    fresh = compare_candidates(source_checkout, inventory["base_commit"],
+                               inventory["head_commit"], baseline, baseline_bytes,
+                               receipt["repository"])
+    need(fresh == inventory, "event candidate inventory differs from fresh Git objects")
+    expected = build_event_manifest(baseline, receipt, inventory, source_checkout)
+    expected["event"].update(identity_receipt_sha256=digest(receipt_path),
+                             candidate_inventory_sha256=digest(inventory_path),
+                             route_oracle_script_sha256=digest(ROOT / "tools/event_corpus_manifest.py"))
+    if source_role == "clean_control":
+        expected["event"]["source_role"] = "clean_control"
+    manifest = json.loads(manifest_path.read_text())
+    need(manifest == expected, "event corpus manifest differs from source-first oracle")
+    need(manifest.get("schema") == "mvp-incoming-event-corpus-v1" and
+         manifest["event"].get("policy_sha256") == MANIFEST_SHA256,
+         "invalid event corpus contract")
+    return manifest
+
+
+def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: str,
+                *, event_context: tuple[Path, Path, Path] | None = None,
+                run_label: str | None = None) -> None:
     lock = json.loads(lock_path.read_text())
     pinned(lock)
-    need(digest(manifest_path) == MANIFEST_SHA256, "current corpus manifest digest drift")
-    manifest = json.loads(manifest_path.read_text())
-    validate_manifest(manifest)
+    event = event_context is not None
+    need(run_label in (None, "control-corpus"), "invalid corpus run label")
+    need(run_label is None or event, "control requires event oracle")
+    if event:
+        receipt_path, inventory_path, source_checkout = event_context
+        manifest = validate_event_manifest(manifest_path, receipt_path,
+                                           inventory_path, source_checkout,
+                                           source_role="clean_control" if run_label == "control-corpus" else "incoming_pr_head")
+    else:
+        need(digest(manifest_path) == MANIFEST_SHA256, "current corpus manifest digest drift")
+        manifest = json.loads(manifest_path.read_text())
+        validate_manifest(manifest)
+    pins = manifest["pins"]
+    selected_count, excluded_count = len(manifest["selected"]), len(manifest["excluded"])
+    route_counts = Counter(row["expected_route"]["classification"] for row in manifest["selected"])
     prior = json.loads((prior_root / "receipt.json").read_text())
     need(prior.get("status") == "accepted" and
          prior.get("preflight", {}).get("run_id") == run_id and
@@ -141,6 +170,16 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
     need(digest(codeql) == release["codeql_binary_sha256"] and
          digest(original_bundle / "bundle-manifest.json") == release["manifest_sha256"],
          "released tool or bundle changed after R3")
+    released_route_source_sha256 = None
+    if event:
+        producer_git = prior_root / "sources/producer.git"
+        route_source = subprocess.check_output(
+            ["git", "--git-dir", str(producer_git), "show",
+             release["commit"] + ":extractor/src/extractor.rs"])
+        released_route_source_sha256 = hashlib.sha256(route_source).hexdigest()
+        need(released_route_source_sha256 ==
+             manifest["event"]["route_oracle_basis"]["extractor_source_sha256"],
+             "released producer routing source differs from event oracle basis")
     free_bytes = shutil.disk_usage(prior_root).free
     need(free_bytes >= 5 * 1024**3 and (os.cpu_count() or 0) >= 2,
          "insufficient disk or CPU for current-corpus run")
@@ -148,7 +187,7 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
     available = re.search(r"(?m)^MemAvailable:\s*(\d+) kB$", memory)
     need(available is not None and int(available.group(1)) >= 2 * 1024**2,
          "less than 2 GiB available memory")
-    run = Run(prior_root / "current-corpus", run_id)
+    run = Run(prior_root / (run_label or ("event-corpus" if event else "current-corpus")), run_id)
     try:
         bundle = run.root / "bundle/codeql-ucode-linux"
         need(not any(path.is_symlink() for path in original_bundle.rglob("*")),
@@ -168,7 +207,7 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
         run.env["PATH"] = str(codeql.parent) + os.pathsep + run.env.get("PATH", "")
         stage = run.root / "stage"
         repos = {}
-        for name, pin in PINS.items():
+        for name, pin in pins.items():
             repo = run.root / "sources" / name
             run.call(f"{name}-init", ["git", "init", repo])
             run.call(f"{name}-remote", ["git", "-C", repo, "remote", "add", "origin", REPOSITORIES[name]])
@@ -184,7 +223,7 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                  f"excluded source mismatch: {row['source_path']}")
             if row.get("git_blob"):
                 got = run.call(f"excluded-blob-{index:03d}", ["git", "-C", repos[row["repo"]], "rev-parse",
-                                                   PINS[row["repo"]] + ":" + row["source_path"]]).strip()
+                                                   pins[row["repo"]] + ":" + row["source_path"]]).strip()
                 need(got == row["git_blob"], "excluded Git blob mismatch")
         for index, row in enumerate(manifest["selected"]):
             repo = repos[row["repo"]]
@@ -202,10 +241,13 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
         write_json(run.root / "preflight.json", {"run_id": run_id, "consumer_sha": consumer_sha,
                    "r3_receipt_sha256": digest(prior_root / "receipt.json"),
                    "manifest_sha256": digest(manifest_path), "release_tag": release["tag"],
-                   "release_commit": release["commit"], "source_pins": PINS,
+                   "release_commit": release["commit"], "source_pins": pins,
+                   **({"event": manifest["event"]} if event else {}),
+                   **({"released_route_source_sha256": released_route_source_sha256,
+                       "released_route_source_matches_oracle": True} if event else {}),
                    "free_disk_bytes": free_bytes, "cpu_count": os.cpu_count(),
                    "available_memory_kib": int(available.group(1)),
-                   "selected_count": 128, "excluded_count": 13,
+                   "selected_count": selected_count, "excluded_count": excluded_count,
                    "actual_package_installed_bytes_verified": False,
                    "wifi_scripts_config_assumed": "CONFIG_WIFI_SCRIPTS_UCODE=y"})
         db = run.root / "db/current"
@@ -216,8 +258,26 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
         run.call("db-init", [codeql, "database", "init", db, "--language=ucode",
                              f"--search-path={search}", f"--common-caches={common}",
                              f"--source-root={stage}"], env=env)
-        routing = index_and_validate_routes(run, db, stage, codeql, common, env, manifest)
+        route_path = db / "trap/ucode/routing.json"
         out = run.root / "out"
+        index_with_retained_routing(run, [codeql, "database", "index-files", "--language=ucode",
+                                        "--include=**/*", f"--working-dir={stage}",
+                                        f"--common-caches={common}", "--threads=1", "--ram=2048", db],
+                                    env, route_path, out / "routing.json")
+        need(route_path.is_file(), "routing report missing after index")
+        routing = json.loads(route_path.read_text())
+        actual_routes = Counter((d["installed_path"], d["classification"], d["reason"], d["status"])
+                                for d in routing["decisions"])
+        expected_routes = Counter((row["proposed_installed_path"],
+                                   row["expected_route"]["classification"],
+                                   row["expected_route"]["reason"],
+                                   "plain_route_selected" if row["expected_route"]["classification"] == "plain" else "inconclusive")
+                                  for row in manifest["selected"])
+        need(actual_routes == expected_routes and routing.get("input_count") == selected_count and
+             routing.get("plain_count") == route_counts["plain"] and routing.get("markup_count") == route_counts["markup"] and
+             routing.get("markup_inconclusive_count") == route_counts["markup"] and
+             all(routing.get(k) == 0 for k in ("excluded_count", "uncertain_count", "duplicate_input_count")),
+             "route identities/counts differ from source oracle")
         run.call("db-finalize", [codeql, "database", "finalize", db,
                                  f"--common-caches={common}"], env=env)
         diagnostics = {}
@@ -239,12 +299,15 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
              "successful identity or extraction-error mismatch")
         decisions = {d["installed_path"]: d for d in routing["decisions"]}
         success_counts = Counter(successes)
-        coverage = {"schema": "ucode-current-corpus-coverage-v0.6",
+        coverage_name = "coverage-event.json" if event else "coverage-v0.6.json"
+        coverage = {"schema": "ucode-event-corpus-coverage-v1" if event else
+                    "ucode-current-corpus-coverage-v0.6",
                     "source_manifest_sha256": digest(manifest_path),
+                    **({"event": manifest["event"]} if event else {}),
                     "release_tag": release["tag"], "producer_commit": release["commit"],
-                    "source_pins": PINS, "actual_package_installed_bytes_verified": False,
-                    "counts": {"selected": 128, "extracted_once": 128, "errored": 0,
-                               "modeled_markup_inconclusive": 35, "excluded": 13},
+                    "source_pins": pins, "actual_package_installed_bytes_verified": False,
+                    "counts": {"selected": selected_count, "extracted_once": selected_count, "errored": 0,
+                               "modeled_markup_inconclusive": route_counts["markup"], "excluded": excluded_count},
                     "selected": [{"repo": row["repo"], "source_commit": row["source_commit"],
                                   "source_path": row["source_path"],
                                   "source_sha256": row["source_sha256"],
@@ -257,7 +320,7 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                                   "extraction_error_count": 0}
                                  for row in manifest["selected"]],
                     "excluded": manifest["excluded"]}
-        write_json(out / "coverage-v0.6.json", coverage)
+        write_json(out / coverage_name, coverage)
         resolved = json.loads(run.call("resolve-suite", [codeql, "resolve", "queries", "--format=json", suite,
                                                        f"--search-path={search}", f"--common-caches={common}"]))
         rules = []
@@ -276,13 +339,16 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                              "--no-default-compilation-cache", "--threads=1", "--ram=2048"])
         producer = {"sha": release["commit"], "pack_sha256": release["asset_sha256"],
                     "codeql_version": lock["codeql"]["version"], "suite_sha256": release["suite_sha256"]}
-        acceptance = {"schema": "ucode-sarif-acceptance-v1", "producer": producer,
+        acceptance = {"schema": "ucode-sarif-event-triage-v1" if event else
+                      "ucode-sarif-acceptance-v1", "producer": producer,
                       "sources": [{"uri": row["proposed_installed_path"], "sha256": row["source_sha256"]}
                                   for row in manifest["selected"]],
                       "expected_extracted": expected_files, "expected_rules": release["expected_rules"],
-                      "expected_sarif_descriptors": ["ucode/m4/direct-rpc-shell-word"],
-                      "expected_results": []}
-        write_json(out / "source-first-acceptance.json", acceptance)
+                      "expected_sarif_descriptors": ["ucode/m4/direct-rpc-shell-word"]}
+        if not event:
+            acceptance["expected_results"] = []
+        acceptance_name = "event-triage-input.json" if event else "source-first-acceptance.json"
+        write_json(out / acceptance_name, acceptance)
         receipt = {"schema": "ucode-sarif-run-v1", "run_id": run_id, "producer": producer,
                    "sarif_sha256": digest(sarif), "successful_files": successes,
                    "extraction_errors": diagnostics["errors"], "resolved_rules": rules,
@@ -290,11 +356,15 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                    "consumer_sha": consumer_sha, "release_tag": release["tag"],
                    "codeql_binary_sha256": digest(codeql)}
         write_json(out / "producer-receipt.json", receipt)
-        accepted_text = run.call("accept", [sys.executable, "-B", ROOT / "tools/sarif_accept.py",
-                                                 "--sarif", sarif, "--manifest", out / "source-first-acceptance.json",
-                                                 "--receipt", out / "producer-receipt.json", "--source-root", stage])
-        (out / "accepted.json").write_text(accepted_text)
-        for name, pin in PINS.items():
+        consumer_args = [sys.executable, "-B", ROOT / "tools/sarif_accept.py",
+                         "--sarif", sarif, "--manifest", out / acceptance_name,
+                         "--receipt", out / "producer-receipt.json", "--source-root", stage]
+        if event:
+            consumer_args.append("--event-triage")
+        accepted_text = run.call("triage" if event else "accept", consumer_args)
+        accepted_name = "triage.json" if event else "accepted.json"
+        (out / accepted_name).write_text(accepted_text)
+        for name, pin in pins.items():
             repo = repos[name]
             need(subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"],
                                          text=True).strip() == pin and
@@ -308,17 +378,23 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
         for row in manifest["excluded"]:
             need(hashlib.sha256(source_bytes(repos[row["repo"]] / row["source_path"])).hexdigest()
                  == row["sha256"], f"excluded source changed during run: {row['source_path']}")
-        write_json(run.root / "receipt.json", {"schema": "ucode-current-corpus-linux-v1",
-                   "status": "accepted", "run_id": run_id, "release_tag": release["tag"],
+        triage = json.loads(accepted_text) if event else None
+        write_json(run.root / "receipt.json", {"schema": "ucode-event-corpus-linux-v1" if event else
+                   "ucode-current-corpus-linux-v1",
+                   "status": triage["status"] if event else "accepted",
+                   "run_id": run_id, "release_tag": release["tag"],
                    "producer_commit": release["commit"], "consumer_sha": consumer_sha,
-                   "manifest_sha256": digest(manifest_path), "source_pins": PINS,
+                   "manifest_sha256": digest(manifest_path), "source_pins": pins,
+                   **({"event": manifest["event"]} if event else {}),
+                   **({"released_route_source_sha256": released_route_source_sha256,
+                       "released_route_source_matches_oracle": True} if event else {}),
                    "selected_count": len(expected_files), "route_counts": {k: routing.get(k) for k in
                     ("input_count", "plain_count", "markup_count", "markup_inconclusive_count",
                      "uncertain_count", "excluded_count", "duplicate_input_count")},
                    "successful_count": len(successes), "extraction_error_count": 0,
-                   "coverage_sha256": digest(out / "coverage-v0.6.json"),
+                   "coverage_sha256": digest(out / coverage_name),
                    "resolved_rules": rules, "sarif_sha256": digest(sarif),
-                   "accepted_sha256": digest(out / "accepted.json"),
+                   "accepted_sha256": digest(out / accepted_name),
                    "commands_sha256": digest(run.root / "commands.json"),
                    "actual_package_installed_bytes_verified": False})
     except Exception as exc:

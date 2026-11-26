@@ -13,6 +13,7 @@ from pathlib import Path, PurePosixPath
 from urllib.parse import unquote, urlsplit
 
 SCHEMA = "ucode-sarif-acceptance-v1"
+EVENT_SCHEMA = "ucode-sarif-event-triage-v1"
 RUN_SCHEMA = "ucode-sarif-run-v1"
 
 
@@ -75,11 +76,23 @@ def expected_tuple(item: dict) -> tuple:
             item["level"])
 
 
-def accept(sarif_path: Path, manifest_path: Path, receipt_path: Path,
-           source_root: Path) -> dict:
+def validate_event_region(row: tuple, source_root: Path) -> None:
+    _, uri, start_line, start_col, end_line, end_col, _ = row
+    lines = (source_root / uri).read_bytes().decode("utf-8", "replace").split("\n")
+    require(end_line <= len(lines), f"event SARIF region beyond source EOF: {uri}")
+    for line_number, column in ((start_line, start_col), (end_line, end_col)):
+        line = lines[line_number - 1].removesuffix("\r")
+        utf16_units = len(line.encode("utf-16-le")) // 2
+        require(column <= utf16_units + 1,
+                f"event SARIF UTF-16 column beyond source line: {uri}:{line_number}:{column}")
+
+
+def inspect(sarif_path: Path, manifest_path: Path, receipt_path: Path,
+            source_root: Path, *, event: bool = False) -> dict:
     manifest, receipt, sarif = map(load_object,
                                    (manifest_path, receipt_path, sarif_path))
-    require(manifest.get("schema") == SCHEMA, "wrong acceptance manifest schema")
+    require(manifest.get("schema") == (EVENT_SCHEMA if event else SCHEMA),
+            "wrong acceptance manifest schema")
     require(receipt.get("schema") == RUN_SCHEMA, "wrong producer receipt schema")
     require(manifest.get("producer") == receipt.get("producer"),
             "producer/release identity mismatch")
@@ -164,18 +177,40 @@ def accept(sarif_path: Path, manifest_path: Path, receipt_path: Path,
     results = run.get("results", [])
     require(isinstance(results, list), "invalid SARIF results")
     actual = Counter(result_tuple(item, levels) for item in results)
-    expected = manifest.get("expected_results")
-    require(isinstance(expected, list), "missing expected results")
-    wanted = Counter(expected_tuple(item) for item in expected)
     require(all(uri in allowed for _, uri, *_ in actual),
             "SARIF result refers to source outside selected stage")
-    require(actual == wanted, f"SARIF result multiset mismatch: got {actual}, wanted {wanted}")
-    return {"schema": SCHEMA, "run_id": receipt["run_id"],
-            "producer": manifest["producer"], "successful_files": sorted(actual_files),
-            "accepted_results": [dict(zip(("rule_id", "uri", "start_line", "start_column",
-                                           "end_line", "end_column", "level"), row))
-                                 for row in sorted(actual.elements())],
-            "sarif_sha256": receipt["sarif_sha256"]}
+    if event:
+        require("expected_results" not in manifest,
+                "event triage cannot borrow output-generated expected results")
+        for row in actual:
+            validate_event_region(row, source_root)
+    else:
+        expected = manifest.get("expected_results")
+        require(isinstance(expected, list), "missing expected results")
+        wanted = Counter(expected_tuple(item) for item in expected)
+        require(actual == wanted, f"SARIF result multiset mismatch: got {actual}, wanted {wanted}")
+    rows = [dict(zip(("rule_id", "uri", "start_line", "start_column",
+                      "end_line", "end_column", "level"), row))
+            for row in sorted(actual.elements())]
+    packet = {"schema": EVENT_SCHEMA if event else SCHEMA, "run_id": receipt["run_id"],
+              "producer": manifest["producer"], "successful_files": sorted(actual_files),
+              "sarif_sha256": receipt["sarif_sha256"]}
+    if event:
+        packet.update(status="triage_required" if actual else "clean_scan",
+                      result_count=len(rows), results_for_triage=rows)
+    else:
+        packet["accepted_results"] = rows
+    return packet
+
+
+def accept(sarif_path: Path, manifest_path: Path, receipt_path: Path,
+           source_root: Path) -> dict:
+    return inspect(sarif_path, manifest_path, receipt_path, source_root)
+
+
+def triage(sarif_path: Path, manifest_path: Path, receipt_path: Path,
+           source_root: Path) -> dict:
+    return inspect(sarif_path, manifest_path, receipt_path, source_root, event=True)
 
 
 def main() -> None:
@@ -184,9 +219,12 @@ def main() -> None:
     parser.add_argument("--manifest", required=True, type=Path)
     parser.add_argument("--receipt", required=True, type=Path)
     parser.add_argument("--source-root", required=True, type=Path)
+    parser.add_argument("--event-triage", action="store_true",
+                        help="retain structurally valid event alerts for review")
     args = parser.parse_args()
-    print(json.dumps(accept(args.sarif, args.manifest, args.receipt,
-                            args.source_root), indent=2, sort_keys=True))
+    evaluator = triage if args.event_triage else accept
+    print(json.dumps(evaluator(args.sarif, args.manifest, args.receipt,
+                               args.source_root), indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":

@@ -1,9 +1,12 @@
 from pathlib import Path
+import os
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
-from tools.incoming_event import InvalidEvent, validate
+from tools.incoming_event import (InvalidEvent, _fetch_commit_identity,
+                                  fetch_base_identity, validate)
 
 
 class IncomingEventTests(unittest.TestCase):
@@ -48,8 +51,13 @@ class IncomingEventTests(unittest.TestCase):
                 "repo": {"full_name": "contributor/openwrt", "fork": True},
             },
         }
+        self.base_tree = self.git("-C", str(self.repo), "rev-parse", f"{self.control}^{{tree}}")
+        self.base_fetch = patch("tools.incoming_event.fetch_base_identity",
+                                return_value={"commit": self.control, "tree": self.base_tree})
+        self.mock_base_fetch = self.base_fetch.start()
 
     def tearDown(self):
+        self.base_fetch.stop()
         self.temp.cleanup()
 
     @staticmethod
@@ -59,11 +67,36 @@ class IncomingEventTests(unittest.TestCase):
     def test_resolves_full_commit_and_tree_and_labels_limited_status(self):
         result = validate(self.event, self.api_pr, self.repo, self.control_repo)
         self.assertEqual(result["source"]["commit"], self.source)
+        self.assertEqual(result["base"], {"commit": self.control, "tree": self.base_tree})
+        self.mock_base_fetch.assert_called_once_with("openwrt", self.control)
         self.assertEqual(result["control"]["commit"], self.control)
         self.assertEqual(result["status"], "identities_resolved_only")
         self.assertEqual(result["head_repository"], "contributor/openwrt")
         self.assertTrue(result["head_repository_is_fork"])
         self.assertNotEqual(result["source"]["tree"], result["control"]["tree"])
+
+    def test_fresh_scan_response_rejects_drift_after_preflight(self):
+        preflight = validate(self.event, self.api_pr, self.repo, self.control_repo)
+        self.assertEqual(preflight, validate(self.event, self.api_pr, self.repo, self.control_repo))
+        changed = (
+            ({**self.api_pr, "state": "closed"}, "not open"),
+            ({**self.api_pr, "number": 124}, "number mismatch"),
+            ({**self.api_pr, "head": {**self.api_pr["head"], "sha": self.control}},
+             "source SHA disagrees"),
+            ({**self.api_pr, "base": {**self.api_pr["base"], "sha": self.source}},
+             "base SHA disagrees"),
+            ({**self.api_pr, "base": {**self.api_pr["base"],
+                                       "repo": {"full_name": "attacker/openwrt"}}},
+             "base repository"),
+        )
+        for fresh, reason in changed:
+            with self.subTest(reason=reason), self.assertRaisesRegex(InvalidEvent, reason):
+                validate(self.event, fresh, self.repo, self.control_repo)
+        # A provenance change can remain syntactically valid; comparing the fresh
+        # receipt with the preflight receipt still catches it.
+        fork_changed = {**self.api_pr, "head": {**self.api_pr["head"],
+                        "repo": {"full_name": "another/openwrt", "fork": True}}}
+        self.assertNotEqual(preflight, validate(self.event, fork_changed, self.repo, self.control_repo))
 
     def test_rejects_branch_name_instead_of_full_commit(self):
         bad = dict(self.event, source_sha="main")
@@ -123,6 +156,20 @@ class IncomingEventTests(unittest.TestCase):
         bad = dict(self.event, base_sha=self.source)
         with self.assertRaisesRegex(InvalidEvent, "base SHA disagrees"):
             validate(bad, self.api_pr, self.repo, self.control_repo)
+        self.mock_base_fetch.assert_not_called()
+
+    def test_rejects_failed_canonical_base_fetch(self):
+        self.mock_base_fetch.side_effect = InvalidEvent("canonical base Git lookup failed")
+        with self.assertRaisesRegex(InvalidEvent, "canonical base Git lookup failed"):
+            validate(self.event, self.api_pr, self.repo, self.control_repo)
+
+    def test_rejects_inconsistent_base_fetch_identity(self):
+        self.mock_base_fetch.return_value = {"commit": self.source, "tree": self.base_tree}
+        with self.assertRaisesRegex(InvalidEvent, "base commit or tree differs"):
+            validate(self.event, self.api_pr, self.repo, self.control_repo)
+        self.mock_base_fetch.return_value = {"commit": self.control, "tree": "bad"}
+        with self.assertRaisesRegex(InvalidEvent, "base commit or tree differs"):
+            validate(self.event, self.api_pr, self.repo, self.control_repo)
 
     def test_accepts_cross_repository_head_with_fork_false(self):
         api = {**self.api_pr, "head": {**self.api_pr["head"],
@@ -137,6 +184,43 @@ class IncomingEventTests(unittest.TestCase):
                                               "repo": {"full_name": "openwrt/openwrt", "fork": False}}}
         result = validate(self.event, same_repo, self.repo, self.control_repo)
         self.assertEqual(result["head_repository"], "openwrt/openwrt")
+
+    def test_production_base_url_and_transport_are_pinned(self):
+        with patch("tools.incoming_event._fetch_commit_identity",
+                   return_value={"commit": self.control, "tree": self.base_tree}) as fetch:
+            self.assertEqual(fetch_base_identity("openwrt", self.control)["tree"], self.base_tree)
+        fetch.assert_called_once_with("https://github.com/openwrt/openwrt.git",
+                                      self.control, "https")
+
+    def test_isolated_fetch_resolves_exact_local_bare_commit_and_tree(self):
+        bare = self.root / "upstream.git"
+        self.git("clone", "--bare", "-q", str(self.repo), str(bare))
+        identity = _fetch_commit_identity(bare.as_uri(), self.control, "file")
+        self.assertEqual(identity, {"commit": self.control, "tree": self.base_tree})
+
+    def test_isolated_fetch_ignores_inherited_git_rewrite(self):
+        bare = self.root / "upstream.git"
+        self.git("clone", "--bare", "-q", str(self.repo), str(bare))
+        malicious = self.root / "gitconfig"
+        malicious.write_text(f'[url "file:///nonexistent/"]\n\tinsteadOf = {bare.as_uri()}\n')
+        with patch.dict(os.environ, {"GIT_CONFIG_GLOBAL": str(malicious),
+                                  "GIT_CONFIG_COUNT": "1",
+                                  "GIT_CONFIG_KEY_0": "url.file:///nonexistent/.insteadOf",
+                                  "GIT_CONFIG_VALUE_0": bare.as_uri()}):
+            identity = _fetch_commit_identity(bare.as_uri(), self.control, "file")
+        self.assertEqual(identity["tree"], self.base_tree)
+
+    def test_isolated_fetch_rejects_missing_base_commit(self):
+        bare = self.root / "upstream.git"
+        self.git("clone", "--bare", "-q", str(self.repo), str(bare))
+        with self.assertRaisesRegex(InvalidEvent, "canonical base Git lookup failed"):
+            _fetch_commit_identity(bare.as_uri(), "0" * 40, "file")
+
+    def test_isolated_fetch_timeout_fails_closed(self):
+        with patch("tools.incoming_event.subprocess.run",
+                   side_effect=subprocess.TimeoutExpired("git", 60)):
+            with self.assertRaisesRegex(InvalidEvent, "canonical base Git lookup timed out"):
+                _fetch_commit_identity("file:///unreachable", self.control, "file")
 
 
 if __name__ == "__main__":

@@ -144,6 +144,7 @@ def build(policy: dict, receipt: dict, inventory: dict, checkout: Path) -> dict:
          inventory.get("head_commit") == head.get("commit") and
          inventory.get("head_tree") == head.get("tree") and
          inventory.get("base_commit") == base.get("commit") and
+         inventory.get("base_tree") == base.get("tree") and
          inventory.get("policy_sha256") == POLICY_SHA256,
          "candidate inventory and event identities differ")
     need(git(checkout, "rev-parse", "HEAD") == head["commit"] and
@@ -202,6 +203,7 @@ def build(policy: dict, receipt: dict, inventory: dict, checkout: Path) -> dict:
         "selected": selected,
         "excluded": excluded,
         "event": {"repository": repo, "base_commit": base["commit"],
+                  "base_tree": base["tree"],
                   "head_commit": head["commit"], "head_tree": head["tree"],
                   "pr_number": receipt.get("pr_number"),
                   "policy_sha256": POLICY_SHA256,
