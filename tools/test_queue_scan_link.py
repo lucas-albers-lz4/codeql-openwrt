@@ -8,6 +8,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from incoming_queue import apply_attested, encoded, open_queue
+from incoming_queue_issued import issue_start
 from issuer_artifact_freeze import INPUT_FILES, R3_OUT, SCAN_OUT
 from queue_scan_link import LinkError, verify
 
@@ -242,6 +243,35 @@ class ScanLinkTests(unittest.TestCase):
         self.start_queue(run_id='999-1')
         with self.assertRaisesRegex(LinkError, 'matching recorded start'):
             self.verify(require_claim=True)
+
+    def test_exact_link_after_issued_start(self):
+        self.set_claim()
+        db = open_queue(self.database)
+        digest = db.execute('select digest from history where seq=2').fetchone()[0]
+        payload = {'schema': 'incoming-issued-start-v1', 'kind': 'start',
+                   'queue_id': self.reservation['queue_id'],
+                   'event_id': self.event_id, 'reservation': 2,
+                   'reservation_digest': digest, 'run_id': '123-1',
+                   'job': {'workflow': '.github/workflows/incoming-event-preflight.yml',
+                           'job': 'released-event-scan', 'run_id': 123,
+                           'attempt': 1, 'id': 456,
+                           'consumer_commit': self.consumer},
+                   'source_sha': self.head, 'control_sha': self.base,
+                   'policy_sha256': '1'*64,
+                   'early_artifact': {'id': 789, 'sha256': '2'*64},
+                   'observation_sha256': '3'*64,
+                   'run_api_sha256': '4'*64, 'jobs_api_sha256': '5'*64,
+                   'artifacts_api_sha256': '6'*64,
+                   'recheck_run_api_sha256': '7'*64,
+                   'recheck_jobs_api_sha256': '8'*64}
+        try:
+            issue_start(db, (2, digest), payload, b'k'*32,
+                        '2026-01-01T00:01:30Z')
+        finally:
+            db.close()
+        result = self.verify(require_claim=True)
+        self.assertEqual(result['queue_state'], 'started')
+        self.assertEqual(result['started_job_id'], 456)
 
     def test_same_job_claim_is_required_when_requested(self):
         with self.assertRaisesRegex(LinkError, 'claim missing'):

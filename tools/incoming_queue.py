@@ -211,7 +211,7 @@ def transition(db, expected, snapshot, capacity, now, previous_snapshot=None):
 
 
 
-def reserve_exact_pr(db, expected, prepared, now):
+def reserve_exact_pr(db, expected, prepared, now, *, retry=False):
     """Reserve one exact current PR for an operator-owned, one-item pilot.
 
     This is an offline queue transition, not a scan dispatch or completion.
@@ -254,8 +254,12 @@ def reserve_exact_pr(db, expected, prepared, now):
         check(db.execute("SELECT count(*) FROM events WHERE subject=? AND status='pending'", (subj,)).fetchone()[0] == 1,
               'PR subject is not uniquely current and pending')
         row = db.execute('SELECT event,status,attempts FROM events WHERE id=?', (eid,)).fetchone()
-        check(row is not None and row[1] == 'pending' and row[2] == 0,
-              'exact PR head is not an unattempted pending event')
+        check(row is not None and row[1] == 'pending' and
+              ((not retry and row[2] == 0) or (retry and row[2] > 0)),
+              'exact PR head is not eligible for requested attempt')
+        if retry:
+            unattempted = db.execute("SELECT count(*) FROM events WHERE status IN ('pending','reserved') AND attempts=0").fetchone()[0]
+            check(unattempted == 0, 'first attempts remain before manual retry')
         event = json.loads(row[0], object_pairs_hook=unique_object)
         check(event.get('kind') == 'pull_request' and event['source']['commit'] == source_sha and
               event['base_commit'] == control_sha and source_sha != control_sha,
@@ -268,11 +272,12 @@ def reserve_exact_pr(db, expected, prepared, now):
                   'event_id': eid, 'source': event['source'],
                   'control_sha': control_sha,
                   'prepared_sha256': hashlib.sha256(encoded(prepared)).hexdigest(),
-                  'capacity': 1, 'status': 'reserved_only'}
+                  'capacity': 1, 'status': 'reserved_only',
+                  'attempts_before': row[2]}
         raw = encoded(result)
         digest = hashlib.sha256(raw).hexdigest()
-        changed = db.execute("UPDATE events SET status='reserved',reservation=?,reservation_digest=?,reason='manual_reserved' WHERE id=? AND status='pending' AND attempts=0",
-                             (seq, digest, eid)).rowcount
+        changed = db.execute("UPDATE events SET status='reserved',reservation=?,reservation_digest=?,reason='manual_reserved' WHERE id=? AND status='pending' AND attempts=?",
+                             (seq, digest, eid, row[2])).rowcount
         check(changed == 1, 'PR reservation changed during transaction')
         db.execute('INSERT INTO history VALUES (?,?,?)', (seq, digest, raw))
         db.execute('COMMIT')
@@ -430,6 +435,11 @@ def apply_attested(db, expected, payload, mac, secret, now):
         check(payload['queue_id'] == queue_id, 'wrong queue identity')
         row = db.execute('SELECT event,status,reservation,reason,reservation_digest,started_job FROM events WHERE id=?',(payload['event_id'],)).fetchone()
         check(row is not None and row[2] == payload['reservation'] and row[4] == payload['reservation_digest'], 'unknown or stale reservation')
+        if row[1] == 'started' and row[5] is not None:
+            recorded_job = json.loads(row[5], object_pairs_hook=unique_object)
+            check(type(recorded_job) is dict and
+                  set(recorded_job) == {'workflow', 'job', 'run_id', 'attempt'},
+                  'issued start requires issued outcome policy')
         event = json.loads(row[0]); kind = payload['kind']
         if kind == 'start':
             check(row[1] == 'reserved', 'reservation is not available')

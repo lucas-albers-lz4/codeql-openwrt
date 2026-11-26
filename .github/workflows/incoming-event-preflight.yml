@@ -51,6 +51,21 @@ on:
       - 'tools/test_reservation_claim.py'
       - 'tools/queue_scan_link.py'
       - 'tools/test_queue_scan_link.py'
+      - 'tools/incoming_queue.py'
+      - 'tools/incoming_queue_issued.py'
+      - 'tools/test_incoming_queue.py'
+      - 'tools/test_incoming_queue_issued.py'
+      - 'tools/operator_artifact_custody.py'
+      - 'tools/operator_start_observation.py'
+      - 'tools/operator_queue_start.py'
+      - 'tools/operator_queue_complete.py'
+      - 'tools/operator_queue_failure.py'
+      - 'tools/operator_issuer_launcher.py'
+      - 'tools/test_operator_artifact_custody.py'
+      - 'tools/test_operator_start_observation.py'
+      - 'tools/test_operator_queue_issuer.py'
+      - 'tools/test_operator_issuer_launcher.py'
+      - 'tools/incoming_queue_reserve.py'
       - 'policy/tests/test_issuer_consumer_prerequisite.py'
       - 'policy/tests/test_issuer_control_graph.py'
       - 'policy/tests/test_issuer_workflow_graph.py'
@@ -83,6 +98,12 @@ jobs:
           python3 -B tools/test_reservation_claim.py -v
           python3 -B tools/test_incoming_dispatch_record.py -v
           python3 -B tools/test_queue_scan_link.py -v
+          python3 -B tools/test_incoming_queue.py -v
+          python3 -B tools/test_incoming_queue_issued.py -v
+          python3 -B tools/test_operator_artifact_custody.py -v
+          python3 -B tools/test_operator_start_observation.py -v
+          python3 -B tools/test_operator_queue_issuer.py -v
+          python3 -B tools/test_operator_issuer_launcher.py -v
           python3 -B -m unittest policy.tests.test_event_corpus_linux policy.tests.test_current_corpus_linux policy.tests.test_sarif_accept policy.tests.test_r3_linux_handoff -v
   resolve-pins:
     if: github.event_name == 'workflow_dispatch'

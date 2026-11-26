@@ -182,20 +182,34 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit,
         need(hashlib.sha256(raw).hexdigest() == head_digest, 'queue history digest mismatch')
         current = json.loads(raw, object_pairs_hook=unique_object)
         need(type(current) is dict, 'invalid queue history document')
-        started = current.get('schema') == 'incoming-queue-action-v2'
+        started = current.get('schema') in ('incoming-queue-action-v2',
+                                            'incoming-queue-issued-action-v1')
         if started:
             attestation = current.get('attestation', {})
+            need(type(attestation) is dict, 'invalid recorded start attestation')
+            issued = current['schema'] == 'incoming-queue-issued-action-v1'
+            expected_job = {
+                'workflow': '.github/workflows/incoming-event-preflight.yml',
+                'job': 'released-event-scan', 'run_id': int(run_id),
+                'attempt': attempt}
+            if issued:
+                actual_job = attestation.get('job', {})
+                need(type(actual_job) is dict and
+                     type(actual_job.get('id')) is int and actual_job['id'] > 0 and
+                     actual_job.get('consumer_commit') == consumer_commit,
+                     'issued start job ID or consumer mismatch')
+                expected_job.update(id=actual_job['id'],
+                                    consumer_commit=consumer_commit)
             need(type(attestation) is dict and
                  isinstance(current.get('mac'), str) and
                  re.fullmatch(r'[0-9a-f]{64}', current['mac']) and
                  current.get('sequence') == head_sequence and
                  attestation.get('kind') == 'start' and
+                 (not issued or attestation.get('schema') == 'incoming-issued-start-v1') and
                  current.get('previous_sha256') == attestation.get('reservation_digest') and
                  attestation.get('run_id') == identity and
-                 attestation.get('job') == {
-                     'workflow': '.github/workflows/incoming-event-preflight.yml',
-                     'job': 'released-event-scan', 'run_id': int(run_id),
-                     'attempt': attempt}, 'queue head is not the matching recorded start')
+                 attestation.get('job') == expected_job,
+                 'queue head is not the matching recorded start')
             sequence, digest = attestation['reservation'], attestation['reservation_digest']
             need(type(sequence) is int and head_sequence == sequence + 1,
                  'start does not immediately follow reservation')
@@ -393,6 +407,7 @@ def verify(database, artifact, run_api_path, run_id, attempt, consumer_commit,
             'consumer_commit': consumer_commit, 'source': receipt['source'],
             'snapshot_files_verified': count, 'scan_status': scan['status'],
             'claim_bound': claim_bound, 'queue_state': 'started' if started else 'reserved',
+            'started_job_id': attestation['job']['id'] if started and issued else None,
             'selected_count': scan['selected_count'], 'result_count': triage['result_count'],
             'limitations': ['Offline comparison; no artifact custody or queue attestation.',
                             'Queue start MAC and running-job evidence are not verified here.']}

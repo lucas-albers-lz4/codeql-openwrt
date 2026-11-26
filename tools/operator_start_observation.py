@@ -48,7 +48,7 @@ def read_policy(path, private_root):
     need(stat.S_ISREG(before.st_mode) and before.st_uid == os.geteuid() and
          before.st_nlink == 1 and stat.S_IMODE(before.st_mode) == 0o600 and
          before.st_size <= 4096, 'policy must be private regular mode 0600')
-    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         opened = os.fstat(fd)
         need((opened.st_dev, opened.st_ino, opened.st_size, opened.st_mtime_ns) ==
@@ -92,8 +92,11 @@ def reserved_queue(database, policy):
         need(actual_id == (policy['queue_id'],), 'queue ID differs from policy')
         event = db.execute('SELECT event,status,attempts,reservation,reservation_digest,started_job '
                            'FROM events WHERE id=?', (reservation['event_id'],)).fetchone()
-        need(event is not None and event[1:] == ('reserved', 0, sequence, digest, None),
-             'queue event is not unstarted exact reservation')
+        attempts_before = reservation.get('attempts_before', 0)
+        need(type(attempts_before) is int and attempts_before >= 0 and
+             event is not None and
+             event[1:] == ('reserved', attempts_before, sequence, digest, None),
+             'queue event is not exact reserved attempt')
         queued = custody.parse(event[0])
         need(queued['source']['commit'] == reservation['source']['commit'] and
              queued['base_commit'] == reservation['control_sha'],
@@ -271,10 +274,12 @@ def check(database, private_root, policy_path, run_id, attempt):
     need(latest_policy == policy and latest_policy_digest == policy_digest,
          'operator policy changed during observation')
     source_root = Path(__file__).resolve().parents[1]
-    source_commit = subprocess.check_output(
-        ['git', '-C', str(source_root), 'rev-parse', 'HEAD'], text=True).strip()
-    source_dirty = bool(subprocess.check_output(
-        ['git', '-C', str(source_root), 'status', '--porcelain=v1'], text=True).strip())
+    source_commit = os.environ.get('OPERATOR_LAUNCH_COMMIT', '')
+    need(os.environ.get('OPERATOR_LAUNCH_SOURCE') == str(source_root) and
+         source_commit == policy['consumer_commit'] and
+         (source_root / '.operator-approved-commit').read_text() == source_commit + '\n',
+         'observer was not launched from approved private source')
+    source_dirty = False
     return {'schema': 'incoming-operator-start-observation-v1',
             'status': 'verified_read_only', 'run_id': run_id, 'attempt': attempt,
             'consumer_commit': policy['consumer_commit'],
