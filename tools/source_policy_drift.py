@@ -50,7 +50,18 @@ def file_identity(root: Path, commit: str, path: str):
 
 def candidate(path: str) -> bool:
     name = PurePosixPath(path).name
-    return PurePosixPath(name).suffix in {".uc", ".ut"} or ("." not in name and name not in {"Makefile", "Config.in"})
+    parts = PurePosixPath(path).parts
+    installed_roots = (("usr", "share", "ucode"),
+                       ("usr", "share", "rpcd", "ucode"),
+                       ("usr", "lib", "ucode"))
+    under_ucode_root = any(
+        parts[index:index + len(root)] == root
+        for root in installed_roots
+        for index in range(len(parts) - len(root))
+    )
+    return (PurePosixPath(name).suffix in {".uc", ".ut"} or
+            ("." not in name and name not in {"Makefile", "Config.in"}) or
+            under_ucode_root)
 
 def policy_input(path: str) -> bool:
     name = PurePosixPath(path).name
@@ -194,7 +205,7 @@ def analyze(manifest: dict, manifest_bytes: bytes, repo_name: str, root: Path, e
             "limitations": ["Only baseline identities and paths in the explicit base-to-event Git diff are compared.",
                             "Unrelated package build-file changes are reported but do not fail; Makefile-only activation of previously unselected sources is not covered.",
                             "No full-tree discovery, install-path inference, package condition evaluation, extraction, CodeQL, SARIF, or consumer handoff is performed.",
-                            "Extensionless candidate heuristic is intentionally broad; unrecognized source layouts may be missed."]}
+                            "Installed-root and suffixless candidate heuristics are intentionally broad; unrecognized source layouts may be missed."]}
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
