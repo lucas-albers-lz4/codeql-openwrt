@@ -156,6 +156,25 @@ class DefaultBranchStartArtifactTests(unittest.TestCase):
             early.freeze(self.inputs, self.output)
         self.assertFalse(self.output.exists())
 
+    def test_decisions_larger_than_old_bound_are_retained(self):
+        raw = b'x' * (16 * 1024 * 1024 + 1)
+        self.source['previous/decisions.json'] = raw
+        (self.inputs / 'previous' / 'decisions.json').write_bytes(raw)
+        self.claim_value['linked_input_sha256']['previous_checkpoint'] = self.sha(
+            'previous/decisions.json')
+        self.write_claim()
+        self.assertEqual(early.freeze(self.inputs, self.output), 'claimed')
+        self.assertEqual((self.output / 'previous' / 'decisions.json').stat().st_size,
+                         len(raw))
+
+    def test_decisions_above_new_bound_fail_before_reading(self):
+        path = self.inputs / 'previous' / 'decisions.json'
+        with path.open('r+b') as handle:
+            handle.truncate(early.MAX_FILE_BYTES + 1)
+        with self.assertRaisesRegex(early.ArtifactError, 'exceeds byte limit'):
+            early.freeze(self.inputs, self.output)
+        self.assertFalse(self.output.exists())
+
     def test_symlink_source_is_rejected_before_output(self):
         path = self.inputs / 'previous' / 'decisions.json'
         target = self.parent / 'outside.json'

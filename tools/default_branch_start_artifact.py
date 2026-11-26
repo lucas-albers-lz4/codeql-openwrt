@@ -16,8 +16,11 @@ import stat
 import sys
 
 
-MAX_FILE_BYTES = 16 * 1024 * 1024
-MAX_TOTAL_BYTES = 48 * 1024 * 1024
+# A retained linked discovery decisions.json measured 47,566,374 bytes in
+# run 45868959396; the two checkpoints together measured 95,093,559 bytes.
+# These bounds leave headroom while remaining explicit and finite.
+MAX_FILE_BYTES = 64 * 1024 * 1024
+MAX_TOTAL_BYTES = 128 * 1024 * 1024
 SHA1 = re.compile(r'[0-9a-f]{40}\Z')
 SHA256 = re.compile(r'[0-9a-f]{64}\Z')
 QUEUE_ID = re.compile(r'[0-9a-f]{32}\Z')
