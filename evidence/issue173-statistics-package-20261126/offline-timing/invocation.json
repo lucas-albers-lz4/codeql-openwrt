@@ -1,0 +1,85 @@
+{
+  "argv": [
+    "/usr/bin/time",
+    "-l",
+    "/bin/sh",
+    "-c",
+    "output=$1; shift; exec \"$@\" 2>\"$output\"",
+    "sh",
+    "/private/tmp/review173-timed-offline.Zno9L6X9/statistics/comparison.stderr",
+    "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/bin/python3.15",
+    "-I",
+    "-B",
+    "/private/tmp/review173-timed-offline.Zno9L6X9/compare_retained.py",
+    "--package",
+    "luci-app-statistics",
+    "--parser",
+    "/Users/lalbers/gitroot/ucode/.worktrees/openwrt-issue173-statistics-app-warning-20261126/tools/luci-base-inventory/archive.py",
+    "--parser-sha",
+    "224e748846138261c2d709b2932764ffeaabfd90378ccf2a8ffa7476e6630100",
+    "--oracle",
+    "/Users/lalbers/gitroot/ucode/.worktrees/openwrt-issue173-statistics-app-warning-20261126/tools/luci-statistics-batch/source-oracle.json",
+    "--ipk",
+    "/private/tmp/review173-stats-final.PlMMDcix/retained/metadata/luci-app-statistics.ipk",
+    "--ipk-sha",
+    "66d275801b8c28134891c20be92c79c243614107f3299270ebd9c1f56e4fc08a",
+    "--luci",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue172-20261125/luci",
+    "--git",
+    "/opt/homebrew/Cellar/git/2.56.1/bin/git"
+  ],
+  "completed_utc": "2026-11-26T11:28:39.683931+00:00",
+  "cpu": "arm64",
+  "cwd": "/private/tmp/review173-timed-offline.Zno9L6X9/statistics",
+  "env": {
+    "HOME": "/private/tmp/review173-timed-offline.Zno9L6X9/statistics/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/private/tmp/review173-timed-offline.Zno9L6X9/statistics/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "hosted_source": {
+    "app_receipt_sha256": "4fdcb1312dd7aeb9e757be5ff5a97d883b6772424c49e61cddba52c113b84ac4",
+    "artifact": 15111611595,
+    "attempt": 1,
+    "head": "d190295e87cb6c2b7303d7295fe5e4273706d3c6",
+    "run": 45800745811
+  },
+  "inputs": {
+    "/Users/lalbers/gitroot/ucode/.worktrees/openwrt-issue173-statistics-app-warning-20261126/tools/luci-base-inventory/archive.py": "224e748846138261c2d709b2932764ffeaabfd90378ccf2a8ffa7476e6630100",
+    "/Users/lalbers/gitroot/ucode/.worktrees/openwrt-issue173-statistics-app-warning-20261126/tools/luci-statistics-batch/source-oracle.json": "a5ab0a2b8f0099073a040b57ec4be3324a874d2f67ec3951a62a18cfa886cf4f",
+    "/private/tmp/review173-stats-final.PlMMDcix/retained/metadata/luci-app-statistics.ipk": "66d275801b8c28134891c20be92c79c243614107f3299270ebd9c1f56e4fc08a",
+    "/private/tmp/review173-timed-offline.Zno9L6X9/compare_retained.py": "07b523560e0a364a28d8699e86aa9925b9d7409434d865b444e94431bd4dedad"
+  },
+  "outputs": {
+    "comparison.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "comparison.stdout": "59342ad4f2cd04764a402b9e975f1c1294aa5b92d65bf209e3a48fe76351fc14",
+    "comparison.time-and-stderr": "91e824f7a08b4ceeec3f3e7dd447af19a4e459f9b1354543021e522c39228a93"
+  },
+  "platform": "macOS-15.8.2-arm64-arm-64bit-Mach-O",
+  "release": "macOS 15.8.2 (24H232)",
+  "schema": "issue173-offline-comparison-timing-v1",
+  "scope": "one offline local pinned Git-source and retained IPK comparison sample, file and tool cache state uncontrolled. No prepared/stage input and no measurement of original hosted comparator.",
+  "started_utc": "2026-11-26T11:28:39.202414+00:00",
+  "tools": {
+    "git": {
+      "path": "/opt/homebrew/Cellar/git/2.56.1/bin/git",
+      "sha256": "6f487a07ba5c4d48ebd60ebddac1fe723b01c02593673eaa4dc4acbf33be98f3",
+      "version": "git version 2.56.1"
+    },
+    "python3": {
+      "path": "/opt/homebrew/Cellar/python@3.15/3.15.2/Frameworks/Python.framework/Versions/3.15/bin/python3.15",
+      "sha256": "fe4fd6c475964c108a2f4b105dcb46f849f4fc2c84d1b46f37443b0eb492fc38",
+      "version": "Python 3.15.2"
+    },
+    "shell": {
+      "path": "/bin/sh",
+      "sha256": "324f9aeacfe8e36831b4537765771ea2926af255d15440a9038008413006201d"
+    },
+    "time": {
+      "path": "/usr/bin/time",
+      "sha256": "42f1c66af3b34979ee54591134b122d2a002fa0db5756df4c88c13a0a2a3d563"
+    }
+  }
+}

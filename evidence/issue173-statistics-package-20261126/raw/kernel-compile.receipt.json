@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/time",
+    "-v",
+    "-o",
+    "/home/runner/work/_temp/issue173-statistics-build/output/kernel-compile.time",
+    "make",
+    "-j2",
+    "target/linux/compile",
+    "V=s"
+  ],
+  "cwd": "/home/runner/work/_temp/issue173-statistics-build/openwrt",
+  "elapsed_seconds": 804.2352985570001,
+  "env": {
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "HOME": "/home/runner/work/_temp/issue173-statistics-build/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TMPDIR": "/home/runner/work/_temp/issue173-statistics-build/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "failure": null,
+  "finished_utc": "2026-11-26T11:23:21.443681+00:00",
+  "label": "kernel-compile",
+  "peak_rss_bytes": null,
+  "rss_note": "not measured",
+  "started_utc": "2026-11-26T11:09:57.208384+00:00",
+  "stderr_sha256": "bcd22536bba96010c7d251b57d48351bc0f9e0a9652f7b2d6e212c7750ab2325",
+  "stdout_sha256": "a553fe2a34f41a6a8396d0fd6fb9db92776e7e78e7f80963b304886df218cf79"
+}

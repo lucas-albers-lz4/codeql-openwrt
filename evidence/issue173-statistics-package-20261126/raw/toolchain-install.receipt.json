@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/time",
+    "-v",
+    "-o",
+    "/home/runner/work/_temp/issue173-statistics-build/output/toolchain-install.time",
+    "make",
+    "-j2",
+    "toolchain/install",
+    "V=s"
+  ],
+  "cwd": "/home/runner/work/_temp/issue173-statistics-build/openwrt",
+  "elapsed_seconds": 1691.3518298760002,
+  "env": {
+    "GIT_CONFIG_GLOBAL": "/dev/null",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_TERMINAL_PROMPT": "0",
+    "HOME": "/home/runner/work/_temp/issue173-statistics-build/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TMPDIR": "/home/runner/work/_temp/issue173-statistics-build/tmp",
+    "TZ": "UTC"
+  },
+  "exit": 0,
+  "failure": null,
+  "finished_utc": "2026-11-26T11:09:56.934300+00:00",
+  "label": "toolchain-install",
+  "peak_rss_bytes": null,
+  "rss_note": "not measured",
+  "started_utc": "2026-11-26T10:41:45.582474+00:00",
+  "stderr_sha256": "c1f61501efc71dd03240675cc711c2017af7f8574f4e216e1671b307bb4779aa",
+  "stdout_sha256": "750ee56257430b0edf1ddcc899d7d905b66934016cb22983beb0769044e97542"
+}

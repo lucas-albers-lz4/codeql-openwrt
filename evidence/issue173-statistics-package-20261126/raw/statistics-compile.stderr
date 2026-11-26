@@ -1,0 +1,1055 @@
+WARNING: Makefile 'package/feeds/packages/bmx7-dnsupdate/Makefile' has a dependency on 'bmx7', which does not exist
+WARNING: Makefile 'package/feeds/packages/bmx7-dnsupdate/Makefile' has a dependency on 'bmx7-json', which does not exist
+WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libmesa', which does not exist
+WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libwayland', which does not exist
+WARNING: Makefile 'package/feeds/packages/gst1-plugins-base/Makefile' has a dependency on 'libgraphene', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-babeld/Makefile' has a dependency on 'babeld', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-uci-config', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-json', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-tun', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-bmx7/Makefile' has a dependency on 'bmx7-iwinfo', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd-mod-jsoninfo', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr/Makefile' has a dependency on 'olsrd-mod-sgwdynspeed', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr-services/Makefile' has a dependency on 'olsrd', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr-services/Makefile' has a dependency on 'olsrd-mod-nameservice', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr-viz/Makefile' has a dependency on 'olsrd', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-app-olsr-viz/Makefile' has a dependency on 'olsrd-mod-txtinfo', which does not exist
+WARNING: Makefile 'package/feeds/luci/luci-proto-batman-adv/Makefile' has a dependency on 'kmod-batman-adv', which does not exist
+WARNING: Makefile 'package/feeds/packages/prometheus-node-exporter-lua/Makefile' has a dependency on 'bmx7', which does not exist
+WARNING: Makefile 'package/feeds/packages/prometheus-node-exporter-lua/Makefile' has a dependency on 'bmx7-json', which does not exist
++ mkdir -p /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl
++ cd /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl
++ mkdir -p bin lib stamp usr/include usr/lib
++ curl -f --connect-timeout 5 --retry 3 --location https://www.lua.org/ftp/lua-5.1.5.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 66  216k   66  143k    0     0  76397      0  0:00:02  0:00:01  0:00:01 76366100  216k  100  216k    0     0   103k      0  0:00:02  0:00:02 --:--:--  103k
+make[3]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
+ldump.c: In function 'DumpString':
+ldump.c:68:26: warning: the comparison will always evaluate as 'false' for the pointer operand in 's + 24' must not be NULL [-Waddress]
+   68 |  if (s==NULL || getstr(s)==NULL)
+      |                          ^~
+lauxlib.c: In function 'luaL_loadfile':
+lauxlib.c:587:4: warning: this 'while' clause does not guard... [-Wmisleading-indentation]
+  587 |    while ((c = getc(lf.f)) != EOF && c != LUA_SIGNATURE[0]) ;
+      |    ^~~~~
+lauxlib.c:588:5: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'while'
+  588 |     lf.extraline = 0;
+      |     ^~
+x86_64-openwrt-linux-musl-ar: `u' modifier ignored since `D' is the default (see `U')
+ltablib.c: In function 'addfield':
+ltablib.c:137:3: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  137 |   if (!lua_isstring(L, -1))
+      |   ^~
+ltablib.c:140:5: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  140 |     luaL_addvalue(b);
+      |     ^~~~~~~~~~~~~
+ar: `u' modifier ignored since `D' is the default (see `U')
++ curl -f --connect-timeout 5 --retry 3 --location https://s3.amazonaws.com/json-c_releases/releases/json-c-0.18-nodoc.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  8  198k    8 16982    0     0  71740      0  0:00:02 --:--:--  0:00:02 71654100  198k  100  198k    0     0   454k      0 --:--:-- --:--:-- --:--:--  454k
++ curl -f --connect-timeout 5 --retry 3 --location https://archive.hadrons.org/software/libmd/libmd-1.1.0.tar.xz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0CMake Warning (dev) at /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/cmake-4.2/Modules/CheckIncludeFile.cmake:154 (message):
+  Policy CMP0075 is not set: Include file check macros honor
+  CMAKE_REQUIRED_LIBRARIES.  Run "cmake --help-policy CMP0075" for policy
+  details.  Use the cmake_policy command to set the policy and suppress this
+  warning.
+
+  CMAKE_REQUIRED_LIBRARIES is set to:
+
+    m
+
+  For compatibility with CMake 3.11 and below this check is ignoring it.
+Call Stack (most recent call first):
+  CMakeLists.txt:98 (check_include_file)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  264k  100  264k    0     0   198k      0  0:00:01  0:00:01 --:--:--  198k
+configure: WARNING: unrecognized options: --disable-nls
+configure: WARNING: using cross tools not prefixed with host triplet
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/libnl-tiny-2025.12.02~40493a65.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 45785  100 45785    0     0   864k      0 --:--:-- --:--:-- --:--:--  876k
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+configure: WARNING: unrecognized options: --disable-nls
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/libubox-2026.11.02~ff13b89e.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 88388  100 88388    0     0  2280k      0 --:--:-- --:--:-- --:--:-- 2332k
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+libtool: warning: remember to run 'libtool --finish /usr/lib'
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/ubus-2026.06.28~24864e78.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 44455  100 44455    0     0   449k      0 --:--:-- --:--:-- --:--:--  452k
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/uci-2025.12.02~66127cd7.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 52732  100 52732    0     0   731k      0 --:--:-- --:--:-- --:--:--  735k
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
++ curl -f --connect-timeout 5 --retry 3 --location https://ftpmirror.gnu.org/libtool/libtool-2.5.4.tar.xz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   166  100   166    0     0    297      0 --:--:-- --:--:-- --:--:--   296
+100 1032k  100 1032k    0     0   820k      0  0:00:01  0:00:01 --:--:--  820k
+configure: WARNING: unrecognized options: --disable-nls
+configure: WARNING: using cross tools not prefixed with host triplet
+configure: WARNING: unrecognized options: --disable-nls
++ curl -f --connect-timeout 5 --retry 3 --location http://www.netfilter.org/projects/libmnl/files/libmnl-1.0.5.tar.bz2
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   316  100   316    0     0    496      0 --:--:-- --:--:-- --:--:--   496
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  307k  100  307k    0     0   179k      0  0:00:01  0:00:01 --:--:--  401k
+autoreconf: export WARNINGS=
+autoreconf: Entering directory '.'
+autoreconf: configure.ac: not using Gettext
+libtool: warning: remember to run 'libtool --finish /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/lib'
++ curl -f --connect-timeout 5 --retry 3 --location https://oss.oetiker.ch/rrdtool/pub/archive/rrdtool-1.0.x/rrdtool-1.0.50.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal -I m4 -I . --force -I m4
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 21 1439k   21  303k    0     0   208k      0  0:00:06  0:00:01  0:00:05  208k100 1439k  100 1439k    0     0   764k      0  0:00:01  0:00:01 --:--:--  763k
+autoreconf: export WARNINGS=
+autoreconf: Entering directory '.'
+autoreconf: configure.ac: not using Gettext
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal -I m4 -I . --force 
+configure.ac:256: warning: underquoted definition of AC_IEEE
+configure.ac:256:   run info Automake 'Extending aclocal'
+configure.ac:256:   or see https://www.gnu.org/software/automake/manual/automake.html#Extending-aclocal
+autoreconf: configure.ac: tracing
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/libtoolize --install --copy --force
+autoreconf: configure.ac: not using Intltool
+autoreconf: configure.ac: not using Gtkdoc
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal -I m4 -I . --force -I m4
+autoreconf: configure.ac: tracing
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/libtoolize --install --copy --force
+autoreconf: configure.ac: not using Intltool
+autoreconf: configure.ac: not using Gtkdoc
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal -I m4 -I . --force 
+configure.ac:256: warning: underquoted definition of AC_IEEE
+configure.ac:256:   run info Automake 'Extending aclocal'
+configure.ac:256:   or see https://www.gnu.org/software/automake/manual/automake.html#Extending-aclocal
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/autoconf --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal --include=m4 --include=. --prepend-include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/aclocal --force
+configure.ac:43: warning: The macro 'AC_PROG_LIBTOOL' is obsolete.
+configure.ac:43: You should run autoupdate.
+aclocal.m4:868: AC_PROG_LIBTOOL is expanded from...
+configure.ac:43: the top level
+configure.ac:173: warning: The macro 'AC_HEADER_STDC' is obsolete.
+configure.ac:173: You should run autoupdate.
+./lib/autoconf/headers.m4:663: AC_HEADER_STDC is expanded from...
+configure.ac:173: the top level
+configure.ac:178: warning: The macro 'AC_HEADER_TIME' is obsolete.
+configure.ac:178: You should run autoupdate.
+./lib/autoconf/headers.m4:702: AC_HEADER_TIME is expanded from...
+configure.ac:178: the top level
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/autoheader --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal --include=m4 --include=. --prepend-include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/aclocal --force
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/automake --add-missing --copy --force-missing
+doc/Makefile.am:37: warning: inference rules can have only one target before the colon (POSIX)
+doc/Makefile.am:49: warning: inference rules can have only one target before the colon (POSIX)
+autoreconf: Leaving directory '.'
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/autoconf --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal --include=m4 --include=. --prepend-include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/aclocal --force
+configure: WARNING: unrecognized options: --disable-nls, --disable-nls, --disable-rpath
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/autoheader --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal --include=m4 --include=. --prepend-include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/aclocal --force
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/automake --add-missing --copy --force-missing
+configure: WARNING: using cross tools not prefixed with host triplet
+autoreconf: Leaving directory '.'
+configure: WARNING: unrecognized options: --disable-nls
+configure: WARNING: tclConfig.sh not found - Tcl interface won't be built
+configure: WARNING: using cross tools not prefixed with host triplet
+configure: WARNING: Doxygen not found - continuing without Doxygen support
+configure: WARNING: unrecognized options: --disable-nls
+configure: WARNING: unrecognized options: --disable-nls, --disable-nls, --disable-rpath
+libtool: warning: remember to run 'libtool --finish /usr/lib'
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/ucode-2026.07.09~b885dd0f.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:--  0:00:01 --:--:--     0100  446k  100  446k    0     0   313k      0  0:00:01  0:00:01 --:--:--  313k
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/libiwinfo-2026.05.26~66bdd1a0.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  141k  100  141k    0     0  3811k      0 --:--:-- --:--:-- --:--:-- 3834k
+cgi.c:29:6: warning: no previous prototype for 'cgiHeader' [-Wmissing-prototypes]
+   29 | void cgiHeader ()
+      |      ^~~~~~~~~
+cgi.c:46:7: warning: no previous prototype for 'cgiDecodeString' [-Wmissing-prototypes]
+   46 | char *cgiDecodeString (char *text)
+      |       ^~~~~~~~~~~~~~~
+cgi.c:75:9: warning: no previous prototype for 'cgiInit' [-Wmissing-prototypes]
+   75 | s_cgi **cgiInit ()
+      |         ^~~~~~~
+cgi.c: In function 'cgiRedirect':
+cgi.c:258:60: warning: format '%d' expects argument of type 'int', but argument 2 has type 'size_t' {aka 'long unsigned int'} [-Wformat=]
+  258 |         printf ("Content-type: text/html\nContent-length: %d\n", 77+(strlen(url)*2));
+      |                                                           ~^     ~~~~~~~~~~~~~~~~~~
+      |                                                            |       |
+      |                                                            int     size_t {aka long unsigned int}
+      |                                                           %ld
+gd.c: In function 'gdImageString':
+gd.c:484:20: warning: pointer targets in passing argument 1 of 'strlen' differ in signedness [-Wpointer-sign]
+  484 |         l = strlen(s);
+      |                    ^
+      |                    |
+      |                    unsigned char *
+In file included from /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/toolchain-x86_64_gcc-14.3.0_musl/include/fortify/string.h:22,
+                 from gd.c:3:
+/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/toolchain-x86_64_gcc-14.3.0_musl/include/string.h:54:16: note: expected 'const char *' but argument is of type 'unsigned char *'
+   54 | size_t strlen (const char *);
+      |                ^~~~~~~~~~~~
+gd.c: In function 'gdImageStringUp':
+gd.c:496:20: warning: pointer targets in passing argument 1 of 'strlen' differ in signedness [-Wpointer-sign]
+  496 |         l = strlen(s);
+      |                    ^
+      |                    |
+      |                    unsigned char *
+/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/toolchain-x86_64_gcc-14.3.0_musl/include/string.h:54:16: note: expected 'const char *' but argument is of type 'unsigned char *'
+   54 | size_t strlen (const char *);
+      |                ^~~~~~~~~~~~
+gd.c: At top level:
+gd.c:1720:5: warning: no previous prototype for 'gdGetWord' [-Wmissing-prototypes]
+ 1720 | int gdGetWord(int *result, FILE *in)
+      |     ^~~~~~~~~
+gd.c:1736:6: warning: no previous prototype for 'gdPutWord' [-Wmissing-prototypes]
+ 1736 | void gdPutWord(int w, FILE *out)
+      |      ^~~~~~~~~
+gd.c:1742:5: warning: no previous prototype for 'gdGetByte' [-Wmissing-prototypes]
+ 1742 | int gdGetByte(int *result, FILE *in)
+      |     ^~~~~~~~~
+gd.c: In function 'gdImageCreateFromXbm':
+gd.c:1893:22: warning: declaration of 'h' shadows a previous local [-Wshadow]
+ 1893 |                 char h[3];
+      |                      ^
+gd.c:1836:16: note: shadowed declaration is here
+ 1836 |         int w, h;
+      |                ^
+gd.c:1917:29: warning: format '%x' expects argument of type 'unsigned int *', but argument 3 has type 'int *' [-Wformat=]
+ 1917 |                 sscanf(h, "%x", &b);
+      |                            ~^   ~~
+      |                             |   |
+      |                             |   int *
+      |                             unsigned int *
+      |                            %x
+gd.c: In function 'gdImageFilledPolygon':
+gd.c:1997:29: warning: declaration of 'y1' shadows a previous local [-Wshadow]
+ 1997 |                         int y1, y2;
+      |                             ^~
+gd.c:1963:13: note: shadowed declaration is here
+ 1963 |         int y1, y2;
+      |             ^~
+gd.c:1997:33: warning: declaration of 'y2' shadows a previous local [-Wshadow]
+ 1997 |                         int y1, y2;
+      |                                 ^~
+gd.c:1963:17: note: shadowed declaration is here
+ 1963 |         int y1, y2;
+      |                 ^~
+gd.c: At top level:
+gd.c:1557:12: warning: 'ZeroDataBlock' defined but not used [-Wunused-variable]
+ 1557 | static int ZeroDataBlock;
+      |            ^~~~~~~~~~~~~
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/cgi-io-2026.07.21~31cb3c89.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 11690  100 11690    0     0   394k      0 --:--:-- --:--:-- --:--:--  407k
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+WARNING: kmod-drm-exec is not available in the kernel config - generating empty package
+WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package
++ curl -f --connect-timeout 5 --retry 3 --location https://netfilter.org/projects/libnftnl/files/libnftnl-1.3.1.tar.xz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  4  340k    4 15967    0     0  14666      0  0:00:23  0:00:01  0:00:22 14675100  340k  100  340k    0     0   219k      0  0:00:01  0:00:01 --:--:--  220k
+configure: WARNING: using cross tools not prefixed with host triplet
+pngwutil.c: In function 'png_write_compressed_data_out':
+pngwutil.c:346:4: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  346 |    if (comp->max_output_ptr != 0)
+      |    ^~
+pngwutil.c:348:7: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  348 |       comp->output_ptr=NULL;
+      |       ^~~~
+rrd_cgi.c: In function 'main':
+rrd_cgi.c:266:15: warning: variable 'server_url' set but not used [-Wunused-but-set-variable]
+  266 |         char *server_url = NULL;
+      |               ^~~~~~~~~~
+rrd_cgi.c:264:14: warning: variable 'length' set but not used [-Wunused-but-set-variable]
+  264 |         long length;
+      |              ^~~~~~
+gdpng.c:17:6: warning: no previous prototype for 'gdImagePng' [-Wmissing-prototypes]
+   17 | void gdImagePng(gdImagePtr im, FILE *out)
+      |      ^~~~~~~~~~
+getopt.c:919:1: warning: no previous prototype for 'getopt' [-Wmissing-prototypes]
+  919 | getopt (argc, argv, optstring)
+      | ^~~~~~
+gifsize.c:58:1: warning: no previous prototype for 'GifSize' [-Wmissing-prototypes]
+   58 | GifSize(FILE *fd, long *width, long *height)
+      | ^~~~~~~
+gifsize.c: In function 'GifSize':
+gifsize.c:64:12: warning: variable 'AspectRatio' set but not used [-Wunused-but-set-variable]
+   64 |        int AspectRatio;
+      |            ^~~~~~~~~~~
+gifsize.c:63:12: warning: variable 'Background' set but not used [-Wunused-but-set-variable]
+   63 |        int Background;
+      |            ^~~~~~~~~~
+gifsize.c:62:12: warning: variable 'ColorResolution' set but not used [-Wunused-but-set-variable]
+   62 |        int ColorResolution;
+      |            ^~~~~~~~~~~~~~~
+parsetime.c:247:6: warning: no previous prototype for 'EnsureMemFree' [-Wmissing-prototypes]
+  247 | void EnsureMemFree ()
+      |      ^~~~~~~~~~~~~
+parsetime.c: In function 'day':
+parsetime.c:663:9: warning: variable 'tlen' set but not used [-Wunused-but-set-variable]
+  663 |     int tlen;
+      |         ^~~~
+pngsize.c:10:1: warning: no previous prototype for 'PngSize' [-Wmissing-prototypes]
+   10 | PngSize(FILE *fd, long *width, long *height)
+      | ^~~~~~~
+rrd_graph.c: In function 'graph_paint':
+rrd_graph.c:2645:9: warning: the address of 'rrd_test_error' will always evaluate as 'true' [-Waddress]
+ 2645 |     if (rrd_test_error) return(-1);
+      |         ^~~~~~~~~~~~~~
+rrd_graph.c:2792:9: warning: the comparison will always evaluate as 'true' for the address of 'rrd_test_error' will never be NULL [-Waddress]
+ 2792 |     if (rrd_test_error) return(-1);
+      |         ^~~~~~~~~~~~~~
+In file included from rrd_tool.h:73,
+                 from rrd_graph.c:12:
+rrd.h:68:6: note: 'rrd_test_error' declared here
+   68 | int  rrd_test_error(void);
+      |      ^~~~~~~~~~~~~~
+rrd_resize.c: In function 'rrd_resize':
+rrd_resize.c:21:23: warning: variable 'grow' set but not used [-Wunused-but-set-variable]
+   21 |     int               grow=0,shrink=0;
+      |                       ^~~~
+rrd_update.c: In function 'rrd_update':
+rrd_update.c:96:22: warning: variable 'wrote_to_file' set but not used [-Wunused-but-set-variable]
+   96 |     int              wrote_to_file = 0;
+      |                      ^~~~~~~~~~~~~
+rrd_xport.c: In function 'rrd_xport_fn':
+rrd_xport.c:425:15: warning: the comparison will always evaluate as 'true' for the address of 'legend' will never be NULL [-Waddress]
+  425 |           if (im->gdes[i].legend)
+      |               ^~
+In file included from rrd_xport.c:8:
+rrd_graph.h:90:20: note: 'legend' declared here
+   90 |     char           legend[FMT_LEG_LEN+5]; /* legend*/
+      |                    ^~~~~~
+rrd_xport.c:460:36: warning: the comparison will always evaluate as 'true' for the address of 'ds_nam' will never be NULL [-Waddress]
+  460 |           if (im->gdes[ii].ds_namv && im->gdes[ii].ds_nam) {
+      |                                    ^~
+rrd_graph.h:85:20: note: 'ds_nam' declared here
+   85 |     char           ds_nam[DS_NAM_SIZE]; /* data source name */
+      |                    ^~~~~~
+rrdupdate.c: In function 'rrd_update':
+rrdupdate.c:96:22: warning: variable 'wrote_to_file' set but not used [-Wunused-but-set-variable]
+   96 |     int              wrote_to_file = 0;
+      |                      ^~~~~~~~~~~~~
+libtool: warning: remember to run 'libtool --finish /usr/lib'
+libtool: warning: 'librrd.la' has not been installed in '/usr/lib'
+libtool: warning: 'librrd.la' has not been installed in '/usr/lib'
+libtool: warning: 'librrd.la' has not been installed in '/usr/lib'
+libtool: warning: '../../src/librrd.la' has not been installed in '/usr/lib'
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/lucihttp-2023.03.15~9b5b683f.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 20217  100 20217    0     0   449k      0 --:--:-- --:--:-- --:--:--  459k
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
++ curl -f --connect-timeout 5 --retry 3 --location https://sources.cdn.openwrt.org/rpcd-2026.10.04~d99f703e.tar.zst
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 41458  100 41458    0     0  1049k      0 --:--:-- --:--:-- --:--:-- 1038k
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+libtool: warning: remember to run 'libtool --finish /usr/lib'
++ curl -f --connect-timeout 5 --retry 3 --location https://netfilter.org/projects/iptables/files/iptables-1.8.10.tar.xz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0ninja: warning: Ignoring jobserver: Pipe-based protocol is not supported! [--jobserver-auth=4,5]
+ 59  626k   59  374k    0     0   308k      0  0:00:02  0:00:01  0:00:01  307k100  626k  100  626k    0     0   511k      0  0:00:01  0:00:01 --:--:--  511k
+autoreconf: export WARNINGS=
+autoreconf: Entering directory '.'
+autoreconf: configure.ac: not using Gettext
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal -I m4 -I . --force -I m4
+autoreconf: configure.ac: tracing
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/libtoolize --install --copy --force
+autoreconf: configure.ac: not using Intltool
+autoreconf: configure.ac: not using Gtkdoc
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal -I m4 -I . --force -I m4
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/autoconf --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal --include=m4 --include=. --prepend-include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/aclocal --force
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/autoheader --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal --include=m4 --include=. --prepend-include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/aclocal --force
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/automake --add-missing --copy --force-missing
+autoreconf: Leaving directory '.'
+configure: WARNING: you should use --build, --host, --target
+configure: WARNING: unrecognized options: --disable-nls
+configure: WARNING: using cross tools not prefixed with host triplet
+configure: WARNING: unrecognized options: --disable-nls
+libxt_CT.c:344:13: warning: 'notrack_ct2_tg_init' defined but not used [-Wunused-function]
+  344 | static void notrack_ct2_tg_init(struct xt_entry_target *target)
+      |             ^~~~~~~~~~~~~~~~~~~
+libxt_CT.c:337:13: warning: 'notrack_ct1_tg_init' defined but not used [-Wunused-function]
+  337 | static void notrack_ct1_tg_init(struct xt_entry_target *target)
+      |             ^~~~~~~~~~~~~~~~~~~
+libxt_CT.c:330:13: warning: 'notrack_ct0_tg_init' defined but not used [-Wunused-function]
+  330 | static void notrack_ct0_tg_init(struct xt_entry_target *target)
+      |             ^~~~~~~~~~~~~~~~~~~
+libxt_CT.c:278:13: warning: 'ct_save' defined but not used [-Wunused-function]
+  278 | static void ct_save(const void *ip, const struct xt_entry_target *target)
+      |             ^~~~~~~
+libxt_CT.c:231:13: warning: 'ct_print' defined but not used [-Wunused-function]
+  231 | static void ct_print(const void *ip, const struct xt_entry_target *target, int numeric)
+      |             ^~~~~~~~
+libxt_CT.c:179:13: warning: 'ct_parse' defined but not used [-Wunused-function]
+  179 | static void ct_parse(struct xt_option_call *cb)
+      |             ^~~~~~~~
+libxt_CT.c:52:37: warning: 'ct_opts' defined but not used [-Wunused-const-variable=]
+   52 | static const struct xt_option_entry ct_opts[] = {
+      |                                     ^~~~~~~
+libxt_CT.c:11:13: warning: 'ct_help' defined but not used [-Wunused-function]
+   11 | static void ct_help(void)
+      |             ^~~~~~~
+In file included from ../include/linux/netfilter/xt_cgroup.h:6,
+                 from libxt_cgroup.c:3:
+/home/runner/work/_temp/issue173-statistics-build/openwrt/build_dir/target-x86_64_musl/linux-x86_64/linux-6.12.116/user_headers/include/linux/limits.h:7:9: warning: "NGROUPS_MAX" redefined
+    7 | #define NGROUPS_MAX    65536    /* supplemental group IDs are available */
+      |         ^~~~~~~~~~~
+In file included from ../include/xtables.h:11,
+                 from libxt_cgroup.c:2:
+/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/toolchain-x86_64_gcc-14.3.0_musl/include/limits.h:48:9: note: this is the location of the previous definition
+   48 | #define NGROUPS_MAX 32
+      |         ^~~~~~~~~~~
+libxt_conntrack.c:1179:12: warning: 'state_xlate' defined but not used [-Wunused-function]
+ 1179 | static int state_xlate(struct xt_xlate *xl,
+      |            ^~~~~~~~~~~
+libxt_conntrack.c:1142:13: warning: 'state_save' defined but not used [-Wunused-function]
+ 1142 | static void state_save(const void *ip, const struct xt_entry_match *match)
+      |             ^~~~~~~~~~
+libxt_conntrack.c:1132:1: warning: 'state_print' defined but not used [-Wunused-function]
+ 1132 | state_print(const void *ip,
+      | ^~~~~~~~~~~
+libxt_conntrack.c:1094:13: warning: 'state_ct23_parse' defined but not used [-Wunused-function]
+ 1094 | static void state_ct23_parse(struct xt_option_call *cb)
+      |             ^~~~~~~~~~~~~~~~
+libxt_conntrack.c:1083:13: warning: 'state_ct1_parse' defined but not used [-Wunused-function]
+ 1083 | static void state_ct1_parse(struct xt_option_call *cb)
+      |             ^~~~~~~~~~~~~~~
+libxt_conntrack.c:1073:13: warning: 'state_parse' defined but not used [-Wunused-function]
+ 1073 | static void state_parse(struct xt_option_call *cb)
+      |             ^~~~~~~~~~~
+libxt_conntrack.c:1021:37: warning: 'state_opts' defined but not used [-Wunused-const-variable=]
+ 1021 | static const struct xt_option_entry state_opts[] = {
+      |                                     ^~~~~~~~~~
+libxt_conntrack.c:1013:1: warning: 'state_help' defined but not used [-Wunused-function]
+ 1013 | state_help(void)
+      | ^~~~~~~~~~
+libxt_conntrack.c:1003:1: warning: 'conntrack1_mt6_save' defined but not used [-Wunused-function]
+ 1003 | conntrack1_mt6_save(const void *ip, const struct xt_entry_match *match)
+      | ^~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:993:1: warning: 'conntrack1_mt4_save' defined but not used [-Wunused-function]
+  993 | conntrack1_mt4_save(const void *ip, const struct xt_entry_match *match)
+      | ^~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:986:13: warning: 'conntrack2_mt6_save' defined but not used [-Wunused-function]
+  986 | static void conntrack2_mt6_save(const void *ip,
+      |             ^~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:980:13: warning: 'conntrack2_mt_save' defined but not used [-Wunused-function]
+  980 | static void conntrack2_mt_save(const void *ip,
+      |             ^~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:963:13: warning: 'conntrack_save' defined but not used [-Wunused-function]
+  963 | static void conntrack_save(const void *ip, const struct xt_entry_match *match)
+      |             ^~~~~~~~~~~~~~
+libxt_conntrack.c:943:1: warning: 'conntrack2_mt6_print' defined but not used [-Wunused-function]
+  943 | conntrack2_mt6_print(const void *ip, const struct xt_entry_match *match,
+      | ^~~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:936:1: warning: 'conntrack2_mt_print' defined but not used [-Wunused-function]
+  936 | conntrack2_mt_print(const void *ip, const struct xt_entry_match *match,
+      | ^~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:925:1: warning: 'conntrack1_mt6_print' defined but not used [-Wunused-function]
+  925 | conntrack1_mt6_print(const void *ip, const struct xt_entry_match *match,
+      | ^~~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:914:1: warning: 'conntrack1_mt4_print' defined but not used [-Wunused-function]
+  914 | conntrack1_mt4_print(const void *ip, const struct xt_entry_match *match,
+      | ^~~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:907:13: warning: 'conntrack_print' defined but not used [-Wunused-function]
+  907 | static void conntrack_print(const void *ip, const struct xt_entry_match *match,
+      |             ^~~~~~~~~~~~~~~
+libxt_conntrack.c:537:13: warning: 'conntrack2_mt_parse' defined but not used [-Wunused-function]
+  537 | static void conntrack2_mt_parse(struct xt_option_call *cb)
+      |             ^~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:514:13: warning: 'conntrack1_mt_parse' defined but not used [-Wunused-function]
+  514 | static void conntrack1_mt_parse(struct xt_option_call *cb)
+      |             ^~~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:337:13: warning: 'conntrack_parse' defined but not used [-Wunused-function]
+  337 | static void conntrack_parse(struct xt_option_call *cb)
+      |             ^~~~~~~~~~~~~~~
+libxt_conntrack.c:119:37: warning: 'conntrack2_mt_opts' defined but not used [-Wunused-const-variable=]
+  119 | static const struct xt_option_entry conntrack2_mt_opts[] = {
+      |                                     ^~~~~~~~~~~~~~~~~~
+libxt_conntrack.c:96:37: warning: 'conntrack_mt_opts_v0' defined but not used [-Wunused-const-variable=]
+   96 | static const struct xt_option_entry conntrack_mt_opts_v0[] = {
+      |                                     ^~~~~~~~~~~~~~~~~~~~
+libxt_multiport.c:517:12: warning: 'multiport_xlate6' defined but not used [-Wunused-function]
+  517 | static int multiport_xlate6(struct xt_xlate *xl,
+      |            ^~~~~~~~~~~~~~~~
+libxt_multiport.c:508:12: warning: 'multiport_xlate' defined but not used [-Wunused-function]
+  508 | static int multiport_xlate(struct xt_xlate *xl,
+      |            ^~~~~~~~~~~~~~~
+libxt_multiport.c:412:13: warning: 'multiport_save6' defined but not used [-Wunused-function]
+  412 | static void multiport_save6(const void *ip_void,
+      |             ^~~~~~~~~~~~~~~
+libxt_multiport.c:405:13: warning: 'multiport_save' defined but not used [-Wunused-function]
+  405 | static void multiport_save(const void *ip_void,
+      |             ^~~~~~~~~~~~~~
+libxt_multiport.c:317:13: warning: 'multiport_print6' defined but not used [-Wunused-function]
+  317 | static void multiport_print6(const void *ip_void,
+      |             ^~~~~~~~~~~~~~~~
+libxt_multiport.c:310:13: warning: 'multiport_print' defined but not used [-Wunused-function]
+  310 | static void multiport_print(const void *ip_void,
+      |             ^~~~~~~~~~~~~~~
+libxt_multiport.c:199:13: warning: 'multiport_parse6' defined but not used [-Wunused-function]
+  199 | static void multiport_parse6(struct xt_option_call *cb)
+      |             ^~~~~~~~~~~~~~~~
+libxt_multiport.c:192:13: warning: 'multiport_parse' defined but not used [-Wunused-function]
+  192 | static void multiport_parse(struct xt_option_call *cb)
+      |             ^~~~~~~~~~~~~~~
+libxt_multiport.c:22:13: warning: 'multiport_help' defined but not used [-Wunused-function]
+   22 | static void multiport_help(void)
+      |             ^~~~~~~~~~~~~~
+In file included from libebt_ip.c:25:
+libxt_icmp.h: In function '__parse_icmp':
+libxt_icmp.h:112:21: warning: inlining failed in call to 'parse_range': call is unlikely and code size would grow [-Winline]
+  112 | static inline char *parse_range(const char *str, unsigned int res[])
+      |                     ^~~~~~~~~~~
+libxt_icmp.h:155:30: note: called from here
+  155 |                 char *next = parse_range(fmtstring, number);
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+libxt_icmp.h:112:21: warning: inlining failed in call to 'parse_range': call is unlikely and code size would grow [-Winline]
+  112 | static inline char *parse_range(const char *str, unsigned int res[])
+      |                     ^~~~~~~~~~~
+libxt_icmp.h:172:32: note: called from here
+  172 |                         next = parse_range(next + 1, number);
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from libebt_ip6.c:26:
+In function '__parse_icmp',
+    inlined from 'ebt_parse_icmpv6' at libxt_icmp.h:227:2,
+    inlined from 'brip6_parse' at libebt_ip6.c:199:3:
+libxt_icmp.h:112:21: warning: inlining failed in call to 'parse_range': call is unlikely and code size would grow [-Winline]
+  112 | static inline char *parse_range(const char *str, unsigned int res[])
+      |                     ^~~~~~~~~~~
+libxt_icmp.h:155:30: note: called from here
+  155 |                 char *next = parse_range(fmtstring, number);
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+libxt_icmp.h:112:21: warning: inlining failed in call to 'parse_range': call is unlikely and code size would grow [-Winline]
+  112 | static inline char *parse_range(const char *str, unsigned int res[])
+      |                     ^~~~~~~~~~~
+libxt_icmp.h:172:32: note: called from here
+  172 |                         next = parse_range(next + 1, number);
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from libipt_REJECT.c:9:
+/home/runner/work/_temp/issue173-statistics-build/openwrt/build_dir/target-x86_64_musl/linux-x86_64/linux-6.12.116/user_headers/include/linux/version.h:3:9: warning: "LINUX_VERSION_MAJOR" redefined
+    3 | #define LINUX_VERSION_MAJOR 6
+      |         ^~~~~~~~~~~~~~~~~~~
+In file included from libipt_REJECT.c:7:
+../include/xtables.h:596:9: note: this is the location of the previous definition
+  596 | #define LINUX_VERSION_MAJOR(x)  (((x)>>16) & 0xFF)
+      |         ^~~~~~~~~~~~~~~~~~~
+In file included from libipt_icmp.c:8:
+In function '__parse_icmp',
+    inlined from '__ipt_parse_icmp' at libxt_icmp.h:196:2,
+    inlined from 'ipt_parse_icmp' at libxt_icmp.h:206:2,
+    inlined from 'icmp_parse' at libipt_icmp.c:51:2:
+libxt_icmp.h:112:21: warning: inlining failed in call to 'parse_range': call is unlikely and code size would grow [-Winline]
+  112 | static inline char *parse_range(const char *str, unsigned int res[])
+      |                     ^~~~~~~~~~~
+libxt_icmp.h:155:30: note: called from here
+  155 |                 char *next = parse_range(fmtstring, number);
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+libxt_icmp.h:112:21: warning: inlining failed in call to 'parse_range': call is unlikely and code size would grow [-Winline]
+  112 | static inline char *parse_range(const char *str, unsigned int res[])
+      |                     ^~~~~~~~~~~
+libxt_icmp.h:172:32: note: called from here
+  172 |                         next = parse_range(next + 1, number);
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from libip6t_icmp6.c:9:
+In function '__parse_icmp',
+    inlined from '__ipt_parse_icmp' at libxt_icmp.h:196:2,
+    inlined from 'ipt_parse_icmpv6' at libxt_icmp.h:213:2,
+    inlined from 'icmp6_parse' at libip6t_icmp6.c:43:2:
+libxt_icmp.h:112:21: warning: inlining failed in call to 'parse_range': call is unlikely and code size would grow [-Winline]
+  112 | static inline char *parse_range(const char *str, unsigned int res[])
+      |                     ^~~~~~~~~~~
+libxt_icmp.h:155:30: note: called from here
+  155 |                 char *next = parse_range(fmtstring, number);
+      |                              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+libxt_icmp.h:112:21: warning: inlining failed in call to 'parse_range': call is unlikely and code size would grow [-Winline]
+  112 | static inline char *parse_range(const char *str, unsigned int res[])
+      |                     ^~~~~~~~~~~
+libxt_icmp.h:172:32: note: called from here
+  172 |                         next = parse_range(next + 1, number);
+      |                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-e 	+ ./libxt_addrtype.man
+-e 	+ ./libip6t_ah.man
+-e 	+ ./libipt_ah.man
+-e 	+ ./libxt_bpf.man
+-e 	+ ./libxt_cgroup.man
+-e 	+ ./libxt_cluster.man
+-e 	+ ./libxt_comment.man
+-e 	+ ./libxt_connbytes.man
+-e 	+ ./libxt_connlimit.man
+-e 	+ ./libxt_connmark.man
+-e 	+ ./libxt_conntrack.man
+-e 	+ ./libxt_cpu.man
+-e 	+ ./libxt_dccp.man
+-e 	+ ./libxt_devgroup.man
+-e 	+ ./libxt_dscp.man
+-e 	+ ./libip6t_dst.man
+-e 	+ ./libxt_ecn.man
+-e 	+ ./libxt_esp.man
+-e 	+ ./libip6t_eui64.man
+-e 	+ ./libip6t_frag.man
+-e 	+ ./libxt_hashlimit.man
+-e 	+ ./libip6t_hbh.man
+-e 	+ ./libxt_helper.man
+-e 	+ ./libip6t_hl.man
+-e 	+ ./libipt_icmp.man
+-e 	+ ./libip6t_icmp6.man
+-e 	+ ./libxt_iprange.man
+-e 	+ ./libip6t_ipv6header.man
+-e 	+ ./libxt_ipvs.man
+-e 	+ ./libxt_length.man
+-e 	+ ./libxt_limit.man
+-e 	+ ./libxt_mac.man
+-e 	+ ./libxt_mark.man
+-e 	+ ./libip6t_mh.man
+-e 	+ ./libxt_multiport.man
+-e 	+ ./libxt_nfacct.man
+-e 	+ ./libxt_osf.man
+-e 	+ ./libxt_owner.man
+-e 	+ ./libxt_physdev.man
+-e 	+ ./libxt_pkttype.man
+-e 	+ ./libxt_policy.man
+-e 	+ ./libxt_quota.man
+-e 	+ ./libxt_rateest.man
+-e 	+ ./libipt_realm.man
+-e 	+ ./libxt_recent.man
+-e 	+ ./libxt_rpfilter.man
+-e 	+ ./libip6t_rt.man
+-e 	+ ./libxt_sctp.man
+-e 	+ ./libxt_set.man
+-e 	+ ./libxt_socket.man
+-e 	+ ./libxt_state.man
+-e 	+ ./libxt_statistic.man
+-e 	+ ./libxt_string.man
+-e 	+ ./libxt_tcp.man
+-e 	+ ./libxt_tcpmss.man
+-e 	+ ./libxt_time.man
+-e 	+ ./libxt_tos.man
+-e 	+ ./libipt_ttl.man
+-e 	+ ./libxt_u32.man
+-e 	+ ./libxt_udp.man
+-e 	+ ./libxt_AUDIT.man
+-e 	+ ./libxt_CHECKSUM.man
+-e 	+ ./libxt_CLASSIFY.man
+-e 	+ ./libipt_CLUSTERIP.man
+-e 	+ ./libxt_CONNMARK.man
+-e 	+ ./libxt_CONNSECMARK.man
+-e 	+ ./libxt_CT.man
+-e 	+ ./libxt_DNAT.man
+-e 	+ ./libip6t_DNPT.man
+-e 	+ ./libxt_DSCP.man
+-e 	+ ./libipt_ECN.man
+-e 	+ ./libip6t_HL.man
+-e 	+ ./libxt_HMARK.man
+-e 	+ ./libxt_IDLETIMER.man
+-e 	+ ./libxt_LED.man
+-e 	+ ./libxt_LOG.man
+-e 	+ ./libxt_MARK.man
+-e 	+ ./libxt_MASQUERADE.man
+-e 	+ ./libxt_NETMAP.man
+-e 	+ ./libxt_NFLOG.man
+-e 	+ ./libxt_NFQUEUE.man
+-e 	+ ./libxt_NOTRACK.man
+-e 	+ ./libxt_RATEEST.man
+-e 	+ ./libxt_REDIRECT.man
+-e 	+ ./libip6t_REJECT.man
+-e 	+ ./libipt_REJECT.man
+-e 	+ ./libxt_SECMARK.man
+-e 	+ ./libxt_SET.man
+-e 	+ ./libxt_SNAT.man
+-e 	+ ./libip6t_SNPT.man
+-e 	+ ./libxt_SYNPROXY.man
+-e 	+ ./libxt_TCPMSS.man
+-e 	+ ./libxt_TCPOPTSTRIP.man
+-e 	+ ./libxt_TEE.man
+-e 	+ ./libxt_TOS.man
+-e 	+ ./libxt_TPROXY.man
+-e 	+ ./libxt_TRACE.man
+-e 	+ ./libipt_TTL.man
+-e 	+ ./libipt_ULOG.man
+xshared.c: In function 'parse_wait_time':
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:329:20: note: called from here
+  329 |         } else if (xs_has_arg(argc, argv))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c: In function 'parse_wait_interval':
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:345:18: note: called from here
+  345 |         else if (xs_has_arg(argc, argv))
+      |                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c: In function 'do_parse':
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1418:29: note: called from here
+ 1418 |                         if (xs_has_arg(argc, argv)) {
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1427:29: note: called from here
+ 1427 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1438:29: note: called from here
+ 1438 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1449:34: note: called from here
+ 1449 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1451:29: note: called from here
+ 1451 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1460:34: note: called from here
+ 1460 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1462:29: note: called from here
+ 1462 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1470:34: note: called from here
+ 1470 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1479:34: note: called from here
+ 1479 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1481:29: note: called from here
+ 1481 |                         if (xs_has_arg(argc, argv)) {
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1499:34: note: called from here
+ 1499 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1507:29: note: called from here
+ 1507 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1521:29: note: called from here
+ 1521 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1754:44: note: called from here
+ 1754 |                         if (!args->bcnt && xs_has_arg(argc, argv))
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c: In function 'parse_wait_time':
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:329:20: note: called from here
+  329 |         } else if (xs_has_arg(argc, argv))
+      |                    ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c: In function 'parse_wait_interval':
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:345:18: note: called from here
+  345 |         else if (xs_has_arg(argc, argv))
+      |                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c: In function 'do_parse':
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1418:29: note: called from here
+ 1418 |                         if (xs_has_arg(argc, argv)) {
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1427:29: note: called from here
+ 1427 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1438:29: note: called from here
+ 1438 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1449:34: note: called from here
+ 1449 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1451:29: note: called from here
+ 1451 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1460:34: note: called from here
+ 1460 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1462:29: note: called from here
+ 1462 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1470:34: note: called from here
+ 1470 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1479:34: note: called from here
+ 1479 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1481:29: note: called from here
+ 1481 |                         if (xs_has_arg(argc, argv)) {
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1499:34: note: called from here
+ 1499 |                         else if (xs_has_arg(argc, argv))
+      |                                  ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1507:29: note: called from here
+ 1507 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1521:29: note: called from here
+ 1521 |                         if (xs_has_arg(argc, argv))
+      |                             ^~~~~~~~~~~~~~~~~~~~~~
+xshared.c:414:13: warning: inlining failed in call to 'xs_has_arg': call is unlikely and code size would grow [-Winline]
+  414 | inline bool xs_has_arg(int argc, char *argv[])
+      |             ^~~~~~~~~~
+xshared.c:1754:44: note: called from here
+ 1754 |                         if (!args->bcnt && xs_has_arg(argc, argv))
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~
+In file included from nft-ruleparse.c:30:
+nft-ruleparse.h: In function 'nft_xt_ctx_get_dreg':
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.h:88:36: note: called from here
+   88 |         struct nft_xt_ctx_reg *r = nft_xt_ctx_get_sreg(ctx, reg);
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'nft_parse_payload',
+    inlined from 'nft_rule_to_iptables_command_state' at nft-ruleparse.c:916:4:
+nft-ruleparse.h:86:38: warning: inlining failed in call to 'nft_xt_ctx_get_dreg': call is unlikely and code size would grow [-Winline]
+   86 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_dreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:130:38: note: called from here
+  130 |         struct nft_xt_ctx_reg *reg = nft_xt_ctx_get_dreg(ctx, regnum);
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'nft_parse_meta_set',
+    inlined from 'nft_parse_meta' at nft-ruleparse.c:212:3,
+    inlined from 'nft_rule_to_iptables_command_state' at nft-ruleparse.c:918:4:
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:159:16: note: called from here
+  159 |         sreg = nft_xt_ctx_get_sreg(ctx, sregnum);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'nft_parse_meta',
+    inlined from 'nft_rule_to_iptables_command_state' at nft-ruleparse.c:918:4:
+nft-ruleparse.h:86:38: warning: inlining failed in call to 'nft_xt_ctx_get_dreg': call is unlikely and code size would grow [-Winline]
+   86 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_dreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:216:15: note: called from here
+  216 |         reg = nft_xt_ctx_get_dreg(ctx, nftnl_expr_get_u32(e, NFTNL_EXPR_META_DREG));
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'nft_parse_bitwise',
+    inlined from 'nft_rule_to_iptables_command_state' at nft-ruleparse.c:920:4:
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:228:39: note: called from here
+  228 |         struct nft_xt_ctx_reg *sreg = nft_xt_ctx_get_sreg(ctx, sregnum);
+      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:237:24: note: called from here
+  237 |                 dreg = nft_xt_ctx_get_sreg(ctx, dregnum); /* sreg, do NOT clear ... */
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'nft_parse_cmp',
+    inlined from 'nft_rule_to_iptables_command_state' at nft-ruleparse.c:922:4:
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:515:16: note: called from here
+  515 |         sreg = nft_xt_ctx_get_sreg(ctx, reg);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'nft_parse_transport',
+    inlined from 'nft_parse_cmp' at nft-ruleparse.c:536:4,
+    inlined from 'nft_rule_to_iptables_command_state' at nft-ruleparse.c:922:4:
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:449:16: note: called from here
+  449 |         sreg = nft_xt_ctx_get_sreg(ctx, reg);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'nft_parse_immediate',
+    inlined from 'nft_rule_to_iptables_command_state' at nft-ruleparse.c:924:4:
+nft-ruleparse.h:86:38: warning: inlining failed in call to 'nft_xt_ctx_get_dreg': call is unlikely and code size would grow [-Winline]
+   86 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_dreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:559:24: note: called from here
+  559 |                 dreg = nft_xt_ctx_get_dreg(ctx, nftnl_expr_get_u32(e, NFTNL_EXPR_IMM_DREG));
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'nft_parse_range',
+    inlined from 'nft_rule_to_iptables_command_state' at nft-ruleparse.c:936:4:
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:868:16: note: called from here
+  868 |         sreg = nft_xt_ctx_get_sreg(ctx, reg);
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from nft-shared.h:14,
+                 from nft.h:5,
+                 from nft-ruleparse-bridge.c:25:
+In function 'lookup_analyze_payloads',
+    inlined from 'nft_bridge_parse_lookup' at nft-ruleparse-bridge.c:324:6:
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse-bridge.c:183:15: note: called from here
+  183 |         reg = nft_xt_ctx_get_sreg(ctx, sreg);
+      |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse-bridge.c:206:23: note: called from here
+  206 |                 reg = nft_xt_ctx_get_sreg(ctx, sreg);
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In function 'get_meta_mask',
+    inlined from 'parse_meta_mark' at nft-ruleparse.c:1050:15,
+    inlined from 'parse_meta' at nft-ruleparse.c:1121:3:
+nft-ruleparse.h:57:38: warning: inlining failed in call to 'nft_xt_ctx_get_sreg': call is unlikely and code size would grow [-Winline]
+   57 | static inline struct nft_xt_ctx_reg *nft_xt_ctx_get_sreg(struct nft_xt_ctx *ctx, enum nft_registers reg)
+      |                                      ^~~~~~~~~~~~~~~~~~~
+nft-ruleparse.c:1028:38: note: called from here
+ 1028 |         struct nft_xt_ctx_reg *reg = nft_xt_ctx_get_sreg(ctx, sreg);
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+libtool: warning: remember to run 'libtool --finish /usr/lib'
+libtool: warning: remember to run 'libtool --finish /usr/lib'
+libtool: warning: '../libxtables/libxtables.la' has not been installed in '/usr/lib'
+libtool: warning: '../libiptc/libip4tc.la' has not been installed in '/usr/lib'
+libtool: warning: '../libiptc/libip6tc.la' has not been installed in '/usr/lib'
+libtool: warning: '../libxtables/libxtables.la' has not been installed in '/usr/lib'
++ curl -f --connect-timeout 5 --retry 3 --location https://collectd.org/files/collectd-5.12.0.tar.bz2
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0  9379    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (22) The requested URL returned error: 404
+Download failed.
++ curl -f --connect-timeout 5 --retry 3 --location https://github.com/collectd/collectd/releases/download/collectd-5.12.0/collectd-5.12.0.tar.bz2
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 1858k  100 1858k    0     0  6081k      0 --:--:-- --:--:-- --:--:-- 6081k
+autoreconf: export WARNINGS=
+autoreconf: Entering directory '.'
+autoreconf: configure.ac: not using Gettext
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal -I m4 -I . --force -I m4
+autoreconf: configure.ac: tracing
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/libtoolize --install --copy --force
+autoreconf: configure.ac: not using Intltool
+autoreconf: configure.ac: not using Gtkdoc
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal -I /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal -I m4 -I . --force -I m4
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/autoconf --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal --include=m4 --include=. --prepend-include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/aclocal --force
+configure.ac:27: warning: The macro 'AC_PROG_CC_C99' is obsolete.
+configure.ac:27: You should run autoupdate.
+./lib/autoconf/c.m4:1662: AC_PROG_CC_C99 is expanded from...
+configure.ac:27: the top level
+configure.ac:41: warning: AC_PROG_LEX without either yywrap or noyywrap is obsolete
+./lib/autoconf/programs.m4:743: _AC_PROG_LEX is expanded from...
+./lib/autoconf/programs.m4:736: AC_PROG_LEX is expanded from...
+configure.ac:41: the top level
+configure.ac:729: warning: The macro 'AC_HEADER_TIME' is obsolete.
+configure.ac:729: You should run autoupdate.
+./lib/autoconf/headers.m4:702: AC_HEADER_TIME is expanded from...
+configure.ac:729: the top level
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/autoheader --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/host/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/hostpkg/share/aclocal --include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/target-x86_64_musl/usr/share/aclocal --include=m4 --include=. --prepend-include=/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/share/aclocal --force
+autoreconf: running: /home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/automake --add-missing --copy --force-missing
+autoreconf: Leaving directory '.'
+configure: WARNING: unrecognized options: --disable-nls, --disable-curl_jolokia, --disable-genericjmx, --disable-lvm, --disable-monitorus, --disable-openvz
+configure: WARNING: using cross tools not prefixed with host triplet
+configure: WARNING: unrecognized options: --disable-nls, --disable-curl_jolokia, --disable-genericjmx, --disable-lvm, --disable-monitorus, --disable-openvz
+libtool: warning: remember to run 'libtool --finish /usr/lib'
+libtool: warning: 'libcollectdclient.la' has not been installed in '/usr/lib'
+libtool: warning: 'libcollectdclient.la' has not been installed in '/usr/lib'
+libtool: warning: 'libcollectdclient.la' has not been installed in '/usr/lib'
+libtool: warning: remember to run 'libtool --finish /usr/lib/collectd'
+/home/runner/work/_temp/issue173-statistics-build/openwrt/staging_dir/host/bin/find: '/home/runner/work/_temp/issue173-statistics-build/openwrt/build_dir/target-x86_64_musl/collectd-5.12.0/ipkg-x86_64/collectd/etc/collectd.conf': No such file or directory
