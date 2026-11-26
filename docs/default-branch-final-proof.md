@@ -49,7 +49,10 @@ that existing archive replay under the caller's run-owned work directory.
 - R3 must report `accepted` for its exact receipt schema, an immutable release,
   a clean consumer checkout, the approved release-lock digest, and matching
   release asset/manifest/producer, CodeQL binary, query suite and resolved-rule
-  identities. A `failed` or altered R3 receipt is rejected.
+  identities. Its root command transcript must match the receipt digest and
+  contain the 48 labels in the reviewed R3 recipe exactly once, with every
+  command exit status zero. A failed or altered R3 receipt or command is
+  rejected.
 - The source manifest, routing receipt, coverage receipt, producer receipt,
   decoded successful/error query JSON, SARIF and consumer triage JSON are
   checked for exact digests and identity multisets. Each selected installed
@@ -82,20 +85,21 @@ and zero extraction errors. It records
 |---|---|
 | Decision | Verify the final default-branch artifact against supplied start bindings before a separate private completion transition. No completion transition is included here. |
 | Base | Clean disposable consumer checkout at `2aa4b63161e0cf59968ea603446d0402debdd56d`; this implementation checkout is under ignored `work/default-branch-final-proof-impl`. |
-| Affected contracts | Completed run/job/artifact metadata, ZIP member inventory and custody bytes, early/final freeze equality, v2 claim/origin replay, R3 release receipt, corpus route/extraction receipts, SARIF tuple and consumer triage multiplicity. |
+| Affected contracts | Completed run/job/artifact metadata, raw ZIP member inventory and custody bytes, early/final freeze equality, v2 claim/origin replay, R3 release and command receipts, corpus route/extraction receipts, SARIF tuple and consumer triage multiplicity. |
 | Oracle and positive | Retained run `45875169837`, attempt 1, scan job `140100374363`, early artifact `15144223386`, final artifact `15144917516`. The final ZIP has 520 regular members: nine frozen inputs, 16 fixed R3/corpus files, and 165 command triples. |
 | Eligible near misses | Changed one frozen input byte; extra or duplicate member; unsafe/NUL name; wrong attempt/job; failed R3 receipt; altered route or extraction multiplicity; `clean_scan` paired with a result; collapsed duplicate SARIF tuple. |
 | Test-to-CI map | `python3 -B -m unittest tools.test_default_branch_final_proof -v` runs in the `contract` job of `.github/workflows/default-branch-commit-scan.yml`. That workflow already selects `tools/**` on pull requests. The live scan job is not a test gate for this verifier change. |
 | Expected artifacts | No generated artifact is committed. Raw APIs, ZIPs and the v2 queue/archive remain under ignored `work/default-branch-early-live-retry-20261126/`. |
 | Resource budget | The verifier performs no network request, build or CodeQL scan. It reads at most the existing 64 MiB ZIP limit and 128 MiB expanded-member limit; peak memory was not measured. |
 
-The local real-run control completed in 3.9 seconds. It used a synthetic,
+The local real-run control completed in about 2 seconds. It used a synthetic,
 zero-filled MAC field solely to test that the returned value keeps
 `mac_verified: false`; no key or signer was used. The measured output was
 `clean_scan`, zero exact SARIF tuples, 128 successful extraction identities,
 zero extraction errors, and 9/9 early/final byte-equal frozen inputs. Final
 ZIP SHA-256: `44ef942823a2a460c9b20dd57730965ca8ae124c5da8407ced4fdebfd195bc1e`.
 Early ZIP SHA-256: `179b74ab48757cc1c0966e3b5e313546f072085b3f52677046115007d08f5ea4`.
+It also validated all 48 R3 command transcript rows with zero failed exits.
 The observed consumer disposition remains `not_evaluated`.
 
 This control is not an authenticated start or completion, a source-truth
