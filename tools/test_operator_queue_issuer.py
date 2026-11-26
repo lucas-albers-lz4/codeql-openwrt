@@ -17,7 +17,7 @@ import operator_queue_start as starter
 
 class IssuerBoundaryTests(unittest.TestCase):
     def test_private_key_file_rejects_alias_fifo_and_hardlink(self):
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
             root = Path(directory).resolve()
             key = root / 'issuer.key'
             fd = os.open(key, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)

@@ -84,7 +84,9 @@ class CustodyTests(unittest.TestCase):
                     custody.unpack_checked(archive.getvalue(), Path(directory))
 
     def test_private_work_root_required(self):
-        with tempfile.TemporaryDirectory() as directory:
+        # Hosted Linux /tmp is sticky world-writable and is intentionally
+        # rejected by private_root; place the positive fixture under cwd.
+        with tempfile.TemporaryDirectory(dir=Path.cwd()) as directory:
             root = Path(directory).resolve()
             custody.private_root(root)
             root.chmod(0o777)
