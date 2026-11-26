@@ -32,7 +32,8 @@ SCAN_OUT = {'routing.json', 'successful.bqrs', 'successful.json', 'errors.bqrs',
             'event-triage-input.json', 'producer-receipt.json', 'triage.json'}
 R3_OUT = {'source-first-manifest.json', 'routing.json', 'successful.bqrs',
           'successful.json', 'errors.bqrs', 'errors.json', 'default-suite.sarif',
-          'producer-receipt.json', 'accepted.json'}
+          'producer-receipt.json', 'accepted.json',
+          'historical-event-manifest.json', 'historical-event-triage.json'}
 
 
 def _git(root: Path, *args: str) -> str:
