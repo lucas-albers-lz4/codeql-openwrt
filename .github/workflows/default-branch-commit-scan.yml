@@ -1,0 +1,192 @@
+name: Linked default-branch commit released scan
+
+on:
+  workflow_dispatch:
+    inputs:
+      previous_run_id:
+        description: Successful predecessor discovery run ID
+        required: true
+        type: string
+      previous_run_attempt:
+        description: Successful predecessor attempt
+        required: true
+        type: string
+        default: '1'
+      previous_sha256:
+        description: Exact predecessor decisions.json SHA-256
+        required: true
+        type: string
+      current_run_id:
+        description: Successful successor discovery run ID
+        required: true
+        type: string
+      current_run_attempt:
+        description: Successful successor attempt
+        required: true
+        type: string
+        default: '1'
+      current_sha256:
+        description: Exact successor decisions.json SHA-256
+        required: true
+        type: string
+      gap_sha256:
+        description: Exact successor gap/gap.json SHA-256
+        required: true
+        type: string
+      repository:
+        description: Canonical upstream repository with the enumerated commit
+        required: true
+        type: choice
+        options: [openwrt/openwrt, openwrt/luci]
+      source_sha:
+        description: Full first-parent commit SHA from the linked gap
+        required: true
+        type: string
+      control_sha:
+        description: Distinct canonical control object SHA; no clean assertion
+        required: true
+        type: string
+  pull_request:
+    paths:
+      - '.github/workflows/default-branch-commit-scan.yml'
+      - 'tools/**'
+      - 'docs/current-corpus-source-v0.6.json'
+      - 'docs/r3-release-lock.json'
+      - 'docs/default-branch-commit-scan.md'
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Test default-branch and released corpus contracts
+        run: python3 -B -m unittest tools.test_default_branch_gap tools.test_default_branch_event tools.test_default_branch_corpus_manifest tools.test_default_branch_corpus_linux tools.test_event_corpus_manifest tools.test_direct_commit_corpus_linux policy.tests.test_current_corpus_linux -v
+
+  released-default-branch-scan:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs: contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Fetch and bind exact linked discovery artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PREVIOUS_RUN: ${{ inputs.previous_run_id }}
+          PREVIOUS_ATTEMPT: ${{ inputs.previous_run_attempt }}
+          PREVIOUS_SHA256: ${{ inputs.previous_sha256 }}
+          CURRENT_RUN: ${{ inputs.current_run_id }}
+          CURRENT_ATTEMPT: ${{ inputs.current_run_attempt }}
+          CURRENT_SHA256: ${{ inputs.current_sha256 }}
+          GAP_SHA256: ${{ inputs.gap_sha256 }}
+        run: |
+          set -euo pipefail
+          inputs="$RUNNER_TEMP/default-branch-inputs-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -m 700 "$inputs"
+          [[ "$PREVIOUS_RUN" =~ ^[1-9][0-9]*$ && "$CURRENT_RUN" =~ ^[1-9][0-9]*$ ]]
+          [[ "$PREVIOUS_ATTEMPT" =~ ^[1-9][0-9]*$ && "$CURRENT_ATTEMPT" =~ ^[1-9][0-9]*$ ]]
+          [[ "$PREVIOUS_SHA256" =~ ^[0-9a-f]{64}$ && "$CURRENT_SHA256" =~ ^[0-9a-f]{64}$ && "$GAP_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$PREVIOUS_RUN" != "$CURRENT_RUN" ]]
+          for role in previous current; do
+            if [[ "$role" == previous ]]; then
+              run_id="$PREVIOUS_RUN"; attempt="$PREVIOUS_ATTEMPT"
+            else
+              run_id="$CURRENT_RUN"; attempt="$CURRENT_ATTEMPT"
+            fi
+            gh api "repos/$GH_REPO/actions/runs/$run_id" > "$inputs/$role-run-api.json"
+            jq -e --arg repo "$GH_REPO" --arg run "$run_id" --arg attempt "$attempt" '
+              .id == ($run | tonumber) and .run_attempt == ($attempt | tonumber) and
+              .repository.full_name == $repo and
+              .path == ".github/workflows/incoming-discovery-manual.yml" and
+              .event == "workflow_dispatch" and .head_branch == "main" and
+              .status == "completed" and .conclusion == "success"
+            ' "$inputs/$role-run-api.json" > /dev/null
+            mkdir "$inputs/$role"
+            gh run download "$run_id" -n "incoming-discovery-${run_id}-${attempt}" -D "$inputs/$role"
+          done
+          printf '%s  %s\n' "$PREVIOUS_SHA256" "$inputs/previous/decisions.json" | sha256sum --check --status
+          printf '%s  %s\n' "$CURRENT_SHA256" "$inputs/current/decisions.json" | sha256sum --check --status
+          printf '%s  %s\n' "$GAP_SHA256" "$inputs/current/gap/gap.json" | sha256sum --check --status
+          python3 -B -m tools.default_branch_gap --previous "$inputs/previous/decisions.json" --current "$inputs/current/decisions.json" --verify-gap "$inputs/current/gap/gap.json"
+      - name: Resolve canonical commit and source-first corpus oracle
+        shell: bash
+        env:
+          REPOSITORY: ${{ inputs.repository }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+          CONTROL_SHA: ${{ inputs.control_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ && "$CONTROL_SHA" =~ ^[0-9a-f]{40}$ && "$SOURCE_SHA" != "$CONTROL_SHA" ]]
+          case "$REPOSITORY" in
+            openwrt/openwrt) short=openwrt ;;
+            openwrt/luci) short=luci ;;
+            *) exit 2 ;;
+          esac
+          url="https://github.com/$REPOSITORY.git"
+          inputs="$RUNNER_TEMP/default-branch-inputs-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          source_checkout="$RUNNER_TEMP/default-branch-source-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          control_checkout="$RUNNER_TEMP/default-branch-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          for checkout in "$source_checkout" "$control_checkout"; do
+            git init "$checkout"
+            git -C "$checkout" remote add origin "$url"
+          done
+          git -C "$source_checkout" fetch --depth=2 origin "$SOURCE_SHA"
+          policy_pin=$(python3 -c 'import json,sys; print(json.load(open("docs/current-corpus-source-v0.6.json"))["pins"][sys.argv[1]])' "$short")
+          [[ "$policy_pin" =~ ^[0-9a-f]{40}$ ]]
+          git -C "$source_checkout" fetch --depth=1 origin "$policy_pin"
+          git -C "$source_checkout" checkout --detach "$SOURCE_SHA"
+          git -C "$control_checkout" fetch --depth=1 origin "$CONTROL_SHA"
+          git -C "$control_checkout" checkout --detach "$CONTROL_SHA"
+          python3 -B -m tools.default_branch_event --previous "$inputs/previous/decisions.json" --current "$inputs/current/decisions.json" --gap "$inputs/current/gap/gap.json" --repository "$REPOSITORY" --source-sha "$SOURCE_SHA" --source-checkout "$source_checkout" --control-sha "$CONTROL_SHA" --control-checkout "$control_checkout" --receipt "$inputs/identity.json"
+          base_sha=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["base"]["commit"])' "$inputs/identity.json")
+          python3 -B tools/full_tree_candidates.py docs/current-corpus-source-v0.6.json "$short" "$source_checkout" "$base_sha" "$SOURCE_SHA" "$inputs/inventory.json"
+          python3 -B -m tools.default_branch_corpus_manifest --previous "$inputs/previous/decisions.json" --current "$inputs/current/decisions.json" --gap "$inputs/current/gap/gap.json" --identity "$inputs/identity.json" --inventory "$inputs/inventory.json" --source-checkout "$source_checkout" --control-checkout "$control_checkout" --output "$inputs/manifest.json"
+      - name: Verify pinned immutable release in same job
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B -m tools.r3_linux_handoff docs/r3-release-lock.json "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Scan full source-first corpus and pass actual SARIF to consumer
+        shell: bash
+        run: |
+          set -euo pipefail
+          inputs="$RUNNER_TEMP/default-branch-inputs-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          run_root="$RUNNER_TEMP/r3-ucode-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python3 -B -m tools.default_branch_corpus_linux docs/r3-release-lock.json "$inputs/manifest.json" "$inputs/previous/decisions.json" "$inputs/current/decisions.json" "$inputs/current/gap/gap.json" "$inputs/identity.json" "$inputs/inventory.json" "$RUNNER_TEMP/default-branch-source-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" "$RUNNER_TEMP/default-branch-control-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" "$run_root" "$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Retain linked inputs and released scan outputs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: default-branch-scan-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/previous-run-api.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/current-run-api.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/previous/decisions.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/current/decisions.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/current/gap/gap.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/identity.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/inventory.json
+            ${{ runner.temp }}/default-branch-inputs-${{ github.run_id }}-${{ github.run_attempt }}/manifest.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/receipt.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/commands.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/default-branch-corpus/validated-default-branch-manifest.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/default-branch-corpus/preflight.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/default-branch-corpus/receipt.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/default-branch-corpus/failure.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/default-branch-corpus/commands.json
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/default-branch-corpus/commands/**
+            ${{ runner.temp }}/r3-ucode-${{ github.run_id }}-${{ github.run_attempt }}/default-branch-corpus/out/**
