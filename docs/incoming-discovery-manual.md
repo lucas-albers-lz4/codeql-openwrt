@@ -20,8 +20,12 @@ The job serializes main discovery attempts and retains GitHub's
 `latest-successful-run-api.json` response. A genesis is accepted only when
 that API reports no prior successful main dispatch. A successor must name
 the latest successful main discovery run and attempt; a stale predecessor
-or parallel fork fails before polling. This check relies on the canonical
-Actions API response and does not make the 30-day artifact retention durable.
+or parallel fork fails before polling. The query inspects at most 100
+completed dispatches and rejects any rerun attempt because a later failed
+attempt can hide an earlier successful checkpoint in a success-filtered API
+view. A larger history or any rerun requires explicit custody reconciliation.
+This check relies on the canonical Actions API response and does not make
+the 30-day artifact retention durable.
 
 The artifact `incoming-discovery-<run-id>-<attempt>` contains `run-input.json`
 and `latest-successful-run-api.json`

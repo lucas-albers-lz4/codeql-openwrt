@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime
 import json
 from pathlib import Path
 import re
@@ -12,6 +13,7 @@ import sys
 from tools import incoming_poll as poll
 
 MAX_API_BYTES = 1_000_000
+MAX_RUNS = 100
 WORKFLOW = '.github/workflows/incoming-discovery-manual.yml'
 
 
@@ -19,29 +21,45 @@ def verify(doc: dict, repository: str, genesis: bool,
            prior_run: str, prior_attempt: str) -> dict:
     poll.check(isinstance(doc, dict), 'latest discovery API response is not an object')
     count, runs = doc.get('total_count'), doc.get('workflow_runs')
-    poll.check(type(count) is int and count >= 0 and isinstance(runs, list) and
-               len(runs) == min(count, 1), 'invalid latest discovery run API response')
+    poll.check(type(count) is int and 0 <= count <= MAX_RUNS and
+               isinstance(runs, list) and len(runs) == count,
+               'invalid latest discovery run API response')
     poll.check(bool(re.fullmatch(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+', repository)),
                'invalid repository')
+    completed = []
+    seen = set()
+    for run in runs:
+        poll.check(isinstance(run, dict) and isinstance(run.get('repository'), dict),
+                   'invalid completed discovery run')
+        run_id, attempt = run.get('id'), run.get('run_attempt')
+        poll.check(type(run_id) is int and run_id > 0 and run_id not in seen and
+                   type(attempt) is int and attempt == 1 and
+                   run['repository'].get('full_name') == repository and
+                   run.get('path') == WORKFLOW and
+                   run.get('event') == 'workflow_dispatch' and
+                   run.get('head_branch') == 'main' and
+                   run.get('status') == 'completed' and
+                   isinstance(run.get('conclusion'), str) and run['conclusion'] and
+                   isinstance(run.get('created_at'), str),
+                   'invalid or rerun discovery history requires reconciliation')
+        try:
+            created = datetime.fromisoformat(run['created_at'].replace('Z', '+00:00'))
+        except ValueError as exc:
+            raise poll.PollError('invalid completed discovery timestamp') from exc
+        poll.check(created.tzinfo is not None, 'missing discovery timestamp timezone')
+        seen.add(run_id)
+        if run['conclusion'] == 'success':
+            completed.append((created, run_id, run))
+    latest = max(completed, default=None)
     if genesis:
-        poll.check(count == 0 and not prior_run, 'genesis requires no successful prior run')
+        poll.check(latest is None and not prior_run,
+                   'genesis requires no successful prior run')
         return {'status': 'genesis_allowed', 'latest_run_id': None}
-    poll.check(count > 0 and bool(re.fullmatch(r'[1-9][0-9]*', prior_run)) and
+    poll.check(latest is not None and bool(re.fullmatch(r'[1-9][0-9]*', prior_run)) and
                bool(re.fullmatch(r'[1-9][0-9]*', prior_attempt)),
                'successor requires a successful prior run')
-    latest = runs[0]
-    poll.check(isinstance(latest, dict) and isinstance(latest.get('repository'), dict),
-               'invalid latest discovery run')
-    run_id, attempt = latest.get('id'), latest.get('run_attempt')
-    poll.check(type(run_id) is int and run_id > 0 and
-               type(attempt) is int and attempt > 0 and
-               latest['repository'].get('full_name') == repository and
-               latest.get('path') == WORKFLOW and
-               latest.get('event') == 'workflow_dispatch' and
-               latest.get('head_branch') == 'main' and
-               latest.get('status') == 'completed' and
-               latest.get('conclusion') == 'success' and
-               str(run_id) == prior_run and str(attempt) == prior_attempt,
+    run_id, attempt = latest[2]['id'], latest[2]['run_attempt']
+    poll.check(str(run_id) == prior_run and str(attempt) == prior_attempt,
                'predecessor is not the latest successful main discovery run')
     return {'status': 'latest_predecessor_verified', 'latest_run_id': run_id,
             'latest_run_attempt': attempt}
