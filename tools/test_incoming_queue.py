@@ -11,7 +11,8 @@ import unittest
 from unittest.mock import patch
 from pathlib import Path
 from incoming_poll import PollError, plan, replay_observed, replay_observed_doc
-from incoming_queue import open_queue, transition, apply_attested, encoded, identity
+from incoming_queue import open_queue, transition, reserve_exact_pr, apply_attested, encoded, identity
+from incoming_queue_reserve import load_prepared
 
 
 def event(repo, number, sha):
@@ -20,6 +21,14 @@ def event(repo, number, sha):
 
 def snapshot(path, events):
     path.write_text(json.dumps({'schema':'incoming-poll-v3','status':'complete','observed_at':'2026-01-01T00:00:00Z','capacity':0,'previous_sha256':None,'genesis':True,'requests':[],'http_errors':[],'decisions':[{'event':e,'status':'pending','decision':'backlog','reason':'new'} for e in events],'limitations':[]}))
+
+
+def prepared(event, snapshot_sha):
+    return {'schema': 'incoming-pr-dispatch-inputs-v1', 'status': 'prepared_only',
+            'upstream': event['repository'].split('/')[1],
+            'pr_number': event['number'], 'source_sha': event['source']['commit'],
+            'control_sha': event['base_commit'],
+            'discovery_checkpoint_sha256': snapshot_sha}
 
 
 def retained_requests():
@@ -88,6 +97,56 @@ class QueueTests(unittest.TestCase):
         with self.assertRaises(PollError): self.advance(predecessor, 0, preserve=True)
         self.assertEqual(self.db.execute('SELECT id,status,reason FROM events ORDER BY id').fetchall(), before)
         self.assertEqual(self.db.execute('SELECT count(*) FROM history').fetchone()[0], 1)
+    def test_exact_manual_pr_reservation_is_single_slot_and_cas_bound(self):
+        first, head = self.advance(None, 0)
+        candidate = prepared(self.events[0], first['snapshot_sha256'])
+        before_rows = self.db.execute('SELECT id,status,reason FROM events ORDER BY id').fetchall()
+        for predecessor, bad in ((head, dict(candidate, discovery_checkpoint_sha256='0'*64)),
+                                 (head, dict(candidate, source_sha='f'*40)),
+                                 (head, dict(candidate, control_sha='f'*40)),
+                                 ((head[0], '0'*64), candidate)):
+            with self.subTest(bad=bad, predecessor=predecessor), self.assertRaises(PollError):
+                reserve_exact_pr(self.db, predecessor, bad, '2026-01-01T00:00:00Z')
+            self.assertEqual(self.db.execute('SELECT id,status,reason FROM events ORDER BY id').fetchall(), before_rows)
+            self.assertEqual(self.db.execute('SELECT count(*) FROM history').fetchone()[0], 1)
+        result, digest = reserve_exact_pr(self.db, head, candidate, '2026-01-01T00:00:00Z')
+        self.assertEqual((result['sequence'], result['event_id'], result['status']),
+                         (1, identity(self.events[0]), 'reserved_only'))
+        self.assertEqual(self.db.execute('SELECT status,reservation,reservation_digest FROM events WHERE id=?',
+                                         (identity(self.events[0]),)).fetchone(),
+                         ('reserved', 1, digest))
+        with self.assertRaises(PollError):
+            reserve_exact_pr(self.db, (1, digest), prepared(self.events[1], first['snapshot_sha256']),
+                             '2026-01-01T00:00:00Z')
+        self.assertEqual(self.db.execute('SELECT count(*) FROM history').fetchone()[0], 2)
+        start = {'kind': 'start', 'event_id': result['event_id'],
+                 'reservation': result['sequence'], 'reservation_digest': digest,
+                 'queue_id': result['queue_id'], 'run_id': 'manual-scan-1'}
+        self.attested((result['sequence'], digest), start)
+        self.assertEqual(self.db.execute('SELECT status,attempts FROM events WHERE id=?',
+                                         (result['event_id'],)).fetchone(), ('started', 1))
+
+    def test_manual_pr_reservation_rejects_superseded_head(self):
+        snapshot(self.snap, [self.events[0]])
+        first, head = self.advance(None, 0)
+        stale = prepared(self.events[0], first['snapshot_sha256'])
+        replacement = event('openwrt/openwrt', 1, 'e')
+        snapshot(self.snap, [replacement])
+        second, head = self.advance(head, 0)
+        stale['discovery_checkpoint_sha256'] = second['snapshot_sha256']
+        with self.assertRaises(PollError):
+            reserve_exact_pr(self.db, head, stale, '2026-01-01T00:00:00Z')
+        self.assertEqual(self.db.execute('SELECT status FROM events WHERE id=?',
+                                         (identity(self.events[0]),)).fetchone()[0], 'inactive')
+    def test_prepared_input_rejects_alias_and_fifo(self):
+        path = self.path/'candidate.json'
+        candidate = prepared(self.events[0], 'a'*64)
+        path.write_text(json.dumps(candidate))
+        self.assertEqual(load_prepared(path), candidate)
+        alias = self.path/'alias.json'; alias.symlink_to(path)
+        with self.assertRaises(PollError): load_prepared(alias)
+        pipe = self.path/'candidate.fifo'; os.mkfifo(pipe)
+        with self.assertRaises(PollError): load_prepared(pipe)
     def test_reconcile_supersession_and_absence(self):
         _,p = self.advance(None,0)
         replacement = event('openwrt/openwrt',1,'e')
