@@ -162,14 +162,77 @@ class DockermanComparatorTests(unittest.TestCase):
 
 
 class DockermanRunnerTests(unittest.TestCase):
+    def _dockerman_candidate_fixture(self, root):
+        out = root / "output"; out.mkdir()
+        ow = root / "openwrt"
+        (ow / "bin/packages/x86_64/luci").mkdir(parents=True)
+        app_ipk = ow / "bin/packages/x86_64/luci" / f"luci-app-dockerman_{runner.PACKAGE_VERSION}_all.ipk"
+        app_ipk.write_bytes(b"partial or complete app ipk")
+        prepared = ow / "build_dir/target-x86_64_musl/luci-app-dockerman"
+        stage = prepared / "ipkg-all/luci-app-dockerman"
+        stage.mkdir(parents=True)
+        (stage / "CONTROL").mkdir()
+        (stage / "CONTROL/control").write_bytes(b"Package: luci-app-dockerman\n")
+        (stage / "usr").mkdir()
+        (stage / "usr/candidate").write_bytes(b"stage candidate")
+        return out, ow, prepared, stage, app_ipk
+
+    def test_failed_app_phase_retains_ipk_prepared_and_full_stage_before_verdict(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            out, _ow, _prepared, _stage, app_ipk = self._dockerman_candidate_fixture(root)
+            probe = SimpleNamespace(root=root, out=out, quiescent=True)
+            def invoke(label, argv, cwd, timeout):
+                (out / (label + ".stdout")).write_bytes(b"vendor/github.com/tinylib/msgp/msgp/circular.go\n")
+                (out / (label + ".stderr")).write_bytes(
+                    b"WARNING: kmod-extra is not available in the kernel config - generating empty package\n")
+            probe.invoke = invoke
+            with patch.object(runner, "frozen_metadata"), patch.object(runner, "source_guard"), \
+                 patch.object(runner.compare, "load_oracle", return_value={"entries": []}):
+                with self.assertRaisesRegex(RuntimeError, "retained build/validation failures"):
+                    runner.phase(probe, "dockerman-compile", "package/feeds/luci/luci-app-dockerman/compile", 1)
+            receipt = json.loads((out / "dockerman-candidate-capture.json").read_text())
+            self.assertEqual(receipt["ipk_copy"], "luci-app-dockerman.ipk")
+            self.assertTrue((out / "luci-app-dockerman.ipk").is_file())
+            self.assertTrue((out / "dockerman-stage/CONTROL/control").is_file())
+            self.assertTrue((out / "dockerman-stage/usr/candidate").is_file())
+            self.assertTrue((out / "dockerman-prepared").is_dir())
+            self.assertEqual((out / "luci-app-dockerman.ipk").read_bytes(), app_ipk.read_bytes())
+
+    def test_partial_nonzero_app_phase_keeps_provider_candidate_without_recopy(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            out, ow, _prepared, _stage, app_ipk = self._dockerman_candidate_fixture(root)
+            probe = SimpleNamespace(root=root, out=out, quiescent=True)
+            def invoke(label, argv, cwd, timeout):
+                (out / (label + ".stdout")).write_bytes(b"partial\n")
+                raise RuntimeError("make exit 2")
+            probe.invoke = invoke
+            with patch.object(runner, "frozen_metadata"), patch.object(runner, "source_guard"), \
+                 patch.object(runner.compare, "load_oracle", return_value={"entries": []}):
+                with self.assertRaisesRegex(RuntimeError, "retained build/validation failures"):
+                    runner.phase(probe, "dockerman-compile", "package/feeds/luci/luci-app-dockerman/compile", 1)
+            retained = out / "provider-candidates/luci" / app_ipk.name
+            self.assertEqual(retained.read_bytes(), app_ipk.read_bytes())
+            self.assertTrue((out / "dockerman-stage/CONTROL/control").is_file())
+            failure = json.loads((out / "dockerman-compile-validation-failures.json").read_text())
+            self.assertIn("logs", failure)
+            app_ipk.write_bytes(b"later mutated")
+            with self.assertRaisesRegex(ValueError, "retained provider candidate differs"):
+                runner.load_retained_provider_candidates(probe)
+
     def test_only_the_six_pinned_directed_cycle_edges_are_observations(self):
-        known = b"make[3]: Circular package/feeds/packages/containerd/compile <- package/feeds/packages/dockerd/compile dependency dropped.\n"
-        rows = runner.cycle_observations((known,))
-        self.assertEqual(rows[0]["edge"], ["containerd", "dockerd"])
+        known = (b"make[1]: Circular package/feeds/packages/containerd/compile <- package/feeds/packages/dockerd/compile dependency dropped.\n"
+                 b"make[1]: Circular package/feeds/packages/runc/compile <- package/feeds/packages/dockerd/compile dependency dropped.\n"
+                 b"make[1]: Circular package/feeds/packages/tini/compile <- package/feeds/packages/dockerd/compile dependency dropped.\n")
+        rows = runner.cycle_observations((known, b"vendor/github.com/tinylib/msgp/msgp/circular.go\n"))
+        self.assertEqual([row["edge"] for row in rows], [
+            ["containerd", "dockerd"], ["runc", "dockerd"], ["tini", "dockerd"]])
+        self.assertEqual(len(runner.cycle_observations((b"vendor/github.com/tinylib/msgp/msgp/circular.go\n",))), 0)
         with self.assertRaisesRegex(ValueError, "unreviewed circular"):
             runner.cycle_observations((b"make: Circular package/feeds/packages/docker/compile <- package/feeds/packages/dockerd/compile dependency dropped.\n",))
         with self.assertRaisesRegex(ValueError, "unparsed or noncanonical circular"):
-            runner.cycle_observations((b"Circular dependency warning without paths\n",))
+            runner.cycle_observations((b"make[1]: Circular dependency warning without paths\n",))
         with self.assertRaisesRegex(ValueError, "unparsed or noncanonical circular"):
             runner.cycle_observations((b"make: Circular other/path/containerd/compile <- package/feeds/packages/dockerd/compile dependency dropped.\n",))
 
@@ -287,23 +350,55 @@ class DockermanRunnerTests(unittest.TestCase):
             (out / "config-final").write_bytes(config)
             probe = SimpleNamespace(root=root, out=out)
             warnings = b"\n".join(runner.KNOWN_EMPTY_WARNINGS.values())
-            with patch.object(runner, "CONFIG_SHA", runner.check.digest(config)), patch.object(runner, "write_json") as write:
-                runner.validate_build_diagnostics(probe, "kernel-package-compile", b"", warnings)
-                self.assertTrue(write.call_args.args[1]["source_scoped_exception_candidate"])
-                self.assertEqual(write.call_args.args[1]["kernel_config_sha256"], runner.check.digest(kernel_config))
             with patch.object(runner, "CONFIG_SHA", runner.check.digest(config)):
-                with self.assertRaisesRegex(ValueError, "outside the exact two"):
+                runner.validate_build_diagnostics(probe, "kernel-package-compile", b"", warnings)
+                prior = json.loads((out / "kernel-package-compile-diagnostic-disposition.json").read_text())
+                self.assertTrue(prior["source_scoped_exception_candidate"])
+                self.assertEqual(prior["kernel_config_sha256"], runner.check.digest(kernel_config))
+                (out / "kernel-package-inventory.json").write_text(json.dumps({
+                    "version": "6.12.116~" + "a" * 32 + "-r1",
+                    "ipk_path": "bin/targets/x86/64/packages/kernel_6.12.116~" + "a" * 32 + "-r1_x86_64.ipk",
+                    "ipk_sha256": "a" * 64,
+                }))
+                with patch.object(runner.kernel_evidence, "recheck", return_value=True) as recheck:
                     runner.validate_build_diagnostics(probe, "dockerman-compile", b"", warnings)
+                    recheck.assert_called_once_with(root)
+                repeated = json.loads((out / "dockerman-compile-diagnostic-disposition.json").read_text())
+                self.assertTrue(repeated["repeated_kernel_warning_candidate"])
+                self.assertEqual(repeated["prior_kernel_warning_receipt_sha256"],
+                                 runner.check.digest((out / "kernel-package-compile-diagnostic-disposition.json").read_bytes()))
+                repeated["raw_empty_package_lines"].reverse()
+                (out / "dockerman-compile-diagnostic-disposition.json").write_text(json.dumps(repeated))
+                prior = json.loads((out / "kernel-package-compile-diagnostic-disposition.json").read_text())
+                self.assertTrue(runner.validate_repeated_warning_linkage(probe, prior)["receipt"][
+                    "repeated_kernel_warning_candidate"])
+                with self.assertRaisesRegex(ValueError, "outside the reviewed kernel"):
+                    runner.validate_build_diagnostics(probe, "toolchain-install", b"", warnings)
                 with self.assertRaisesRegex(ValueError, "unreviewed empty-package"):
                     runner.validate_build_diagnostics(probe, "kernel-package-compile", b"", warnings + b"\nWARNING: kmod-other is not available in the kernel config - generating empty package")
+                with patch.object(runner.kernel_evidence, "recheck", side_effect=ValueError("changed kernel")):
+                    with self.assertRaisesRegex(ValueError, "changed kernel"):
+                        runner.validate_build_diagnostics(probe, "dockerman-compile", b"", warnings)
+                prior_path = out / "kernel-package-compile-diagnostic-disposition.json"
+                prior_bytes = prior_path.read_bytes()
+                prior_doc = json.loads(prior_bytes)
+                prior_doc["source_scoped_exception_candidate"] = False
+                prior_path.write_text(json.dumps(prior_doc))
+                with patch.object(runner.kernel_evidence, "recheck", return_value=True):
+                    with self.assertRaisesRegex(ValueError, "no prior validated kernel warning"):
+                        runner.validate_build_diagnostics(probe, "dockerman-compile", b"", warnings)
+                prior_path.write_bytes(prior_bytes)
                 with self.assertRaisesRegex(ValueError, "must appear on stderr"):
                     runner.validate_build_diagnostics(probe, "kernel-package-compile", warnings, b"")
                 with self.assertRaisesRegex(ValueError, "unreviewed empty-package"):
                     runner.validate_build_diagnostics(probe, "kernel-package-compile", b"", warnings + b" ")
+                with self.assertRaisesRegex(ValueError, "exact two reviewed kernel helpers"):
+                    runner.validate_build_diagnostics(probe, "dockerman-compile", b"", warnings.split(b"\n", 1)[0])
                 (kernel / ".config").write_text("CONFIG_DRM=y\nCONFIG_DRM_I915=m\nCONFIG_DRM_EXEC=m\n")
                 (retained_kernel / ".config").write_bytes(b"CONFIG_DRM=y\nCONFIG_DRM_I915=m\nCONFIG_DRM_EXEC=m\n")
                 with self.assertRaisesRegex(ValueError, "no longer explains"):
-                    runner.validate_build_diagnostics(probe, "kernel-package-compile", b"", warnings)
+                    with patch.object(runner.kernel_evidence, "recheck", return_value=True):
+                        runner.validate_build_diagnostics(probe, "dockerman-compile", b"", warnings)
 
     def test_selected_graph_scope_ignores_unrelated_global_rows_but_keeps_root_closure(self):
         raw = (b"$(curdir)/feeds/luci/luci-app-dockerman/compile += $(curdir)/feeds/luci/luci-app-dockerman/compile\n"

@@ -108,9 +108,12 @@ def host_preflight(out, root):
 
 def cycle_observations(streams):
     rows = []
+    diagnostic_prefix = re.compile(r"^make(?:\[\d+\])?: Circular(?:\s|$)")
     pattern = re.compile(r"^make(?:\[\d+\])?: Circular package/feeds/packages/([A-Za-z0-9+_.-]+)/compile <- package/feeds/packages/([A-Za-z0-9+_.-]+)/compile dependency dropped\.$")
     for line in b"\n".join(streams).decode("utf-8", "replace").splitlines():
-        if "circular" not in line.lower():
+        # Package source paths and compiler output can contain `circular`; only
+        # GNU Make's diagnostic prefix enters the strict cycle grammar.
+        if not diagnostic_prefix.match(line):
             continue
         match = pattern.fullmatch(line)
         if not match:
@@ -169,6 +172,62 @@ def source_guard(probe, label):
                             probe.root / "packages/utils" / package_name)
 
 
+def _validate_warning_context(probe):
+    config = check.physical_file(probe.out / "config-final", probe.out, True)
+    if check.digest(config) != CONFIG_SHA:
+        raise ValueError("empty-package source-scope exception requires exact Dockerman config")
+    config_lines = set(config.decode().splitlines())
+    for package in KNOWN_EMPTY_WARNINGS:
+        if f"CONFIG_PACKAGE_{package}=y" not in config_lines:
+            raise ValueError("reviewed empty helper is not selected by the pinned profile: " + package)
+    kernel_root = probe.root / "openwrt/build_dir/target-x86_64_musl/linux-x86_64/linux-6.12.116"
+    kernel_config = check.physical_file(kernel_root / ".config", kernel_root, True)
+    retained_kernel_config = check.physical_file(probe.out / "kernel-evidence/.config", probe.out, True)
+    if retained_kernel_config != kernel_config:
+        raise ValueError("retained kernel config differs from live kernel config")
+    kernel_lines = kernel_config.decode().splitlines()
+    symbols = {"kmod-drm-exec": "CONFIG_DRM_EXEC", "kmod-drm-suballoc-helper": "CONFIG_DRM_SUBALLOC_HELPER"}
+    for package, symbol in symbols.items():
+        found = [line for line in kernel_lines if line.startswith(symbol + "=") or line == f"# {symbol} is not set"]
+        if found not in ([], [f"# {symbol} is not set"]):
+            raise ValueError("kernel config no longer explains reviewed empty helper: " + package)
+    for symbol, expected in (("CONFIG_DRM", "CONFIG_DRM=y"), ("CONFIG_DRM_I915", "CONFIG_DRM_I915=m")):
+        found = [line for line in kernel_lines if line.startswith(symbol + "=") or line == f"# {symbol} is not set"]
+        if found != [expected]:
+            raise ValueError("pinned DRM/i915 kernel context differs: " + symbol)
+    live_magic = check.physical_file(kernel_root / ".vermagic", kernel_root, True)
+    retained_magic = check.physical_file(probe.out / "kernel-evidence/.vermagic", probe.out, True)
+    if live_magic != retained_magic:
+        raise ValueError("retained kernel vermagic differs from live kernel vermagic")
+    return config, kernel_config, live_magic
+
+
+def _validate_repeated_dockerman_warnings(probe, names):
+    if sorted(names) != sorted(KNOWN_EMPTY_WARNINGS):
+        raise ValueError("Dockerman phase warning set differs from the exact reviewed pair")
+    prior_path = probe.out / "kernel-package-compile-diagnostic-disposition.json"
+    prior_bytes = check.physical_file(prior_path, probe.out, True)
+    prior = check.json_object(prior_bytes)
+    if prior.get("phase") != "kernel-package-compile" or prior.get("source_scoped_exception_candidate") is not True:
+        raise ValueError("no prior validated kernel warning candidate")
+    config, kernel_config, live_magic = _validate_warning_context(probe)
+    if (sorted(prior.get("raw_empty_package_lines", [])) != sorted(x.decode() for x in KNOWN_EMPTY_WARNINGS.values()) or
+            prior.get("config_sha256") != CONFIG_SHA or
+            prior.get("kernel_config_sha256") != check.digest(kernel_config) or
+            prior.get("kernel_vermagic_sha256") != check.digest(live_magic)):
+        raise ValueError("Dockerman warning pair differs from the prior kernel warning fingerprint")
+    inventory_path = probe.out / "kernel-package-inventory.json"
+    inventory_bytes = check.physical_file(inventory_path, probe.out, True)
+    inventory = check.json_object(inventory_bytes)
+    kernel_version = inventory.get("version")
+    if (not isinstance(kernel_version, str) or
+            inventory.get("ipk_path") != f"bin/targets/x86/64/packages/kernel_{kernel_version}_x86_64.ipk" or
+            not re.fullmatch(r"[0-9a-f]{64}", str(inventory.get("ipk_sha256", "")))):
+        raise ValueError("prior validated kernel IPK inventory is incomplete")
+    kernel_evidence.recheck(probe.root)
+    return config, kernel_config, live_magic, prior_path, prior_bytes, inventory_bytes
+
+
 def validate_build_diagnostics(probe, label, stdout, stderr):
     data = stdout + b"\n" + stderr
     needle = b"is not available in the kernel config - generating empty package"
@@ -183,44 +242,33 @@ def validate_build_diagnostics(probe, label, stdout, stderr):
             raise ValueError("unreviewed empty-package diagnostic: " + line.decode("utf-8", "replace"))
         names.append(matched[0])
     candidate = False
+    repeat_candidate = False
+    kernel_config = live_magic = prior_path = prior_bytes = kernel_inventory_bytes = None
     if lines:
-        if label != "kernel-package-compile" or sorted(names) != sorted(KNOWN_EMPTY_WARNINGS):
+        if sorted(names) != sorted(KNOWN_EMPTY_WARNINGS):
             raise ValueError("empty-package diagnostic outside the exact two reviewed kernel helpers")
-        config = check.physical_file(probe.out / "config-final", probe.out, True)
-        if check.digest(config) != CONFIG_SHA:
-            raise ValueError("empty-package source-scope exception requires exact Dockerman config")
-        config_lines = set(config.decode().splitlines())
-        for package in KNOWN_EMPTY_WARNINGS:
-            if f"CONFIG_PACKAGE_{package}=y" not in config_lines:
-                raise ValueError("reviewed empty helper is not selected by the pinned profile: " + package)
-        kernel_root = probe.root / "openwrt/build_dir/target-x86_64_musl/linux-x86_64/linux-6.12.116"
-        kernel_config = check.physical_file(kernel_root / ".config", kernel_root, True)
-        retained_kernel_config = check.physical_file(probe.out / "kernel-evidence/.config", probe.out, True)
-        if retained_kernel_config != kernel_config:
-            raise ValueError("retained kernel config differs from live kernel config")
-        kernel_lines = kernel_config.decode().splitlines()
-        symbols = {"kmod-drm-exec": "CONFIG_DRM_EXEC", "kmod-drm-suballoc-helper": "CONFIG_DRM_SUBALLOC_HELPER"}
-        for package, symbol in symbols.items():
-            found = [line for line in kernel_lines if line.startswith(symbol + "=") or line == f"# {symbol} is not set"]
-            if found not in ([], [f"# {symbol} is not set"]):
-                raise ValueError("kernel config no longer explains reviewed empty helper: " + package)
-        for symbol, expected in (("CONFIG_DRM", "CONFIG_DRM=y"), ("CONFIG_DRM_I915", "CONFIG_DRM_I915=m")):
-            found = [line for line in kernel_lines if line.startswith(symbol + "=") or line == f"# {symbol} is not set"]
-            if found != [expected]:
-                raise ValueError("pinned DRM/i915 kernel context differs: " + symbol)
-        live_magic = check.physical_file(kernel_root / ".vermagic", kernel_root, True)
-        retained_magic = check.physical_file(probe.out / "kernel-evidence/.vermagic", probe.out, True)
-        if live_magic != retained_magic:
-            raise ValueError("retained kernel vermagic differs from live kernel vermagic")
-        candidate = True
+        if label == "kernel-package-compile":
+            config, kernel_config, live_magic = _validate_warning_context(probe)
+            candidate = True
+        elif label == "dockerman-compile":
+            config, kernel_config, live_magic, prior_path, prior_bytes, kernel_inventory_bytes = _validate_repeated_dockerman_warnings(probe, names)
+            repeat_candidate = True
+        else:
+            raise ValueError("empty-package diagnostic outside the reviewed kernel and Dockerman phases")
     scrubbed = b"\n".join(line for line in data.splitlines() if line.strip() not in lines)
     kernel_checks.reject_empty_package_diagnostic(scrubbed)
     write_json(probe.out / (label + "-diagnostic-disposition.json"), {
         "phase": label, "raw_empty_package_lines": [x.decode("utf-8", "replace") for x in lines],
         "source_scoped_exception_candidate": candidate,
-        "kernel_config_sha256": check.digest(kernel_config) if candidate else None,
-        "kernel_vermagic_sha256": check.digest(live_magic) if candidate else None,
-        "disposition": "candidate only; kernel IPK validation and package-recipe dependency comparison remain required" if candidate else "no empty package diagnostics observed"})
+        "repeated_kernel_warning_candidate": repeat_candidate,
+        "prior_kernel_warning_receipt": prior_path.name if prior_path else None,
+        "prior_kernel_warning_receipt_sha256": check.digest(prior_bytes) if prior_bytes else None,
+        "validated_kernel_package_inventory": "kernel-package-inventory.json" if kernel_inventory_bytes else None,
+        "validated_kernel_package_inventory_sha256": check.digest(kernel_inventory_bytes) if kernel_inventory_bytes else None,
+        "config_sha256": CONFIG_SHA if candidate or repeat_candidate else None,
+        "kernel_config_sha256": check.digest(kernel_config) if candidate or repeat_candidate else None,
+        "kernel_vermagic_sha256": check.digest(live_magic) if candidate or repeat_candidate else None,
+        "disposition": "candidate only; kernel IPK validation and package-recipe dependency comparison remain required" if candidate or repeat_candidate else "no empty package diagnostics observed"})
 
 
 def phase(probe, label, target, timeout):
@@ -234,16 +282,25 @@ def phase(probe, label, target, timeout):
         failure = exc
     if not probe.quiescent:
         raise failure or RuntimeError("phase process group is not quiescent; do not inspect live outputs")
-    stdout = check.physical_file(probe.out / (label + ".stdout"), probe.out)
-    stderr = check.physical_file(probe.out / (label + ".stderr"), probe.out)
+    stdout = stderr = b""
+    log_error = None
     custody_error = None
     try:
         if label == "kernel-compile":
             kernel_evidence.capture_kernel(probe.root, CONFIG_SHA)
         elif label == "kernel-package-compile":
             kernel_evidence.snapshot_package_output(probe.root)
+        elif label == "dockerman-compile":
+            capture_errors = capture_dockerman_candidates(probe)
+            if capture_errors:
+                raise ValueError("Dockerman pre-verdict candidate capture incomplete: " + json.dumps(capture_errors, sort_keys=True))
     except Exception as exc:
         custody_error = exc
+    try:
+        stdout = check.physical_file(probe.out / (label + ".stdout"), probe.out)
+        stderr = check.physical_file(probe.out / (label + ".stderr"), probe.out)
+    except Exception as exc:
+        log_error = exc
     after_error = None
     try:
         frozen_metadata(probe, label + "-after")
@@ -251,18 +308,24 @@ def phase(probe, label, target, timeout):
     except Exception as exc:
         after_error = exc
     diagnostic_error = None
-    try:
-        validate_build_diagnostics(probe, label, stdout, stderr)
-    except Exception as exc:
-        diagnostic_error = exc
+    if log_error is not None:
+        diagnostic_error = log_error
+    else:
+        try:
+            validate_build_diagnostics(probe, label, stdout, stderr)
+        except Exception as exc:
+            diagnostic_error = exc
     cycle_error = None
     if label in ("kernel-compile", "kernel-package-compile", "dockerman-compile"):
-        try:
-            write_json(probe.out / (label + "-cycle-warnings.json"), cycle_observations((stdout, stderr)))
-        except Exception as exc:
-            cycle_error = exc
+        if log_error is not None:
+            cycle_error = log_error
+        else:
+            try:
+                write_json(probe.out / (label + "-cycle-warnings.json"), cycle_observations((stdout, stderr)))
+            except Exception as exc:
+                cycle_error = exc
     failures = {key: repr(exc) for key, exc in (
-        ("make", failure), ("custody", custody_error), ("post_phase", after_error),
+        ("make", failure), ("custody", custody_error), ("logs", log_error), ("post_phase", after_error),
         ("diagnostics", diagnostic_error), ("cycle_parser", cycle_error)) if exc is not None}
     if failures:
         write_json(probe.out / (label + "-validation-failures.json"), failures)
@@ -335,9 +398,105 @@ def retain_provider_candidates(probe):
     return records
 
 
+def load_retained_provider_candidates(probe):
+    manifest_path = probe.out / "provider-candidates.json"
+    manifest = check.json_object(check.physical_file(manifest_path, probe.out, True))
+    if set(manifest) != {"members"} or not isinstance(manifest["members"], list):
+        raise ValueError("provider candidate manifest schema differs")
+    ow = probe.root / "openwrt"
+    rows = {}
+    for row in manifest["members"]:
+        required = {"path", "retained_path", "sha256", "size", "mode"}
+        if not isinstance(row, dict) or set(row) != required or row["path"] in rows:
+            raise ValueError("provider candidate row is invalid or duplicated")
+        rel = Path(row["path"])
+        if rel.is_absolute() or rel.as_posix() != row["path"] or ".." in rel.parts:
+            raise ValueError("provider candidate source path is not canonical and relative")
+        parents = {
+            "bin/packages/x86_64/luci": "luci",
+            "bin/packages/x86_64/packages": "packages",
+            "bin/packages/x86_64/base": "base",
+            "bin/targets/x86/64/packages": "target",
+        }
+        parent = rel.parent.as_posix()
+        if parent not in parents or row["retained_path"] != f"provider-candidates/{parents[parent]}/{rel.name}":
+            raise ValueError("provider candidate source or retained layout differs")
+        source = ow / rel
+        retained = probe.out / row["retained_path"]
+        source_bytes = check.physical_file(source, ow, True)
+        retained_bytes = check.physical_file(retained, probe.out, True)
+        source_mode = source.stat().st_mode & 0o7777
+        retained_mode = retained.stat().st_mode & 0o7777
+        if (source_bytes != retained_bytes or check.digest(source_bytes) != row["sha256"] or
+                len(source_bytes) != row["size"] or format(source_mode, "04o") != row["mode"] or
+                retained_mode != source_mode):
+            raise ValueError("retained provider candidate differs from live path or manifest: " + row["path"])
+        rows[row["path"]] = row
+    return rows
+
+
+def capture_dockerman_candidates(probe):
+    """Retain package, prepared, and full stage candidates before interpreting diagnostics."""
+    ow = probe.root / "openwrt"
+    errors = {}
+    try:
+        if not (probe.out / "provider-candidates").exists():
+            retain_provider_candidates(probe)
+        provider_rows = load_retained_provider_candidates(probe)
+    except Exception as exc:
+        provider_rows = {}
+        errors["providers"] = repr(exc)
+    app_rows = [row for row in provider_rows.values()
+                if Path(row["path"]).name.startswith("luci-app-dockerman_")]
+    expected_rel = "bin/packages/x86_64/luci/luci-app-dockerman_" + PACKAGE_VERSION + "_all.ipk"
+    try:
+        if len(app_rows) == 1 and app_rows[0]["path"] == expected_rel:
+            source = ow / expected_rel
+            data, _mode = compare.physical_file(source)
+            with (probe.out / "luci-app-dockerman.ipk").open("xb") as stream:
+                stream.write(data)
+        elif app_rows:
+            errors["app_ipk"] = "unexpected or ambiguous Dockerman IPK candidates"
+    except Exception as exc:
+        errors["app_ipk"] = repr(exc)
+    prepared = ow / "build_dir/target-x86_64_musl/luci-app-dockerman"
+    stage = prepared / "ipkg-all/luci-app-dockerman"
+    prepared_copy = stage_copy = None
+    try:
+        if prepared.is_dir() and not prepared.is_symlink() and prepared.resolve(strict=True) == prepared:
+            prepared_copy = capture_selected_prepared(prepared, probe.out)
+        else:
+            errors["prepared"] = "Dockerman prepared directory missing or aliased"
+    except Exception as exc:
+        errors["prepared"] = repr(exc)
+    try:
+        if stage.is_dir() and not stage.is_symlink() and stage.resolve(strict=True) == stage:
+            stage_copy = capture_stage(stage, probe.out)
+        else:
+            errors["stage"] = "Dockerman stage directory missing or aliased"
+    except Exception as exc:
+        errors["stage"] = repr(exc)
+    write_json(probe.out / "dockerman-candidate-capture.json", {
+        "schema": "issue173-dockerman-candidate-capture-v1",
+        "provider_manifest": "provider-candidates.json" if (probe.out / "provider-candidates.json").is_file() else None,
+        "provider_manifest_sha256": check.digest((probe.out / "provider-candidates.json").read_bytes())
+            if (probe.out / "provider-candidates.json").is_file() else None,
+        "dockerman_ipk_candidates": app_rows,
+        "ipk_copy": "luci-app-dockerman.ipk" if (probe.out / "luci-app-dockerman.ipk").is_file() else None,
+        "prepared_copy": prepared_copy.name if prepared_copy else None,
+        "stage_copy": stage_copy.name if stage_copy else None,
+        "errors": errors,
+    })
+    return errors
+
+
 def package_outputs(probe, kernel_receipt):
     ow = probe.root / "openwrt"
-    retained_candidates = {row["path"]: row for row in retain_provider_candidates(probe)}
+    if not (probe.out / "provider-candidates.json").exists():
+        if (probe.out / "provider-candidates").exists():
+            raise ValueError("partial provider candidate capture cannot be recreated")
+        retain_provider_candidates(probe)
+    retained_candidates = load_retained_provider_candidates(probe)
     roots = [ow / "bin/packages/x86_64/luci", ow / "bin/packages/x86_64/packages",
              ow / "bin/packages/x86_64/base", ow / "bin/targets/x86/64/packages"]
     inventory = []
@@ -396,6 +555,23 @@ def package_outputs(probe, kernel_receipt):
             "provider_candidate_manifest_sha256": check.digest((probe.out / "provider-candidates.json").read_bytes()),
             "go_binary": str(go.relative_to(ow)),
             "go_version": version_output.decode().strip()}
+
+
+def validate_repeated_warning_linkage(probe, kernel_diagnostic):
+    repeated_path = probe.out / "dockerman-compile-diagnostic-disposition.json"
+    repeated_bytes = check.physical_file(repeated_path, probe.out, True)
+    repeated = check.json_object(repeated_bytes)
+    if repeated.get("repeated_kernel_warning_candidate"):
+        kernel_path = probe.out / "kernel-package-compile-diagnostic-disposition.json"
+        kernel_bytes = check.physical_file(kernel_path, probe.out, True)
+        inventory_bytes = check.physical_file(probe.out / "kernel-package-inventory.json", probe.out, True)
+        expected_lines = sorted(kernel_diagnostic.get("raw_empty_package_lines", []))
+        if (not expected_lines or sorted(repeated.get("raw_empty_package_lines", [])) != expected_lines or
+                repeated.get("prior_kernel_warning_receipt") != kernel_path.name or
+                repeated.get("prior_kernel_warning_receipt_sha256") != check.digest(kernel_bytes) or
+                repeated.get("validated_kernel_package_inventory_sha256") != check.digest(inventory_bytes)):
+            raise ValueError("Dockerman repeated warning receipt is not bound to the validated kernel warning/IPK evidence")
+    return {"path": repeated_path.name, "sha256": check.digest(repeated_bytes), "receipt": repeated}
 
 
 def execute_phases(probe, run_phase, kernel_action):
@@ -488,17 +664,31 @@ def build(probe):
     if not ipk_dir.is_dir() or ipk_dir.is_symlink() or sorted(ipk_dir.glob("luci-app-dockerman_*.ipk")) != [built_ipk]:
         raise ValueError("Dockerman selected IPK path is missing or ambiguous")
     ipk = check.physical_file(built_ipk, probe.root / "openwrt", True)
+    capture = check.json_object(check.physical_file(probe.out / "dockerman-candidate-capture.json", probe.out, True))
+    if capture.get("errors") or capture.get("ipk_copy") != "luci-app-dockerman.ipk":
+        raise ValueError("Dockerman pre-verdict candidate capture is incomplete")
+    provider_manifest_bytes = check.physical_file(probe.out / "provider-candidates.json", probe.out, True)
+    if capture.get("provider_manifest_sha256") != check.digest(provider_manifest_bytes):
+        raise ValueError("pre-verdict provider manifest changed after capture")
+    provider_rows = load_retained_provider_candidates(probe)
+    expected_app_path = built_ipk.relative_to(probe.root / "openwrt").as_posix()
+    if capture.get("dockerman_ipk_candidates") != [provider_rows.get(expected_app_path)]:
+        raise ValueError("pre-verdict Dockerman IPK candidate identity changed")
     retained = probe.out / "luci-app-dockerman.ipk"
-    with retained.open("xb") as stream:
-        stream.write(ipk)
+    retained_ipk = check.physical_file(retained, probe.out, True)
+    if retained_ipk != ipk:
+        raise ValueError("retained Dockerman IPK differs from live build output")
     prepared = probe.root / "openwrt/build_dir/target-x86_64_musl/luci-app-dockerman"
     stage = prepared / "ipkg-all/luci-app-dockerman"
     if prepared.is_symlink() or stage.is_symlink() or not prepared.is_dir() or not stage.is_dir():
         raise ValueError("Dockerman prepared/stage directories are missing or aliased")
     if prepared.resolve(strict=True) != prepared or stage.resolve(strict=True) != stage:
         raise ValueError("Dockerman prepared/stage path is not physical")
-    prepared_copy = capture_selected_prepared(prepared, probe.out)
-    stage_copy = capture_stage(stage, probe.out)
+    prepared_copy = probe.out / "dockerman-prepared"
+    stage_copy = probe.out / "dockerman-stage"
+    if (capture.get("prepared_copy") != prepared_copy.name or not prepared_copy.is_dir() or
+            capture.get("stage_copy") != stage_copy.name or not stage_copy.is_dir()):
+        raise ValueError("Dockerman prepared or stage candidates were not captured before verdict")
     go_receipt = package_outputs(probe, json.loads((probe.out / "kernel-package-inventory.json").read_text()))
     result = compare.compare(probe.root / "luci", prepared, stage, ipk,
                              (probe.root / "openwrt/.config").read_bytes())
@@ -518,6 +708,7 @@ def build(probe):
             comparison = check.json_object((probe.out / "dockerman-package-comparison.json").read_bytes())
             if set(comparison["declared_runtime_dependencies"]) != compare.DIRECT_DEPS:
                 raise ValueError("source-scoped helper diagnostic cannot be finalized with a changed app dependency set")
+            repeated_evidence = validate_repeated_warning_linkage(probe, diagnostic)
             write_json(probe.out / "kernel-diagnostic-scope-final-disposition.json", {
                 "raw_warning_receipt": diagnostic_path.name,
                 "raw_warning_receipt_sha256": check.digest(diagnostic_path.read_bytes()),
@@ -528,6 +719,8 @@ def build(probe):
                 "kernel_version": kernel_package["version"],
                 "kernel_config_sha256": diagnostic["kernel_config_sha256"],
                 "kernel_vermagic_sha256": diagnostic["kernel_vermagic_sha256"],
+                "dockerman_repeated_warning_receipt": repeated_evidence["path"],
+                "dockerman_repeated_warning_receipt_sha256": repeated_evidence["sha256"],
                 "dockerman_comparison": "dockerman-package-comparison.json",
                 "dockerman_comparison_sha256": check.digest((probe.out / "dockerman-package-comparison.json").read_bytes()),
                 "direct_app_dependencies": comparison["declared_runtime_dependencies"],
@@ -560,11 +753,13 @@ def main():
         failure = repr(exc)
         result = {"status": "failed", "failure": failure, "profile": "dockerman-only",
                   "scope": "partial build evidence only; inspect retained phases and diagnostics"}
-        if probe.quiescent and probe.out.exists() and not (probe.out / "provider-candidates.json").exists():
+        if probe.quiescent and probe.out.exists() and not (probe.out / "provider-candidates").exists():
             try:
                 retain_provider_candidates(probe)
             except Exception as retain_exc:
                 result["provider_candidate_retention_error"] = repr(retain_exc)
+        elif (probe.out / "provider-candidates").exists() and not (probe.out / "provider-candidates.json").exists():
+            result["provider_candidate_retention_error"] = "partial provider snapshot preserved; no recopy attempted"
         metadata.capture_failure_evidence(probe, result)
     output_ok = probe.finish(result)
     if failure or not output_ok:
