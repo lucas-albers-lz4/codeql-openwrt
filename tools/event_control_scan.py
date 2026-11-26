@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import stat
 import sys
 
 from tools.current_corpus_linux import run_current
@@ -65,6 +66,23 @@ def assert_clean(triage: dict) -> None:
          triage.get('results_for_triage') == [], 'control produced findings; clean-control expectation failed')
 
 
+def verify_and_remove_replay(inputs: Path, replay: Path) -> None:
+    names = {'control-derived-receipt.json', 'control-inventory.json',
+             'control-manifest.json', 'control-binding.json'}
+    need(replay.is_dir() and not replay.is_symlink() and
+         {path.name for path in replay.iterdir()} == names,
+         'control oracle replay has unexpected entries')
+    for name in sorted(names):
+        source, copied = inputs / name, replay / name
+        need(copied.is_file() and not copied.is_symlink() and
+             stat.S_ISREG(copied.stat().st_mode) and copied.stat().st_nlink == 1 and
+             source.read_bytes() == copied.read_bytes(),
+             'control oracle replay mismatch: ' + name)
+    for name in sorted(names):
+        (replay / name).unlink()
+    replay.rmdir()
+
+
 def main() -> None:
     need(len(sys.argv) == 7, 'usage: event_control_scan RELEASE_LOCK EVENT_RECEIPT CONTROL_CHECKOUT INPUT_DIR R3_RUN_ROOT RUN_ID')
     lock, receipt, checkout, inputs, root = map(Path, sys.argv[1:6])
@@ -74,8 +92,7 @@ def main() -> None:
     stage = 'replay'
     try:
         prepare(receipt, checkout, replay)
-        for name in ('control-derived-receipt.json', 'control-inventory.json', 'control-manifest.json', 'control-binding.json'):
-            need((inputs / name).read_bytes() == (replay / name).read_bytes(), 'control oracle replay mismatch: ' + name)
+        verify_and_remove_replay(inputs, replay)
         stage = 'released_scan'
         run_current(lock, inputs / 'control-manifest.json', root, run_id,
                     event_context=(inputs / 'control-derived-receipt.json', inputs / 'control-inventory.json', checkout),
