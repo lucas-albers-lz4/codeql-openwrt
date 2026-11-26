@@ -1,0 +1,379 @@
+{
+  "config": {
+    "config": {
+      "path": ".config",
+      "sha256": "8946db83b06e591ffd3ea9bf48e47595a40bdfb56fa8a1a45cfe8099cb3324d6"
+    },
+    "feeds": {
+      "path": "feeds.conf",
+      "sha256": "52b3e3c257411fc5de4caf088d2fab73a242ca33dfe182088113f217d0239848"
+    },
+    "js_minification": true,
+    "per_feed_repo": "CONFIG_PER_FEED_REPO=y"
+  },
+  "control": {
+    "Architecture": "all",
+    "Package": "luci-app-adblock-fast",
+    "Version": "1.2.4-r4"
+  },
+  "control_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "control",
+      "sha256": "ed696288149382e609729e81bca684ac209d73225a92c754b94d629c7ab9d0d5",
+      "size": 575,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst",
+      "sha256": "61511dd6dcc9e5ae9038f7ea8b0ecdf3bdd17612af012c3d9536e9aca03691df",
+      "size": 160,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst-pkg",
+      "sha256": "ab1fbeaaef80ce81cc4a8e403d96ff0e564088417d52e735c7c4a1adb4cc7a95",
+      "size": 138,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "prerm",
+      "sha256": "41e62438f65308026184be1d4d931ae9100923e5ae97b146fb678e5b6cd0fc6c",
+      "size": 117,
+      "type": "file"
+    }
+  ],
+  "data_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "etc/uci-defaults",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "etc/uci-defaults/40_luci-adblock-fast",
+      "sha256": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36",
+      "size": 742,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "etc/uci-defaults/95_adblock-fast-api",
+      "sha256": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18",
+      "size": 1198,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/luci/menu.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/luci/menu.d/luci-app-adblock-fast.json",
+      "sha256": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53",
+      "size": 248,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/acl.d",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/acl.d/adblock-fast-api.json",
+      "sha256": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed",
+      "size": 277,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/acl.d/luci-app-adblock-fast.json",
+      "sha256": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d",
+      "size": 636,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "usr/share/rpcd/ucode",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+      "size": 23660,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/adblock-fast",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/adblock-fast/status.js",
+      "sha256": "3df345eeb76fe6457a5bea665ec47b29125d765bbacdc24c58ea2211c0204fc4",
+      "size": 18370,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/adblock-fast",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/adblock-fast/overview.js",
+      "sha256": "6b6c886b5ea1af828bc343aa1c9de0d88722b890fdc087d161da4810926a5c80",
+      "size": 24561,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/status",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "www/luci-static/resources/view/status/include",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "www/luci-static/resources/view/status/include/70_adblock-fast.js",
+      "sha256": "5ee13d54ea08c1cb8d491422fcc8189250584e9d2c5e150476b2efa00bd05c88",
+      "size": 1396,
+      "type": "file"
+    }
+  ],
+  "ipk_sha256": "b3d18c736a970f0ba17919e1249c837dae393b04f5ec541950a6cce737110e0f",
+  "oracle_sha256": "ea71145e8da15d306d601227c4b74a710b44516823a0192ebed509d1d7e72e2d",
+  "outer_sha256": {
+    "control.tar.gz": "a02ffd0338c9706269a4795e9a9243ce99884f75c438e5ad7e21438b344f9d74",
+    "data.tar.gz": "b07ef4541da0bb6e3af1a0d043e8bd6505b2e6740533e026c7838495b809635e",
+    "debian-binary": "d526eb4e878a23ef26ae190031b4efd2d58ed66789ac049ea3dbaf74c9df7402"
+  },
+  "package": "app",
+  "source_mappings": [
+    {
+      "disposition": "auxiliary_htdocs_js",
+      "ipk_mode": "0644",
+      "ipk_sha256": "3df345eeb76fe6457a5bea665ec47b29125d765bbacdc24c58ea2211c0204fc4",
+      "path": "www/luci-static/resources/adblock-fast/status.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "4e94751b8ca58b87fa1f12089d2dc796478ddd3cc86ec7f9522d2db6505cd665",
+      "source_git_mode": "100644",
+      "source_sha256": "4e94751b8ca58b87fa1f12089d2dc796478ddd3cc86ec7f9522d2db6505cd665",
+      "staged_mode": "0644",
+      "staged_sha256": "3df345eeb76fe6457a5bea665ec47b29125d765bbacdc24c58ea2211c0204fc4",
+      "transform_provenance": "minification_unverified"
+    },
+    {
+      "disposition": "auxiliary_htdocs_js",
+      "ipk_mode": "0644",
+      "ipk_sha256": "6b6c886b5ea1af828bc343aa1c9de0d88722b890fdc087d161da4810926a5c80",
+      "path": "www/luci-static/resources/view/adblock-fast/overview.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "ac0678c6d1f1fa58fd1c1b603784d02f5381b6833ebeed59a3bdab60be0dc9b2",
+      "source_git_mode": "100644",
+      "source_sha256": "ac0678c6d1f1fa58fd1c1b603784d02f5381b6833ebeed59a3bdab60be0dc9b2",
+      "staged_mode": "0644",
+      "staged_sha256": "6b6c886b5ea1af828bc343aa1c9de0d88722b890fdc087d161da4810926a5c80",
+      "transform_provenance": "minification_unverified"
+    },
+    {
+      "disposition": "auxiliary_htdocs_js",
+      "ipk_mode": "0644",
+      "ipk_sha256": "5ee13d54ea08c1cb8d491422fcc8189250584e9d2c5e150476b2efa00bd05c88",
+      "path": "www/luci-static/resources/view/status/include/70_adblock-fast.js",
+      "prepared_mode": "0644",
+      "prepared_sha256": "b4a5a4ccfbbb1b028252eab9d8fa2236cdb4e7e2b292066258cea40119255109",
+      "source_git_mode": "100644",
+      "source_sha256": "b4a5a4ccfbbb1b028252eab9d8fa2236cdb4e7e2b292066258cea40119255109",
+      "staged_mode": "0644",
+      "staged_sha256": "5ee13d54ea08c1cb8d491422fcc8189250584e9d2c5e150476b2efa00bd05c88",
+      "transform_provenance": "minification_unverified"
+    },
+    {
+      "disposition": "excluded_shell_route_control",
+      "ipk_mode": "0644",
+      "ipk_sha256": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36",
+      "path": "etc/uci-defaults/40_luci-adblock-fast",
+      "prepared_mode": "0644",
+      "prepared_sha256": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36",
+      "source_git_mode": "100644",
+      "source_sha256": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36",
+      "staged_mode": "0644",
+      "staged_sha256": "0ca723ac47f18a275114a4298eef353b1c89b52a9d258f76d9d085d0b26baf36",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "disposition": "excluded_shell_second_control",
+      "ipk_mode": "0644",
+      "ipk_sha256": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18",
+      "path": "etc/uci-defaults/95_adblock-fast-api",
+      "prepared_mode": "0644",
+      "prepared_sha256": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18",
+      "source_git_mode": "100644",
+      "source_sha256": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18",
+      "staged_mode": "0644",
+      "staged_sha256": "172479755f289d85717045235e84864e99c996bcf82a631a21c50f4457748d18",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "disposition": "auxiliary_menu",
+      "ipk_mode": "0644",
+      "ipk_sha256": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53",
+      "path": "usr/share/luci/menu.d/luci-app-adblock-fast.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53",
+      "source_git_mode": "100644",
+      "source_sha256": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53",
+      "staged_mode": "0644",
+      "staged_sha256": "b86ab6308a17a2d9af3ecaa993cd01c0ab55b8beb402e39b76d95ffa6a353b53",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "disposition": "auxiliary_acl_evidence",
+      "ipk_mode": "0644",
+      "ipk_sha256": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed",
+      "path": "usr/share/rpcd/acl.d/adblock-fast-api.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed",
+      "source_git_mode": "100644",
+      "source_sha256": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed",
+      "staged_mode": "0644",
+      "staged_sha256": "6e1a9ccb00b528da74265311b23c4c7190f2650cf4480c52a5fa94648fd105ed",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "disposition": "auxiliary_acl_evidence",
+      "ipk_mode": "0644",
+      "ipk_sha256": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d",
+      "path": "usr/share/rpcd/acl.d/luci-app-adblock-fast.json",
+      "prepared_mode": "0644",
+      "prepared_sha256": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d",
+      "source_git_mode": "100644",
+      "source_sha256": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d",
+      "staged_mode": "0644",
+      "staged_sha256": "af249e0610e568be8e7bac542c0ce9f402e1a95cd34d3c5eb9a9724aff46502d",
+      "transform_provenance": "source_equal"
+    },
+    {
+      "disposition": "selected_ucode_rpcd",
+      "ipk_mode": "0644",
+      "ipk_sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+      "path": "usr/share/rpcd/ucode/luci.adblock-fast",
+      "prepared_mode": "0644",
+      "prepared_sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+      "source_git_mode": "100644",
+      "source_sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+      "staged_mode": "0644",
+      "staged_sha256": "3cb9d07b33a0aec36743326a5cb1e18885d245a132ef92174eb4c8b70aaebdd8",
+      "transform_provenance": "source_equal"
+    }
+  ],
+  "source_pins": {
+    "luci": "cb87fe60e1e2e052af36a93647f2264577829e0a",
+    "openwrt": "4e9642517b48bae612ff10fb72fb9199e559500e",
+    "packages": "07e0d16305d2b5903b37ad7913e33e18795f81a4"
+  }
+}

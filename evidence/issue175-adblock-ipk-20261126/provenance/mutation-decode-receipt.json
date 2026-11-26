@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/Users/lalbers/gitroot/ucode/.tools/codeql-2.27.4/codeql/codeql",
+    "bqrs",
+    "decode",
+    "--format=json",
+    "--entities=id,url,string",
+    "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/mutation/output/mutant.bqrs",
+    "--output=/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/mutation/output/mutant.json"
+  ],
+  "cwd": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/mutation-producer",
+  "decoded_sha256": "63c4d11bcc35973820142a5a03358a6db97d2ea920b01ef7cdc7956e30f1d3ea",
+  "elapsed_seconds": 0.5183152919926215,
+  "env": {
+    "CODEQL_UCODE_STAGED_ROOT": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/stage",
+    "HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/mutation/home",
+    "LC_ALL": "C",
+    "PATH": "/usr/bin:/bin",
+    "TMPDIR": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/mutation/tmp",
+    "TZ": "UTC",
+    "XDG_CACHE_HOME": "/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/run/mutation/cache"
+  },
+  "exit": 0,
+  "failure": null,
+  "peak_rss_bytes": null,
+  "postguard": "inputs_unchanged",
+  "prior_warning_exception": {
+    "bqrs_sha256": "dd526c3940f1201c6b82a48f24a202ebd927ddd6fc0546b14b7bc123b29a4b65",
+    "query_receipt_sha256": "1c2581484c268c225ef1a5f3cbe11de64b0ae6d373943e6f4062de5a4b851421",
+    "warnings": [
+      "WARNING: Not caching stages during query-loading, since max heap size is only 1816 MB.",
+      "WARNING: unused predicate 'systemFormalInBody' (/Users/lalbers/gitroot/ucode/coverage-wave-work/issue175-execution-context-20261126/mutation-producer/ql/lib/codeql/ucode/m3/Models.qll:149,19-37)"
+    ]
+  },
+  "result": {
+    "baseline_rows": 14,
+    "boundary": "Consistency of selected extracted AST nodes; no runtime or security claim.",
+    "coordinate_witness_rows": 15,
+    "mutant_rows": 15,
+    "near_miss_added": 1
+  },
+  "rss_note": "not measured",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

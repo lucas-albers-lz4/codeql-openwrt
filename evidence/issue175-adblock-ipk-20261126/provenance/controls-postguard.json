@@ -1,0 +1,5 @@
+{
+  "failure": "RuntimeError(\"control stopped with retained phase receipt: mutation query ValueError('unexpected control stderr warning')\")",
+  "result": null,
+  "status": "baseline_unchanged"
+}
