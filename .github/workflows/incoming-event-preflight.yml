@@ -295,6 +295,56 @@ jobs:
           set -euo pipefail
           input_root="$RUNNER_TEMP/event-input-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
           python3 -B tools/reservation_claim.py "$input_root/replayed-receipt.json" "$input_root/reservation-claim.json"
+      - name: Prepare early non-issuing start observation
+        id: early-start
+        if: steps.release.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          from tools.issuer_artifact_freeze import _open_regular
+          root = Path(os.environ['RUNNER_TEMP']) / f"event-input-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
+          def read(name):
+              with _open_regular(root / name, root) as (stream, opened):
+                  if opened.st_size > 1024 * 1024:
+                      raise RuntimeError('early observation source exceeds byte limit')
+                  raw = stream.read(1024 * 1024 + 1)
+                  if len(raw) != opened.st_size:
+                      raise RuntimeError('early observation source changed while reading')
+                  return raw
+          claim_raw = read('reservation-claim.json')
+          claim = json.loads(claim_raw)
+          claimed = claim.get('status') == 'claimed_unverified'
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write('claimed=' + ('true' if claimed else 'false') + '\n')
+          if claimed:
+              names = ('dispatch-inputs.json', 'replayed-receipt.json',
+                       'reservation-claim.json', 'scan-pull-api-response.json')
+              early = Path(os.environ['RUNNER_TEMP']) / f"incoming-start-{os.environ['GITHUB_RUN_ID']}-{os.environ['GITHUB_RUN_ATTEMPT']}"
+              early.mkdir(mode=0o700)
+              files = {name: claim_raw if name == 'reservation-claim.json' else read(name)
+                       for name in names}
+              receipt = {'schema': 'incoming-early-start-observation-v1',
+                         'status': 'retained_non_issuing',
+                         'run_id': os.environ['GITHUB_RUN_ID'] + '-' + os.environ['GITHUB_RUN_ATTEMPT'],
+                         'consumer_commit': os.environ['GITHUB_SHA'],
+                         'files': {name: hashlib.sha256(raw).hexdigest()
+                                   for name, raw in files.items()}}
+              for name, raw in files.items():
+                  with (early / name).open('xb') as output:
+                      output.write(raw)
+              with (early / 'receipt.json').open('x') as output:
+                  output.write(json.dumps(receipt, sort_keys=True, indent=2) + '\n')
+          PY
+      - name: Upload early non-issuing start observation
+        if: steps.early-start.outputs.claimed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: incoming-start-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/incoming-start-${{ github.run_id }}-${{ github.run_attempt }}/*.json
       - name: Prepare control oracle before either corpus scan
         id: control-oracle
         if: steps.release.outputs.ready == 'true'

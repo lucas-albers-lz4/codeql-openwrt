@@ -150,6 +150,17 @@ This is a same-job *claim*, not authentication of the queue or a signed start.
 The older unclaimed scan remains comparable without that flag and reports
 `claim_bound: false`.
 
+For a claimed manual scan, the `released-event-scan` job also uploads a small
+`incoming-start-<run>-<attempt>` artifact after canonical PR revalidation and
+before R3. It contains the dispatch inputs, replayed PR receipt, reservation
+claim, scan-time PR API response, and a digest receipt. This is a non-issuing
+observation: it is absent for an unclaimed run and does not prove that the
+scan ran or that the job was live when an operator fetched it. A future local
+issuer must verify the canonical run and job were in progress, the artifact's
+API identity and ZIP digest, the approved workflow revision, and the exact
+queue reservation before recording a start. Completion must compare these
+early bytes with the final frozen inputs.
+
 If a manual reservation never started and the upstream PR head or base moved,
 the operator can recover that exact queue slot with
 `tools/incoming_queue_recover_stale.py`. Supply the private database, expected
