@@ -74,10 +74,6 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual((output / 'metadata-sample-packagedeps').read_bytes(), b'changed graph')
 
     def test_exact_initial_graph_allowlist_and_in_run_lock(self):
-        self.assertEqual(runner.GRAPH_SHAS, frozenset({
-            '48bbf0a4525d53718fb8271f52857082e7917b09c268873706261b897ecf3b69',
-            '2f934e455a22f63289ebb82e87f59866f002167dae7418b5ed5464cf6a608a80',
-        }))
         variants = (b'graph variant A\n', b'graph variant B\n')
         digests = frozenset(hashlib.sha256(x).hexdigest() for x in variants)
         with tempfile.TemporaryDirectory() as tmp:
@@ -88,7 +84,7 @@ class RunnerTests(unittest.TestCase):
             (ow / '.config').write_bytes(b'fixture config')
             graph = ow / 'tmp/.packagedeps'
             probe = SimpleNamespace(root=root, out=output)
-            with patch.object(runner, 'CONFIG_SHA', hashlib.sha256(b'fixture config').hexdigest()), patch.object(runner, 'GRAPH_SHAS', digests), patch.object(runner.check, 'validate_final_config'), patch.object(runner.check, 'validate_packagedeps'):
+            with patch.object(runner, 'CONFIG_SHA', hashlib.sha256(b'fixture config').hexdigest()), patch.object(runner.graph_scope, 'scope', side_effect=lambda graph, config: b'approved' if graph in variants else b'changed'), patch.object(runner.graph_scope, 'SCOPE_SHA', hashlib.sha256(b'approved').hexdigest()), patch.object(runner.check, 'validate_final_config'), patch.object(runner.check, 'validate_packagedeps'):
                 for index, variant in enumerate(variants):
                     graph.write_bytes(variant)
                     # Each separate run starts with the actual pre-build label.
