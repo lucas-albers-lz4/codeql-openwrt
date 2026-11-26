@@ -34,7 +34,9 @@ corpus scan. The artifact contains the exact `reservation-claim.json`,
 `previous-run-api.json` and `current-run-api.json`, plus `receipt.json` with
 the byte count and SHA-256 for every payload file. The writer reads bounded
 regular files without following their final symlink, requires private run
-inputs and exclusive private outputs, checks the claim-bound identity,
+inputs and exclusive private outputs, enforces a 64 MiB per-file and 128 MiB
+aggregate bound (the linked discovery checkpoint pair measured about 95 MiB
+in run 45868959396), checks the claim-bound identity,
 manifest, checkpoint and gap digests, checks the inventory bytes against the
 manifest digest, verifies the linked discovery run API identities, and reads
 the frozen copies back to compare them with the captured source bytes. The
