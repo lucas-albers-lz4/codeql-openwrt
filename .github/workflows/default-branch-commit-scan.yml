@@ -85,6 +85,8 @@ jobs:
         run: python3 -B -m unittest tools.test_default_branch_gap tools.test_default_branch_event tools.test_default_branch_corpus_manifest tools.test_default_branch_corpus_linux tools.test_default_branch_reservation_claim tools.test_default_branch_start_artifact tools.test_default_branch_reservation_reconcile tools.test_default_branch_live_observation tools.test_default_branch_private_start tools.test_default_branch_final_proof tools.test_default_branch_consumer_replay tools.test_event_corpus_manifest tools.test_direct_commit_corpus_linux policy.tests.test_current_corpus_linux -v
       - name: Test private terminal capture custody and identity
         run: python3 -B -m unittest tools.test_default_branch_private_final_capture -v
+      - name: Test authenticated private sequence-one start preflight
+        run: python3 -B -m unittest tools.test_default_branch_authenticated_start -v
       - name: Test bounded source-byte and route oracle
         run: python3 -B -m unittest tools.test_default_branch_source_truth -v
       - name: Test offline issued start and terminal actions
