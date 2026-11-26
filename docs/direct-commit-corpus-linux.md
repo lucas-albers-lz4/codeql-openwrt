@@ -34,7 +34,8 @@ historical identity probe did not replay live linked gap/checkpoint bytes.
 Actual installed IPK bytes, a clean/no-alert control and live Gate 8 remain
 separate evidence requirements.
 
-The manual `direct-commit-openvpn-history.yml` workflow uses clean pinned
+The `direct-commit-openvpn-history.yml` workflow runs the released scan only
+on manual dispatch from `main`; pull requests run contract tests only. It uses clean pinned
 LuCI checkouts and `direct_commit_historical_identity.py` to resolve the
 introduction, its first parent and the fixed commit against canonical Git
 objects. Its `historical-direct-commit-source-identity-v1` receipt has no
