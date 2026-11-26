@@ -182,8 +182,21 @@ class ScanLinkTests(unittest.TestCase):
             'commit': self.head, 'tree': self.tree}
         (self.freeze / 'inventory.json').write_bytes(encoded(inventory))
 
-    def verify(self):
-        return verify(self.database, self.artifact, self.run_api, '123', 1, self.consumer)
+    def verify(self, require_claim=False):
+        return verify(self.database, self.artifact, self.run_api, '123', 1,
+                      self.consumer, require_claim)
+
+    def set_claim(self):
+        db = open_queue(self.database)
+        digest = db.execute('select digest from history where seq=2').fetchone()[0]
+        db.close()
+        self.files['inputs/reservation-claim.json'] = {
+            'schema': 'incoming-reservation-claim-v1', 'status': 'claimed_unverified',
+            'run_id': '123-1', 'queue_id': self.reservation['queue_id'],
+            'reservation_sequence': 2, 'reservation_sha256': digest,
+            'event_id': self.event_id, 'source_sha': self.head,
+            'control_sha': self.base}
+        self.write_freeze()
 
     def test_exact_link_is_read_only(self):
         before = self.database.read_bytes()
@@ -191,6 +204,19 @@ class ScanLinkTests(unittest.TestCase):
         self.assertEqual(result['status'], 'linked_only')
         self.assertEqual(self.database.read_bytes(), before)
         self.assertFalse(self.database.with_name('queue.db-journal').exists())
+
+    def test_same_job_claim_is_required_when_requested(self):
+        with self.assertRaisesRegex(LinkError, 'claim missing'):
+            self.verify(require_claim=True)
+        self.set_claim()
+        self.assertTrue(self.verify(require_claim=True)['claim_bound'])
+
+    def test_wrong_same_job_claim_rejected(self):
+        self.set_claim()
+        self.files['inputs/reservation-claim.json']['reservation_sha256'] = '0'*64
+        self.write_freeze()
+        with self.assertRaisesRegex(LinkError, 'reservation claim mismatch'):
+            self.verify(require_claim=True)
 
     def test_changed_snapshot_file_rejected(self):
         (self.snapshot / 'event/receipt.json').write_text('{}')
