@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from tools.event_control_scan import assert_clean, prepare, prepare_with_report
+from tools.event_control_scan import assert_clean, prepare, prepare_with_report, verify_and_remove_replay
 
 
 class ControlContract(unittest.TestCase):
@@ -16,6 +16,32 @@ class ControlContract(unittest.TestCase):
                       {'status': 'clean_scan', 'result_count': 0}):
             with self.assertRaises(Exception):
                 assert_clean(value)
+
+    def test_replay_equal_bytes_are_removed_before_artifact_freeze(self):
+        names = ('control-derived-receipt.json', 'control-inventory.json',
+                 'control-manifest.json', 'control-binding.json')
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            inputs, replay = root / 'control-oracle', root / 'control-oracle-replay'
+            inputs.mkdir()
+            replay.mkdir()
+            for name in names:
+                (inputs / name).write_text(name)
+                (replay / name).write_text(name)
+            verify_and_remove_replay(inputs, replay)
+            self.assertFalse(replay.exists())
+            replay.mkdir()
+            for name in names:
+                (replay / name).write_text(name)
+            (replay / 'extra.json').write_text('{}')
+            with self.assertRaisesRegex(Exception, 'unexpected entries'):
+                verify_and_remove_replay(inputs, replay)
+            self.assertTrue(replay.exists())
+            (replay / 'extra.json').unlink()
+            (replay / names[0]).write_text('mismatch')
+            with self.assertRaisesRegex(Exception, 'replay mismatch'):
+                verify_and_remove_replay(inputs, replay)
+            self.assertTrue(replay.exists())
 
     def test_mismatched_control_tree_rejected_before_oracle(self):
         with tempfile.TemporaryDirectory() as directory:
