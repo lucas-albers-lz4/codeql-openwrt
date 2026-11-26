@@ -1,0 +1,99 @@
+{
+  "builtin_projection_sha256": "d97b9bb697cff77ecdc1f29fbf00e6ae9f56faa86341aeb5c0528d44ae38db82",
+  "control": {
+    "Architecture": "x86_64",
+    "Package": "kernel",
+    "Version": "6.12.116~d06fc8e744142971fdfa96b50c6d006f-r1"
+  },
+  "control_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "control",
+      "sha256": "16e2b3a3554f4c2eda32cc3f8fb9932cbf40183fd24dc3cd1e945fdfae9d8de4",
+      "size": 383,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "postinst",
+      "sha256": "61511dd6dcc9e5ae9038f7ea8b0ecdf3bdd17612af012c3d9536e9aca03691df",
+      "size": 160,
+      "type": "file"
+    },
+    {
+      "mode": "0755",
+      "path": "prerm",
+      "sha256": "41e62438f65308026184be1d4d931ae9100923e5ae97b146fb678e5b6cd0fc6c",
+      "size": 117,
+      "type": "file"
+    }
+  ],
+  "data_members": [
+    {
+      "mode": "0755",
+      "path": "",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "lib",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "lib/modules",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0755",
+      "path": "lib/modules/6.12.116",
+      "sha256": null,
+      "size": 0,
+      "type": "directory"
+    },
+    {
+      "mode": "0644",
+      "path": "lib/modules/6.12.116/modules.builtin",
+      "sha256": "d97b9bb697cff77ecdc1f29fbf00e6ae9f56faa86341aeb5c0528d44ae38db82",
+      "size": 4127,
+      "type": "file"
+    },
+    {
+      "mode": "0644",
+      "path": "lib/modules/6.12.116/modules.builtin.modinfo",
+      "sha256": "911a93bcabbd2c6f54d5c37e6477ef3c614fb875d85f698ae66584b1db7c7a0b",
+      "size": 13400,
+      "type": "file"
+    }
+  ],
+  "ipk_inventory": {
+    "kernel_6.12.116~d06fc8e744142971fdfa96b50c6d006f-r1_x86_64.ipk": {
+      "sha256": "3f45007bbdbad6d0c171adc06cb1b7e667ff1895d9ce909986fbe3f9a78ab25e",
+      "size": 5254
+    }
+  },
+  "ipk_path": "bin/targets/x86/64/packages/kernel_6.12.116~d06fc8e744142971fdfa96b50c6d006f-r1_x86_64.ipk",
+  "ipk_sha256": "3f45007bbdbad6d0c171adc06cb1b7e667ff1895d9ce909986fbe3f9a78ab25e",
+  "ipk_size": 5254,
+  "kernel_version_sha256": "d0e4b1404f4d1c59bccde094ce9de1f71a07b5696a06d140a0c8ad32d07b5b0d",
+  "modinfo_sha256": "911a93bcabbd2c6f54d5c37e6477ef3c614fb875d85f698ae66584b1db7c7a0b",
+  "outer_members": {
+    "control.tar.gz": "f20d2b89672e106bec7e02852cbd5ecd7b2d0917defe2cedf1dd0a19dcbb58f8",
+    "data.tar.gz": "296f67e7fac7a41e9e9b08e8a5d61cb7b22a17bfa05f815a71be898ec739797b",
+    "debian-binary": "d526eb4e878a23ef26ae190031b4efd2d58ed66789ac049ea3dbaf74c9df7402"
+  },
+  "version": "6.12.116~d06fc8e744142971fdfa96b50c6d006f-r1"
+}

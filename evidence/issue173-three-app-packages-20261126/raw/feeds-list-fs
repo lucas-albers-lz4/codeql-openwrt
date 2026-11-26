@@ -1,0 +1,2 @@
+src-link luci ../../luci
+src-link packages ../../packages

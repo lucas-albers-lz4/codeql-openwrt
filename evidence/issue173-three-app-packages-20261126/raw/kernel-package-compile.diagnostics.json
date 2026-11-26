@@ -1,0 +1,7 @@
+{
+  "accepted_scoped_empty_warnings": [
+    "WARNING: kmod-drm-exec is not available in the kernel config - generating empty package",
+    "WARNING: kmod-drm-suballoc-helper is not available in the kernel config - generating empty package"
+  ],
+  "phase": "kernel-package-compile"
+}
