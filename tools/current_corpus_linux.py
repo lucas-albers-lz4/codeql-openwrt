@@ -20,6 +20,8 @@ from tools.r3_linux_handoff import (EXPECTED_QUERIES, ROOT, Run, digest,
 from tools.event_corpus_manifest import build as build_event_manifest
 from tools.event_corpus_manifest import POLICY_SHA256 as EVENT_POLICY_SHA256
 from tools.full_tree_candidates import compare as compare_candidates
+from tools import direct_commit_corpus_manifest as direct_manifest
+from tools import direct_commit_admission as direct_admission
 
 MANIFEST_SHA256 = "9c004ed477665f6567a071eac45051445c61019af927bfa4e51bae4c50ebd490"
 PINS = {
@@ -34,6 +36,8 @@ REPOSITORIES = {
 }
 HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
+DIRECT_ALERT_ORACLE = ROOT / "docs/direct-commit-openvpn-alert-v1.json"
+DIRECT_ALERT_ORACLE_SHA256 = "14ab2c0d08ef691abf6855a6171d8af1a707671bf5f2311a3088aca56aca07c5"
 
 
 def relative_path(value: object) -> str:
@@ -129,19 +133,85 @@ def validate_event_manifest(manifest_path: Path, receipt_path: Path,
     return manifest
 
 
+def validate_direct_commit_manifest(manifest_path: Path, identity_path: Path,
+                                    admission_path: Path, inventory_path: Path,
+                                    source_checkout: Path, control_checkout: Path) -> tuple[dict, bytes]:
+    limit = direct_manifest.MAX_INPUT
+    policy_raw = direct_admission.read_regular_bounded(direct_manifest.POLICY, limit)
+    identity_raw = direct_admission.read_regular_bounded(identity_path, limit)
+    admission_raw = direct_admission.read_regular_bounded(admission_path, limit)
+    inventory_raw = direct_admission.read_regular_bounded(inventory_path, limit)
+    manifest_raw = direct_admission.read_regular_bounded(manifest_path, limit)
+    expected = direct_manifest.build_manifest(policy_raw, identity_raw, admission_raw,
+                                              inventory_raw, source_checkout, control_checkout)
+    actual = direct_manifest.parse(manifest_raw)
+    need(actual == expected, "direct-commit manifest differs from fresh source oracle")
+    need(actual.get("schema") == "mvp-direct-commit-corpus-v1" and
+         actual.get("status") == "historical_direct_commit_source_first_oracle_only" and
+         len(actual["selected"]) == 112 and len(actual["excluded"]) == 11 and
+         actual["event"].get("kind") == "direct_commit" and
+         actual["event"].get("source_role") == "historical_direct_commit" and
+         "pr_number" not in actual["event"] and
+         actual["event"].get("historical_policy_sha256") == direct_manifest.POLICY_SHA256,
+         "direct-commit corpus contract differs")
+    return actual, manifest_raw
+
+
+def assert_direct_known_alert(triage: dict, manifest: dict, release: dict) -> dict:
+    oracle_raw = direct_admission.read_regular_bounded(DIRECT_ALERT_ORACLE, 100_000)
+    need(hashlib.sha256(oracle_raw).hexdigest() == DIRECT_ALERT_ORACLE_SHA256,
+         "direct-commit alert oracle digest differs")
+    oracle = direct_manifest.parse(oracle_raw)
+    need(oracle.get("schema") == "direct-commit-openvpn-alert-oracle-v1" and
+         oracle.get("expected_multiplicity") == 1 and
+         oracle.get("release_tag") == release["tag"] and
+         oracle.get("source_commit") == manifest["event"]["head_commit"] and
+         oracle.get("historical_policy_sha256") == manifest["event"]["historical_policy_sha256"],
+         "direct-commit alert oracle identity differs")
+    expected = oracle.get("expected_result")
+    need(isinstance(expected, dict) and set(expected) ==
+         {"rule_id", "uri", "start_line", "start_column", "end_line", "end_column", "level"},
+         "direct-commit expected result malformed")
+    sources = [row for row in manifest["selected"]
+               if row["proposed_installed_path"] == expected["uri"]]
+    need(len(sources) == 1 and sources[0]["source_sha256"] == oracle["source_sha256"] and
+         sources[0]["source_commit"] == oracle["source_commit"],
+         "direct-commit alert source differs")
+    rows = triage.get("results_for_triage")
+    need(triage.get("status") == "triage_required" and isinstance(rows, list) and
+         triage.get("result_count") == len(rows) and
+         sum(row == expected for row in rows) == 1,
+         "historical OpenVPN alert tuple/multiplicity missing")
+    return {"schema": "direct-commit-known-alert-assertion-v1", "status": "known_alert_observed",
+            "oracle_sha256": DIRECT_ALERT_ORACLE_SHA256,
+            "source_commit": oracle["source_commit"], "expected_result": expected,
+            "multiplicity": 1, "total_triage_results": len(rows),
+            "limits": ["Other results remain triage findings; fixed no-alert control and live Gate 8 are separate."]}
+
+
 def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: str,
-                *, event_context: tuple[Path, Path, Path] | None = None,
+                *, event_context: tuple[Path, ...] | None = None,
                 run_label: str | None = None) -> None:
     lock = json.loads(lock_path.read_text())
     pinned(lock)
     event = event_context is not None
+    direct = event and len(event_context) == 5
+    validated_manifest_raw = None
     need(run_label in (None, "control-corpus"), "invalid corpus run label")
     need(run_label is None or event, "control requires event oracle")
+    need(not direct or run_label is None, "direct-commit control requires separate contract")
     if event:
-        receipt_path, inventory_path, source_checkout = event_context
-        manifest = validate_event_manifest(manifest_path, receipt_path,
-                                           inventory_path, source_checkout,
-                                           source_role="clean_control" if run_label == "control-corpus" else "incoming_pr_head")
+        if direct:
+            identity_path, admission_path, inventory_path, source_checkout, control_checkout = event_context
+            manifest, validated_manifest_raw = validate_direct_commit_manifest(
+                manifest_path, identity_path, admission_path, inventory_path,
+                source_checkout, control_checkout)
+        else:
+            need(len(event_context) == 3, "invalid event context")
+            receipt_path, inventory_path, source_checkout = event_context
+            manifest = validate_event_manifest(manifest_path, receipt_path,
+                                               inventory_path, source_checkout,
+                                               source_role="clean_control" if run_label == "control-corpus" else "incoming_pr_head")
     else:
         need(digest(manifest_path) == MANIFEST_SHA256, "current corpus manifest digest drift")
         manifest = json.loads(manifest_path.read_text())
@@ -187,8 +257,15 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
     available = re.search(r"(?m)^MemAvailable:\s*(\d+) kB$", memory)
     need(available is not None and int(available.group(1)) >= 2 * 1024**2,
          "less than 2 GiB available memory")
-    run = Run(prior_root / (run_label or ("event-corpus" if event else "current-corpus")), run_id)
+    run = Run(prior_root / ("direct-commit-corpus" if direct else
+                            (run_label or ("event-corpus" if event else "current-corpus"))), run_id)
     try:
+        if direct:
+            snapshot = run.root / "validated-direct-manifest.json"
+            snapshot.write_bytes(validated_manifest_raw)
+            need(digest(snapshot) == hashlib.sha256(validated_manifest_raw).hexdigest(),
+                 "validated direct manifest snapshot differs")
+            manifest_path = snapshot
         bundle = run.root / "bundle/codeql-ucode-linux"
         need(not any(path.is_symlink() for path in original_bundle.rglob("*")),
              "release bundle gained a symlink after R3")
@@ -301,8 +378,9 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
              "successful identity or extraction-error mismatch")
         decisions = {d["installed_path"]: d for d in routing["decisions"]}
         success_counts = Counter(successes)
-        coverage_name = "coverage-event.json" if event else "coverage-v0.6.json"
-        coverage = {"schema": "ucode-event-corpus-coverage-v1" if event else
+        coverage_name = "coverage-direct-commit.json" if direct else "coverage-event.json" if event else "coverage-v0.6.json"
+        coverage = {"schema": "ucode-direct-commit-corpus-coverage-v1" if direct else
+                    "ucode-event-corpus-coverage-v1" if event else
                     "ucode-current-corpus-coverage-v0.6",
                     "source_manifest_sha256": digest(manifest_path),
                     **({"event": manifest["event"]} if event else {}),
@@ -366,6 +444,10 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
         accepted_text = run.call("triage" if event else "accept", consumer_args)
         accepted_name = "triage.json" if event else "accepted.json"
         (out / accepted_name).write_text(accepted_text)
+        if direct:
+            direct_assertion = assert_direct_known_alert(json.loads(accepted_text), manifest, release)
+            direct_assertion["triage_sha256"] = digest(out / accepted_name)
+            write_json(out / "known-alert-assertion.json", direct_assertion)
         for name, pin in pins.items():
             repo = repos[name]
             need(subprocess.check_output(["git", "-C", str(repo), "rev-parse", "HEAD"],
@@ -381,7 +463,8 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
             need(hashlib.sha256(source_bytes(repos[row["repo"]] / row["source_path"])).hexdigest()
                  == row["sha256"], f"excluded source changed during run: {row['source_path']}")
         triage = json.loads(accepted_text) if event else None
-        write_json(run.root / "receipt.json", {"schema": "ucode-event-corpus-linux-v1" if event else
+        write_json(run.root / "receipt.json", {"schema": "ucode-direct-commit-corpus-linux-v1" if direct else
+                   "ucode-event-corpus-linux-v1" if event else
                    "ucode-current-corpus-linux-v1",
                    "status": triage["status"] if event else "accepted",
                    "run_id": run_id, "release_tag": release["tag"],
@@ -397,6 +480,8 @@ def run_current(lock_path: Path, manifest_path: Path, prior_root: Path, run_id: 
                    "coverage_sha256": digest(out / coverage_name),
                    "resolved_rules": rules, "sarif_sha256": digest(sarif),
                    "accepted_sha256": digest(out / accepted_name),
+                   **({"known_alert_assertion_sha256": digest(out / "known-alert-assertion.json")}
+                      if direct else {}),
                    "commands_sha256": digest(run.root / "commands.json"),
                    "actual_package_installed_bytes_verified": False})
     except Exception as exc:
