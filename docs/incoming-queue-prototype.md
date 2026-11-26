@@ -111,6 +111,18 @@ download and run API response together for review. A fabricated matching
 artifact and API file can still satisfy this offline comparison; a trusted
 same-job issuer is needed for completion.
 
+For a new manual scan, the operator may also supply the private queue ID,
+reservation sequence, and transition SHA-256 through the optional
+`incoming-event-preflight.yml` dispatch inputs. The scan job writes
+`reservation-claim.json` only after re-fetching and validating the PR and
+includes it in the frozen artifact inventory. Supply all three values or
+none; partial or malformed claims fail the job. Invoke the offline linker
+with `--require-claim` for this path. It compares the frozen claim with the
+current local queue record and reports `claim_bound: true` if they match.
+This is a same-job *claim*, not authentication of the queue or a signed start.
+The older unclaimed scan remains comparable without that flag and reports
+`claim_bound: false`.
+
 The `apply_attested` Python API accepts a start, failure, completion or recovery payload
 with an HMAC-SHA256 over canonical JSON using an externally provisioned secret
 of at least 32 bytes. The signer is a trust boundary: the MAC authenticates a
