@@ -24,10 +24,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/incoming-discovery-manual.yml'
-      - 'tools/incoming_poll.py'
-      - 'tools/test_incoming_poll.py'
-      - 'tools/discovery_pr_dispatch.py'
-      - 'tools/test_discovery_pr_dispatch.py'
+      - 'tools/**'
 
 permissions:
   actions: read
@@ -41,12 +38,15 @@ jobs:
         with:
           persist-credentials: false
       - name: Test read-only discovery contract
-        run: python3 -B -m unittest tools.test_incoming_poll tools.test_discovery_pr_dispatch -v
+        run: python3 -B -m unittest tools.test_incoming_poll tools.test_discovery_pr_dispatch tools.test_discovery_latest_predecessor -v
   discover:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     needs: contract
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    concurrency:
+      group: incoming-discovery-main
+      cancel-in-progress: false
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -61,9 +61,13 @@ jobs:
           CONSUMER_SHA: ${{ github.sha }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           mkdir discovery-output
+          gh api "repos/$GH_REPO/actions/workflows/incoming-discovery-manual.yml/runs?event=workflow_dispatch&branch=main&per_page=100" > discovery-output/latest-successful-run-api.json
+          python3 -B -m tools.discovery_latest_predecessor --api-response discovery-output/latest-successful-run-api.json --repository "$GH_REPO" --genesis "$GENESIS" --prior-run "$PRIOR_RUN" --prior-attempt "$PRIOR_ATTEMPT" --current-run "$RUN_ID"
           if [[ "$GENESIS" == 'true' ]]; then
             [[ -z "$PRIOR_RUN" && -z "$PRIOR_SHA256" ]]
           else
@@ -133,12 +137,23 @@ jobs:
           fi
           cp discovery-output/poll/decisions.json discovery-output/decisions.json
           sha256sum discovery-output/decisions.json | tee discovery-output/decisions.sha256
+      - name: Enumerate and replay bounded default-branch gap
+        id: gap
+        if: inputs.genesis == false
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 -B -m tools.default_branch_gap --previous predecessor/decisions.json --current discovery-output/decisions.json --output-dir discovery-output/gap
+          python3 -B -m tools.default_branch_gap --previous predecessor/decisions.json --current discovery-output/decisions.json --verify-gap discovery-output/gap/gap.json
+          sha256sum discovery-output/gap/gap.json | tee discovery-output/gap/gap.sha256
       - name: Record failed preparation or poll phase
         if: failure() && github.event_name == 'workflow_dispatch'
         env:
           PREPARE: ${{ steps.prepare.outcome }}
           PREDECESSOR: ${{ steps.predecessor.outcome }}
           POLL: ${{ steps.poll.outcome }}
+          GAP: ${{ steps.gap.outcome }}
         run: |
           mkdir -p discovery-output
           python3 -B - <<'PY'
@@ -149,6 +164,7 @@ jobs:
               'prepare': os.environ['PREPARE'],
               'predecessor': os.environ['PREDECESSOR'],
               'poll': os.environ['POLL'],
+              'gap': os.environ['GAP'],
               'limitation': 'Phase receipt only; inspect restricted job log for failure detail.',
           }
           Path('discovery-output/workflow-failure.json').write_text(json.dumps(record, indent=2) + '\n')

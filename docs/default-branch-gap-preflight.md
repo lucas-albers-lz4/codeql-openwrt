@@ -1,6 +1,6 @@
 # Default-branch gap preflight
 
-`tools/default_branch_gap.py` is a read-only, operator-run preflight for two
+`tools/default_branch_gap.py` is a read-only preflight for two
 successive incoming-discovery checkpoints. It does not dispatch scans, change
 the queue, or approve a commit for analysis.
 Set `GITHUB_TOKEN` for authenticated GitHub API reads; `GH_TOKEN` alone is not
@@ -37,9 +37,11 @@ checkpoint's external custody; those remain the caller's responsibility.
 The result is **discovery
 evidence only**: each enumerated commit still needs canonical membership,
 source selection, a released producer scan, and a consumer disposition.
-This tool is not wired into the discovery workflow's dispatch path yet.
-The current v3 poller still observes only poll-time tips, and PR-head gaps
-remain outside this preflight.
+The manual discovery workflow runs and replays this preflight after each
+non-genesis poll on `main`, retaining its gap record or failure in the same
+artifact. It does not dispatch the enumerated commits or add them to the
+poller's capacity-one selection. The current v3 poller still observes only
+poll-time tips, and PR-head gaps remain outside this preflight.
 
 The one-commit LuCI OpenVPN introduction interval
 `7f6ba9d46028635f0d5aa2e15fcab9ffd163a688` →

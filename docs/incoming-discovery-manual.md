@@ -14,10 +14,28 @@ run's `decisions.json`. The workflow verifies the earlier run's identity and
 success, downloads its named artifact, checks the digest and validates the
 checkpoint before any new upstream API request. If the artifact expired or
 any check fails, stop and investigate; do not silently start a new genesis.
+The discovery job runs only from `main`; a pull request runs contract tests
+without producing a successor checkpoint.
+The job serializes main discovery attempts and retains GitHub's
+`latest-successful-run-api.json` response. A genesis is accepted only when
+that API reports no prior successful main dispatch. A successor must name
+the latest successful main discovery run and attempt; a stale predecessor
+or parallel fork fails before polling. The query inspects at most 100 main
+dispatches, including the current run. It rejects reruns and other active
+runs because their mutable status can hide an earlier successful checkpoint
+from filtered API views. A larger history or any rerun requires explicit
+custody reconciliation.
+This check relies on the canonical Actions API response and does not make
+the 30-day artifact retention durable.
 
 The artifact `incoming-discovery-<run-id>-<attempt>` contains `run-input.json`
+and `latest-successful-run-api.json`
 after valid input preparation and, on success, `decisions.json`,
-`decisions.sha256` and `poll/decisions.json`. A failed preparation or poll
+`decisions.sha256` and `poll/decisions.json`. A successful non-genesis run
+also retains `gap/gap.json` and `gap/gap.sha256`, after an offline replay of
+the exact retained compare responses. A non-fast-forward, truncated or
+unverifiable gap fails the workflow and retains `gap/failure.json` when
+available. A failed preparation or poll
 retains `workflow-failure.json`; a poll failure also retains
 `poll/failure.json` when the poller could write one. A checkout or contract-job
 failure can prevent artifact creation entirely. Failed runs are never valid
