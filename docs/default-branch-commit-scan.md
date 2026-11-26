@@ -35,6 +35,14 @@ postscan link receipt and does not authenticate execution or artifact custody.
 The replayed linked discovery run/checkpoint/gap values are the supplied scan
 inputs; they are not a verified private queue origin.
 
+An operator can compare a retained run-bound scan artifact with the local
+reservation and retained intake archives using the read-only
+[reservation claim reconciliation](default-branch-reservation-reconciliation.md).
+That step validates the claim and input identities only. GitHub artifact
+metadata is run-bound rather than job-bound, and the local action, policy and
+operator fields remain unkeyed claims; reconciliation does not write a start,
+completion, scan outcome or coverage state.
+
 `tools/default_branch_corpus_manifest.py` applies frozen v0.6 candidate
 policy to the exact first-parent-to-commit interval. It stages the full
 selected corpus at the commit and retains the other repositories at their
