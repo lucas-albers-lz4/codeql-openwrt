@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 from tools import incoming_poll as p
 from tools.test_default_branch_gap import GapTests  # Included in the hosted discovery contract.
+from tools.test_default_branch_event import DirectCommitIdentityTests  # Read-only direct-commit contract.
 
 A = 'a' * 40
 B = 'b' * 40
