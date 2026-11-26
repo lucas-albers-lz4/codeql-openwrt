@@ -168,6 +168,73 @@ class DefaultBranchBacklogIssuedTests(unittest.TestCase):
             approved_policy or self._approved_policy(),
             attestation or self._attestation(), observed_at)
 
+    def _terminal_evidence(self, kind):
+        if kind == 'complete':
+            return {
+                'schema': 'operator-default-branch-authenticated-final-proof-v1',
+                'proof_status': 'independently_authenticated',
+                'proof_sha256': '8' * 64,
+                'source_truth': 'verified_from_canonical_git_objects',
+                'source_oracle_sha256': 'd' * 64,
+                'final_artifact': {'id': 9991010, 'sha256': '9' * 64, 'size': 5678},
+                'early_artifact': {'id': 9991003, 'sha256': '1' * 64, 'size': 1234},
+                'early_final_equal_frozen_inputs': 9,
+                'claim_origin_replay_status': 'replayed_and_verified',
+                'consumer_status': 'clean_scan',
+                'sarif_result_count': 0,
+                'alert_disposition': 'no_results',
+                'actual_package_installed_bytes_verified': False,
+            }
+        if kind == 'failed_execution':
+            return {
+                'schema': 'operator-default-branch-terminal-observation-v1',
+                'run_api_sha256': 'a' * 64,
+                'jobs_api_sha256': 'b' * 64,
+                'run_status': 'completed', 'run_conclusion': 'failure',
+                'job_status': 'completed', 'job_conclusion': 'failure',
+            }
+        return {
+            'schema': 'operator-default-branch-indeterminate-evidence-v1',
+            'reason': 'missing_artifact', 'evidence_sha256': 'c' * 64,
+        }
+
+    def _terminal_attestation(self, kind='complete', evidence=None):
+        with closing(sqlite3.connect(self.database)) as db:
+            db.row_factory = sqlite3.Row
+            row = db.execute(
+                'SELECT document_json,action_sha256 FROM issued_actions WHERE seq=1'
+            ).fetchone()
+        self.assertIsNotNone(row)
+        start_unsigned, _, _ = issued._load_document(row['document_json'])
+        start = start_unsigned['attestation']
+        return {
+            'schema': issued.TERMINAL_SCHEMA,
+            'kind': kind,
+            'queue_id': start['queue_id'],
+            'reservation_sequence': start['reservation_sequence'],
+            'reservation_sha256': start['reservation_sha256'],
+            'identity': start['identity'],
+            'run_id': start['run_id'],
+            'run_attempt': start['run_attempt'],
+            'job_id': start['job_id'],
+            'workflow': start['workflow'],
+            'job': start['job'],
+            'start_sha256': row['action_sha256'],
+            'evidence': evidence if evidence is not None else
+            self._terminal_evidence(kind),
+        }
+
+    def _issue_terminal(self, attestation=None, observed_at='2026-11-26T12:02:00Z',
+                        *, expected_seq=1, expected_hash=None, key=TEST_KEY):
+        if expected_hash is None:
+            with closing(sqlite3.connect(self.database)) as db:
+                expected_hash = db.execute(
+                    'SELECT action_sha256 FROM issued_actions WHERE seq=1'
+                ).fetchone()[0]
+        return issued.issue_terminal(
+            self.root, expected_seq, expected_hash, key,
+            attestation or self._terminal_attestation(), observed_at)
+
     def test_v2_to_v3_migration_adds_only_new_chain_and_preserves_v1_v2_bytes(self):
         self._migrate_v2()
         before = self._v2_snapshot()
@@ -269,6 +336,212 @@ class DefaultBranchBacklogIssuedTests(unittest.TestCase):
                 db, TEST_KEY)['sha256'], result['issued_sha256'])
         with self.assertRaisesRegex(issued.IssuedActionError, 'MAC mismatch'):
             issued.issued_head(self.root, b'wrong-disposable-key-32-bytes-long')
+
+    def test_start_document_loader_rejects_sequence_two_start_shaped_envelope(self):
+        self._migrate_v3()
+        self._issue()
+        with closing(sqlite3.connect(self.database)) as db:
+            raw = db.execute(
+                'SELECT document_json FROM issued_actions WHERE seq=1').fetchone()[0]
+        forged = json.loads(raw)
+        forged['issued_seq'] = 2
+        forged['previous_issued_sha256'] = 'a' * 64
+        forged['mac'] = 'b' * 64
+        with self.assertRaisesRegex(issued.IssuedActionError,
+                                    'not a sequence-1 start'):
+            issued._load_document(issued.canonical_bytes(forged).decode('utf-8'))
+
+    def _assert_terminal_kind(self, kind):
+        self._migrate_v3()
+        start = self._issue()
+        with closing(sqlite3.connect(self.database)) as db:
+            backlog_before = db.execute(
+                'SELECT repository,ref,ordinal,status FROM commit_backlog '
+                'ORDER BY repository,ref,ordinal').fetchall()
+            reservation_before = db.execute(
+                'SELECT previous_hash,body_json,action_hash FROM reservation_actions'
+            ).fetchall()
+        result = self._issue_terminal(self._terminal_attestation(kind))
+        self.assertEqual(result['status'], 'issued_terminal')
+        self.assertEqual(result['kind'], kind)
+        self.assertEqual(result['issued_seq'], 2)
+        self.assertEqual(result['start_sha256'], start['issued_sha256'])
+        head = issued.issued_head(self.root, TEST_KEY)
+        self.assertEqual((head['seq'], head['action_count']), (2, 2))
+        self.assertTrue(head['hmac_verified'])
+        with closing(sqlite3.connect(self.database)) as db:
+            db.row_factory = sqlite3.Row
+            rows = db.execute(
+                'SELECT seq,previous_sha256,document_json,action_sha256 '
+                'FROM issued_actions ORDER BY seq').fetchall()
+            terminal = json.loads(rows[1]['document_json'])
+            self.assertEqual(rows[1]['seq'], 2)
+            self.assertEqual(rows[1]['previous_sha256'], start['issued_sha256'])
+            self.assertEqual(terminal['issued_seq'], 2)
+            self.assertEqual(terminal['previous_issued_sha256'], start['issued_sha256'])
+            self.assertEqual(terminal['attestation']['kind'], kind)
+            for statement in (
+                    "UPDATE issued_actions SET document_json='{}' WHERE seq=1",
+                    'DELETE FROM issued_actions WHERE seq=1',
+                    "UPDATE issued_actions SET document_json='{}' WHERE seq=2",
+                    'DELETE FROM issued_actions WHERE seq=2'):
+                with self.assertRaises(sqlite3.IntegrityError):
+                    db.execute(statement)
+            self.assertEqual(backlog_before, [tuple(row) for row in db.execute(
+                'SELECT repository,ref,ordinal,status FROM commit_backlog '
+                'ORDER BY repository,ref,ordinal')])
+            self.assertEqual(reservation_before, [tuple(row) for row in db.execute(
+                'SELECT previous_hash,body_json,action_hash FROM reservation_actions')])
+        return result
+
+    def test_complete_terminal_is_bound_append_only_and_does_not_rewrite_backlog(self):
+        self._assert_terminal_kind('complete')
+
+    def test_failed_execution_terminal_is_typed_and_signed(self):
+        self._assert_terminal_kind('failed_execution')
+
+    def test_indeterminate_terminal_is_typed_and_signed(self):
+        self._assert_terminal_kind('indeterminate')
+
+    def test_terminal_rejects_stale_head_wrong_identity_and_duplicate(self):
+        self._migrate_v3()
+        self._issue()
+        before = self._issued_snapshot()
+        wrong_identity = self._terminal_attestation()
+        wrong_identity['identity']['commit_sha'] = 'e' * 40
+        with self.assertRaisesRegex(issued.IssuedActionError,
+                                    'differs from verified start identity'):
+            self._issue_terminal(wrong_identity)
+        for field, value in (('ordinal', 1.0), ('receipt_seq', True)):
+            invalid_type = self._terminal_attestation()
+            invalid_type['identity'][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(
+                    issued.IssuedActionError, 'issued-terminal exact identity'):
+                self._issue_terminal(invalid_type)
+        with self.assertRaisesRegex(issued.IssuedActionError, 'stale issued action head'):
+            self._issue_terminal(expected_seq=0, expected_hash=ZERO_HASH)
+        self.assertEqual(self._issued_snapshot(), before)
+        result = self._issue_terminal()
+        terminal = self._issued_snapshot()
+        self.assertEqual(issued.issued_head(self.root, TEST_KEY)['seq'], 2)
+        with self.assertRaisesRegex(issued.IssuedActionError, 'stale issued action head'):
+            self._issue_terminal()
+        self.assertEqual(self._issued_snapshot(), terminal)
+        self.assertEqual(result['issued_sha256'], terminal[0][0][3])
+
+    def test_complete_terminal_early_artifact_must_match_start_exactly(self):
+        self._migrate_v3()
+        self._issue()
+        before = self._issued_snapshot()
+        for field, value in (('id', 9991004), ('sha256', 'f' * 64), ('size', 1235)):
+            attestation = self._terminal_attestation()
+            attestation['evidence']['early_artifact'][field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(
+                    issued.IssuedActionError,
+                    'complete terminal early artifact differs from issued start'):
+                self._issue_terminal(attestation)
+            self.assertEqual(self._issued_snapshot(), before)
+
+    def test_current_supplied_start_only_proof_cannot_produce_complete_terminal(self):
+        self._migrate_v3()
+        self._issue()
+        before = self._issued_snapshot()
+        current_proof = {
+            'schema': 'operator-default-branch-final-proof-v1',
+            'proof_status': 'verified_against_supplied_start_only',
+            'proof_sha256': '8' * 64,
+            'final_artifact': {'id': 9991010, 'sha256': '9' * 64, 'size': 5678},
+            'early_artifact': {'id': 9991003, 'sha256': '1' * 64, 'size': 1234},
+            'early_final_equal_frozen_inputs': 9,
+            'claim_origin_replay_status': 'claim_reconciled_read_only',
+            'consumer_status': 'clean_scan', 'sarif_result_count': 0,
+            'source_truth': 'open_without_fresh_canonical_git_object_retrieval',
+            'actual_package_installed_bytes_verified': False,
+            'alert_disposition': 'not_evaluated',
+        }
+        with self.assertRaisesRegex(issued.IssuedActionError,
+                                    'invalid complete terminal proof fields'):
+            self._issue_terminal(self._terminal_attestation('complete', current_proof))
+        mismatched_rows = self._terminal_evidence('complete')
+        mismatched_rows['sarif_result_count'] = 1
+        with self.assertRaisesRegex(issued.IssuedActionError,
+                                    'invalid complete terminal proof summary'):
+            self._issue_terminal(self._terminal_attestation('complete', mismatched_rows))
+        self.assertEqual(self._issued_snapshot(), before)
+
+    def test_terminal_accepts_late_terminal_only_after_a_timely_start(self):
+        self._migrate_v3(expires_at='2026-11-26T12:02:00Z')
+        self._issue(observed_at='2026-11-26T12:01:00Z')
+        result = self._issue_terminal(observed_at='2026-11-27T12:00:00Z')
+        self.assertEqual(result['status'], 'issued_terminal')
+        self.assertEqual(issued.issued_head(self.root, TEST_KEY)['seq'], 2)
+
+    def test_late_start_after_reservation_expiry_is_rejected(self):
+        self._migrate_v3(expires_at='2026-11-26T12:00:30Z')
+        with self.assertRaisesRegex(issued.IssuedActionError,
+                                    'after an unexpired reservation'):
+            self._issue(observed_at='2026-11-26T12:01:00Z')
+        self.assertEqual(issued.issued_head(self.root, TEST_KEY)['seq'], 0)
+
+    def test_two_concurrent_same_head_terminals_produce_one_terminal(self):
+        self._migrate_v3()
+        self._issue()
+        attestation = self._terminal_attestation()
+        barrier = threading.Barrier(2)
+
+        def writer():
+            barrier.wait(timeout=5)
+            try:
+                return self._issue_terminal(attestation)
+            except issued.IssuedActionError as exc:
+                return exc
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            outcomes = list(pool.map(lambda _index: writer(), range(2)))
+        self.assertEqual(sum(isinstance(item, dict) for item in outcomes), 1)
+        errors = [item for item in outcomes if isinstance(item, Exception)]
+        self.assertEqual(len(errors), 1)
+        self.assertRegex(str(errors[0]), 'stale issued action head')
+        head = issued.issued_head(self.root, TEST_KEY)
+        self.assertEqual((head['seq'], head['action_count']), (2, 2))
+        self.assertTrue(head['hmac_verified'])
+
+    def test_terminal_tampering_breaks_action_hash(self):
+        self._migrate_v3()
+        self._issue()
+        self._issue_terminal()
+        with closing(sqlite3.connect(self.database)) as db:
+            row = db.execute(
+                'SELECT document_json FROM issued_actions WHERE seq=2').fetchone()
+            altered = row[0].replace('replayed_and_verified', 'forged_and_verified')
+            db.execute('DROP TRIGGER issued_actions_no_update')
+            db.execute('UPDATE issued_actions SET document_json=? WHERE seq=2', (altered,))
+            db.execute("CREATE TRIGGER issued_actions_no_update BEFORE UPDATE ON issued_actions "
+                       "BEGIN SELECT RAISE(ABORT, 'issued actions are append-only'); END")
+            db.commit()
+        with self.assertRaisesRegex(issued.IssuedActionError,
+                                    'issued action envelope or hash mismatch'):
+            issued.issued_head(self.root, TEST_KEY)
+
+    def test_forged_terminal_mac_fails_after_hash_chain_rewrite(self):
+        self._migrate_v3()
+        self._issue()
+        self._issue_terminal()
+        with closing(sqlite3.connect(self.database)) as db:
+            doc = json.loads(db.execute(
+                'SELECT document_json FROM issued_actions WHERE seq=2').fetchone()[0])
+            doc['mac'] = 'f' * 64
+            raw = issued.canonical_bytes(doc).decode('utf-8')
+            forged_hash = issued.digest(raw.encode('utf-8'))
+            db.execute('DROP TRIGGER issued_actions_no_update')
+            db.execute('UPDATE issued_actions SET document_json=?,action_sha256=? WHERE seq=2',
+                       (raw, forged_hash))
+            db.execute('UPDATE issued_head SET hash=? WHERE singleton=1', (forged_hash,))
+            db.execute("CREATE TRIGGER issued_actions_no_update BEFORE UPDATE ON issued_actions "
+                       "BEGIN SELECT RAISE(ABORT, 'issued actions are append-only'); END")
+            db.commit()
+        with self.assertRaisesRegex(issued.IssuedActionError, 'MAC mismatch'):
+            issued.issued_head(self.root, TEST_KEY)
 
     def test_later_intake_preserves_signed_start_chain(self):
         self._migrate_v3()
@@ -395,6 +668,12 @@ class DefaultBranchBacklogIssuedTests(unittest.TestCase):
     def test_issued_test_is_wired_into_discovery_contract_workflow(self):
         workflow = (Path(__file__).resolve().parents[1] /
                     '.github/workflows/incoming-discovery-manual.yml').read_text()
+        self.assertIn('tools.test_default_branch_backlog_issued', workflow)
+
+    def test_issued_test_is_wired_into_default_branch_contract_workflow(self):
+        workflow = (Path(__file__).resolve().parents[1] /
+                    '.github/workflows/default-branch-commit-scan.yml').read_text()
+        self.assertIn('Test offline issued start and terminal actions', workflow)
         self.assertIn('tools.test_default_branch_backlog_issued', workflow)
 
 
