@@ -117,8 +117,10 @@ reservation sequence, and transition SHA-256 through the optional
 `reservation-claim.json` only after re-fetching and validating the PR and
 includes it in the frozen artifact inventory. Supply all three values or
 none; partial or malformed claims fail the job. Invoke the offline linker
-with `--require-claim` for this path. It compares the frozen claim with the
-current local queue record and reports `claim_bound: true` if they match.
+with `--require-claim` for this path. It compares the frozen claim and the
+pre-resolution `dispatch-inputs.json` with the current local queue record,
+and reports `claim_bound: true` if they match. Both files must appear in the
+freeze's exact input inventory.
 This is a same-job *claim*, not authentication of the queue or a signed start.
 The older unclaimed scan remains comparable without that flag and reports
 `claim_bound: false`.

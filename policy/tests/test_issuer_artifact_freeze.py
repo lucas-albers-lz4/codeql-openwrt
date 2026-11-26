@@ -319,6 +319,11 @@ class FreezeEntrypointTests(unittest.TestCase):
         self.assertEqual(result['artifacts']['event']['stage']['file.uc']['sha256'],
                          hashlib.sha256(b'source').hexdigest())
 
+    def test_requires_pre_resolution_dispatch_input(self):
+        (self.inputs / 'dispatch-inputs.json').unlink()
+        with self.assertRaisesRegex(RuntimeError, 'missing or unexpected artifacts'):
+            self.check()
+
     def test_requires_historical_event_triage_outputs(self):
         (self.run / 'out/openvpn-parent/historical-event-triage.json').unlink()
         with self.assertRaisesRegex(RuntimeError, 'missing or unexpected artifacts'):
