@@ -8,6 +8,8 @@ from unittest.mock import patch
 from tools import incoming_poll as p
 from tools.test_default_branch_gap import GapTests  # Included in the hosted discovery contract.
 from tools.test_default_branch_event import DirectCommitIdentityTests  # Read-only direct-commit contract.
+from tools.test_direct_commit_admission import (DirectCommitAdmissionTests,
+                                                FrozenAdmissionArtifactTests)  # Frozen admission input controls.
 
 A = 'a' * 40
 B = 'b' * 40

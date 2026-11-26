@@ -1,0 +1,91 @@
+{
+  "commits": {
+    "absent_parent": "7f6ba9d46028635f0d5aa2e15fcab9ffd163a688",
+    "fixed": "e4ff45ecbc6ad212951815c8c99b2749fbd7de6b",
+    "introduced": "5306e007656fe9a77aee2d2a94072d003b0b5a7d"
+  },
+  "identities": {
+    "absent_parent": {
+      "package_recipe": {
+        "state": "absent"
+      },
+      "shared_recipe": {
+        "bytes": 11405,
+        "git_blob": "27e5302cbad51fa285934a5b69f0a788395869f8",
+        "mode": "100644",
+        "sha256": "503439cffea8d80904d411e703347c785b312838b0d5502f30f2b4358a9b94ed",
+        "state": "tracked_blob"
+      },
+      "ucode_source": {
+        "state": "absent"
+      }
+    },
+    "fixed": {
+      "package_recipe": {
+        "bytes": 310,
+        "git_blob": "cbfade398a81419b7f40bb9646e009faa0a548cb",
+        "mode": "100644",
+        "sha256": "dba202ccf79d16c3e634c31c94c77d6b95eea63eb88c2622a8095105d3575dc9",
+        "state": "tracked_blob"
+      },
+      "shared_recipe": {
+        "bytes": 11568,
+        "git_blob": "76646a3e395aee6baa721103663d099b4f2b57fa",
+        "mode": "100644",
+        "sha256": "b2fd7beaa3a3f17ad1636fab71ca61e6ab89b82ab2c54343c51b19a0dd330422",
+        "state": "tracked_blob"
+      },
+      "ucode_source": {
+        "bytes": 2910,
+        "git_blob": "eb3b418f855d24ae0a34d5d09a289b9342098129",
+        "mode": "100644",
+        "sha256": "6593792678951fd500c2b090d17d9e500a05a642cfb996ee02c1649473152410",
+        "state": "tracked_blob"
+      }
+    },
+    "introduced": {
+      "package_recipe": {
+        "bytes": 310,
+        "git_blob": "cbfade398a81419b7f40bb9646e009faa0a548cb",
+        "mode": "100644",
+        "sha256": "dba202ccf79d16c3e634c31c94c77d6b95eea63eb88c2622a8095105d3575dc9",
+        "state": "tracked_blob"
+      },
+      "shared_recipe": {
+        "bytes": 11405,
+        "git_blob": "27e5302cbad51fa285934a5b69f0a788395869f8",
+        "mode": "100644",
+        "sha256": "503439cffea8d80904d411e703347c785b312838b0d5502f30f2b4358a9b94ed",
+        "state": "tracked_blob"
+      },
+      "ucode_source": {
+        "bytes": 2898,
+        "git_blob": "da389170328212f8f0a3b7bea42be11d42bd0c38",
+        "mode": "100644",
+        "sha256": "051c8162f826683333e11264615806df5ab08415676c0bd098921cb1b05af991",
+        "state": "tracked_blob"
+      }
+    }
+  },
+  "limitations": [
+    "This is source-to-installed projection, not actual built IPK bytes.",
+    "The v0.6 frozen policy has no selected or excluded OpenVPN row; admitting this path needs a new reviewed policy contract.",
+    "No full candidate inventory, CodeQL scan, SARIF, or no-alert control is established by this artifact."
+  ],
+  "paths": {
+    "package_recipe": "protocols/luci-proto-openvpn/Makefile",
+    "shared_recipe": "luci.mk",
+    "ucode_source": "protocols/luci-proto-openvpn/root/usr/share/rpcd/ucode/luci.openvpn.uc"
+  },
+  "proposed_installed_path": "usr/share/rpcd/ucode/luci.openvpn.uc",
+  "proposed_route": {
+    "classification": "plain",
+    "reason": "rpcd_raw_mode_full_path"
+  },
+  "repository": "openwrt/luci",
+  "schema": "openvpn-direct-commit-policy-admission-source-v1",
+  "source_first_basis": [
+    "Introduced package Makefile includes ../../luci.mk and declares LUCI_DEPENDS:=+openvpn.",
+    "Historical luci.mk Build/Prepare copies root contents into PKG_BUILD_DIR/root and package install copies that root into package root."
+  ]
+}
