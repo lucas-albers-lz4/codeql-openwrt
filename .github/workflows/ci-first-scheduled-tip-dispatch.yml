@@ -1,0 +1,148 @@
+name: CI-first scheduled upstream tip dispatch
+
+on:
+  workflow_run:
+    workflows: [Incoming read-only discovery]
+    types: [completed]
+    branches: [main]
+  pull_request:
+    paths:
+      - '.github/workflows/ci-first-scheduled-tip-dispatch.yml'
+      - 'tools/ci_first_tip_dispatch.py'
+      - 'tools/test_ci_first_tip_dispatch.py'
+      - 'docs/ci-first-scheduled-tip-dispatch.md'
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Test bounded scheduled-tip selection
+        run: python3 -B -m unittest tools.test_ci_first_tip_dispatch -v
+
+  dispatch:
+    needs: contract
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.event == 'schedule' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      actions: write
+      contents: read
+    concurrency:
+      group: ci-first-scheduled-tip-dispatch
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Fetch completed discovery and predecessor artifacts
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          CURRENT_RUN: ${{ github.event.workflow_run.id }}
+          CURRENT_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+          CURRENT_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/ci-first-dispatch-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir -m 700 "$root"
+          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
+          printf '%s\n' "$GITHUB_SHA" > "$root/dispatcher-source-sha.txt"
+          [[ "$CURRENT_RUN" =~ ^[1-9][0-9]*$ && "$CURRENT_ATTEMPT" =~ ^[1-9][0-9]*$ ]]
+          [[ "$CURRENT_SHA" =~ ^[0-9a-f]{40}$ ]]
+          gh api "repos/$REPO/actions/runs/$CURRENT_RUN" > "$root/current-run-api.json"
+          jq -e --arg repo "$REPO" --arg run "$CURRENT_RUN" --arg attempt "$CURRENT_ATTEMPT" --arg sha "$CURRENT_SHA" '
+            .id == ($run | tonumber) and .run_attempt == ($attempt | tonumber) and
+            .repository.full_name == $repo and .head_sha == $sha and
+            .path == ".github/workflows/incoming-discovery-manual.yml" and
+            .event == "schedule" and .head_branch == "main" and
+            .status == "completed" and .conclusion == "success"
+          ' "$root/current-run-api.json" > /dev/null
+          mkdir "$root/current" "$root/previous"
+          gh run download "$CURRENT_RUN" -R "$REPO" \
+            -n "incoming-discovery-$CURRENT_RUN-$CURRENT_ATTEMPT" -D "$root/current"
+          python3 -B -c 'import sys; from pathlib import Path; from tools.ci_first_tip_dispatch import read_small; read_small(Path(sys.argv[1]))' "$root/current/run-input.json"
+          previous_run=$(jq -er '.previous_run_id | select(type == "string" and test("^[1-9][0-9]*$"))' "$root/current/run-input.json")
+          previous_attempt=$(jq -er '.previous_run_attempt | select(type == "string" and test("^[1-9][0-9]*$"))' "$root/current/run-input.json")
+          previous_event=$(jq -er '.previous_run_event | select(. == "schedule" or . == "workflow_dispatch")' "$root/current/run-input.json")
+          gh api "repos/$REPO/actions/runs/$previous_run" > "$root/previous-run-api.json"
+          jq -e --arg repo "$REPO" --arg run "$previous_run" --arg attempt "$previous_attempt" --arg event "$previous_event" '
+            .id == ($run | tonumber) and .run_attempt == ($attempt | tonumber) and
+            .repository.full_name == $repo and
+            .path == ".github/workflows/incoming-discovery-manual.yml" and
+            .event == $event and .head_branch == "main" and
+            .status == "completed" and .conclusion == "success"
+          ' "$root/previous-run-api.json" > /dev/null
+          gh run download "$previous_run" -R "$REPO" \
+            -n "incoming-discovery-$previous_run-$previous_attempt" -D "$root/previous"
+          python3 -B -m tools.default_branch_gap --previous "$root/previous/decisions.json" \
+            --current "$root/current/decisions.json" --verify-gap "$root/current/gap/gap.json"
+          python3 -B -m tools.ci_first_tip_dispatch --current "$root/current" \
+            --previous "$root/previous" --run-id "$CURRENT_RUN" \
+            --attempt "$CURRENT_ATTEMPT" --output "$root/dispatch-plan.json"
+      - name: Dispatch released scans for changed upstream tips
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/ci-first-dispatch-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          jq -c '.scans[]' "$root/dispatch-plan.json" > "$root/scan-rows.jsonl"
+          touch "$root/dispatch-attempts.jsonl"
+          while IFS= read -r row; do
+            repository=$(jq -er '.repository' <<< "$row")
+            source_sha=$(jq -er '.source_sha' <<< "$row")
+            control_sha=$(jq -er '.control_sha' <<< "$row")
+            previous_run=$(jq -er '.previous_run_id' <<< "$row")
+            previous_attempt=$(jq -er '.previous_run_attempt' <<< "$row")
+            previous_sha=$(jq -er '.previous_sha256' <<< "$row")
+            current_run=$(jq -er '.current_run_id' <<< "$row")
+            current_attempt=$(jq -er '.current_run_attempt' <<< "$row")
+            current_sha=$(jq -er '.current_sha256' <<< "$row")
+            gap_sha=$(jq -er '.gap_sha256' <<< "$row")
+            jq -cn --argjson input "$row" '{status:"attempting",input:$input}' >> "$root/dispatch-attempts.jsonl"
+            gh workflow run default-branch-commit-scan.yml -R "$REPO" --ref main \
+              -f "previous_run_id=$previous_run" \
+              -f "previous_run_attempt=$previous_attempt" \
+              -f "previous_sha256=$previous_sha" \
+              -f "current_run_id=$current_run" \
+              -f "current_run_attempt=$current_attempt" \
+              -f "current_sha256=$current_sha" \
+              -f "gap_sha256=$gap_sha" \
+              -f "repository=$repository" \
+              -f "source_sha=$source_sha" \
+              -f "control_sha=$control_sha"
+            jq -cn --argjson input "$row" '{status:"accepted_by_dispatch_api",input:$input}' >> "$root/dispatch-attempts.jsonl"
+          done < "$root/scan-rows.jsonl"
+          count=$(jq -r '.scans | length' "$root/dispatch-plan.json")
+          {
+            echo '## Scheduled released Ucode scans'
+            echo "Changed upstream tip dispatch requests accepted: **$count**"
+            echo 'Only the latest observed default-branch tip per changed repository is selected.'
+            echo 'The downstream jobs revalidate source and emit SARIF or an explicit failure artifact.'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain dispatch plan and exact API observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ci-first-tip-dispatch-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/ci-first-dispatch-${{ github.run_id }}-${{ github.run_attempt }}/current-run-api.json
+            ${{ runner.temp }}/ci-first-dispatch-${{ github.run_id }}-${{ github.run_attempt }}/previous-run-api.json
+            ${{ runner.temp }}/ci-first-dispatch-${{ github.run_id }}-${{ github.run_attempt }}/dispatch-plan.json
+            ${{ runner.temp }}/ci-first-dispatch-${{ github.run_id }}-${{ github.run_attempt }}/dispatch-attempts.jsonl
+            ${{ runner.temp }}/ci-first-dispatch-${{ github.run_id }}-${{ github.run_attempt }}/dispatcher-source-sha.txt
+          retention-days: 30
