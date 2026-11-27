@@ -8,17 +8,17 @@ caller-supplied terminal evidence.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
 import hashlib
 import hmac
 import json
 import math
+import os
 import re
 import time
+from datetime import datetime, timezone
 
 from tools import default_branch_backlog_intake as intake
 from tools import default_branch_backlog_reservation as reservation
-
 
 ISSUED_SCHEMA = 'default-branch-issued-action-v1'
 START_SCHEMA = 'default-branch-issued-start-v1'
@@ -62,6 +62,11 @@ COMPLETE_EVIDENCE_KEYS = {
 FAILURE_EVIDENCE_KEYS = {
     'schema', 'run_api_sha256', 'jobs_api_sha256', 'run_status',
     'run_conclusion', 'job_status', 'job_conclusion',
+}
+FAILURE_EVIDENCE_V2_KEYS = FAILURE_EVIDENCE_KEYS | {
+    'first_run_api_sha256', 'first_jobs_api_sha256',
+    'second_run_api_sha256', 'second_jobs_api_sha256',
+    'capture_receipt_sha256', 'reservation_policy_sha256',
 }
 INDETERMINATE_EVIDENCE_KEYS = {
     'schema', 'reason', 'evidence_sha256',
@@ -354,9 +359,20 @@ def _validate_terminal_evidence(kind, evidence):
                 'invalid complete terminal proof summary')
         return
     if kind == 'failed_execution':
-        require(set(evidence) == FAILURE_EVIDENCE_KEYS and
-                evidence.get('schema') ==
-                'operator-default-branch-terminal-observation-v1' and
+        legacy = (set(evidence) == FAILURE_EVIDENCE_KEYS and
+                  evidence.get('schema') ==
+                  'operator-default-branch-terminal-observation-v1')
+        captured = (set(evidence) == FAILURE_EVIDENCE_V2_KEYS and
+                    evidence.get('schema') ==
+                    'operator-default-branch-terminal-observation-v2' and
+                    all(isinstance(evidence.get(name), str) and
+                        SHA256.fullmatch(evidence[name]) is not None
+                        for name in FAILURE_EVIDENCE_V2_KEYS - FAILURE_EVIDENCE_KEYS) and
+                    evidence.get('run_api_sha256') ==
+                    evidence.get('second_run_api_sha256') and
+                    evidence.get('jobs_api_sha256') ==
+                    evidence.get('second_jobs_api_sha256'))
+        require((legacy or captured) and
                 all(isinstance(evidence.get(name), str) and
                     SHA256.fullmatch(evidence[name]) is not None
                     for name in ('run_api_sha256', 'jobs_api_sha256')) and
@@ -367,6 +383,9 @@ def _validate_terminal_evidence(kind, evidence):
                 type(evidence.get('job_conclusion')) is str and
                 evidence['job_conclusion'] in FAILURE_CONCLUSIONS,
                 'invalid failed-execution terminal evidence')
+        if captured:
+            require(evidence['run_conclusion'] == evidence['job_conclusion'],
+                    'captured failure run and scan job conclusions differ')
         return
     require(kind == 'indeterminate' and
             set(evidence) == INDETERMINATE_EVIDENCE_KEYS and
@@ -449,6 +468,23 @@ def _check_monotonic_deadline(deadline):
     require(type(deadline) in (int, float) and math.isfinite(deadline) and
             time.monotonic() <= deadline,
             'live observation deadline expired before issued start CAS')
+
+
+def _check_expected_storage(private_root, expected):
+    if expected is None:
+        return
+    require(type(expected) is tuple and len(expected) == 2 and
+            type(expected[0]) is tuple and len(expected[0]) == 2 and
+            type(expected[1]) is tuple and len(expected[1]) == 5,
+            'invalid expected private storage identity')
+    root = os.stat(private_root, follow_symlinks=False)
+    database = os.stat(os.path.join(private_root, DATABASE_NAME),
+                       follow_symlinks=False)
+    actual = ((root.st_dev, root.st_ino),
+              (database.st_dev, database.st_ino, database.st_size,
+               database.st_mtime_ns, database.st_ctime_ns))
+    require(actual == expected,
+            'private root or database changed before terminal write')
 
 
 def _load_action_document(document_json):
@@ -547,6 +583,12 @@ def _validate_terminal_binding(attestation, observed_at, start_attestation,
         require(attestation['evidence']['early_artifact'] ==
                 start_attestation['early_artifact'],
                 'complete terminal early artifact differs from issued start')
+    if (attestation['kind'] == 'failed_execution' and
+            attestation['evidence']['schema'] ==
+            'operator-default-branch-terminal-observation-v2'):
+        require(attestation['evidence']['reservation_policy_sha256'] ==
+                start_attestation['policy_sha256'],
+                'captured failure reservation policy differs from issued start')
     terminal_time = _canonical_time(observed_at, 'terminal observation time')
     start_time = _canonical_time(start_observed_at, 'issued observation time')
     require(terminal_time >= start_time,
@@ -696,7 +738,8 @@ def issue_start(private_root, expected_seq, expected_sha256, key,
 
 
 def issue_terminal(private_root, expected_seq, expected_sha256, key,
-                   attestation, observed_at):
+                   attestation, observed_at, *, monotonic_deadline=None,
+                   expected_storage_identity=None):
     """Append one typed sequence-2 terminal action after a verified start.
 
     The terminal action is deliberately offline. Its typed evidence is still
@@ -706,10 +749,13 @@ def issue_terminal(private_root, expected_seq, expected_sha256, key,
     _validate_key(key)
     _validate_terminal(attestation)
     _canonical_time(observed_at, 'terminal observation time')
+    _check_expected_storage(private_root, expected_storage_identity)
     conn = _open_existing(private_root)
     try:
         conn.execute('BEGIN IMMEDIATE')
         try:
+            _check_expected_storage(private_root, expected_storage_identity)
+            _check_monotonic_deadline(monotonic_deadline)
             intake._initialize_or_check_schema(conn)
             require(conn.execute('PRAGMA user_version').fetchone()[0] ==
                     intake.ISSUED_SCHEMA_VERSION,
@@ -739,6 +785,7 @@ def issue_terminal(private_root, expected_seq, expected_sha256, key,
                 attestation, observed_at, start_attestation,
                 start_unsigned['observed_at'], expected_sha256, body,
                 reservation_hash)
+            _check_monotonic_deadline(monotonic_deadline)
             document, document_raw, action_hash = _signed_document(
                 attestation, key, observed_at, issued_seq=2,
                 previous_issued_sha256=expected_sha256)
@@ -753,6 +800,7 @@ def issue_terminal(private_root, expected_seq, expected_sha256, key,
             require(final['seq'] == 2 and final['sha256'] == action_hash and
                     final['action_count'] == 2 and final['hmac_verified'],
                     'issued terminal append did not advance exact authenticated head')
+            _check_monotonic_deadline(monotonic_deadline)
             conn.commit()
             return {'status': 'issued_terminal', 'kind': attestation['kind'],
                     'queue_id': head['queue_id'], 'issued_seq': 2,
