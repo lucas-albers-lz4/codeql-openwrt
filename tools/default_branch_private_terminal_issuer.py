@@ -50,8 +50,12 @@ def _storage_identity(root):
 
 
 def _derive_failure(root, key, signed, start_raw, captured, run_id, attempt):
-    """Reopen fixed-path capture bytes; ignore the capture function's summary."""
-    name = f'default-branch-failed-{run_id}-{attempt}'
+    """Reopen the returned invocation's bytes; ignore its outcome summary."""
+    invocation_id = captured.get('invocation_id')
+    _need(type(invocation_id) is str and
+          failure.INVOCATION_ID.fullmatch(invocation_id) is not None,
+          'failure capture returned an invalid invocation ID')
+    name = f'default-branch-failed-{run_id}-{attempt}-{invocation_id}'
     with custody._directory(None, root) as root_fd:
         start = custody._start_evidence(
             root_fd, start_raw, run_id, attempt,
@@ -60,8 +64,23 @@ def _derive_failure(root, key, signed, start_raw, captured, run_id, attempt):
         )
         with (custody._directory(root_fd, failure.CAPTURE_DIR) as parent,
               custody._directory(parent, name) as directory):
-            _need(set(os.listdir(directory)) == set(RAW_NAMES) | {'receipt.json'},
+            _need(set(os.listdir(directory)) == set(RAW_NAMES) | {'manifest.json', 'receipt.json'},
                   'failure capture directory inventory differs')
+            manifest_raw = custody._read(directory, 'manifest.json',
+                                         custody.MAX_RECEIPT)
+            expected_manifest = {
+                      'schema': failure.MANIFEST_SCHEMA,
+                      'invocation_id': invocation_id,
+                      'queue_id': signed['queue_id'],
+                      'reservation_sha256': signed['reservation_sha256'],
+                      'start_sha256': signed['start_sha256'],
+                      'observation_sha256': signed['observation_sha256'],
+                      'run_id': run_id,
+                      'attempt': attempt,
+                      'job_id': signed['job_id'],
+                  }
+            _need(manifest_raw == issued.canonical_bytes(expected_manifest),
+                  'failure invocation manifest differs from authenticated start')
             receipt_raw = custody._read(directory, 'receipt.json',
                                         custody.MAX_RECEIPT)
             _need(issued.digest(receipt_raw) == captured.get('receipt_sha256') and
@@ -72,6 +91,9 @@ def _derive_failure(root, key, signed, start_raw, captured, run_id, attempt):
             _need(issued.canonical_bytes(receipt) == receipt_raw and
                   receipt.get('schema') == failure.SCHEMA and
                   receipt.get('status') == 'verified_failed_execution_bytes' and
+                  receipt.get('invocation_id') == invocation_id and
+                  receipt.get('manifest_sha256') == issued.digest(manifest_raw) ==
+                  captured.get('manifest_sha256') and
                   receipt.get('verification_scope') ==
                   'read_only_authenticated_start_and_two_canonical_failure_observations' and
                   receipt.get('terminal_action_issued') is False and
@@ -102,7 +124,7 @@ def _derive_failure(root, key, signed, start_raw, captured, run_id, attempt):
                     bodies[role] = reconcile.parse_json(raw, filename)
                     bodies[role + '_sha256'] = issued.digest(raw)
                 snapshots.append(bodies)
-            _need(set(os.listdir(directory)) == set(RAW_NAMES) | {'receipt.json'},
+            _need(set(os.listdir(directory)) == set(RAW_NAMES) | {'manifest.json', 'receipt.json'},
                   'failure capture directory changed during read')
             observed = [custody._time(value, 'failure capture observation')
                         for value in receipt['observed_at']]
@@ -187,7 +209,8 @@ def issue_failed_execution(root: Path, key: bytes, run_id: int,
         head = issued.issued_head(root, key)
         _need(head['seq'] == 2 and head['sha256'] == result['issued_sha256'] and
               head['hmac_verified'], 'committed terminal head differs after CAS')
-        return {**result, 'capture_receipt_sha256': issued.digest(receipt_raw)}
+        return {**result, 'capture_receipt_sha256': issued.digest(receipt_raw),
+                'capture_invocation_id': captured['invocation_id']}
     except PrivateTerminalIssuerError:
         raise
     except (OSError, ValueError, TypeError, KeyError, AttributeError,

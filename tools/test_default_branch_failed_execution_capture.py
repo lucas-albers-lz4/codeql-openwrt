@@ -73,6 +73,10 @@ class FailedExecutionCaptureTests(TestCase):
         ):
             return failure.capture_failed_execution(self.root, fixtures.TEST_KEY, 9, 1)
 
+    def capture_dirs(self):
+        parent = self.root / failure.CAPTURE_DIR
+        return sorted(parent.iterdir()) if parent.exists() else []
+
     def test_signed_failure_without_artifact_and_exact_custody(self):
         before = self.fixture.db.read_bytes()
         with patch.object(issued, "issue_terminal", side_effect=AssertionError("CAS")):
@@ -86,6 +90,7 @@ class FailedExecutionCaptureTests(TestCase):
         self.assertEqual(
             {path.name for path in directory.iterdir()},
             {
+                "manifest.json",
                 "first-run-api.json",
                 "first-jobs-api.json",
                 "second-run-api.json",
@@ -97,6 +102,24 @@ class FailedExecutionCaptureTests(TestCase):
             issued.digest((directory / "receipt.json").read_bytes()),
             result["receipt_sha256"],
         )
+        manifest_raw = (directory / "manifest.json").read_bytes()
+        receipt = json.loads((directory / "receipt.json").read_bytes())
+        self.assertEqual(receipt["invocation_id"], result["invocation_id"])
+        self.assertEqual(receipt["manifest_sha256"], issued.digest(manifest_raw))
+        self.assertEqual(json.loads(manifest_raw)["invocation_id"], result["invocation_id"])
+        self.assertEqual(json.loads(manifest_raw)["reservation_sha256"],
+                         authenticated.verify_authenticated_start(self.root, fixtures.TEST_KEY)["reservation_sha256"])
+
+    def test_same_execution_new_invocation_and_collision_rejected(self):
+        first = self.capture()
+        second = self.capture()
+        self.assertNotEqual(first["invocation_id"], second["invocation_id"])
+        self.assertNotEqual(first["capture_path"], second["capture_path"])
+        self.assertEqual(len(self.capture_dirs()), 2)
+        with patch.object(failure.secrets, "token_hex", return_value=first["invocation_id"]), self.assertRaises(failure.FailedExecutionError):
+            self.capture()
+        self.assertEqual(self.urls, [])
+        self.assertEqual(len(self.capture_dirs()), 2)
 
     def test_active_success_and_inconsistent_failure_matrix(self):
         for run_status, run_conclusion, job_conclusion in (
@@ -199,20 +222,15 @@ class FailedExecutionCaptureTests(TestCase):
         def changed_mode(parent, name, **kwargs):
             with original(parent, name, **kwargs) as descriptor:
                 yield descriptor
-                if name == "default-branch-failed-9-1":
+                if isinstance(name, str) and name.startswith("default-branch-failed-9-1-"):
                     os.fchmod(descriptor, 0o755)
 
         with patch.object(custody, "_directory", changed_mode), self.assertRaises(
             failure.FailedExecutionError
         ):
             self.capture()
-        self.assertFalse(
-            (
-                self.root
-                / failure.CAPTURE_DIR
-                / "default-branch-failed-9-1/receipt.json"
-            ).exists()
-        )
+        self.assertEqual(len(self.capture_dirs()), 1)
+        self.assertFalse((self.capture_dirs()[0] / "receipt.json").exists())
 
     def test_extra_entry_and_published_readback_failure(self):
         original_write = custody._write
@@ -230,7 +248,7 @@ class FailedExecutionCaptureTests(TestCase):
             failure.FailedExecutionError
         ):
             self.capture()
-        directory = self.root / failure.CAPTURE_DIR / "default-branch-failed-9-1"
+        directory = self.capture_dirs()[0]
         self.assertFalse((directory / "receipt.json").exists())
         shutil.rmtree(self.root / failure.CAPTURE_DIR)
 
@@ -255,7 +273,8 @@ class FailedExecutionCaptureTests(TestCase):
         ):
             self.capture()
         self.assertTrue(published)
-        self.assertFalse((directory / "receipt.json").exists())
+        self.assertEqual(len(self.capture_dirs()), 1)
+        self.assertFalse((self.capture_dirs()[0] / "receipt.json").exists())
 
     def test_transport_redirect_and_partial_custody(self):
         def interrupted():
@@ -280,12 +299,12 @@ class FailedExecutionCaptureTests(TestCase):
             private, "_root_is_durable", return_value=self.root
         ), self.assertRaises(failure.FailedExecutionError):
             failure.capture_failed_execution(self.root, fixtures.TEST_KEY, 9, 1)
-        directory = self.root / failure.CAPTURE_DIR / "default-branch-failed-9-1"
+        directory = self.capture_dirs()[0]
         self.assertEqual(
-            {path.name for path in directory.iterdir()}, {"first-run-api.json"}
+            {path.name for path in directory.iterdir()}, {"manifest.json", "first-run-api.json"}
         )
-        with self.assertRaises(failure.FailedExecutionError):
-            self.capture()
+        retried = self.capture()
+        self.assertNotEqual(directory, self.root / retried["capture_path"])
 
         with patch.object(
             custody,

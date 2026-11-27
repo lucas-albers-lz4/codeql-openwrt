@@ -41,6 +41,7 @@ class PrivateTerminalIssuerTests(TestCase):
         result = self._issue()
         self.assertEqual(result['kind'], 'failed_execution')
         self.assertEqual(result['issued_seq'], 2)
+        self.assertRegex(result['capture_invocation_id'], r'^[0-9a-f]{32}$')
         self.assertEqual(issued.issued_head(
             self.fixture.root, start_fixture.TEST_KEY)['sha256'],
             result['issued_sha256'])
@@ -56,7 +57,7 @@ class PrivateTerminalIssuerTests(TestCase):
                          'operator-default-branch-terminal-observation-v2')
         self.assertEqual(evidence['capture_receipt_sha256'],
                          result['capture_receipt_sha256'])
-        directory = self.fixture.root / failure.CAPTURE_DIR / 'default-branch-failed-9-1'
+        directory = next((self.fixture.root / failure.CAPTURE_DIR).iterdir())
         for prefix in ('first', 'second'):
             for role in ('run', 'jobs'):
                 name = f'{prefix}-{role}-api.json'
@@ -115,6 +116,48 @@ class PrivateTerminalIssuerTests(TestCase):
             self._issue()
         self.assertEqual(issued.issued_head(
             self.fixture.root, start_fixture.TEST_KEY)['seq'], 1)
+
+    def test_existing_capture_invocation_substitution_cannot_sign(self):
+        prior = self.fixture.capture()
+        original = failure.capture_failed_execution
+
+        def substituted(*args):
+            result = original(*args)
+            return {**result, 'invocation_id': prior['invocation_id'],
+                    'capture_path': prior['capture_path']}
+
+        with (patch.object(failure, 'capture_failed_execution', side_effect=substituted),
+              self.assertRaises(issuer.PrivateTerminalIssuerError)):
+            self._issue()
+        self.assertEqual(issued.issued_head(
+            self.fixture.root, start_fixture.TEST_KEY)['seq'], 1)
+
+    def test_self_consistent_manifest_substitution_cannot_sign(self):
+        original = failure.capture_failed_execution
+
+        for field, value in (('attempt', True), ('reservation_sha256', 'f' * 64)):
+            with self.subTest(field=field):
+                def replaced(*args, field=field, value=value):
+                    result = original(*args)
+                    directory = self.fixture.root / result['capture_path']
+                    manifest_path = directory / 'manifest.json'
+                    manifest = json.loads(manifest_path.read_bytes())
+                    manifest[field] = value
+                    manifest_raw = issued.canonical_bytes(manifest)
+                    manifest_path.write_bytes(manifest_raw)
+                    receipt_path = directory / 'receipt.json'
+                    receipt = json.loads(receipt_path.read_bytes())
+                    receipt['manifest_sha256'] = issued.digest(manifest_raw)
+                    receipt_raw = issued.canonical_bytes(receipt)
+                    receipt_path.write_bytes(receipt_raw)
+                    return {**result, 'manifest_sha256': issued.digest(manifest_raw),
+                            'receipt_sha256': issued.digest(receipt_raw)}
+
+                with (patch.object(failure, 'capture_failed_execution', side_effect=replaced),
+                      self.assertRaises(issuer.PrivateTerminalIssuerError)):
+                    self._issue()
+                self.assertEqual(issued.issued_head(
+                    self.fixture.root, start_fixture.TEST_KEY)['seq'], 1)
 
     def test_expired_transaction_deadline_rolls_back(self):
         original = issued.issue_terminal
