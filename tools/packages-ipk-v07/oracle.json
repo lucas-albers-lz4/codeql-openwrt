@@ -1,0 +1,192 @@
+{
+  "schema": "packages-feed-ipk-v07-oracle-v1",
+  "scope": "seven selected packages-feed source members in two package IPKs",
+  "sources": {
+    "openwrt": {
+      "commit": "4e9642517b48bae612ff10fb72fb9199e559500e",
+      "tree": "328d4df01c038d365176b72753b778e10c3ff413"
+    },
+    "packages": {
+      "commit": "07e0d16305d2b5903b37ad7913e33e18795f81a4",
+      "tree": "a6b0fc0935cbfeedb810e6e991b6940f71548ea7"
+    }
+  },
+  "build_config": {
+    "required": {
+      "CONFIG_TARGET_x86": "y",
+      "CONFIG_TARGET_x86_64": "y",
+      "CONFIG_PACKAGE_adblock-fast": "m",
+      "CONFIG_PACKAGE_uvol": "m"
+    },
+    "disabled": [
+      "CONFIG_PACKAGE_autopart",
+      "CONFIG_USE_APK"
+    ]
+  },
+  "packages": {
+    "adblock-fast": {
+      "version": "1.2.4-r4",
+      "architecture": "all",
+      "recipe": "net/adblock-fast/Makefile",
+      "empty_build_hooks": [
+        "Configure",
+        "Compile"
+      ],
+      "prepare_behavior": "default prepare with no PKG_SOURCE assignment",
+      "declared_runtime_dependencies": [
+        "curl",
+        "resolveip",
+        "ucode",
+        "ucode-mod-fs",
+        "ucode-mod-uci",
+        "ucode-mod-ubus",
+        "ucode-mod-uloop",
+        "gawk (conditional on BUSYBOX_DEFAULT_AWK)",
+        "grep (conditional on BUSYBOX_DEFAULT_GREP)",
+        "sed (conditional on BUSYBOX_DEFAULT_SED)",
+        "coreutils-sort (conditional on BUSYBOX_DEFAULT_SORT)"
+      ],
+      "ucode_members": [
+        {
+          "source_path": "net/adblock-fast/files/lib/adblock-fast/adblock-fast.uc",
+          "git_blob": "55cfd30bfb0849701ebae44705df23a29ed17f91",
+          "source_sha256": "19727b189472f380b9791b1fc37c4acdec60eea06650f7d845fea8fafbd49315",
+          "source_mode": "100644",
+          "member_path": "lib/adblock-fast/adblock-fast.uc",
+          "recipe_source_operand": "./files/lib/adblock-fast/adblock-fast.uc",
+          "install_destination_kind": "file",
+          "expected_sha256": "8bd395045ed87d7fe55db7760c623dcad51fc7c16052e83c3861da4f5d604c28",
+          "stage_mode": "0644",
+          "member_mode": "0644",
+          "transform": {
+            "kind": "replace-once",
+            "before": "\tversion: 'dev-test',",
+            "after": "\tversion: '1.2.4-r4',"
+          }
+        },
+        {
+          "source_path": "net/adblock-fast/files/lib/adblock-fast/cli.uc",
+          "git_blob": "6c6314531521cd25fc512aecfd0526b1d08eef75",
+          "source_sha256": "97d650438ffb335bdb575122225beb4057e551f5e1fc23cc53ad79f61198f7c9",
+          "source_mode": "100644",
+          "member_path": "lib/adblock-fast/cli.uc",
+          "recipe_source_operand": "./files/lib/adblock-fast/cli.uc",
+          "install_destination_kind": "file",
+          "expected_sha256": "97d650438ffb335bdb575122225beb4057e551f5e1fc23cc53ad79f61198f7c9",
+          "stage_mode": "0644",
+          "member_mode": "0644",
+          "transform": null
+        }
+      ],
+      "negative_controls": [
+        {
+          "source_path": "net/adblock-fast/tests/lib/mocklib.uc",
+          "git_blob": "fd2bbf0da058267681b58d01e021d3e22e6128cb",
+          "source_sha256": "175d8a671c7117943342968a7b2a2ca2de1f512f830a15508d219dbbaf7b9418",
+          "source_mode": "100644",
+          "forbidden_member_suffix": "tests/lib/mocklib.uc"
+        },
+        {
+          "source_path": "net/adblock-fast/tests/lib/mocklib/ubus.uc",
+          "git_blob": "ee6d48788457f6e909151bc2e78271a57917ee57",
+          "source_sha256": "7b2863e84460ab056322d60662cc2f6e978f82cc544a16a50fd308564331f551",
+          "source_mode": "100644",
+          "forbidden_member_suffix": "tests/lib/mocklib/ubus.uc"
+        },
+        {
+          "source_path": "net/adblock-fast/tests/lib/mocklib/uci.uc",
+          "git_blob": "155cbef89d5dd00e79b2c06e0a162c4aa8006d75",
+          "source_sha256": "dd8f41b03feff8f2183470f554fa13a0a813dc3a8832da000ca5e014b7c308f7",
+          "source_mode": "100644",
+          "forbidden_member_suffix": "tests/lib/mocklib/uci.uc"
+        }
+      ]
+    },
+    "uvol": {
+      "version": "1.0-r1",
+      "architecture": "all",
+      "recipe": "utils/uvol/Makefile",
+      "empty_build_hooks": [
+        "Prepare",
+        "Configure",
+        "Compile"
+      ],
+      "prepare_behavior": "explicit empty Build/Prepare hook",
+      "declared_runtime_dependencies": [
+        "blockd",
+        "ucode",
+        "ucode-mod-fs",
+        "ucode-mod-math",
+        "ucode-mod-uci"
+      ],
+      "ucode_members": [
+        {
+          "source_path": "utils/uvol/files/blockdev_common.uc",
+          "git_blob": "f76508657feacc021f95d516d2bc134493f638f6",
+          "source_sha256": "a2f9a68f7ba15355534abde0e7f6e5fb0c3b87e6abede9a1fca8a71da030da2e",
+          "source_mode": "100644",
+          "member_path": "usr/lib/uvol/blockdev_common.uc",
+          "recipe_source_operand": "./files/blockdev_common.uc",
+          "install_destination_kind": "directory",
+          "expected_sha256": "a2f9a68f7ba15355534abde0e7f6e5fb0c3b87e6abede9a1fca8a71da030da2e",
+          "stage_mode": "0644",
+          "member_mode": "0644",
+          "transform": null
+        },
+        {
+          "source_path": "utils/uvol/files/uci.uc",
+          "git_blob": "be3bae13639b5632d62d9d4dc3e2ca0353c37fb7",
+          "source_sha256": "10553087392f0785e070c27e5fad5c477b087dcd362ea4b22876412125c749e1",
+          "source_mode": "100644",
+          "member_path": "usr/lib/uvol/uci.uc",
+          "recipe_source_operand": "./files/uci.uc",
+          "install_destination_kind": "directory",
+          "expected_sha256": "10553087392f0785e070c27e5fad5c477b087dcd362ea4b22876412125c749e1",
+          "stage_mode": "0644",
+          "member_mode": "0644",
+          "transform": null
+        },
+        {
+          "source_path": "utils/uvol/files/lvm.uc",
+          "git_blob": "c93a50e8e60ad046c9fec91c3b1f19c60a9e7bdb",
+          "source_sha256": "13508790b0f326b68a9f19749a84799aa281dce95375ece12f2d1f6ea58d275f",
+          "source_mode": "100644",
+          "member_path": "usr/lib/uvol/backends/lvm.uc",
+          "recipe_source_operand": "./files/lvm.uc",
+          "install_destination_kind": "directory",
+          "expected_sha256": "13508790b0f326b68a9f19749a84799aa281dce95375ece12f2d1f6ea58d275f",
+          "stage_mode": "0644",
+          "member_mode": "0644",
+          "transform": null
+        },
+        {
+          "source_path": "utils/uvol/files/ubi.uc",
+          "git_blob": "8b46112c75383c332f2578e64ef2055432c19483",
+          "source_sha256": "5cba856ce13aad3c140b3169fa89a4affe8b2a2bcae38931f32dfb8edeb27f14",
+          "source_mode": "100644",
+          "member_path": "usr/lib/uvol/backends/ubi.uc",
+          "recipe_source_operand": "./files/ubi.uc",
+          "install_destination_kind": "directory",
+          "expected_sha256": "5cba856ce13aad3c140b3169fa89a4affe8b2a2bcae38931f32dfb8edeb27f14",
+          "stage_mode": "0644",
+          "member_mode": "0644",
+          "transform": null
+        },
+        {
+          "source_path": "utils/uvol/files/uvol",
+          "git_blob": "2e2ea2928bec244bb42dce8332af52e06f70d932",
+          "source_sha256": "97dda9ef432ae84e4f8efb5d3903fad484fcf69ab043b77dd97ae059bb775498",
+          "source_mode": "100644",
+          "member_path": "usr/sbin/uvol",
+          "recipe_source_operand": "./files/uvol",
+          "install_destination_kind": "directory",
+          "expected_sha256": "97dda9ef432ae84e4f8efb5d3903fad484fcf69ab043b77dd97ae059bb775498",
+          "stage_mode": "0755",
+          "member_mode": "0755",
+          "transform": null
+        }
+      ],
+      "negative_controls": []
+    }
+  }
+}
