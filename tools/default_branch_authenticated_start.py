@@ -6,9 +6,9 @@ remote data, issues an action, or assigns a terminal scan outcome.
 from __future__ import annotations
 
 import os
-from pathlib import Path
 import sqlite3
 import stat
+from pathlib import Path
 from typing import TypedDict
 
 from tools import default_branch_backlog_intake as intake
@@ -18,9 +18,9 @@ from tools import default_branch_live_observation as live
 from tools import default_branch_private_final_capture as capture
 from tools import default_branch_reservation_reconcile as reconcile
 
-
 SCHEMA = 'operator-default-branch-authenticated-start-preflight-v1'
 SCOPE = 'authenticated_sequence_one_start_and_retained_observation_only'
+HEAD_SNAPSHOT_SCHEMA = 'operator-default-branch-authenticated-head-snapshot-v1'
 MAX_START = 1024 * 1024
 MAX_DATABASE = 256 * 1024 * 1024
 
@@ -118,6 +118,82 @@ def _open_read_only(root_fd):
     except BaseException:
         conn.close()
         raise
+
+
+def read_authenticated_head_snapshot(private_root: Path, key: bytes) -> dict:
+    """Bind issued head, signed start and reservation from one read-only DB image.
+
+    This verifies local HMACs but cannot detect a restored older valid image.
+    An external witness supplies that independent rollback comparison.
+    """
+    try:
+        issued._validate_key(key)
+        root = intake.private_root(Path(private_root))
+        root_before = os.stat(root, follow_symlinks=False)
+        root_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            opened = os.fstat(root_fd)
+            _need(stat.S_ISDIR(opened.st_mode) and
+                  opened.st_uid == os.geteuid() and
+                  stat.S_IMODE(opened.st_mode) == 0o700 and
+                  (opened.st_dev, opened.st_ino) ==
+                  (root_before.st_dev, root_before.st_ino),
+                  'private root changed before database read')
+            conn, database_before = _open_read_only(root_fd)
+            try:
+                issued._check_v3_schema(conn)
+                intake._verify_receipt_chain(conn)
+                head = issued.verify_issued_chain(conn, key)
+                _need(head['hmac_verified'] and head['seq'] in (1, 2) and
+                      head['action_count'] == head['seq'],
+                      'issued head is not an authenticated start or terminal')
+                rows = conn.execute(
+                    'SELECT document_json,action_sha256 FROM issued_actions '
+                    'WHERE seq=1').fetchall()
+                _need(len(rows) == 1, 'authenticated start row is missing')
+                start, _, start_raw = issued._load_document(rows[0]['document_json'])
+                start_sha = issued.digest(start_raw)
+                _need(0 < len(start_raw) <= MAX_START and
+                      start_sha == rows[0]['action_sha256'],
+                      'authenticated start digest differs')
+                chain, body, reservation_sha = issued._load_reservation(conn)
+                _need(chain['queue_id'] == head['queue_id'] and
+                      body['status'] == 'reserved_only' and
+                      start['attestation']['reservation_sha256'] == reservation_sha,
+                      'signed start reservation differs')
+                issued._validate_start_binding(
+                    start['attestation'], start['observed_at'], body,
+                    reservation_sha)
+                after = os.stat(root, follow_symlinks=False)
+                current = os.fstat(root_fd)
+                _need(stat.S_ISDIR(after.st_mode) and
+                      after.st_uid == current.st_uid == os.geteuid() and
+                      stat.S_IMODE(after.st_mode) ==
+                      stat.S_IMODE(current.st_mode) == 0o700 and
+                      (after.st_dev, after.st_ino) ==
+                      (current.st_dev, current.st_ino) ==
+                      (root_before.st_dev, root_before.st_ino) and
+                      _db_fingerprint(os.stat(issued.DATABASE_NAME,
+                          dir_fd=root_fd, follow_symlinks=False)) ==
+                      database_before,
+                      'private root or database changed during head snapshot')
+                _sidecars_absent(root_fd)
+                return {
+                    'schema': HEAD_SNAPSHOT_SCHEMA,
+                    'queue_id': head['queue_id'], 'seq': head['seq'],
+                    'sha256': head['sha256'],
+                    'action_count': head['action_count'],
+                    'hmac_verified': True,
+                    'start_sha256': start_sha,
+                    'reservation_sha256': reservation_sha,
+                }
+            finally:
+                conn.close()
+        finally:
+            os.close(root_fd)
+    except (OSError, ValueError, TypeError, KeyError, AttributeError,
+            RecursionError, OverflowError, sqlite3.Error) as exc:
+        raise AuthenticatedStartError('authenticated head snapshot failed') from exc
 
 
 def verify_authenticated_start(private_root: Path, key: bytes) -> AuthenticatedStartReceipt:
