@@ -126,3 +126,61 @@ The observed consumer disposition remains `not_evaluated`.
 This control is not an authenticated start or completion, a source-truth
 replay, a BQRS check, an installed-package byte result, or a finding
 disposition. It does not close the later private terminal issuer gate.
+
+## Full v3 retained-artifact fixture
+
+On the merged PR #265 base `d3bd691f120050404cc3bb1c6ee4585c747c4a53`
+(tree `2415a5550dd5ef462096e0ecd4050d8dd58be03b`), the opt-in
+`RetainedRunV3FullProofTests` test exercises the public
+`verify_final_proof(..., require_issued_start_head=True)` call over the
+retained early and final ZIP bytes, the actual in-progress and completed API
+bodies, and a copy of the captured v2 reservation/archive store. The source
+oracle is loaded and pinned before inspecting ZIP members:
+`rederived-manifest-at-674.json`, SHA-256
+`b920839d1bd1e19f14b99491fbdc22f0b240e3a4841b46a01edb22f2a6adf506`.
+
+The early artifact is ID `15144223386`, 14,611,319 bytes, SHA-256
+`179b74ab48757cc1c0966e3b5e313546f072085b3f52677046115007d08f5ea4`.
+The final artifact is ID `15144917516`, 14,906,724 bytes, SHA-256
+`44ef942823a2a460c9b20dd57730965ca8ae124c5da8407ced4fdebfd195bc1e`.
+The six supplied API bodies matched their retained receipt hashes. The exact
+result was `verified_against_supplied_start_only`, with nine frozen members
+equal, all 128 selected identities and 13 excluded identities matching the
+pre-output oracle, routing 93 plain and 35 markup-inconclusive files, 0
+extraction errors, `clean_scan`, and empty SARIF and consumer result tuples.
+The verifier checked 48 R3 command rows and 165 corpus command rows. Both
+`start_binding.mac_verified` and
+`claim_origin_replay.database.start_mac_verified` were false.
+
+The test copied the captured v2 queue and nine archive files into a new local
+work directory, migrated only that copy to v3, then created a sequence-one
+start with a test-only key. Its synthetic `observed_at` of
+`2026-11-26T18:22:00Z` falls after early artifact upload and before scan-job
+completion. The recheck digests reuse the same supplied early observation;
+they are synthetic and do not model an independent API recheck. The original
+queue, archives, API bodies and ZIP files were rehashed after the run and
+remained byte-identical. The raw public return and expected control failure
+reasons are retained as `public-proof.json` and `controls.json` under ignored
+`work/default-branch-v3-final-proof-*/` in the disposable checkout. The ledger
+retains a small normalized receipt with artifact, API, start, database,
+control and public-return digests; it does not copy the large raw artifacts
+into versioned evidence.
+
+The fixture rejected five controls with specific causes: changed start bytes,
+stale issued head, changed final `identity.json`, wrong scan job ID, and wrong
+attempt. Run it only when the retained inputs are available and explicitly
+set:
+
+```sh
+CODEQL_OPENWRT_RETAINED_RUN_ROOT=/path/to/ledger/work/default-branch-early-live-retry-20261126 \
+CODEQL_OPENWRT_SOURCE_ORACLE=/path/to/ledger/work/source-truth-preflight-45875169837-pr254-20261126/rederived-manifest-at-674.json \
+python3 -B -m unittest \
+  tools.test_default_branch_final_proof.RetainedRunV3FullProofTests.test_full_public_v3_proof_and_discriminating_controls -v
+```
+
+The fixture is skipped when the retained-run variable is absent and fails if
+the configured input bundle is incomplete. Its successful clean result is a
+bounded retained-run replay, not a source-derived negative security result.
+The run had no real signed start; source provenance, BQRS-to-decoded-row
+provenance, installed package bytes, authenticated completion and alert
+disposition remain open.
