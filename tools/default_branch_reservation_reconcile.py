@@ -244,10 +244,12 @@ def _check_database_unchanged(conn, database, before):
 
 
 def _load_local_action(conn, root, requested_queue_id, requested_sequence,
-                       requested_hash, *, require_v3=False):
+                       requested_hash, *, require_v3=False,
+                       supplied_start_sha256=None):
     try:
         intake._initialize_or_check_schema(conn)
-        expected_version = (intake.ISSUED_SCHEMA_VERSION if require_v3 else
+        expected_version = (intake.ISSUED_SCHEMA_VERSION if
+                            (require_v3 or supplied_start_sha256 is not None) else
                             intake.RESERVATION_SCHEMA_VERSION)
         require(conn.execute('PRAGMA application_id').fetchone()[0] == intake.APP_ID and
                 conn.execute('PRAGMA user_version').fetchone()[0] == expected_version,
@@ -261,6 +263,19 @@ def _load_local_action(conn, root, requested_queue_id, requested_sequence,
                     issued_head['sha256'] == issued.ZERO_HASH and
                     issued_head['action_count'] == 0,
                     'live observation requires an empty v3 issued head')
+        if supplied_start_sha256 is not None:
+            require(not require_v3 and isinstance(supplied_start_sha256, str) and
+                    SHA256.fullmatch(supplied_start_sha256) is not None,
+                    'supplied start digest is invalid')
+            # Structural binding only: a key-owning issuer must separately
+            # verify the sequence-one HMAC before trusting this result.
+            issued_head = issued.verify_issued_chain(conn)
+            require(issued_head['seq'] == issued_head['action_count'] == 1 and
+                    issued_head['sha256'] == supplied_start_sha256 and
+                    issued_head['queue_id'] == requested_queue_id,
+                    'supplied start differs from exact v3 issued head')
+    except ReconcileError:
+        raise
     except (intake.IntakeError, reservation.ReservationError, sqlite3.Error,
             ValueError, TypeError, KeyError, AttributeError, OverflowError,
             RecursionError) as exc:
@@ -592,8 +607,12 @@ def _verify_scan_claim(members, canonical_run, action, receipt_body,
 
 
 def reconcile_bytes(private_root, run_raw, jobs_raw, artifacts_raw, zip_raw,
-                    run_id, attempt, work_parent):
-    """Validate supplied canonical API observations and scan ZIP against one local action."""
+                    run_id, attempt, work_parent, *, start_raw=None):
+    """Replay supplied API/ZIP bytes against v2 or one supplied v3 start.
+
+    The v3 path checks canonical start bytes and the unkeyed issued head.
+    A private issuer must authenticate the start MAC separately.
+    """
     root = _private_root(private_root)
     require(type(run_id) is int and run_id > 0 and type(attempt) is int and attempt > 0,
             'run ID and attempt must be positive integers')
@@ -630,11 +649,31 @@ def reconcile_bytes(private_root, run_raw, jobs_raw, artifacts_raw, zip_raw,
             isinstance(asserted.get('reservation_sha256'), str) and
             SHA256.fullmatch(asserted['reservation_sha256']) is not None,
             'reservation claim triplet is incomplete or absent')
+    start_sha256 = None
+    if start_raw is not None:
+        require(type(start_raw) is bytes and 0 < len(start_raw) <= 1024 * 1024,
+                'supplied start bytes are empty or unbounded')
+        try:
+            start, _, canonical = issued._load_document(start_raw.decode('utf-8'))
+            issued._validate_start(start['attestation'])
+        except (issued.IssuedActionError, UnicodeError, TypeError, KeyError,
+                AttributeError, RecursionError) as exc:
+            raise ReconcileError('supplied start document is invalid') from exc
+        start_att = start['attestation']
+        require(canonical == start_raw and
+                start_att['queue_id'] == asserted['queue_id'] and
+                start_att['reservation_sequence'] == asserted['reservation_sequence'] and
+                start_att['reservation_sha256'] == asserted['reservation_sha256'] and
+                start_att['run_id'] == run_id and
+                start_att['run_attempt'] == attempt and
+                start_att['job_id'] == job['id'],
+                'supplied start differs from claimed run/job/reservation')
+        start_sha256 = digest(start_raw)
     conn, database, database_info = _read_only_connection(root)
     try:
         action, receipt_body, archive_pair = _load_local_action(
             conn, root, asserted['queue_id'], asserted['reservation_sequence'],
-            asserted['reservation_sha256'])
+            asserted['reservation_sha256'], supplied_start_sha256=start_sha256)
         _verify_scan_claim(members, run, action, receipt_body, archive_pair,
                            Path(work_parent))
         _check_database_unchanged(conn, database, database_info)
@@ -665,8 +704,15 @@ def reconcile_bytes(private_root, run_raw, jobs_raw, artifacts_raw, zip_raw,
                 'jobs_api_sha256': digest(jobs_raw),
                 'artifacts_api_sha256': digest(artifacts_raw),
             },
-            'database': {'read_only': True, 'schema_version': intake.RESERVATION_SCHEMA_VERSION,
-                         'receipt_chain_verified': True, 'action_chain_verified': True},
+            'database': {'read_only': True, 'schema_version': (
+                intake.ISSUED_SCHEMA_VERSION if start_sha256 is not None else
+                intake.RESERVATION_SCHEMA_VERSION),
+                         'receipt_chain_verified': True, 'action_chain_verified': True,
+                         **({'supplied_start_head_bound': True,
+                             'supplied_start_sha256': start_sha256,
+                             'start_mac_verified': False,
+                             'head_scope': 'read_only_snapshot_unkeyed'}
+                            if start_sha256 is not None else {})},
             'limitations': [
                 'The reservation action hash, operator name, policy bytes and policy digest are unkeyed local claims; this check does not authenticate them.',
                 'GitHub artifact metadata binds the ZIP to the workflow run, not directly to a particular job; matching the expected job is a same-run inference.',

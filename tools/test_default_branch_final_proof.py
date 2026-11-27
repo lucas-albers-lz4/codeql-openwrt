@@ -6,6 +6,8 @@ import json
 import unittest
 import warnings
 from pathlib import Path
+from contextlib import ExitStack
+from unittest.mock import patch
 from zipfile import ZIP_STORED, ZipFile, ZipInfo
 import stat
 
@@ -129,6 +131,82 @@ class FrozenInputTests(unittest.TestCase):
         early['identity.json'] = b'changed'
         with self.assertRaisesRegex(proof.FinalProofError, 'bytes differ'):
             proof._compare_frozen_inputs(inputs, early)
+
+
+class V3ReplayBindingTests(unittest.TestCase):
+    def test_public_flag_passes_exact_start_bytes_to_reconciliation(self):
+        run_id, attempt = 9, 1
+        start_raw = b'{"fixture":"start"}\n'
+        final_zip, early_zip = b'f', b'e'
+        run = {'status': 'completed', 'conclusion': 'success',
+               'head_sha': '1' * 40}
+        job = {'id': 33, 'status': 'completed', 'conclusion': 'success'}
+        final = {'id': 45, 'size_in_bytes': 1,
+                 'digest': 'sha256:' + proof.digest(final_zip)}
+        early = {'id': 44, 'size_in_bytes': 1,
+                 'digest': 'sha256:' + proof.digest(early_zip)}
+        inputs = {name: b'x' for name in proof.FROZEN_INPUTS}
+        early_members = dict(inputs, **{'receipt.json': b'{}'})
+        captured = []
+
+        class StopAtReplay(RuntimeError):
+            pass
+
+        def stop_replay(*args, **kwargs):
+            captured.append((args, kwargs))
+            raise StopAtReplay
+
+        with ExitStack() as stack:
+            stack.enter_context(patch.object(
+                proof.reconcile, 'parse_json', side_effect=[run, {}, {}] * 2))
+            stack.enter_context(patch.object(
+                proof.reconcile, 'verify_github_metadata', return_value=(job, final)))
+            stack.enter_context(patch.object(proof, '_final_members', return_value=(inputs, {})))
+            stack.enter_context(patch.object(proof.live, '_early_artifact', return_value=early))
+            stack.enter_context(patch.object(proof, '_raw_zip_names', return_value=[]))
+            stack.enter_context(patch.object(proof.live, '_read_early_zip',
+                                             return_value=early_members))
+            stack.enter_context(patch.object(proof, 'parse_object', side_effect=[
+                {'attestation': {'release_lock_sha256': '2' * 64}},
+                {'files': dict.fromkeys(proof.FROZEN_INPUTS)},
+                {'attestation': {'release_lock_sha256': '2' * 64}},
+                {'files': dict.fromkeys(proof.FROZEN_INPUTS)},
+            ]))
+            stack.enter_context(patch.object(proof.live, '_verify_receipt_files',
+                                             return_value={}))
+            stack.enter_context(patch.object(proof.reconcile, 'reconcile_bytes',
+                                             side_effect=stop_replay))
+            for flag in (False, True):
+                with self.subTest(flag=flag), self.assertRaises(StopAtReplay):
+                    proof.verify_final_proof(
+                        Path('/unused/private'), Path(__file__).resolve().parents[1],
+                        b'run', b'jobs', b'artifacts', final_zip, early_zip,
+                        start_raw, run_id, attempt,
+                        require_issued_start_head=flag)
+        self.assertEqual([call[1]['start_raw'] for call in captured],
+                         [None, start_raw])
+
+    def test_exact_snapshot_receipt_required_without_authentication_claim(self):
+        start_raw = b'canonical fixture start bytes\n'
+        database = {
+            'schema_version': proof.reconcile.intake.ISSUED_SCHEMA_VERSION,
+            'supplied_start_head_bound': True,
+            'supplied_start_sha256': proof.digest(start_raw),
+            'start_mac_verified': False,
+            'head_scope': 'read_only_snapshot_unkeyed',
+        }
+        proof._verify_v3_replay_binding({'database': database}, start_raw)
+        for field, value in (
+                ('schema_version', proof.reconcile.intake.RESERVATION_SCHEMA_VERSION),
+                ('supplied_start_head_bound', False),
+                ('supplied_start_sha256', '0' * 64),
+                ('start_mac_verified', True),
+                ('head_scope', 'claimed_current')):
+            with self.subTest(field=field):
+                altered = dict(database, **{field: value})
+                with self.assertRaisesRegex(proof.FinalProofError,
+                                            'exact supplied v3 start head'):
+                    proof._verify_v3_replay_binding({'database': altered}, start_raw)
 
 
 class ConsumerTupleTests(unittest.TestCase):
