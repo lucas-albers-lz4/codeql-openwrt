@@ -2,7 +2,7 @@
 
 `tools.default_branch_failed_execution_capture.capture_failed_execution(private_root,
 key, run_id, attempt)` accepts key bytes in process. It has no CLI, key reader,
-terminal writer, CAS, artifact download, or retry path. Its typed status is
+terminal writer, CAS, artifact download, or automatic retry path. Its typed status is
 `verified_failed_execution_bytes`; this is evidence for later review, not a
 signed terminal action.
 
@@ -10,8 +10,11 @@ The path validator runs before the existing authenticated-start preflight. The
 first database and retained-start I/O boundary is that preflight: a
 checked private root, singly linked 0600 database snapshot without sidecars,
 HMAC-verified sequence-one head, reservation chain and exact retained start
-receipt/API/early ZIP bytes. Only then does the caller open an exclusive 0700
-capture directory. The canonical HTTPS transport fetches the fixed consumer
+receipt/API/early ZIP bytes. Only then does the caller generate a 128-bit
+CSPRNG invocation ID and open an exclusive 0700 capture directory named with
+the run, attempt and ID. A canonical manifest is exclusively written and read
+back before network I/O; it binds the ID to the queue, reservation, start, observation,
+run, attempt and job. The canonical HTTPS transport fetches the fixed consumer
 repository run and attempt-specific complete jobs listing twice, with bounded
 direct-200 responses and no credential-forwarding redirect. The signed run,
 workflow, authenticated main head, attempt and unique scan job ID must match.
@@ -28,8 +31,9 @@ must have its exact file inventory before staging. The canonical receipt is
 exclusively written and fsynced as pending bytes. Publication follows all
 directory, parent and root post-use checks; the published receipt is reopened
 by its original inode. A readback failure removes the published receipt. A
-failure can leave a partial capture directory without `receipt.json`; its path
-cannot be reused as a fresh attempt. No result from this function authorizes
+failure can leave a partial capture directory without `receipt.json`; a later
+manual invocation uses a new ID and leaves the orphan for audit. The receipt and return include
+the invocation ID and manifest digest under the v2 capture schema. No result from this function authorizes
 issuance.
 
 The `contract` job runs synthetic fixture tests with a real fixture HMAC and
@@ -37,12 +41,30 @@ queue. They cover terminal failure without any artifact, active/success/mixed
 outcomes, run/attempt/job/head/complete-listing mismatch, second observation
 drift, changed durable head, legitimate sequence-two advancement, late
 directory check failure, extra entries, transport redirect and incomplete
-custody. They
-do not prove a live GitHub run or prevent rollback to an older valid store.
+custody, two invocations for one run/attempt, pre-receipt interruption followed
+by retry, deterministic ID collision and manifest binding. They do not prove
+a live GitHub run or prevent rollback to an older valid store.
 Production terminal issuance still needs an independent durable checkpoint,
 proof review, a recheck-to-CAS deadline and the issuer's own transaction.
 
 ## Review packet
+
+### Invocation naming slice
+
+Base is clean merged #267 `8f7c1ff3ec5960941ad3b4ec1362b33d71c86e30`
+(tree `33f5c64e08bfc2766bc79fc220d4b64be21ab899`). The affected contracts
+are the capture path, manifest and receipt, and the private issuer reader of
+that returned path. The signed terminal document schema and offline issuer
+call signature are unchanged. The source-first positive is the signed fixture
+start for run 9, attempt 1, job 33 followed by two identical completed
+`failure/failure` observations; the active scan job is the eligible near miss.
+Before the first network request, the checked root and authenticated database
+and retained start are read, then the exclusive invocation directory and
+manifest are created. No fixture test opens a live credential or queue. The
+focused capture and issuer tests already run in the hosted `contract` job of
+`default-branch-commit-scan.yml`. Expected output is the test log; local
+budget is under 30 seconds, 2 MiB disk and 100 MiB memory. This change does
+not add a witness or authorize a live issuer.
 
 - **Decision and base:** this bounded change starts at merged main
   `8ae2fb4bae82eb770287ed388235b96dd04e0454`. It adds failure byte

@@ -5,6 +5,8 @@ or automatic retry is available from this module.
 """
 
 import os
+import re
+import secrets
 import sqlite3
 import subprocess
 from contextlib import ExitStack, suppress
@@ -18,8 +20,10 @@ from tools import default_branch_private_final_capture as custody
 from tools import default_branch_private_start as private
 from tools import default_branch_reservation_reconcile as reconcile
 
-SCHEMA = "operator-default-branch-failed-execution-bytes-v1"
+SCHEMA = "operator-default-branch-failed-execution-bytes-v2"
+MANIFEST_SCHEMA = "operator-default-branch-failed-execution-invocation-v1"
 CAPTURE_DIR = "failed-execution-captures"
+INVOCATION_ID = re.compile(r"[0-9a-f]{32}\Z")
 ALLOWED_PAIRS = frozenset({(value, value) for value in issued.FAILURE_CONCLUSIONS})
 
 
@@ -32,6 +36,8 @@ class VerifiedFailedExecutionBytes(TypedDict):
     status: str
     verification_scope: str
     queue_id: str
+    invocation_id: str
+    manifest_sha256: str
     start_sha256: str
     observation_sha256: str
     repository: str
@@ -187,7 +193,10 @@ def _capture(root, key, run_id, attempt, network):
         "run": endpoint,
         "jobs": f"{endpoint}/attempts/{attempt}/jobs?per_page=100",
     }
-    name = f"default-branch-failed-{run_id}-{attempt}"
+    invocation_id = secrets.token_hex(16)
+    _need(INVOCATION_ID.fullmatch(invocation_id) is not None,
+          "invalid failure capture invocation ID")
+    name = f"default-branch-failed-{run_id}-{attempt}-{invocation_id}"
     with ExitStack() as publisher:
         with ExitStack() as stack:
             root_fd = stack.enter_context(custody._directory(None, root))
@@ -200,6 +209,21 @@ def _capture(root, key, run_id, attempt, network):
             _need(
                 set(os.listdir(directory)) == set(),
                 "new failure capture directory is not empty",
+            )
+            manifest = {
+                "schema": MANIFEST_SCHEMA,
+                "invocation_id": invocation_id,
+                "queue_id": signed["queue_id"],
+                "reservation_sha256": signed["reservation_sha256"],
+                "start_sha256": signed["start_sha256"],
+                "observation_sha256": signed["observation_sha256"],
+                "run_id": run_id,
+                "attempt": attempt,
+                "job_id": signed["job_id"],
+            }
+            manifest_raw = issued.canonical_bytes(manifest)
+            manifest_identity = custody._write(
+                directory, "manifest.json", manifest_raw, custody.MAX_RECEIPT
             )
             fetch = network()
             files, requests, times, parsed, snapshots = {}, [], [], [], []
@@ -246,11 +270,18 @@ def _capture(root, key, run_id, attempt, network):
                     identity == {"size": len(raw), "sha256": reconcile.digest(raw)},
                     "raw API custody changed before receipt publication",
                 )
+            _need(
+                custody._read(directory, "manifest.json", custody.MAX_RECEIPT)
+                == manifest_raw,
+                "invocation manifest changed before receipt publication",
+            )
             receipt = {
                 "schema": SCHEMA,
                 "status": "verified_failed_execution_bytes",
                 "verification_scope": "read_only_authenticated_start_and_two_canonical_failure_observations",
                 "queue_id": signed["queue_id"],
+                "invocation_id": invocation_id,
+                "manifest_sha256": manifest_identity["sha256"],
                 "start_sha256": signed["start_sha256"],
                 "observation_sha256": signed["observation_sha256"],
                 "repository": reconcile.REPOSITORY,
@@ -274,7 +305,7 @@ def _capture(root, key, run_id, attempt, network):
             )
             receipt_inode = (pending.st_dev, pending.st_ino)
             _need(
-                set(os.listdir(directory)) == set(files) | {custody.PENDING_RECEIPT},
+                set(os.listdir(directory)) == set(files) | {"manifest.json", custody.PENDING_RECEIPT},
                 "failure capture directory has unexpected entries",
             )
             publish_fd = os.dup(directory)

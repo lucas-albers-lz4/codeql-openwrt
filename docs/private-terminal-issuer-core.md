@@ -32,8 +32,9 @@ the hosted test log. No hosted gate has run for this local candidate.
 `issue_failed_execution(root, key, run_id, attempt)` authenticates the exact
 sequence-one HMAC, reservation, origin-linked start observation, and retained
 early ZIP through the merged preflight. It invokes the merged canonical
-two-observation failure capture itself. It reopens the fixed capture path,
-checks directory inventory, readback hashes and the capture-returned receipt
+two-observation failure capture itself. It reopens the invocation-specific
+capture path derived from the returned ID, checks the exact manifest,
+directory inventory, readback hashes and the capture-returned receipt
 digest, and rederives the exact run/job outcome from all four raw API files.
 It reauthenticates the start and compares root/database inode and metadata
 fingerprints before CAS. The writer checks the expected storage fingerprint
@@ -47,9 +48,11 @@ The deadline is checked before commit; it does not bound a blocked SQLite
 commit. A stable second GitHub observation narrows but does not eliminate the
 API-to-CAS race. A hostile writer with the issuer's own UID could still race
 path opens; the live issuer requires a private OS account and stronger
-first-I/O isolation review. The fixed per-run capture directory blocks a
-second attempt after a pre-CAS crash. It needs invocation-specific directories
-and recovery that trusts only a committed, authenticated action. This core
+first-I/O isolation review. An interrupted pre-CAS capture leaves an auditable
+orphan and a new invocation can capture the same run/attempt. The signed
+receipt digest transitively binds the invocation ID and manifest; the issuer
+also returns that ID. Recovery that trusts only a committed, authenticated
+action remains required. This core
 does not maintain an independent durable head checkpoint, so a restored older
 valid queue could pass HMAC checks. No live launcher or key-loading path is
 provided. Do not call it with a live key until these gates are resolved.
@@ -74,8 +77,8 @@ Before a live pilot, add the approved completion policy and explicit binding
 to the reservation's policy and the approved start-policy bytes; OS-isolate
 ZIP/source/consumer workers from the key and queue; pin the interpreter and
 import path before private I/O; keep an external durable head checkpoint with
-crash reconciliation outside the queue restore unit; add unique capture
-invocations and post-CAS recovery; review the first I/O and credential
+crash reconciliation outside the queue restore unit; add post-CAS recovery;
+review the first I/O and credential
 boundary; run exact-head hosted contract, unittests and typed-handoff gates.
 The canonical source verifier remains partial on the 17 outside-v0.6
 packages-feed signals described in the ledger, and this change does not
