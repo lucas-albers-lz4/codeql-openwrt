@@ -132,6 +132,11 @@ sys.stdout.buffer.write((root / f'response-{{index}}.bin').read_bytes())
             self.assertEqual(db.execute('SELECT COUNT(*) FROM issued_actions').fetchone()[0], 0)
 
     def test_positive_fetches_retains_six_exact_bodies_then_reads_key_and_cas(self):
+        class FixtureDateTime(datetime):
+            @classmethod
+            def now(cls, tz=None):
+                return datetime(2026, 11, 26, 12, 0, 1, tzinfo=timezone.utc)
+
         original_read_key = start._read_key
         original_issue_start = issued.issue_start
         original_fsync_directory = start._fsync_directory
@@ -175,7 +180,8 @@ sys.stdout.buffer.write((root / f'response-{{index}}.bin').read_bytes())
 
         with patch.object(start, '_read_key', side_effect=read_key_after_custody), \
              patch.object(issued, 'issue_start', side_effect=issue_after_key), \
-             patch.object(start, '_fsync_directory', side_effect=record_fsync):
+             patch.object(start, '_fsync_directory', side_effect=record_fsync), \
+             patch.object(start, 'datetime', FixtureDateTime):
             result = self._launch()
 
         self.assertEqual(result['status'], 'issued_start')
