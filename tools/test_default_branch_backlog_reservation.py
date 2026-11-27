@@ -395,7 +395,13 @@ class DefaultBranchBacklogReservationTests(unittest.TestCase):
             '--policy', str(self.policy_path), '--release-lock', str(self.release_lock),
             '--operator', 'cli-operator', '--expires-at', '2026-11-27T12:00:00Z',
         ]
-        with patch('sys.stdout', stdout):
+        actual_reserve = reservation.reserve
+
+        def reserve_at_fixture_time(*reserve_args, **reserve_kwargs):
+            return actual_reserve(*reserve_args, now=self.now, **reserve_kwargs)
+
+        with patch('sys.stdout', stdout), \
+             patch.object(reservation, 'reserve', side_effect=reserve_at_fixture_time):
             self.assertEqual(reservation.main(args), 0)
         stdout.seek(0)
         self.assertEqual(json.loads(stdout.read())['status'], 'reserved_only')
