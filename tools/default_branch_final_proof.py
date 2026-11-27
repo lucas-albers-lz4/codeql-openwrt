@@ -846,18 +846,33 @@ def _verify_start_binding(start_raw: bytes, run: dict, job: dict,
     }
 
 
+def _verify_v3_replay_binding(claim_replay: dict, start_raw: bytes) -> None:
+    database = claim_replay.get('database', {})
+    need(database.get('schema_version') == reconcile.intake.ISSUED_SCHEMA_VERSION and
+         database.get('supplied_start_head_bound') is True and
+         database.get('supplied_start_sha256') == digest(start_raw) and
+         database.get('start_mac_verified') is False and
+         database.get('head_scope') == 'read_only_snapshot_unkeyed',
+         'claim replay did not bind the exact supplied v3 start head')
+
+
 def verify_final_proof(private_root: Path, work_root: Path,
                        run_raw: bytes, jobs_raw: bytes, artifacts_raw: bytes,
                        final_zip: bytes, early_zip: bytes, start_raw: bytes,
-                       run_id: int, attempt: int) -> dict:
+                       run_id: int, attempt: int, *,
+                       require_issued_start_head: bool = False) -> dict:
     """Verify supplied terminal bytes against one supplied start binding.
 
     `reconcile_bytes` performs read-only local action/receipt/archive replay.
     The resulting status is not authenticated queue completion: the supplied
     start MAC is deliberately not checked here.
     """
+    need(type(require_issued_start_head) is bool,
+         'issued start head requirement must be boolean')
     need(type(run_id) is int and run_id > 0 and type(attempt) is int and attempt > 0,
          'run ID and attempt must be positive integers')
+    need(type(start_raw) is bytes and 0 < len(start_raw) <= 1024 * 1024,
+         'supplied start document is empty or exceeds its byte bound')
     run = reconcile.parse_json(run_raw, 'canonical completed run API')
     jobs = reconcile.parse_json(jobs_raw, 'complete jobs API')
     artifacts = reconcile.parse_json(artifacts_raw, 'complete artifacts API')
@@ -908,13 +923,16 @@ def verify_final_proof(private_root: Path, work_root: Path,
     try:
         claim_replay = reconcile.reconcile_bytes(
             Path(private_root), run_raw, jobs_raw, artifacts_raw, final_zip,
-            run_id, attempt, work_root)
+            run_id, attempt, work_root,
+            start_raw=start_raw if require_issued_start_head else None)
     except (reconcile.ReconcileError, OSError, ValueError, TypeError,
             KeyError, AttributeError, OverflowError, RecursionError) as exc:
         raise FinalProofError('archived claim/origin replay failed') from exc
     need(claim_replay.get('status') == 'claim_reconciled_read_only' and
          claim_replay.get('canonical_run', {}).get('artifact_sha256') == digest(final_zip),
          'archived claim/origin replay did not bind this final artifact')
+    if require_issued_start_head:
+        _verify_v3_replay_binding(claim_replay, start_raw)
     scan_summary = _verify_scan_receipts(
         inputs, r3, run_id, attempt, claim_replay['reservation']['policy_claim'])
     start_summary = _verify_start_binding(start_raw, run, job, early_artifact,
@@ -937,12 +955,16 @@ def verify_final_proof(private_root: Path, work_root: Path,
         'actual_package_installed_bytes_verified': False,
         'alert_disposition': 'not_evaluated',
         'limitations': [
-            'The supplied start document MAC and durable issued-chain head were not verified.',
+            ('The supplied start bytes matched the unkeyed v3 issued head in a read-only snapshot; its MAC was not verified and the head may change after the snapshot.'
+             if require_issued_start_head else
+             'The supplied start document MAC and durable issued-chain head were not verified.'),
             'GitHub artifact metadata binds the ZIP to the run, not directly to its uploader job; the unique expected job is a same-run inference.',
             'The final ZIP contains source claims but no staged source bytes. Selection and routing source truth require fresh canonical Git objects and an independent oracle replay.',
             'This verifier records exact SARIF/consumer tuples; triage_required means human disposition is still needed and no alert disposition is asserted.',
             'Extraction checks compare the archived decoded JSON rows and receipts; BQRS is not decoded or independently tied to those rows, and CodeQL is not re-executed.',
-            'Claim/origin replay uses the captured v2 reservation store and retained archives; this tool does not migrate or mutate queue state.',
+            ('Claim/origin replay uses a v3 read-only snapshot, its exact sequence-one start head and retained archives; this tool does not migrate or mutate queue state.'
+             if require_issued_start_head else
+             'Claim/origin replay uses the captured v2 reservation store and retained archives; this tool does not migrate or mutate queue state.'),
         ],
     }
 

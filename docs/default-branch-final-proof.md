@@ -17,6 +17,27 @@ or assign alert disposition. The function returns
 document, not an authenticated start or queue completion. A later private
 terminal issuer must check the durable v3 issued chain and MAC.
 
+The optional `require_issued_start_head=True` path now replays the same
+claim against a v3 read-only queue snapshot. It requires the supplied canonical
+sequence-one document bytes to match the exact unkeyed issued head, and binds
+the claimed run, attempt, job and reservation to that document. This is a
+snapshot structural check; it neither verifies the HMAC nor proves that the
+head remains current after the snapshot. The default v2 path and its receipt
+shape remain unchanged for historical retained-run analysis. A future private
+issuer must authenticate the start with its key, capture and validate final
+bytes in the same invocation, and recheck the head inside sequence-two CAS.
+
+This v3 integration increment is based on clean merged consumer
+`98e02b5165d26c9b8a7633f923f7c602f83a9b3f`. It changes only the
+reservation replay and final-proof call contract. The fixture oracle
+is one pending reservation and its exact signed start at sequence one.
+An unissued start, changed MAC byte, changed scan job ID, stale head and
+sequence-two head are eligible near misses. The contract job already runs
+`tools.test_default_branch_reservation_reconcile`,
+`tools.test_default_branch_final_proof` and
+`tools.test_default_branch_backlog_issued`. These offline controls use no
+CodeQL database, source fetch, network call, key file or live queue.
+
 The implementation reuses
 `tools.default_branch_reservation_reconcile.reconcile_bytes` to replay the
 captured v2 reservation, intake receipt and archived discovery origin. It does

@@ -11,6 +11,7 @@ import unittest
 from zipfile import ZipFile, ZIP_DEFLATED
 
 from tools import default_branch_backlog_intake as intake
+from tools import default_branch_backlog_issued as issued
 from tools import default_branch_backlog_reservation as reservation
 from tools import default_branch_reservation_claim as scan_claim
 from tools import default_branch_reservation_reconcile as reconcile
@@ -220,7 +221,8 @@ class DefaultBranchReservationReconcileTests(unittest.TestCase):
                 archive.writestr(name, raw)
         return stream.getvalue()
 
-    def _observe(self, *, members=None, run=None, jobs=None, artifacts=None):
+    def _observe(self, *, members=None, run=None, jobs=None, artifacts=None,
+                 start_raw=None):
         members = self.members if members is None else members
         run = self.run if run is None else run
         jobs = self.jobs if jobs is None else jobs
@@ -231,7 +233,99 @@ class DefaultBranchReservationReconcileTests(unittest.TestCase):
         artifacts['artifacts'][0]['digest'] = 'sha256:' + digest(zip_raw)
         return reconcile.reconcile_bytes(
             self.root, json_bytes(run), json_bytes(jobs), json_bytes(artifacts),
-            zip_raw, run['id'], run['run_attempt'], self.work)
+            zip_raw, run['id'], run['run_attempt'], self.work,
+            start_raw=start_raw)
+
+    def _issue_fixture_start(self, *, issue=True):
+        issued.migrate_v2_to_v3(self.root)
+        body, reservation_hash = self._action()
+        policy = body['policy']
+        att = {
+            'schema': issued.START_SCHEMA, 'kind': 'start',
+            'queue_id': body['queue_id'], 'reservation_sequence': 1,
+            'reservation_sha256': reservation_hash, 'identity': body['identity'],
+            'origin_receipt_sha256': body['origin']['receipt_hash'],
+            'origin_gap_sha256': body['origin']['gap_sha256'],
+            'policy_sha256': policy['policy_sha256'],
+            'consumer_commit': policy['consumer_commit'],
+            'release_lock_sha256': policy['release_lock_sha256'],
+            'run_id': RUN_ID, 'run_attempt': RUN_ATTEMPT, 'job_id': 700,
+            'workflow': reservation.WORKFLOW, 'job': issued.START_JOB,
+            'early_artifact': {'id': 100, 'size': 1, 'sha256': 'a' * 64},
+            'observation_sha256': 'b' * 64,
+            'run_api_sha256': 'c' * 64, 'jobs_api_sha256': 'd' * 64,
+            'artifacts_api_sha256': 'e' * 64,
+            'recheck_run_api_sha256': 'f' * 64,
+            'recheck_jobs_api_sha256': '1' * 64,
+        }
+        key = b'fixture-key-32-bytes-exactly-0000'
+        if not issue:
+            return issued._signed_document(att, key, '2026-11-26T12:00:01Z')[1]
+        issued.issue_start(
+            self.root, 0, issued.ZERO_HASH, key,
+            {'consumer_commit': policy['consumer_commit'],
+             'release_lock_sha256': policy['release_lock_sha256']},
+            att, '2026-11-26T12:00:01Z')
+        with closing(sqlite3.connect(self.database)) as db:
+            return db.execute(
+                'SELECT document_json FROM issued_actions WHERE seq=1'
+            ).fetchone()[0].encode('utf-8')
+
+    def test_v3_replay_binds_supplied_start_to_exact_issued_head(self):
+        start_raw = self._issue_fixture_start()
+        before = digest(self.database.read_bytes())
+        result = self._observe(start_raw=start_raw)
+        self.assertEqual(result['status'], 'claim_reconciled_read_only')
+        self.assertEqual(result['database']['schema_version'],
+                         intake.ISSUED_SCHEMA_VERSION)
+        self.assertTrue(result['database']['supplied_start_head_bound'])
+        self.assertFalse(result['database']['start_mac_verified'])
+        self.assertEqual(before, digest(self.database.read_bytes()))
+        with self.assertRaisesRegex(reconcile.ReconcileError,
+                                    'supplied start differs from exact v3 issued head'):
+            forged = json.loads(start_raw)
+            forged['mac'] = '0' * 64
+            self._observe(start_raw=issued.canonical_bytes(forged))
+        with closing(sqlite3.connect(self.database)) as db, db:
+            db.execute('UPDATE issued_head SET hash=?', ('0' * 64,))
+        with self.assertRaises(reconcile.ReconcileError):
+            self._observe(start_raw=start_raw)
+
+    def test_v3_replay_rejects_job_drift_and_already_issued_terminal(self):
+        start_raw = self._issue_fixture_start()
+        jobs = json.loads(json.dumps(self.jobs))
+        jobs['jobs'][0]['id'] = 701
+        with self.assertRaisesRegex(reconcile.ReconcileError,
+                                    'claimed run/job/reservation'):
+            self._observe(jobs=jobs, start_raw=start_raw)
+        start_doc = json.loads(start_raw)
+        start = start_doc['attestation']
+        attestation = {
+            'schema': issued.TERMINAL_SCHEMA, 'kind': 'failed_execution',
+            **{key: start[key] for key in (
+                'queue_id', 'reservation_sequence', 'reservation_sha256',
+                'identity', 'run_id', 'run_attempt', 'job_id', 'workflow', 'job')},
+            'start_sha256': digest(start_raw),
+            'evidence': {
+                'schema': 'operator-default-branch-terminal-observation-v1',
+                'run_api_sha256': 'a' * 64, 'jobs_api_sha256': 'b' * 64,
+                'run_status': 'completed', 'run_conclusion': 'failure',
+                'job_status': 'completed', 'job_conclusion': 'failure',
+            },
+        }
+        issued.issue_terminal(
+            self.root, 1, digest(start_raw),
+            b'fixture-key-32-bytes-exactly-0000', attestation,
+            '2026-11-26T12:02:00Z')
+        with self.assertRaisesRegex(reconcile.ReconcileError,
+                                    'supplied start differs from exact v3 issued head'):
+            self._observe(start_raw=start_raw)
+
+    def test_v3_replay_rejects_unissued_well_formed_start(self):
+        start_raw = self._issue_fixture_start(issue=False)
+        with self.assertRaisesRegex(reconcile.ReconcileError,
+                                    'supplied start differs from exact v3 issued head'):
+            self._observe(start_raw=start_raw)
 
     def test_matching_claim_replays_exact_archive_and_leaves_database_byte_identical(self):
         before = digest(self.database.read_bytes())
@@ -241,6 +335,12 @@ class DefaultBranchReservationReconcileTests(unittest.TestCase):
         self.assertEqual(result['claim_status'], 'claimed_unverified')
         self.assertEqual(result['reservation']['identity'], self.identity)
         self.assertEqual(result['canonical_run']['head_sha'], CONSUMER_HEAD)
+        self.assertEqual(result['database'], {
+            'read_only': True,
+            'schema_version': intake.RESERVATION_SCHEMA_VERSION,
+            'receipt_chain_verified': True,
+            'action_chain_verified': True,
+        })
         self.assertEqual(before, after)
         self.assertFalse(Path(str(self.database) + '-journal').exists())
         self.assertFalse(Path(str(self.database) + '-wal').exists())
